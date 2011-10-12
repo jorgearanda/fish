@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>Client - Main Screen</title>
+<script src="getvalue.js"></script>
+</head>
+
+<body>
+This is the main simulation screen.
+<br>
+In here we will see the fish stock, information on the other agents, etc.
+<br>
+The simulation engine will control when will we leave this screen. For now, just press this button to finish the workflow:
+<br>
+
+<form action="debrief.html">
+<script language="JavaScript">
+gid = getValue("gid");
+document.write('<input type="hidden" name="gid" value=' + gid + ' />');
+</script>
+<button type="submit">End Simulation</button>
+</form>
+</body>
+</html>
