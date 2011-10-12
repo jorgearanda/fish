@@ -2,14 +2,76 @@
 <head>
 <title>Client - Main Screen</title>
 <script src="getvalue.js"></script>
+<script language="JavaScript">
+function drawControl() {
+	var cCanvas = document.getElementById("controlCanvas");
+	var cContext = cCanvas.getContext("2d");
+	cContext.font = "12px sans-serif";
+	cContext.fillText("Main simulation screen", 20, 20);
+	cContext.fillText("Each fish earns you $X", 20, 60);
+	cContext.fillText("Each minute at sea costs $X", 20, 80);
+	cContext.fillText("Leaving port costs $X", 20, 100);
+	
+	cContext.fillStyle = "orange";
+	cContext.fillRect(20, 140, 200, 30);
+	cContext.fillRect(20, 180, 200, 30);
+	cContext.fillRect(20, 220, 200, 30);
+	
+	cContext.fillStyle = "black";
+	cContext.font = "bold 12px sans-serif";
+	cContext.fillText("Go out to sea", 30, 160);
+	cContext.fillText("Return to port", 30, 200);
+	cContext.fillText("Cast for one fish", 30, 240);
+
+}
+
+function drawOcean() {
+	var oCanvas = document.getElementById("oceanCanvas");
+	var oContext = oCanvas.getContext("2d");
+	oContext.font = "12px sans-serif";
+	oContext.fillText("Message about Season number and fish remaining.", 100, 20);
+	oContext.font = "20px sans-serif";
+	oContext.fillText("Fishies go here!", 200, 200);
+}
+
+function drawInfo() {
+	var iCanvas = document.getElementById("infoCanvas");
+	var iContext = iCanvas.getContext("2d");
+
+	iContext.fillStyle = "pink";
+	iContext.fillRect(40, 30, 190, 100);
+	iContext.fillRect(240, 30, 140, 100);
+	iContext.fillRect(390, 30, 300, 100);
+	
+	iContext.fillStyle = "black";
+	iContext.font = "12px sans-serif";
+	iContext.fillText("Table with overall performance", 50, 50);
+	iContext.fillText("Status of fishers", 250, 50);
+	iContext.fillText("Table of fish caught and profits", 400, 50);
+
+
+}
+
+function drawAll() {
+	drawControl();
+	drawOcean();
+	drawInfo();
+}
+</script>
 </head>
 
-<body>
-This is the main simulation screen.
-<br>
-In here we will see the fish stock, information on the other agents, etc.
-<br>
-The simulation engine will control when will we leave this screen. For now, just press this button to finish the workflow:
+
+<body onload="drawAll()">
+
+<div width="1210" height="760" style="overflow: auto">
+<canvas id="controlCanvas" width="300" height="700" style="float: left"></canvas>
+
+<canvas id="oceanCanvas" width="800" height="500"></canvas>
+
+<canvas id="infoCanvas" width="800" height="200"></canvas>
+</div>
+
+The simulation engine will control when will we leave this screen. For now, please don't mind the awful colors and just press this button to finish the workflow:
 <br>
 
 <form action="debrief.html">
