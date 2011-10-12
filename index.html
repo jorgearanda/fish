@@ -4,11 +4,26 @@
 </head>
 
 <body>
-Text for the client introductory screen.
-
+<h2>Welcome to FISH, and thanks for participating!</h2>
+<br>
+You can either join a group, or run the simulation in standalone mode (we'll give you some AI agents to run against).
+<br><br>
+<hr>
 <form action="prep.html">
-Which group do you want to join? <input type="text" name="gid" />
-<button type="submit">Join Group</button>
+<h3>Group Mode</h3>
+Group name: <input type="text" name="gid" autofocus/>
+<br><br>
+<button type="submit">Get Started!</button>
 </form>
+<br>
+
+<hr>
+<form action="prep.html">
+<h3>Standalone Mode</h3>
+<input type="hidden" name="gid" value="solo"/>
+<br>
+<button type="submit">Go Solo!</button>
+</form>
+<hr>
 </body>
 </html>
