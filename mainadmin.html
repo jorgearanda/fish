@@ -5,26 +5,27 @@
 </head>
 
 <body>
-This is the main screen for administration.
-<br>
-There will be a list of simulations already executed here.
-<br>
-Then the possibility to download them all in one go:
-<br>
-<em>(Button doesn't do anything yet)</em>
-<button type="button">Download Logs</button>
-<br>
-<br>
-And then two more actions:
-<br>
+<h2>Fish Administration</h2>
 
-<form action="newgroup.html">
-<button type="submit">Create a Group</button>
-</form>
-<br>
-<form action="newuser.html">
-<button type="submit">Create a New User</button>
-</form>
+<h3>Simulations in Progress</h3>
 
+<b><a href="active.html?sim=test1">Test1</a></b> - Started on 2011/11/15 16:00 PST by Jorge.
+<br>
+<b><a href="active.html?sim=test2">Test2</a></b> - Started on 2011/11/15 17:00 PST by Jorge.
+<br><br>
+
+You can also <a href="newgroup.html">create a new group (simulation)</a>, or <a href="newuser.html">create a new user</a>.
+
+
+<h3>Simulations Completed</h3>
+
+<b><a href="logs.html?sim=oldtest">OldTest</a></b> - Started on 2009/11/15 16:00 PST, ended on 2009/11/16 09:00 PST, by Jorge.
+<br>
+<b><a href="logs.html?sim=oldtes2">OldTest2</a></b> - Started on 2009/11/15 16:00 PST, ended on 2009/11/16 09:00 PST, by Jorge.
+<br>
+<b><a href="logs.html?sim=oldtest3">OldTest3</a></b> - Started on 2009/11/15 16:00 PST, ended on 2009/11/16 09:00 PST, by Jorge.
+<br><br>
+
+Download <a href="logs.html?all=1">all the logs</a> in one go:
 </body>
 </html>
