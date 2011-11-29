@@ -8,14 +8,110 @@ We'll need a name for the group, as well as a long bunch of settings.
 <br>
 
 <form action="active.html">
-Group name: <input type="text" name="gid" />
+Simulation name: <input type="text" name="gid" />
 <br>
-Setting 1: <input type="text" name="s1" />
+<h3>General settings</h3>
+
+Opponents:
+<br><input type="radio" name="opponents" value="artificial" checked/> Artificial
 <br>
-Setting 2: <input type="text" name="s2" />
+<input type="radio" name="opponents" value="human"/> Human
 <br>
-Setting 3: <input type="text" name="s3" />
 <br>
+Number of fishers: <input type="number" min="0" step="1" name="numfishers" value="4" />
+<br>
+Number of oceans: <input type="number" min="0" step="1" name="numoceans" value="1"/>
+<br>
+Fishing seasons: <input type="number" min="0" step="1" name="seasons" value="4" />
+<br>
+Initial delay seconds: <input type="number" min="0" step="1" name="initialdelay" value="15" />
+<br>
+Season delay seconds: <input type="number" min="0" step="1" name="seasondelay" value="10" />
+<br>
+<h3>Economics</h3>
+
+Fish value: <input type="number" min="0" step="1" name="fishvalue" value="2000" />
+<br>
+Cost per departure: <input type="number" min="0" step="1" name="costdeparture" value="25"/>
+<br>
+Cost per second: <input type="number" min="0" step="1" name="costsecond" value="10" />
+<br>
+
+<h3>Fish Stocks and Fishing</h3>
+
+Real fish: <input type="number" min="0" step="1" name="realfish" value="120" />
+<br>
+Mystery fish: <input type="number" min="0" step="1" name="mysteryfish" value="30" />
+<br>
+Spawn factor: <input type="number" min="0" step="0.1" name="spawnfactor" value="4.0" />
+<br>
+Chance of catch: <input type="number" min="0" step="0.01" name="chancecatch" value="1.0" />
+<br>
+
+<h3>Information display</h3>
+
+Show all fishers:
+<br><input type="radio" name="showallfishers" value="y" /> Yes
+<br>
+<input type="radio" name="showallfishers" value="n" checked/> No
+<br>
+<br>
+
+Show names:
+<br><input type="radio" name="shownames" value="y" checked/> Yes
+<br>
+<input type="radio" name="shownames" value="n"/> No
+<br>
+<br>
+
+Show status:
+<br><input type="radio" name="showstatus" value="y" checked/> Yes
+<br>
+<input type="radio" name="showstatus" value="n"/> No
+<br>
+<br>
+
+Show number caught:
+<br><input type="radio" name="shownumcaught" value="y" checked/> Yes
+<br>
+<input type="radio" name="shownumcaught" value="n"/> No
+<br>
+
+<br>
+Show balance:
+<br><input type="radio" name="showbalance" value="y" checked/> Yes
+<br>
+<input type="radio" name="showbalance" value="n"/> No
+<br>
+
+<h3>Artificial agents' information</h3>
+<h4>Agent 1</h4>
+<br>
+Name: <input type="text" name="agent1name" value="Kermit"/>
+<br>
+Greediness: <input type="number" min="0" step="0.01" max="1" name="agent1greed" value="0.5" />
+<br>
+Initial balance: <input type="number" min="0" step="1" name="agent1balance" value="10000" />
+<br>
+
+<h4>Agent 2</h4>
+<br>
+Name: <input type="text" name="agent2name" value="Gonzo"/>
+<br>
+Greediness: <input type="number" min="0" step="0.01" max="1" name="agent2greed" value="0.5" />
+<br>
+Initial balance: <input type="number" min="0" step="1" name="agent2balance" value="10000" />
+<br>
+
+<h4>Agent 3</h4>
+<br>
+Name: <input type="text" name="agent3name" value="Fozzie"/>
+<br>
+Greediness: <input type="number" min="0" step="0.01" max="1" name="agent3greed" value="0.5" />
+<br>
+Initial balance: <input type="number" min="0" step="1" name="agent3balance" value="10000" />
+<br>
+
 <button type="submit">Create this Group</button>
 </form>
 
