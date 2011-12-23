@@ -1,6 +1,25 @@
 <html>
 <head>
+<script src="/socket.io/socket.io.js"></script>
+<script language="JavaScript">
+  var socket = io.connect();
+
+  socket.on('gamesettings', function (gs) {
+    console.log(gs);
+    var gameSettings = gs;
+  });
+
+  socket.on('news', function (data) {
+    console.log(data);
+  });
+  
+  socket.on('message',function(data) {
+	  console.log('Received a message from the server!', data);
+  });
+</script>
+
 <title>Client - Main Screen</title>
+
 <script src="getvalue.js"></script>
 <script language="JavaScript">
 function drawControl() {
