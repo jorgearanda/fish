@@ -3,12 +3,25 @@
 <script src="/socket.io/socket.io.js"></script>
 <script language="JavaScript">
   var socket = io.connect();
+  var gameSettings = null;
+  var id = null;
+  var agents = null;
 
   socket.on('gamesettings', function (gs) {
     console.log(gs);
-    var gameSettings = gs;
+    gameSettings = gs;
   });
 
+  socket.on('myID', function (myID) {
+    console.log(myID);
+    id = myID;
+  });
+  
+  socket.on('agents', function (ags) {
+    console.log(ags);
+    agents = ags;
+  });
+  
   socket.on('news', function (data) {
     console.log(data);
   });
