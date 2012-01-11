@@ -32,9 +32,14 @@ function humanAgent (name) {
 }
 
 var gs = { expectedPlayers : 4,
-           expectedHumans : 1,
+           expectedHumans : 2,
            actualPlayers : 0,
-           actualHumans : 0 };
+           actualHumans : 0,
+           mode : 'standby',
+           totalSeasons : 4,
+           currentSeason : 0,
+           seasonDuration : 60,
+           status : 'waiting' };
 
 var agents = new Array();
 
@@ -61,6 +66,8 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	if (gs.actualPlayers == gs.expectedPlayers) {
-		io.sockets.emit('news', 'All agents connected!');
+		gs.status = 'running';
+		io.sockets.emit('gamesettings', gs);
+		io.sockets.emit('begin', 'All agents connected!');
 	}
 });

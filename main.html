@@ -26,6 +26,10 @@
     console.log(data);
   });
   
+  socket.on('begin', function (data) {
+  	console.log('begin: ' + data);
+  });
+  
   socket.on('message',function(data) {
 	  console.log('Received a message from the server!', data);
   });
