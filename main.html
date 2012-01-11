@@ -6,6 +6,8 @@
   var gameSettings = null;
   var id = null;
   var agents = null;
+  var loop;
+
 
   socket.on('gamesettings', function (gs) {
     console.log(gs);
@@ -39,6 +41,7 @@
 
 <script src="getvalue.js"></script>
 <script language="JavaScript">
+
 function drawControl() {
 	var cCanvas = document.getElementById("controlCanvas");
 	var cContext = cCanvas.getContext("2d");
@@ -61,6 +64,12 @@ function drawControl() {
 
 }
 
+function clearControl() {
+	var cCanvas = document.getElementById("controlCanvas");
+	var cContext = cCanvas.getContext("2d");
+	cContext.clearRect(0,0,300,700);
+}
+
 function drawOcean() {
 	var oCanvas = document.getElementById("oceanCanvas");
 	var oContext = oCanvas.getContext("2d");
@@ -68,6 +77,12 @@ function drawOcean() {
 	oContext.fillText("Message about Season number and fish remaining.", 100, 20);
 	oContext.font = "20px sans-serif";
 	oContext.fillText("Fishies go here!", 200, 200);
+}
+
+function clearOcean() {
+	var oCanvas = document.getElementById("oceanCanvas");
+	var oContext = oCanvas.getContext("2d");
+	oContext.clearRect(0,0,800,500);
 }
 
 function drawInfo() {
@@ -84,14 +99,27 @@ function drawInfo() {
 	iContext.fillText("Table with overall performance", 50, 50);
 	iContext.fillText("Status of fishers", 250, 50);
 	iContext.fillText("Table of fish caught and profits", 400, 50);
+	if (gameSettings != null) {
+		iContext.fillText(gameSettings.status, 50, 100);
+	} else {
+		iContext.fillText('booting up', 50, 100);
+	}
+}
 
-
+function clearInfo() {
+	var iCanvas = document.getElementById("infoCanvas");
+	var iContext = iCanvas.getContext("2d");
+	iContext.clearRect(0,0,800,200);
 }
 
 function drawAll() {
+	clearControl();
 	drawControl();
+	clearOcean();
 	drawOcean();
+	clearInfo();
 	drawInfo();
+	loop = setTimeout('drawAll()', 1000);
 }
 </script>
 </head>
