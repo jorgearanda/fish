@@ -47,9 +47,13 @@ function drawControl() {
 	var cContext = cCanvas.getContext("2d");
 	cContext.font = "12px sans-serif";
 	cContext.fillText("Main simulation screen", 20, 20);
-	cContext.fillText("Each fish earns you $X", 20, 60);
-	cContext.fillText("Each minute at sea costs $X", 20, 80);
-	cContext.fillText("Leaving port costs $X", 20, 100);
+	
+	if (gameSettings != null) {
+		cContext.fillText("Each fish earns you $" + gameSettings.valueFish, 20, 60);
+		cContext.fillText("Casting for a fish costs $" + gameSettings.costCast, 20, 80);
+		cContext.fillText("Each minute at sea costs $" + gameSettings.costAtSea, 20, 100);
+		cContext.fillText("Leaving port costs $" + gameSettings.costDepart, 20, 120);
+	}
 	
 	cContext.fillStyle = "orange";
 	cContext.fillRect(20, 140, 200, 30);
@@ -74,7 +78,13 @@ function drawOcean() {
 	var oCanvas = document.getElementById("oceanCanvas");
 	var oContext = oCanvas.getContext("2d");
 	oContext.font = "12px sans-serif";
-	oContext.fillText("Message about Season number and fish remaining.", 100, 20);
+	if (gameSettings != null) {
+		minFish = gameSettings.certainFish
+		maxFish = minFish + gameSettings.mysteryFish
+		oContext.fillText("This is season " + gameSettings.currentSeason + ". There are between " + minFish + " and " + maxFish + " fish remaining.", 100, 20);
+	} else {
+		oContext.fillText("Message about Season number and fish remaining.", 100, 20);
+	}
 	oContext.font = "20px sans-serif";
 	oContext.fillText("Fishies go here!", 200, 200);
 }
@@ -96,13 +106,14 @@ function drawInfo() {
 	
 	iContext.fillStyle = "black";
 	iContext.font = "12px sans-serif";
-	iContext.fillText("Table with overall performance", 50, 50);
-	iContext.fillText("Status of fishers", 250, 50);
-	iContext.fillText("Table of fish caught and profits", 400, 50);
 	if (gameSettings != null) {
-		iContext.fillText(gameSettings.status, 50, 100);
+		iContext.fillText("Fisher               Fish caught   Money   Status", 50, 50);
+		for (i = 0; i < gameSettings.players.length; i++) {
+			iContext.fillText(gameSettings.players[i].name + "              " + gameSettings.players[i].fishCaught + "      " + gameSettings.players[i].money + "       " + gameSettings.players[i].status, 50, 70 + (i * 20));
+		}
+		iContext.fillText(gameSettings.status, 50, 130);
 	} else {
-		iContext.fillText('booting up', 50, 100);
+		iContext.fillText('booting up', 50, 130);
 	}
 }
 
