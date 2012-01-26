@@ -7,6 +7,15 @@
   var id = null;
   var agents = null;
   var loop;
+  var cCanvas;
+  var cContext;
+  var oCanvas;
+  var oContext;
+  var iCanvas;
+  var iContext;
+  var sailingAllowed = false;
+  var fishingAllowed = false;
+  var returningAllowed = false;
 
 
   socket.on('gamesettings', function (gs) {
@@ -30,6 +39,7 @@
   
   socket.on('begin', function (data) {
   	console.log('begin: ' + data);
+  	sailingAllowed = true;
   });
   
   socket.on('message',function(data) {
@@ -42,9 +52,37 @@
 <script src="getvalue.js"></script>
 <script language="JavaScript">
 
+function goToSeaOnClick() {
+	socket.emit('toSea', {id: id});
+	sailingAllowed = false;
+	fishingAllowed = true;
+	returningAllowed = true;
+}
+
+function controlOnClick(e) {
+	var x;
+    var y;
+    if (e.pageX != undefined && e.pageY != undefined) {
+		x = e.pageX;
+		y = e.pageY;
+    } else {
+		x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+		y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+	x -= cCanvas.offsetLeft;
+	y -= cCanvas.offsetTop;
+
+	if ((x >= 20) && (x <= 220) && (y >= 140) && (y <= 170)) {
+		goToSeaOnClick();
+		drawAll();
+	}
+}
+
+
 function drawControl() {
-	var cCanvas = document.getElementById("controlCanvas");
-	var cContext = cCanvas.getContext("2d");
+	cCanvas = document.getElementById("controlCanvas");
+	cCanvas.addEventListener("click", controlOnClick, false);
+	cContext = cCanvas.getContext("2d");
 	cContext.font = "12px sans-serif";
 	cContext.fillText("Main simulation screen", 20, 20);
 	
@@ -53,30 +91,58 @@ function drawControl() {
 		cContext.fillText("Casting for a fish costs $" + gameSettings.costCast, 20, 80);
 		cContext.fillText("Each minute at sea costs $" + gameSettings.costAtSea, 20, 100);
 		cContext.fillText("Leaving port costs $" + gameSettings.costDepart, 20, 120);
+		
+		if ((gameSettings.status = "running") && (sailingAllowed)) {
+			cContext.fillStyle = "orange";
+			cContext.fillRect(20, 140, 200, 30);
+			cContext.fillStyle = "black";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Go out to sea", 30, 160);
+		} else {
+			cContext.fillStyle = "gainsboro";
+			cContext.fillRect(20, 140, 200, 30);
+			cContext.fillStyle = "darkslategray";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Go out to sea", 30, 160);		
+		}
+		if ((gameSettings.status = "running") && (fishingAllowed)) {
+			cContext.fillStyle = "orange";
+			cContext.fillRect(20, 180, 200, 30);
+			cContext.fillStyle = "black";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Return to port", 30, 200);
+		} else {
+			cContext.fillStyle = "gainsboro";
+			cContext.fillRect(20, 180, 200, 30);
+			cContext.fillStyle = "darkslategray";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Return to port", 30, 200);
+		}
+		if ((gameSettings.status = "running") && (returningAllowed)) {
+			cContext.fillStyle = "orange";
+			cContext.fillRect(20, 220, 200, 30);
+			cContext.fillStyle = "black";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Cast for one fish", 30, 240);
+		} else {
+			cContext.fillStyle = "gainsboro";
+			cContext.fillRect(20, 220, 200, 30);
+			cContext.fillStyle = "darkslategray";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Cast for one fish", 30, 240);
+		}
 	}
-	
-	cContext.fillStyle = "orange";
-	cContext.fillRect(20, 140, 200, 30);
-	cContext.fillRect(20, 180, 200, 30);
-	cContext.fillRect(20, 220, 200, 30);
-	
-	cContext.fillStyle = "black";
-	cContext.font = "bold 12px sans-serif";
-	cContext.fillText("Go out to sea", 30, 160);
-	cContext.fillText("Return to port", 30, 200);
-	cContext.fillText("Cast for one fish", 30, 240);
-
 }
 
 function clearControl() {
-	var cCanvas = document.getElementById("controlCanvas");
-	var cContext = cCanvas.getContext("2d");
+	cCanvas = document.getElementById("controlCanvas");
+	cContext = cCanvas.getContext("2d");
 	cContext.clearRect(0,0,300,700);
 }
 
 function drawOcean() {
-	var oCanvas = document.getElementById("oceanCanvas");
-	var oContext = oCanvas.getContext("2d");
+	oCanvas = document.getElementById("oceanCanvas");
+	oContext = oCanvas.getContext("2d");
 	oContext.font = "12px sans-serif";
 	if (gameSettings != null) {
 		minFish = gameSettings.certainFish
@@ -90,14 +156,14 @@ function drawOcean() {
 }
 
 function clearOcean() {
-	var oCanvas = document.getElementById("oceanCanvas");
-	var oContext = oCanvas.getContext("2d");
+	oCanvas = document.getElementById("oceanCanvas");
+	oContext = oCanvas.getContext("2d");
 	oContext.clearRect(0,0,800,500);
 }
 
 function drawInfo() {
-	var iCanvas = document.getElementById("infoCanvas");
-	var iContext = iCanvas.getContext("2d");
+	iCanvas = document.getElementById("infoCanvas");
+	iContext = iCanvas.getContext("2d");
 
 	iContext.fillStyle = "pink";
 	iContext.fillRect(40, 30, 190, 100);
@@ -118,8 +184,8 @@ function drawInfo() {
 }
 
 function clearInfo() {
-	var iCanvas = document.getElementById("infoCanvas");
-	var iContext = iCanvas.getContext("2d");
+	iCanvas = document.getElementById("infoCanvas");
+	iContext = iCanvas.getContext("2d");
 	iContext.clearRect(0,0,800,200);
 }
 

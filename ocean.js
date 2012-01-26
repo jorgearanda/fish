@@ -85,4 +85,11 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit('gamesettings', gs);
 		io.sockets.emit('begin', 'All agents connected!');
 	}
+	
+	socket.on('toSea', function (data) {
+		console.log("A player sailed to sea: " + data.id);
+		gs.players[data.id].status = 'At sea';
+		gs.players[data.id].money -= gs.costDepart;
+		io.sockets.emit('gamesettings', gs);
+	});
 });
