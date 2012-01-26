@@ -92,4 +92,16 @@ io.sockets.on('connection', function (socket) {
 		gs.players[data.id].money -= gs.costDepart;
 		io.sockets.emit('gamesettings', gs);
 	});
+
+	socket.on('fishing', function (data) {
+		console.log("A player tried to fish: " + data.id);
+		gs.players[data.id].money -= gs.costCast;
+		if (gs.certainFish + gs.actualMysteryFish > 0) {
+			gs.players[data.id].money += gs.valueFish;
+			// Right now we're only removing actual fish, not mystery fish...
+			gs.certainFish -= 1;
+		}
+		io.sockets.emit('gamesettings', gs);
+	});
+	
 });

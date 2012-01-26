@@ -59,6 +59,14 @@ function goToSeaOnClick() {
 	returningAllowed = true;
 }
 
+function castForFishOnClick() {
+	if (gameSettings.certainFish + gameSettings.actualMysteryFish <= 1) {
+		fishingAllowed = false;
+	}
+	socket.emit('fishing', {id: id});
+}
+
+
 function controlOnClick(e) {
 	var x;
     var y;
@@ -72,10 +80,16 @@ function controlOnClick(e) {
 	x -= cCanvas.offsetLeft;
 	y -= cCanvas.offsetTop;
 
-	if ((x >= 20) && (x <= 220) && (y >= 140) && (y <= 170)) {
+	if ((x >= 20) && (x <= 220) && (y >= 140) && (y <= 170) && sailingAllowed) {
 		goToSeaOnClick();
 		drawAll();
 	}
+
+	if ((x >= 20) && (x <= 220) && (y >= 220) && (y <= 250) && fishingAllowed) {
+		castForFishOnClick();
+		drawAll();
+	}
+	
 }
 
 
@@ -92,6 +106,10 @@ function drawControl() {
 		cContext.fillText("Each minute at sea costs $" + gameSettings.costAtSea, 20, 100);
 		cContext.fillText("Leaving port costs $" + gameSettings.costDepart, 20, 120);
 		
+		if (gameSettings.certainFish + gameSettings.actualMysteryFish < 1) {
+			fishingAllowed = false;
+		}
+		
 		if ((gameSettings.status = "running") && (sailingAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 140, 200, 30);
@@ -105,7 +123,7 @@ function drawControl() {
 			cContext.font = "bold 12px sans-serif";
 			cContext.fillText("Go out to sea", 30, 160);		
 		}
-		if ((gameSettings.status = "running") && (fishingAllowed)) {
+		if ((gameSettings.status = "running") && (returningAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 180, 200, 30);
 			cContext.fillStyle = "black";
@@ -118,7 +136,7 @@ function drawControl() {
 			cContext.font = "bold 12px sans-serif";
 			cContext.fillText("Return to port", 30, 200);
 		}
-		if ((gameSettings.status = "running") && (returningAllowed)) {
+		if ((gameSettings.status = "running") && (fishingAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 220, 200, 30);
 			cContext.fillStyle = "black";
