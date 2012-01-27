@@ -16,6 +16,7 @@
   var sailingAllowed = false;
   var fishingAllowed = false;
   var returningAllowed = false;
+  var seconds;
 
 
   socket.on('gamesettings', function (gs) {
@@ -40,6 +41,11 @@
   socket.on('begin', function (data) {
   	console.log('begin: ' + data);
   	sailingAllowed = true;
+  });
+  
+  socket.on('time', function (data) {
+  	console.log('Seconds from start: ' + data);
+  	seconds = data;
   });
   
   socket.on('message',function(data) {
@@ -110,7 +116,7 @@ function drawControl() {
 			fishingAllowed = false;
 		}
 		
-		if ((gameSettings.status = "running") && (sailingAllowed)) {
+		if ((gameSettings.status == "running") && (sailingAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 140, 200, 30);
 			cContext.fillStyle = "black";
@@ -123,7 +129,7 @@ function drawControl() {
 			cContext.font = "bold 12px sans-serif";
 			cContext.fillText("Go out to sea", 30, 160);		
 		}
-		if ((gameSettings.status = "running") && (returningAllowed)) {
+		if ((gameSettings.status == "running") && (returningAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 180, 200, 30);
 			cContext.fillStyle = "black";
@@ -136,7 +142,7 @@ function drawControl() {
 			cContext.font = "bold 12px sans-serif";
 			cContext.fillText("Return to port", 30, 200);
 		}
-		if ((gameSettings.status = "running") && (fishingAllowed)) {
+		if ((gameSettings.status == "running") && (fishingAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 220, 200, 30);
 			cContext.fillStyle = "black";
