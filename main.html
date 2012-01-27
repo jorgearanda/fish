@@ -47,6 +47,25 @@
   	console.log('Seconds from start: ' + data);
   	seconds = data;
   });
+
+  socket.on('pausetime', function (data) {
+  	console.log('Seconds from start of pause: ' + data);
+  	seconds = data;
+  });
+
+  socket.on('endseason', function (data) {
+  	console.log('Season ' + data + ' ended.');
+  	sailingAllowed = false;
+  	fishingAllowed = false;
+  	returningAllowed = false;
+  });
+  
+  socket.on('gameover', function (data) {
+  	console.log('Simulation over.');
+  	sailingAllowed = false;
+  	fishingAllowed = false;
+  	returningAllowed = false;
+  });
   
   socket.on('message',function(data) {
 	  console.log('Received a message from the server!', data);

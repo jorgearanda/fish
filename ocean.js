@@ -20,7 +20,7 @@ function handler (req, res) {
 var players = 0;
 var expectedPlayers = 4;
 var aiPlayers = 3;
-var startingFish = 10;
+var startingFish = 40;
 var chanceOfCatch = 1.0;
 var spawnFactor = 4.0;
 
@@ -42,6 +42,7 @@ function humanAgent (name) {
 	this.fishCaught = 0;
 	this.money = 100;
 	this.status = 'At port';
+	this.actualCasts = 0;
 }
 
 var agents = new Array();
@@ -52,8 +53,9 @@ var gs = { expectedPlayers : 4,
            mode : 'standby',
            totalSeasons : 4,
            currentSeason : 0,
-           seasonDuration : 60,
-           certainFish : 10,
+           seasonDuration : 30,
+           pauseDuration : 10,
+           certainFish : 40,
            mysteryFish : 0,
            actualMysteryFish : 0,
            costDepart : 10,
@@ -106,8 +108,10 @@ io.sockets.on('connection', function (socket) {
 	socket.on('fishing', function (data) {
 		console.log("A player tried to fish: " + data.id);
 		gs.players[data.id].money -= gs.costCast;
+		gs.players[data.id].actualCasts++;
 		if (gs.certainFish + gs.actualMysteryFish > 0) {
 			gs.players[data.id].money += gs.valueFish;
+			gs.players[data.id].fishCaught++;
 			// Right now we're only removing actual fish, not mystery fish...
 			gs.certainFish -= 1;
 		}
@@ -120,21 +124,63 @@ io.sockets.on('connection', function (socket) {
 
 var secondsSinceStart = 0;
 var t;
+var endTimer = false;
+
 function timer() {
 	if (gs.actualPlayers == gs.expectedPlayers) {
-		secondsSinceStart += 1;
-		console.log('Seconds since start of season: ' + secondsSinceStart);
-		io.sockets.emit('time', secondsSinceStart);
-		
-		for (i = 0; i < gs.players.length; i++) {
-			if (gs.players[i].type == 'ai') {
-				aiActions(i);
+		if (gs.status == 'running') {
+			secondsSinceStart += 1;
+			if (gs.seasonDuration <= secondsSinceStart) {
+				gs.status = 'paused';
+				secondsSinceStart = 0;
+				for (i = 0; i < gs.players.length; i++) {
+					gs.players[i].status = 'At port';
+					gs.players[i].actualCasts = 0;
+				}
+				if (gs.currentSeason < gs.totalSeasons) {
+					console.log('Season ended, beginning pause period.');
+					io.sockets.emit('gamesettings', gs);
+					io.sockets.emit('endseason', gs.currentSeason);
+				} else {
+					gs.status = 'over';
+					console.log('Simulation ended.');
+					io.sockets.emit('gamesettings', gs);
+					io.sockets.emit('gameover', 'gameover');
+					endTimer = true;
+				}
+			} else {
+				console.log('Seconds since start of season: ' + secondsSinceStart);
+				io.sockets.emit('time', secondsSinceStart);
+				for (i = 0; i < gs.players.length; i++) {
+					if (gs.players[i].type == 'ai') {
+						aiActions(i);
+					}
+				}
+			}
+		} else {
+			secondsSinceStart += 1;
+			if (gs.pauseDuration <= secondsSinceStart) {
+				gs.certainFish *= gs.spawnFactor;
+				gs.actualMysteryFish *= gs.spawnFactor;
+				gs.status = 'running';
+				secondsSinceStart = 0;
+				gs.currentSeason += 1;
+				console.log('Beginning new season.');
+				io.sockets.emit('begin', 'New season');
+			} else {
+				console.log('Seconds since pausing: ' + secondsSinceStart);
+				io.sockets.emit('pausetime', secondsSinceStart);
 			}
 		}
 	} else {
 		console.log('Waiting for players.');
 	}
-	t = setTimeout(timer, 1000);
+	
+	if (!endTimer) {
+		t = setTimeout(timer, 1000);
+	} else {
+		console.log('Over and out.');
+	}
 }
 
 function aiActions(ag) {
@@ -150,6 +196,7 @@ function aiActions(ag) {
 		gs.players[ag].money += gs.valueFish;
 		gs.players[ag].actualCasts ++;
 		gs.certainFish -= 1;
+		gs.players[ag].fishCaught++;
 	} else if (((gs.players[ag].intendedCasts <= gs.players[ag].actualCasts) || (gs.certainFish + gs.actualMysteryFish <= 0)) && gs.players[ag].status == 'At sea') {
 		gs.players[ag].status = 'At port';
 	}
