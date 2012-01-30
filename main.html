@@ -84,6 +84,13 @@ function goToSeaOnClick() {
 	returningAllowed = true;
 }
 
+function returnToPortOnClick() {
+	socket.emit('toPort', {id: id});
+	sailingAllowed = true;
+	fishingAllowed = false;
+	returningAllowed = false;
+}
+
 function castForFishOnClick() {
 	if (gameSettings.certainFish + gameSettings.actualMysteryFish <= 1) {
 		fishingAllowed = false;
@@ -107,6 +114,11 @@ function controlOnClick(e) {
 
 	if ((x >= 20) && (x <= 220) && (y >= 140) && (y <= 170) && sailingAllowed) {
 		goToSeaOnClick();
+		drawAll();
+	}
+
+	if ((x >= 20) && (x <= 220) && (y >= 180) && (y <= 210) && returningAllowed) {
+		returnToPortOnClick();
 		drawAll();
 	}
 

@@ -105,6 +105,12 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit('gamesettings', gs);
 	});
 
+	socket.on('toPort', function (data) {
+		console.log("A player returned to port: " + data.id);
+		gs.players[data.id].status = 'At port';
+		io.sockets.emit('gamesettings', gs);
+	});
+
 	socket.on('fishing', function (data) {
 		console.log("A player tried to fish: " + data.id);
 		gs.players[data.id].money -= gs.costCast;
@@ -155,7 +161,11 @@ function timer() {
 					if (gs.players[i].type == 'ai') {
 						aiActions(i);
 					}
+					if (gs.players[i].status == 'At sea') {
+						gs.players[i].money -= gs.costAtSea;
+					}
 				}
+				io.sockets.emit('gamesettings', gs);
 			}
 		} else {
 			secondsSinceStart += 1;
