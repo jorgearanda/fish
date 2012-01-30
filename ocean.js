@@ -1,10 +1,14 @@
-var ocean = require('http').createServer(handler)
-  , io = require('socket.io').listen(ocean)
-  , fs = require('fs')
+var http = require('http');
+var io = require('socket.io').listen(ocean);
+var fs = require('fs');
+var url = require('url');
+
 
 ocean.listen(80);
 
 function handler (req, res) {
+  var pathname = url.parse(request.url).pathname;
+  console.log('Request for ' + pathname + ' received.');
   fs.readFile(__dirname + '/main.html',
   function (err, data) {
     if (err) {
