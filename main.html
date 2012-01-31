@@ -2,6 +2,29 @@
 <head>
 <script src="/socket.io/socket.io.js"></script>
 <script language="JavaScript">
+  function getValue(varname) {
+	var url = window.location.href;
+	var qparts = url.split("?");
+	if (qparts.length == 0) {
+		return "";
+	}
+	var query = qparts[1];
+	var vars = query.split("&");
+	var value = "";
+	for (i = 0; i < vars.length; i++) {
+		var parts = vars[i].split("=");
+		if (parts[0] == varname) {
+			value = parts[1];
+			break;
+		}
+	}
+	value = unescape(value);
+	value.replace(/\+/g," ");
+	return value;
+  }
+
+  var group = getValue("gid");
+  console.log("Group: " + group);
   var socket = io.connect();
   var gameSettings = null;
   var id = null;
@@ -18,6 +41,13 @@
   var returningAllowed = false;
   var seconds;
 
+	socket.on("connect", function (data) {
+		socket.emit("join group", group);
+	});
+	
+	socket.on("join", function (data) {
+		console.log(data);
+	});
 
   socket.on('gamesettings', function (gs) {
     console.log(gs);
@@ -74,7 +104,6 @@
 
 <title>Client - Main Screen</title>
 
-<script src="getvalue.js"></script>
 <script language="JavaScript">
 
 function goToSeaOnClick() {
