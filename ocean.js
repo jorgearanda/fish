@@ -63,6 +63,7 @@ function engine(io) {
 						}
 						if (g.players[i].status == 'At sea') {
 							g.players[i].money -= g.costAtSea;
+							g.players[i].endMoneyPerSeason[g.currentSeason] = g.players[i].money;
 						}
 					}
 					io.sockets.in(gameName).emit('gamesettings', g);
@@ -75,6 +76,11 @@ function engine(io) {
 					g.status = 'running';
 					g.currentSeconds = 0;
 					g.currentSeason += 1;
+					for (i = 0; i < g.players.length; i++) {
+						g.players[i].fishCaughtPerSeason[g.currentSeason] = 0;
+						g.players[i].startMoneyPerSeason[g.currentSeason] = g.players[i].money;
+						g.players[i].endMoneyPerSeason[g.currentSeason] = g.players[i].money;
+					}
 					console.log('Beginning new season in gameroom ' + gameName);
 					io.sockets.in(gameName).emit('begin', 'New season');
 				} else {
@@ -93,13 +99,16 @@ function engine(io) {
 			console.log("A player sailed to sea: " + agent.name + ", gameroom " + gameName + ".");
 			agent.status = 'At sea';
 			agent.money -= g.costDepart;
+			agent.endMoneyPerSeason[g.currentSeason] = agent.money;
 		} else if ((agent.intendedCasts > agent.actualCasts) && 	(agent.status == 'At sea') && (g.certainFish + g.actualMysteryFish > 0)) {
 			console.log("A player tried to fish: " + agent.name + ", gameroom " + gameName + ".");
 			agent.money -= g.costCast;
 			agent.money += g.valueFish;
+			agent.endMoneyPerSeason[g.currentSeason] = agent.money;
 			agent.actualCasts ++;
 			g.certainFish -= 1;
 			agent.fishCaught++;
+			agent.fishCaughtPerSeason[g.currentSeason]++;
 		} else if (((agent.intendedCasts <= agent.actualCasts) || (g.certainFish + g.actualMysteryFish <= 0)) && agent.status == 'At sea') {
 			agent.status = 'At port';
 		}
@@ -111,7 +120,10 @@ function engine(io) {
 		this.type = 'ai';
 		this.greediness = 0.5;
 		this.fishCaught = 0;
+		this.fishCaughtPerSeason = new Array();
 		this.money = 100;
+		this.startMoneyPerSeason = new Array();
+		this.endMoneyPerSeason = new Array();
 		this.status = 'At port';
 		this.intendedCasts = Math.round(((startingFish - (startingFish / spawnFactor)) / expectedPlayers) * 2 * this.greediness / chanceOfCatch);
 		this.actualCasts = 0;
@@ -122,7 +134,10 @@ function engine(io) {
 		this.type = 'human';
 		this.greediness = null;
 		this.fishCaught = 0;
+		this.fishCaughtPerSeason = new Array();
 		this.money = 100;
+		this.startMoneyPerSeason = new Array();
+		this.endMoneyPerSeason = new Array();
 		this.status = 'At port';
 		this.actualCasts = 0;
 	}
@@ -196,6 +211,7 @@ function engine(io) {
 				console.log("A player sailed to sea: " + data.id + ", gameroom " + group + ".");
 				games[group].players[data.id].status = 'At sea';
 				games[group].players[data.id].money -= games[group].costDepart;
+				games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
 				io.sockets.in(group).emit('gamesettings', games[group]);
 			});
 
@@ -212,9 +228,11 @@ function engine(io) {
 				if (games[group].certainFish + games[group].actualMysteryFish > 0) {
 					games[group].players[data.id].money += games[group].valueFish;
 					games[group].players[data.id].fishCaught++;
+					games[group].players[data.id].fishCaughtPerSeason[games[group].currentSeason]++;
 					// Right now we're only removing actual fish, not mystery fish...
 					games[group].certainFish -= 1;
 				}
+				games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
 				io.sockets.in(group).emit('gamesettings', games[group]);
 			});
 	
