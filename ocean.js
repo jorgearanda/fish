@@ -121,6 +121,7 @@ function engine(io) {
 		this.greediness = 0.5;
 		this.fishCaught = 0;
 		this.fishCaughtPerSeason = new Array();
+		this.startMoney = 100;
 		this.money = 100;
 		this.startMoneyPerSeason = new Array();
 		this.endMoneyPerSeason = new Array();
@@ -135,6 +136,7 @@ function engine(io) {
 		this.greediness = null;
 		this.fishCaught = 0;
 		this.fishCaughtPerSeason = new Array();
+		this.startMoney = 100;
 		this.money = 100;
 		this.startMoneyPerSeason = new Array();
 		this.endMoneyPerSeason = new Array();
@@ -203,6 +205,11 @@ function engine(io) {
 			if (games[group].actualPlayers == games[group].expectedPlayers) {
 				games[group].status = 'running';
 				games[group].currentSeason = 1;
+				for (i = 0; i < games[group].players.length; i++) {
+					games[group].players[i].startMoneyPerSeason[1] = games[group].players[i].startMoney;
+					games[group].players[i].endMoneyPerSeason[1] = games[group].players[i].startMoney;
+					games[group].players[i].fishCaughtPerSeason[1] = 0;
+				}
 				io.sockets.in(group).emit('gamesettings', games[group]);
 				io.sockets.in(group).emit('begin', 'All agents connected!');
 			}

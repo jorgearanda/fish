@@ -250,20 +250,32 @@ function drawInfo() {
 	iContext = iCanvas.getContext("2d");
 
 	iContext.fillStyle = "pink";
-	iContext.fillRect(40, 30, 190, 100);
-	iContext.fillRect(240, 30, 140, 100);
-	iContext.fillRect(390, 30, 300, 100);
+	iContext.fillRect(40, 10, 190, 135);
+	iContext.fillRect(190, 10, 190, 135);
+	iContext.fillRect(390, 10, 190, 135);
 	
 	iContext.fillStyle = "black";
 	iContext.font = "12px sans-serif";
 	if (gameSettings != null) {
-		iContext.fillText("Fisher               Fish caught   Money   Status", 50, 50);
+		iContext.fillText("Fisher", 50, 50);
+		iContext.fillText("Status", 150, 50);
+		iContext.fillText("Fish caught", 200, 30);
+		iContext.fillText("This season", 200, 50);
+		iContext.fillText("Overall", 300, 50);
+		iContext.fillText("Profits", 400, 30);
+		iContext.fillText("This season", 400, 50);
+		iContext.fillText("Overall", 500, 50);
 		for (i = 0; i < gameSettings.players.length; i++) {
-			iContext.fillText(gameSettings.players[i].name + "              " + gameSettings.players[i].fishCaught + "      " + gameSettings.players[i].money + "       " + gameSettings.players[i].status, 50, 70 + (i * 20));
+			iContext.fillText(gameSettings.players[i].name, 50, 70 + (i * 20));
+			iContext.fillText(gameSettings.players[i].status, 150, 70 + (i * 20));
+			iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, 70 + (i * 20));
+			iContext.fillText(gameSettings.players[i].fishCaught, 300, 70 + (i * 20));
+			iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, 70 + (i * 20));
+			iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, 70 + (i * 20));
 		}
-		iContext.fillText(gameSettings.status, 50, 130);
+		iContext.fillText(gameSettings.status, 50, 150);
 	} else {
-		iContext.fillText('booting up', 50, 130);
+		iContext.fillText('booting up', 50, 150);
 	}
 }
 
