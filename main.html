@@ -333,11 +333,21 @@ function drawFish(oContext, image, size, x, y) {
 function drawOcean() {
 	oCanvas = document.getElementById("oceanCanvas");
 	oContext = oCanvas.getContext("2d");
-	oContext.font = "12px sans-serif";
 	if (gameSettings != null) {
 		minFish = gameSettings.certainFish
 		maxFish = minFish + gameSettings.mysteryFish
-		oContext.fillText("This is season " + gameSettings.currentSeason + ". There are between " + minFish + " and " + maxFish + " fish remaining.", 100, 20);
+		oContext.font = "14px sans-serif";
+		oContext.fillStyle = "black";
+		oContext.fillText("This is season " + gameSettings.currentSeason + ". There are between " + minFish + " and " + maxFish + " fish remaining.", 10, 20);
+		
+		if (gameSettings.status == "running" && gameSettings.seasonDuration - gameSettings.currentSeconds < 10) {
+			oContext.fillStyle = "red";
+			oContext.fillText("Warning: this season is about to end.", 400, 20);
+		}
+		if (gameSettings.status == "paused" && gameSettings.pauseDuration - gameSettings.currentSeconds < 5) {
+			oContext.fillStyle = "blue";
+			oContext.fillText("Get ready: the next season is about to start.", 400, 20);
+		}
 	
 		oContext.fillStyle = "lightblue";
 		oContext.fillRect(0, 40, 800, 460);
@@ -388,8 +398,6 @@ function drawOcean() {
 			idxTiny++;
 			mystery -= 1;
 		}
-	} else {
-		oContext.fillText("Message about Season number and fish remaining.", 100, 20);
 	}
 }
 

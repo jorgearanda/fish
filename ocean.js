@@ -86,6 +86,7 @@ function engine(io) {
 				} else {
 					console.log('Seconds since pausing gameroom ' + gameName + ': ' + g.currentSeconds);
 					io.sockets.in(gameName).emit('pausetime', g.currentSeconds);
+					io.sockets.in(gameName).emit('gamesettings', g);
 				}
 			}
 		} else {
