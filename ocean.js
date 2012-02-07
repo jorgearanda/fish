@@ -158,9 +158,9 @@ function engine(io) {
 		this.certainFish = 40;
 		this.mysteryFish = 10;
 		this.actualMysteryFish = 5;
-		this.costDepart = 10;
+		this.costDepart = 0;
 		this.costCast = 2;
-		this.costAtSea = 1;
+		this.costAtSea = 0;
 		this.valueFish = 5;
 		this.chanceOfCatch = 1.00;
 		this.spawnFactor = 4.00;

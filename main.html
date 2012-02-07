@@ -168,9 +168,15 @@ function drawControl() {
 	
 	if (gameSettings != null) {
 		cContext.fillText("Each fish earns you $" + gameSettings.valueFish, 20, 60);
-		cContext.fillText("Casting for a fish costs $" + gameSettings.costCast, 20, 80);
-		cContext.fillText("Each minute at sea costs $" + gameSettings.costAtSea, 20, 100);
-		cContext.fillText("Leaving port costs $" + gameSettings.costDepart, 20, 120);
+		if (gameSettings.costCast > 0) {
+			cContext.fillText("Casting for a fish costs $" + gameSettings.costCast, 20, 80);
+		}
+		if (gameSettings.costAtSea > 0) {
+			cContext.fillText("Each minute at sea costs $" + gameSettings.costAtSea, 20, 100);
+		}
+		if (gameSettings.costDepart > 0) {
+			cContext.fillText("Leaving port costs $" + gameSettings.costDepart, 20, 120);
+		}
 		
 		if (gameSettings.certainFish + gameSettings.actualMysteryFish < 1) {
 			fishingAllowed = false;
