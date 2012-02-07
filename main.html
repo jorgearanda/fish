@@ -224,6 +224,112 @@ function clearControl() {
 	cContext.clearRect(0,0,300,700);
 }
 
+
+var fishImage = new Image();
+var mysteryFishImage = new Image();
+fishImage.src = "certain-fish.png"
+mysteryFishImage.src = "mystery-fish.png"
+
+function Coords() {
+	this.x = 0;
+	this.y = 0;
+}
+
+var largeFishSpots = new Array();
+for (i = 0; i < 6; i++) {
+	largeFishSpots[i] = new Coords();
+}
+largeFishSpots[0].x = 100;
+largeFishSpots[0].y = 100;
+largeFishSpots[1].x = 500;
+largeFishSpots[1].y = 300;
+largeFishSpots[2].x = 300;
+largeFishSpots[2].y = 100;
+largeFishSpots[3].x = 500;
+largeFishSpots[3].y = 100;
+largeFishSpots[4].x = 100;
+largeFishSpots[4].y = 300;
+largeFishSpots[5].x = 300;
+largeFishSpots[5].y = 300;
+
+var midFishSpots = new Array();
+for (i = 0; i < 6; i++) {
+	midFishSpots[i] = new Coords();
+}
+midFishSpots[0].x = 100;
+midFishSpots[0].y = 400;
+midFishSpots[1].x = 200;
+midFishSpots[1].y = 400;
+midFishSpots[2].x = 400;
+midFishSpots[2].y = 200;
+midFishSpots[3].x = 600;
+midFishSpots[3].y = 200;
+midFishSpots[4].x = 200;
+midFishSpots[4].y = 200;
+midFishSpots[5].x = 600;
+midFishSpots[5].y = 400;
+
+var smallFishSpots = new Array();
+for (i = 0; i < 8; i++) {
+	smallFishSpots[i] = new Coords();
+}
+smallFishSpots[0].x = 490;
+smallFishSpots[0].y = 290;
+smallFishSpots[1].x = 290;
+smallFishSpots[1].y = 90;
+smallFishSpots[2].x = 590;
+smallFishSpots[2].y = 90;
+smallFishSpots[3].x = 590;
+smallFishSpots[3].y = 390;
+smallFishSpots[4].x = 90;
+smallFishSpots[4].y = 90;
+smallFishSpots[5].x = 90;
+smallFishSpots[5].y = 390;
+smallFishSpots[6].x = 490;
+smallFishSpots[6].y = 390;
+smallFishSpots[7].x = 190;
+smallFishSpots[7].y = 190;
+
+var tinyFishSpots = new Array();
+for (i = 0; i < 8; i++) {
+	tinyFishSpots[i] = new Coords();
+}
+tinyFishSpots[0].x = 620;
+tinyFishSpots[0].y = 120;
+tinyFishSpots[1].x = 20;
+tinyFishSpots[1].y = 220;
+tinyFishSpots[2].x = 20;
+tinyFishSpots[2].y = 420;
+tinyFishSpots[3].x = 420;
+tinyFishSpots[3].y = 320;
+tinyFishSpots[4].x = 420;
+tinyFishSpots[4].y = 120;
+tinyFishSpots[5].x = 720;
+tinyFishSpots[5].y = 120;
+tinyFishSpots[6].x = 720;
+tinyFishSpots[6].y = 420;
+tinyFishSpots[7].x = 320;
+tinyFishSpots[7].y = 120;
+
+function drawFish(oContext, image, size, x, y) {
+	oContext.fillStyle = "black";
+	if (size == 100) {
+		oContext.font = "14px sans-serif";
+		oContext.drawImage(image, x, y);
+		oContext.fillText("100", x + 80, y + 110);
+	} else if (size == 25) {
+		oContext.font = "12px sans-serif";
+		oContext.drawImage(image, x, y, 100, 100);
+		oContext.fillText("25", x + 40, y + 55);
+	} else if (size == 5) {
+		oContext.font = "10px sans-serif";
+		oContext.drawImage(image, x, y, 50, 50);
+		oContext.fillText("5", x + 20, y + 30);
+	} else {
+		oContext.drawImage(image, x, y, 25, 25);
+	}
+}
+
 function drawOcean() {
 	oCanvas = document.getElementById("oceanCanvas");
 	oContext = oCanvas.getContext("2d");
@@ -232,11 +338,59 @@ function drawOcean() {
 		minFish = gameSettings.certainFish
 		maxFish = minFish + gameSettings.mysteryFish
 		oContext.fillText("This is season " + gameSettings.currentSeason + ". There are between " + minFish + " and " + maxFish + " fish remaining.", 100, 20);
+	
+		oContext.fillStyle = "lightblue";
+		oContext.fillRect(0, 40, 800, 460);
+		
+		var certain = gameSettings.certainFish;
+		var mystery = gameSettings.mysteryFish;
+		var idxLarge = 0;
+		var idxMid = 0;
+		var idxSmall = 0;
+		var idxTiny = 0;
+		while (certain >= 100) {
+			drawFish(oContext, fishImage, 100, largeFishSpots[idxLarge].x, largeFishSpots[idxLarge].y);
+			idxLarge++;
+			certain -= 100;
+		}
+		while (certain >= 25) {
+			drawFish(oContext, fishImage, 25, midFishSpots[idxMid].x, midFishSpots[idxMid].y);
+			idxMid++;
+			certain -= 25;
+		}
+		while (certain >= 5) {
+			drawFish(oContext, fishImage, 5, smallFishSpots[idxSmall].x, smallFishSpots[idxSmall].y);
+			idxSmall++;
+			certain -= 5;
+		}
+		while (certain > 0) {
+			drawFish(oContext, fishImage, 1, tinyFishSpots[idxTiny].x, tinyFishSpots[idxTiny].y);
+			idxTiny++;
+			certain -= 1;
+		}
+		while (mystery >= 100) {
+			drawFish(oContext, mysteryFishImage, 100, largeFishSpots[idxLarge].x, largeFishSpots[idxLarge].y);
+			idxLarge++;
+			mystery -= 100;
+		}
+		while (mystery >= 25) {
+			drawFish(oContext, mysteryFishImage, 25, midFishSpots[idxMid].x, midFishSpots[idxMid].y);
+			idxMid++;
+			mystery -= 25;
+		}
+		while (mystery >= 5) {
+			drawFish(oContext, mysteryFishImage, 5, smallFishSpots[idxSmall].x, smallFishSpots[idxSmall].y);
+			idxSmall++;
+			mystery -= 5;
+		}
+		while (mystery > 0) {
+			drawFish(oContext, mysteryFishImage, 1, tinyFishSpots[idxTiny].x, tinyFishSpots[idxTiny].y);
+			idxTiny++;
+			mystery -= 1;
+		}
 	} else {
 		oContext.fillText("Message about Season number and fish remaining.", 100, 20);
 	}
-	oContext.font = "20px sans-serif";
-	oContext.fillText("Fishies go here!", 200, 200);
 }
 
 function clearOcean() {

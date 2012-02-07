@@ -7,7 +7,7 @@ function engine(io) {
 	
 	var players = 0;
 	var expectedPlayers = 4;
-	var aiPlayers = 2;
+	var aiPlayers = 3;
 	var startingFish = 40;
 	var chanceOfCatch = 1.0;
 	var spawnFactor = 4.0;
@@ -146,17 +146,17 @@ function engine(io) {
 	
 	function gameParameters () {
 		this.expectedPlayers = 4;
-		this.expectedHumans = 2;
+		this.expectedHumans = 1;
 		this.actualPlayers = 0;
 		this.actualHumans = 0;
 		this.timable = true;
 		this.totalSeasons = 4;
 		this.currentSeason = 0;
-		this.seasonDuration = 10;
-		this.pauseDuration = 5;
+		this.seasonDuration = 60;
+		this.pauseDuration = 10;
 		this.certainFish = 40;
-		this.mysteryFish = 0;
-		this.actualMysteryFish = 0;
+		this.mysteryFish = 10;
+		this.actualMysteryFish = 5;
 		this.costDepart = 10;
 		this.costCast = 2;
 		this.costAtSea = 1;
@@ -284,6 +284,31 @@ function mainadmin(response, io) {
   });
 }
 
+function certainfish(response, io) {
+	console.log("Request handler 'certainfish' was called.");
+	fs.readFile(__dirname + '/certain-fish.png',
+	function (err, data) {
+		if (err) {
+			return response.end('Error loading certain-fish.png');
+		}
+		response.writeHead(200);
+		response.end(data);
+	});
+}
+
+function mysteryfish(response, io) {
+	console.log("Request handler 'mysteryfish' was called.");
+	fs.readFile(__dirname + '/mystery-fish.png',
+	function (err, data) {
+		if (err) {
+			return response.end('Error loading mystery-fish.png');
+		}
+		response.writeHead(200);
+		response.end(data);
+	});
+}
+
 exports.fish = fish;
 exports.mainadmin = mainadmin;
-
+exports.certainfish = certainfish;
+exports.mysteryfish = mysteryfish;
