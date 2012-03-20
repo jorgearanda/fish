@@ -11,11 +11,11 @@ function engine(io) {
 	var startingFish = 40;
 	var chanceOfCatch = 1.0;
 	var spawnFactor = 4.0;
-
+    
 	var t;
 	var beginTimer = false;
 	var endTimer = false;
-
+    
 	function timer() {
 		if (!endTimer) {
 			for (game in games) {
@@ -30,7 +30,7 @@ function engine(io) {
 			endTimer = true;
 		}
 	}
-
+    
 	function timeStep(gameName) {
 		g = games[gameName];
 		if (g.actualPlayers == g.expectedPlayers) {
@@ -104,7 +104,7 @@ function engine(io) {
 			console.log('Waiting for players in gameroom ' + gameName);
 		}
 	}
-
+    
 	function aiActions(g, gameName, agentID) {
 		agent = g.players[agentID];
 		if ((agent.intendedCasts > agent.actualCasts) && 	(agent.status == 'At port') && (g.certainFish + g.actualMysteryFish > 0)) {
@@ -126,7 +126,7 @@ function engine(io) {
 		}
 		io.sockets.in(gameName).emit('gamesettings', g);
 	}
-		
+    
 	function aiAgent (name) {
 		this.name = name;
 		this.type = 'ai';
@@ -142,7 +142,7 @@ function engine(io) {
 		this.actualCasts = 0;
         this.readRules = true;
 	}
-
+    
 	function humanAgent (name) {
 		this.name = name;
 		this.type = 'human';
@@ -187,120 +187,109 @@ function engine(io) {
 			this.actualPlayers++;
 		}
 	}
-
+    
 	io.sockets.on('connection', function (socket) {
-		var myID;
-		socket.on('join group', function (group) {
-			socket.set('group', group, function() {
-				socket.emit("myGroup", group);
-			});
-			socket.join(group);
-			
-			if (group in games) {
-				console.log("Group " + group + " already exists; user joined.");
-			} else {
-				games[group] = new gameParameters();
-				console.log("New group added, and parameters created: " +group);
-			}
-			io.sockets.in(group).emit("join", "A player joined this group.");
-			
-			games[group].players[games[group].actualPlayers] = new humanAgent(games[group].actualPlayers);
-			myID = games[group].actualPlayers++;
-			games[group].actualHumans++;
-			io.sockets.in(group).emit("gamesettings", games[group]);
-
-			socket.set('gamesettings', games[group], function() {
-				socket.emit('gamesettings', games[group]);
-			});
-	
-			socket.set('myID', myID, function() {
-				socket.emit('myID', myID);
-			});
-	
-			//if (games[group].actualPlayers == games[group].expectedPlayers) {
-			//	games[group].status = 'readying';
-			//	games[group].currentSeason = 1;
-			//	for (i = 0; i < games[group].players.length; i++) {
-			//		games[group].players[i].startMoneyPerSeason[1] = games[group].players[i].startMoney;
-			//		games[group].players[i].endMoneyPerSeason[1] = games[group].players[i].startMoney;
-			//		games[group].players[i].fishCaughtPerSeason[1] = 0;
-			//	}
-			//	io.sockets.in(group).emit('gamesettings', games[group]);
-			//	io.sockets.in(group).emit('readying', 'All agents ready - prepare!');
-			//}
-		
-			socket.on('toSea', function (data) {
-				console.log("A player sailed to sea: " + data.id + ", gameroom " + group + ".");
-				games[group].players[data.id].status = 'At sea';
-				games[group].players[data.id].money -= games[group].costDepart;
-				games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
-				io.sockets.in(group).emit('gamesettings', games[group]);
-			});
-
-			socket.on('toPort', function (data) {
-				console.log("A player returned to port: " + data.id + ", gameroom " + group + ".");
-				games[group].players[data.id].status = 'At port';
-				io.sockets.in(group).emit('gamesettings', games[group]);
-			});
-                  
-                  socket.on('readRules', function(data) {
-                            console.log("A player read the rules and is ready to start: " + data.id + ", gameroom " + group + ".");
-                            games[group].players[data.id].readRules = true;
-                            allReadRules = true;
-                            for (i = 0; i < games[group].players.length; i++) {
-                                if (games[group].players[i].readRules == false) {
-                                    allReadRules = false;
-                                }
+                  var myID;
+                  socket.on('join group', function (group) {
+                            socket.set('group', group, function() {
+                                       socket.emit("myGroup", group);
+                                       });
+                            socket.join(group);
+                            
+                            if (group in games) {
+                            console.log("Group " + group + " already exists; user joined.");
+                            } else {
+                            games[group] = new gameParameters();
+                            console.log("New group added, and parameters created: " +group);
                             }
-                            if (games[group].actualPlayers == games[group].expectedPlayers && allReadRules) {
-                                games[group].status = 'readying';
-                                games[group].currentSeason = 1;
-                                for (i = 0; i < games[group].players.length; i++) {
-                                    games[group].players[i].startMoneyPerSeason[1] = games[group].players[i].startMoney;
-                                    games[group].players[i].endMoneyPerSeason[1] = games[group].players[i].startMoney;
-                                    games[group].players[i].fishCaughtPerSeason[1] = 0;
-                                }
-                                io.sockets.in(group).emit('gamesettings', games[group]);
-                                io.sockets.in(group).emit('readying', 'All agents ready - prepare!');
+                            io.sockets.in(group).emit("join", "A player joined this group.");
+                            
+                            games[group].players[games[group].actualPlayers] = new humanAgent(games[group].actualPlayers);
+                            myID = games[group].actualPlayers++;
+                            games[group].actualHumans++;
+                            io.sockets.in(group).emit("gamesettings", games[group]);
+                            
+                            socket.set('gamesettings', games[group], function() {
+                                       socket.emit('gamesettings', games[group]);
+                                       });
+                            
+                            socket.set('myID', myID, function() {
+                                       socket.emit('myID', myID);
+                                       });
+                            
+                            
+                            socket.on('toSea', function (data) {
+                                      console.log("A player sailed to sea: " + data.id + ", gameroom " + group + ".");
+                                      games[group].players[data.id].status = 'At sea';
+                                      games[group].players[data.id].money -= games[group].costDepart;
+                                      games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
+                                      io.sockets.in(group).emit('gamesettings', games[group]);
+                                      });
+                            
+                            socket.on('toPort', function (data) {
+                                      console.log("A player returned to port: " + data.id + ", gameroom " + group + ".");
+                                      games[group].players[data.id].status = 'At port';
+                                      io.sockets.in(group).emit('gamesettings', games[group]);
+                                      });
+                            
+                            socket.on('readRules', function(data) {
+                                      console.log("A player read the rules and is ready to start: " + data.id + ", gameroom " + group + ".");
+                                      games[group].players[data.id].readRules = true;
+                                      allReadRules = true;
+                                      for (i = 0; i < games[group].players.length; i++) {
+                                      if (games[group].players[i].readRules == false) {
+                                      allReadRules = false;
+                                      }
+                                      }
+                                      if (games[group].actualPlayers == games[group].expectedPlayers && allReadRules) {
+                                      games[group].status = 'readying';
+                                      games[group].currentSeason = 1;
+                                      for (i = 0; i < games[group].players.length; i++) {
+                                      games[group].players[i].startMoneyPerSeason[1] = games[group].players[i].startMoney;
+                                      games[group].players[i].endMoneyPerSeason[1] = games[group].players[i].startMoney;
+                                      games[group].players[i].fishCaughtPerSeason[1] = 0;
+                                      }
+                                      io.sockets.in(group).emit('gamesettings', games[group]);
+                                      io.sockets.in(group).emit('readying', 'All agents ready - prepare!');
+                                      }
+                                      });
+                            
+                            socket.on('fishing', function (data) {
+                                      console.log("A player tried to fish: " + data.id + ", gameroom " + group + ".");
+                                      games[group].players[data.id].money -= games[group].costCast;
+                                      games[group].players[data.id].actualCasts++;
+                                      if (games[group].certainFish + games[group].actualMysteryFish > 0) {
+                                      games[group].players[data.id].money += games[group].valueFish;
+                                      games[group].players[data.id].fishCaught++;
+                                      games[group].players[data.id].fishCaughtPerSeason[games[group].currentSeason]++;
+                                      // Right now we're only removing actual fish, not mystery fish...
+                                      games[group].certainFish -= 1;
+                                      }
+                                      games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
+                                      io.sockets.in(group).emit('gamesettings', games[group]);
+                                      });
+                            
+                            // Begin timekeeping
+                            if (beginTimer == false) {
+                            beginTimer = true;
+                            timer();
                             }
                             });
-
-			socket.on('fishing', function (data) {
-				console.log("A player tried to fish: " + data.id + ", gameroom " + group + ".");
-				games[group].players[data.id].money -= games[group].costCast;
-				games[group].players[data.id].actualCasts++;
-				if (games[group].certainFish + games[group].actualMysteryFish > 0) {
-					games[group].players[data.id].money += games[group].valueFish;
-					games[group].players[data.id].fishCaught++;
-					games[group].players[data.id].fishCaughtPerSeason[games[group].currentSeason]++;
-					// Right now we're only removing actual fish, not mystery fish...
-					games[group].certainFish -= 1;
-				}
-				games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
-				io.sockets.in(group).emit('gamesettings', games[group]);
-			});
-	
-			// Begin timekeeping
-			if (beginTimer == false) {
-				beginTimer = true;
-				timer();
-			}
-		});
-	});
+                  });
 }
 
 
 function fish(response, io) {
 	console.log("Request handler 'fish' was called.");
 	fs.readFile(__dirname + '/main.html',
-	function (err, data) {
-		if (err) {
-			response.writeHead(500);
-			return response.end('Error loading main.html');
-		}
-    	response.writeHead(200);
-    	response.end(data);
-  	});
+                function (err, data) {
+                if (err) {
+                response.writeHead(500);
+                return response.end('Error loading main.html');
+                }
+                response.writeHead(200);
+                response.end(data);
+                });
   	
   	if (engineCalled == false) {
   		engineCalled = true;
@@ -309,40 +298,40 @@ function fish(response, io) {
 }
 
 function mainadmin(response, io) {
-  console.log("Request handler 'mainadmin' was called.");
-  fs.readFile(__dirname + '/mainadmin.html',
-  function (err, data) {
-    if (err) {
-      response.writeHead(500);
-      return response.end('Error loading mainadmin.html');
-    }
-    response.writeHead(200);
-    response.end(data);
-  });
+    console.log("Request handler 'mainadmin' was called.");
+    fs.readFile(__dirname + '/mainadmin.html',
+                function (err, data) {
+                if (err) {
+                response.writeHead(500);
+                return response.end('Error loading mainadmin.html');
+                }
+                response.writeHead(200);
+                response.end(data);
+                });
 }
 
 function certainfish(response, io) {
 	console.log("Request handler 'certainfish' was called.");
 	fs.readFile(__dirname + '/certain-fish.png',
-	function (err, data) {
-		if (err) {
-			return response.end('Error loading certain-fish.png');
-		}
-		response.writeHead(200);
-		response.end(data);
-	});
+                function (err, data) {
+                if (err) {
+                return response.end('Error loading certain-fish.png');
+                }
+                response.writeHead(200);
+                response.end(data);
+                });
 }
 
 function mysteryfish(response, io) {
 	console.log("Request handler 'mysteryfish' was called.");
 	fs.readFile(__dirname + '/mystery-fish.png',
-	function (err, data) {
-		if (err) {
-			return response.end('Error loading mystery-fish.png');
-		}
-		response.writeHead(200);
-		response.end(data);
-	});
+                function (err, data) {
+                if (err) {
+                return response.end('Error loading mystery-fish.png');
+                }
+                response.writeHead(200);
+                response.end(data);
+                });
 }
 
 exports.fish = fish;
