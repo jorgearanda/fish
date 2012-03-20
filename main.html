@@ -23,23 +23,24 @@
 	return value;
   }
 
-  var group = getValue("gid");
-  console.log("Group: " + group);
-  var socket = io.connect();
-  var gameSettings = null;
-  var id = null;
-  var agents = null;
-  var loop;
-  var cCanvas;
-  var cContext;
-  var oCanvas;
-  var oContext;
-  var iCanvas;
-  var iContext;
-  var sailingAllowed = false;
-  var fishingAllowed = false;
-  var returningAllowed = false;
-  var seconds;
+    var group = getValue("gid");
+    console.log("Group: " + group);
+    var socket = io.connect();
+    var gameSettings = null;
+    var id = null;
+    var agents = null;
+    var loop;
+    var cCanvas;
+    var cContext;
+    var oCanvas;
+    var oContext;
+    var iCanvas;
+    var iContext;
+    var sailingAllowed = false;
+    var fishingAllowed = false;
+    var returningAllowed = false;
+    var readRules = false;
+    var seconds;
 
 	socket.on("connect", function (data) {
 		socket.emit("join group", group);
@@ -71,6 +72,12 @@
   socket.on('begin', function (data) {
   	console.log('begin: ' + data);
   	sailingAllowed = true;
+  });
+
+  socket.on('readying', function (data) {
+  	console.log('readying: ' + data);
+  	sailingAllowed = false;
+  	fishingAllowed = false;
   });
   
   socket.on('time', function (data) {
@@ -127,6 +134,11 @@ function castForFishOnClick() {
 	socket.emit('fishing', {id: id});
 }
 
+function goFishingOnClick() {
+    readRules = true;
+    gameSettings.players[id].readRules = true;
+    socket.emit('readRules', {id: id});
+}
 
 function controlOnClick(e) {
 	var x;
@@ -155,7 +167,11 @@ function controlOnClick(e) {
 		castForFishOnClick();
 		drawAll();
 	}
-	
+
+    if ((x >= 20) && (x <= 220) && (y >= 260) && (y <= 290) && (readRules == false)) {
+		goFishingOnClick();
+		drawAll();
+	}
 }
 
 
@@ -195,6 +211,7 @@ function drawControl() {
 			cContext.font = "bold 12px sans-serif";
 			cContext.fillText("Go out to sea", 30, 160);		
 		}
+        
 		if ((gameSettings.status == "running") && (returningAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 180, 200, 30);
@@ -208,7 +225,8 @@ function drawControl() {
 			cContext.font = "bold 12px sans-serif";
 			cContext.fillText("Return to port", 30, 200);
 		}
-		if ((gameSettings.status == "running") && (fishingAllowed)) {
+		
+        if ((gameSettings.status == "running") && (fishingAllowed)) {
 			cContext.fillStyle = "orange";
 			cContext.fillRect(20, 220, 200, 30);
 			cContext.fillStyle = "black";
@@ -221,6 +239,21 @@ function drawControl() {
 			cContext.font = "bold 12px sans-serif";
 			cContext.fillText("Cast for one fish", 30, 240);
 		}
+        
+        if (readRules == false) {
+			cContext.fillStyle = "orange";
+			cContext.fillRect(20, 260, 200, 30);
+			cContext.fillStyle = "black";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Go Fishing!", 30, 280);
+		} else {
+			cContext.fillStyle = "gainsboro";
+			cContext.fillRect(20, 260, 200, 30);
+			cContext.fillStyle = "darkslategray";
+			cContext.font = "bold 12px sans-serif";
+			cContext.fillText("Go Fishing!", 30, 280);
+		}
+
 	}
 }
 
@@ -339,37 +372,48 @@ function drawFish(oContext, image, size, x, y) {
 function drawOcean() {
 	oCanvas = document.getElementById("oceanCanvas");
 	oContext = oCanvas.getContext("2d");
-	if (gameSettings != null && gameSettings.status == "waiting") {
+    
+    // Readying mode --- show preparation text
+	if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
 		oContext.fillStyle = "lightblue";
 		oContext.fillRect(0, 40, 800, 460);
 		oContext.fillStyle = "black";
 		oContext.font = "12px Courier";
-		fitWidth = 760
-		lineHeight = 15
-	    var words = gameSettings.prepText.split(' ');
-	    var currentLine = 0;
-	    var idx = 1;
-	    while (words.length > 0 && idx <= words.length) {
-	        var str = words.slice(0, idx).join(' ');
-        	var w = oContext.measureText(str).width;
-        	if ( w > fitWidth ) {
-	            if (idx==1) {
-    	            idx=2;
-            	}
-            	oContext.fillText( words.slice(0, idx-1).join(' '), 20, 60 + (lineHeight*currentLine) );
-	            currentLine++;
-    	        words = words.splice(idx-1);
-        	    idx = 1;
-        	} else {
-        		idx++;
-        	}
-    	}
-    	if  (idx > 0) {
-        	oContext.fillText( words.join(' '), 20, 60 + (lineHeight*currentLine) );
+		var fitWidth = 760
+		var lineHeight = 15
+        var lines = gameSettings.prepText.split('\n');
+        var currentLine = 0;
+        for (i = 0; i < lines.length; i++) {
+            var words = lines[i].split(' ');
+            var idx = 1;
+            while (words.length > 0 && idx <= words.length) {
+                var str = words.slice(0, idx).join(' ');
+                var w = oContext.measureText(str).width;
+                if ( w > fitWidth ) {
+                    if (idx==1) {
+                        idx=2;
+                    }
+                    oContext.fillText( words.slice(0, idx-1).join(' '), 20, 60 + (lineHeight*currentLine) );
+                    currentLine++;
+                    words = words.splice(idx-1);
+                    idx = 1;
+                } else {
+                    idx++;
+                }
+            }
+            if  (idx > 0) {
+                oContext.fillText( words.join(' '), 20, 60 + (lineHeight*currentLine) );
+                currentLine++;
+            }
+        }
+        
+        if (gameSettings.status == "readying") {
+        	oContext.fillStyle = "red";
+        	oContext.fillText("Get ready! The simulation is about to start.", 20, 420);
         }
 	}
 
-	if (gameSettings != null && gameSettings.status != "waiting") {
+	if (gameSettings != null && gameSettings.status != "waiting" && gameSettings.status != "readying") {
 		minFish = gameSettings.certainFish
 		maxFish = minFish + gameSettings.mysteryFish
 		oContext.font = "14px sans-serif";
