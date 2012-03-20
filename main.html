@@ -339,7 +339,37 @@ function drawFish(oContext, image, size, x, y) {
 function drawOcean() {
 	oCanvas = document.getElementById("oceanCanvas");
 	oContext = oCanvas.getContext("2d");
-	if (gameSettings != null) {
+	if (gameSettings != null && gameSettings.status == "waiting") {
+		oContext.fillStyle = "lightblue";
+		oContext.fillRect(0, 40, 800, 460);
+		oContext.fillStyle = "black";
+		oContext.font = "12px Courier";
+		fitWidth = 760
+		lineHeight = 15
+	    var words = gameSettings.prepText.split(' ');
+	    var currentLine = 0;
+	    var idx = 1;
+	    while (words.length > 0 && idx <= words.length) {
+	        var str = words.slice(0, idx).join(' ');
+        	var w = oContext.measureText(str).width;
+        	if ( w > fitWidth ) {
+	            if (idx==1) {
+    	            idx=2;
+            	}
+            	oContext.fillText( words.slice(0, idx-1).join(' '), 20, 60 + (lineHeight*currentLine) );
+	            currentLine++;
+    	        words = words.splice(idx-1);
+        	    idx = 1;
+        	} else {
+        		idx++;
+        	}
+    	}
+    	if  (idx > 0) {
+        	oContext.fillText( words.join(' '), 20, 60 + (lineHeight*currentLine) );
+        }
+	}
+
+	if (gameSettings != null && gameSettings.status != "waiting") {
 		minFish = gameSettings.certainFish
 		maxFish = minFish + gameSettings.mysteryFish
 		oContext.font = "14px sans-serif";
@@ -453,6 +483,7 @@ function clearInfo() {
 	iContext.clearRect(0,0,800,200);
 }
 
+
 function drawAll() {
 	clearControl();
 	drawControl();
@@ -469,22 +500,12 @@ function drawAll() {
 <body onload="drawAll()">
 
 <div width="1210" height="760" style="overflow: auto">
-<canvas id="controlCanvas" width="300" height="700" style="float: left"></canvas>
+<canvas id="controlCanvas" width="300" height="700" style="position: absolute; left: 0; top: 0"></canvas>
 
-<canvas id="oceanCanvas" width="800" height="500"></canvas>
+<canvas id="oceanCanvas" width="800" height="500" style="position: absolute; left: 300; top: 0"></canvas>
 
-<canvas id="infoCanvas" width="800" height="200"></canvas>
+<canvas id="infoCanvas" width="800" height="200" style="position: absolute; left: 300; top: 500"></canvas>
 </div>
 
-The simulation engine will control when will we leave this screen. For now, please don't mind the awful colors and just press this button to finish the workflow:
-<br>
-
-<form action="debrief.html">
-<script language="JavaScript">
-gid = getValue("gid");
-document.write('<input type="hidden" name="gid" value=' + gid + ' />');
-</script>
-<button type="submit">End Simulation</button>
-</form>
 </body>
 </html>

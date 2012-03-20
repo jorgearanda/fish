@@ -147,7 +147,7 @@ function engine(io) {
 	
 	function gameParameters () {
 		this.expectedPlayers = 4;
-		this.expectedHumans = 1;
+		this.expectedHumans = 2;
 		this.actualPlayers = 0;
 		this.actualHumans = 0;
 		this.timable = true;
@@ -167,6 +167,7 @@ function engine(io) {
 		this.players = new Array();
 		this.status = "waiting";
 		this.currentSeconds = 0;
+		this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers in this ocean. All the fishers see the same ocean that you do. At the beginning, the number of fish will be displayed on the screen. However, sometimes there is some uncertainty about the number of fish. In those cases, 'mystery fish' will be shown on the screen as well, and the number is displayed as a certain range, not as an absolute number. Once the simulation begins, you and the other fishers may catch as many of these fish as you like. Once  you have taken as many fish as you want, you return to port with your catches, and the first season ends. Then the fish spawn for the next season, if any are left to spawn (if no fish are left, they cannot spawn). For every fish left at the end of one season, two fish will be available to be caught in the next season. However, because the ocean can support only so many fish, the total number of fish will never exceed the original number of fish. Fishing can go on this way for many seasons, but all fishing permanently ceases any time that all the fish are caught.";
 		
 		for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
 			this.players[i] = new aiAgent('Robot ' + i);
