@@ -82,8 +82,8 @@ function engine(io) {
 			} else {
 				g.currentSeconds += 1;
 				if (g.pauseDuration <= g.currentSeconds) {
-					g.certainFish *= g.spawnFactor;
-					g.actualMysteryFish *= g.spawnFactor;
+					g.certainFish = Math.min(g.certainFish * g.spawnFactor, g.startingFish);
+					g.actualMysteryFish = Math.min(g.actualMysteryFish * g.spawnFactor, g.startingMysteryFish);
 					g.status = 'running';
 					g.currentSeconds = 0;
 					g.currentSeason += 1;
@@ -91,7 +91,10 @@ function engine(io) {
 						g.players[i].fishCaughtPerSeason[g.currentSeason] = 0;
 						g.players[i].startMoneyPerSeason[g.currentSeason] = g.players[i].money;
 						g.players[i].endMoneyPerSeason[g.currentSeason] = g.players[i].money;
-					}
+                        
+                        if (g.players[i].type = 'ai') {
+                            g.players[i].intendedCasts = Math.round(((g.certainFish + g.actualMysteryFish - ((g.certainFish + g.actualMysteryFish) / g.spawnFactor)) / g.players.length) * 2 * g.players[i].greediness / g.chanceOfCatch);
+                        }					}
 					console.log('Beginning new season in gameroom ' + gameName);
 					io.sockets.in(gameName).emit('begin', 'New season');
 				} else {
@@ -118,7 +121,11 @@ function engine(io) {
 			agent.money += g.valueFish;
 			agent.endMoneyPerSeason[g.currentSeason] = agent.money;
 			agent.actualCasts ++;
-			g.certainFish -= 1;
+			if (Math.floor(Math.random() * (g.certainFish + g.actualMysteryFish)) < g.certainFish) {
+				g.certainFish -= 1;
+			} else {
+				g.actualMysteryFish -= 1;
+			}
 			agent.fishCaught++;
 			agent.fishCaughtPerSeason[g.currentSeason]++;
 		} else if (((agent.intendedCasts <= agent.actualCasts) || (g.certainFish + g.actualMysteryFish <= 0)) && agent.status == 'At sea') {
@@ -127,7 +134,7 @@ function engine(io) {
 		io.sockets.in(gameName).emit('gamesettings', g);
 	}
     
-	function aiAgent (name) {
+	function aiAgent (name, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch) {
 		this.name = name;
 		this.type = 'ai';
 		this.greediness = 0.5;
@@ -138,7 +145,7 @@ function engine(io) {
 		this.startMoneyPerSeason = new Array();
 		this.endMoneyPerSeason = new Array();
 		this.status = 'At port';
-		this.intendedCasts = Math.round(((startingFish - (startingFish / spawnFactor)) / expectedPlayers) * 2 * this.greediness / chanceOfCatch);
+		this.intendedCasts = Math.round(((startingFish + actualMysteryFish - ((startingFish + actualMysteryFish) / spawnFactor)) / expectedPlayers) * 2 * this.greediness / chanceOfCatch);
 		this.actualCasts = 0;
         this.readRules = true;
 	}
@@ -168,8 +175,10 @@ function engine(io) {
 		this.currentSeason = 0;
 		this.seasonDuration = 60;
 		this.pauseDuration = 10;
+        this.startingFish = 40;
 		this.certainFish = 40;
 		this.mysteryFish = 10;
+        this.startingMysteryFish = 5;
 		this.actualMysteryFish = 5;
 		this.costDepart = 0;
 		this.costCast = 2;
@@ -183,7 +192,7 @@ function engine(io) {
 		this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers in this ocean. All the fishers see the same ocean that you do. At the beginning, the number of fish will be displayed on the screen. However, sometimes there is some uncertainty about the number of fish. In those cases, 'mystery fish' will be shown on the screen as well, and the number is displayed as a certain range, not as an absolute number. Once the simulation begins, you and the other fishers may catch as many of these fish as you like. Once  you have taken as many fish as you want, you return to port with your catches, and the first season ends. Then the fish spawn for the next season, if any are left to spawn (if no fish are left, they cannot spawn). For every fish left at the end of one season, two fish will be available to be caught in the next season. However, because the ocean can support only so many fish, the total number of fish will never exceed the original number of fish. Fishing can go on this way for many seasons, but all fishing permanently ceases any time that all the fish are caught.\n\nYou can make money fishing. You will be paid $5 for every fish you catch. (For now, this is 'play' money...but please treat it as if it were real money.)\n\nYour job is to consider all these factors, and the other fishers, and make your own decisions about how to fish. Fish however you wish.\n\nPlease ask if anything is unclear. We want you to fully understand the rules before you start fishing.\n\nIf you are sure you understand all the above, you are ready to fish. Click on the Go Fishing button below when you are ready. Once all the fishers have clicked this button, the first season will begin. (You may have to wait briefly for all the others fishers to click the button.)";
 		
 		for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-			this.players[i] = new aiAgent('Robot ' + i);
+			this.players[i] = new aiAgent('Robot ' + i, this.expectedPlayers, this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
 			this.actualPlayers++;
 		}
 	}
@@ -259,11 +268,15 @@ function engine(io) {
                                       games[group].players[data.id].money -= games[group].costCast;
                                       games[group].players[data.id].actualCasts++;
                                       if (games[group].certainFish + games[group].actualMysteryFish > 0) {
-                                      games[group].players[data.id].money += games[group].valueFish;
+									  games[group].players[data.id].money += games[group].valueFish;
                                       games[group].players[data.id].fishCaught++;
                                       games[group].players[data.id].fishCaughtPerSeason[games[group].currentSeason]++;
-                                      // Right now we're only removing actual fish, not mystery fish...
-                                      games[group].certainFish -= 1;
+
+									  if (Math.floor(Math.random() * (games[group].certainFish + games[group].actualMysteryFish)) < games[group].certainFish) {
+									  games[group].certainFish -= 1;
+									  } else {
+									  games[group].actualMysteryFish -= 1;
+									  }
                                       }
                                       games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
                                       io.sockets.in(group).emit('gamesettings', games[group]);
