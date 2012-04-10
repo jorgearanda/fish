@@ -179,8 +179,7 @@ function drawControl() {
     cCanvas = document.getElementById("controlCanvas");
     cCanvas.addEventListener("click", controlOnClick, false);
     cContext = cCanvas.getContext("2d");
-    cContext.font = "12px sans-serif";
-    cContext.fillText("Main simulation screen", 20, 20);
+    cContext.font = "14px sans-serif";
 
     if (gameSettings != null) {
         cContext.fillText("Each fish earns you $" + gameSettings.valueFish, 20, 60);
@@ -202,13 +201,13 @@ function drawControl() {
             cContext.fillStyle = "orange";
             cContext.fillRect(20, 140, 200, 30);
             cContext.fillStyle = "black";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Go out to sea", 30, 160);
         } else {
             cContext.fillStyle = "gainsboro";
             cContext.fillRect(20, 140, 200, 30);
             cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Go out to sea", 30, 160);
         }
 
@@ -216,13 +215,13 @@ function drawControl() {
             cContext.fillStyle = "orange";
             cContext.fillRect(20, 180, 200, 30);
             cContext.fillStyle = "black";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Return to port", 30, 200);
         } else {
             cContext.fillStyle = "gainsboro";
             cContext.fillRect(20, 180, 200, 30);
             cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Return to port", 30, 200);
         }
 
@@ -230,13 +229,13 @@ function drawControl() {
             cContext.fillStyle = "orange";
             cContext.fillRect(20, 220, 200, 30);
             cContext.fillStyle = "black";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Cast for one fish", 30, 240);
         } else {
             cContext.fillStyle = "gainsboro";
             cContext.fillRect(20, 220, 200, 30);
             cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Cast for one fish", 30, 240);
         }
 
@@ -244,13 +243,13 @@ function drawControl() {
             cContext.fillStyle = "orange";
             cContext.fillRect(20, 260, 200, 30);
             cContext.fillStyle = "black";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Go Fishing!", 30, 280);
         } else {
             cContext.fillStyle = "gainsboro";
             cContext.fillRect(20, 260, 200, 30);
             cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 12px sans-serif";
+            cContext.font = "bold 14px sans-serif";
             cContext.fillText("Go Fishing!", 30, 280);
         }
 
@@ -266,8 +265,8 @@ function clearControl() {
 
 var fishImage = new Image();
 var mysteryFishImage = new Image();
-fishImage.src = "certain-fish.png"
-mysteryFishImage.src = "mystery-fish.png"
+fishImage.src = "certain-fish.png";
+mysteryFishImage.src = "mystery-fish.png";
 
 function Coords() {
     this.x = 0;
@@ -357,7 +356,7 @@ function drawFish(oContext, image, size, x, y) {
         oContext.drawImage(image, x, y);
         oContext.fillText("100", x + 80, y + 110);
     } else if (size == 25) {
-        oContext.font = "12px sans-serif";
+        oContext.font = "14px sans-serif";
         oContext.drawImage(image, x, y, 100, 100);
         oContext.fillText("25", x + 40, y + 55);
     } else if (size == 5) {
@@ -373,14 +372,21 @@ function drawOcean() {
     oCanvas = document.getElementById("oceanCanvas");
     oContext = oCanvas.getContext("2d");
 
+    // Booting up
+    if (gameSettings == null) {
+        oContext.fillStyle = "darkblue";
+        oContext.font = "20px sans-serif";
+        oContext.fillText("Please wait - loading the application", 20, 200);
+    }
+
     // Readying mode --- show preparation text
     if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
         oContext.fillStyle = "lightblue";
         oContext.fillRect(0, 40, 800, 460);
         oContext.fillStyle = "black";
-        oContext.font = "12px Courier";
-        var fitWidth = 760
-        var lineHeight = 15
+        oContext.font = "14px Courier";
+        var fitWidth = 760;
+        var lineHeight = 15;
         var lines = gameSettings.prepText.split('\n');
         var currentLine = 0;
         for (i = 0; i < lines.length; i++) {
@@ -409,24 +415,28 @@ function drawOcean() {
 
         if (gameSettings.status == "readying") {
             oContext.fillStyle = "red";
-            oContext.fillText("Get ready! The simulation is about to start.", 20, 420);
+            oContext.fillText("Get ready! The simulation is about to start.", 20, 480);
         }
     }
 
     if (gameSettings != null && gameSettings.status != "waiting" && gameSettings.status != "readying") {
-        minFish = gameSettings.certainFish
-        maxFish = minFish + gameSettings.mysteryFish
-        oContext.font = "14px sans-serif";
+        minFish = gameSettings.certainFish;
+        maxFish = minFish + gameSettings.mysteryFish;
+        oContext.font = "16px sans-serif";
         oContext.fillStyle = "black";
-        oContext.fillText("This is season " + gameSettings.currentSeason + ". There are between " + minFish + " and " + maxFish + " fish remaining.", 10, 20);
-
-        if (gameSettings.status == "running" && gameSettings.seasonDuration - gameSettings.currentSeconds < 10) {
-            oContext.fillStyle = "red";
-            oContext.fillText("Warning: this season is about to end.", 400, 20);
+        if (gameSettings.status == "running") {
+            oContext.fillText("This is season " + gameSettings.currentSeason + ". There are between " + minFish + " and " + maxFish + " fish remaining.", 10, 20);
+            if (gameSettings.seasonDuration - gameSettings.currentSeconds < 10) {
+                oContext.fillStyle = "red";
+                oContext.fillText("Warning: this season is about to end.", 480, 20);
+            }
         }
-        if (gameSettings.status == "paused" && gameSettings.pauseDuration - gameSettings.currentSeconds < 5) {
-            oContext.fillStyle = "blue";
-            oContext.fillText("Get ready: the next season is about to start.", 400, 20);
+        if (gameSettings.status == "paused") {
+            oContext.fillText("We are in between seasons.", 10, 20);
+            if (gameSettings.pauseDuration - gameSettings.currentSeconds < 5) {
+                oContext.fillStyle = "blue";
+                oContext.fillText("Get ready: the next season is about to start.", 480, 20);
+            }
         }
 
         oContext.fillStyle = "lightblue";
@@ -488,36 +498,39 @@ function clearOcean() {
 }
 
 function drawInfo() {
-    iCanvas = document.getElementById("infoCanvas");
-    iContext = iCanvas.getContext("2d");
-
-    iContext.fillStyle = "pink";
-    iContext.fillRect(40, 10, 190, 135);
-    iContext.fillRect(190, 10, 190, 135);
-    iContext.fillRect(390, 10, 190, 135);
-
-    iContext.fillStyle = "black";
-    iContext.font = "12px sans-serif";
     if (gameSettings != null) {
-        iContext.fillText("Fisher", 50, 50);
-        iContext.fillText("Status", 150, 50);
-        iContext.fillText("Fish caught", 200, 30);
-        iContext.fillText("This season", 200, 50);
-        iContext.fillText("Overall", 300, 50);
-        iContext.fillText("Profits", 400, 30);
-        iContext.fillText("This season", 400, 50);
-        iContext.fillText("Overall", 500, 50);
-        for (i = 0; i < gameSettings.players.length; i++) {
-            iContext.fillText(gameSettings.players[i].name, 50, 70 + (i * 20));
-            iContext.fillText(gameSettings.players[i].status, 150, 70 + (i * 20));
-            iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, 70 + (i * 20));
-            iContext.fillText(gameSettings.players[i].fishCaught, 300, 70 + (i * 20));
-            iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, 70 + (i * 20));
-            iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, 70 + (i * 20));
+        iCanvas = document.getElementById("infoCanvas");
+        iContext = iCanvas.getContext("2d");
+
+        iContext.fillStyle = "aliceblue";
+        iContext.fillRect(0, 10, 380, 135);
+        iContext.fillRect(190, 10, 190, 135);
+        iContext.fillRect(390, 10, 410, 135);
+
+        if (gameSettings.status != "waiting") {
+            iContext.fillStyle = "black";
+            iContext.font = "14px sans-serif";
+
+            iContext.fillText("Fisher", 50, 50);
+            iContext.fillText("Status", 150, 50);
+            iContext.fillText("Fish caught", 200, 30);
+            iContext.fillText("This season", 200, 50);
+            iContext.fillText("Overall", 300, 50);
+            iContext.fillText("Profits", 400, 30);
+            iContext.fillText("This season", 400, 50);
+            iContext.fillText("Overall", 500, 50);
+            for (i = 0; i < gameSettings.players.length; i++) {
+                iContext.fillText(gameSettings.players[i].name, 50, 70 + (i * 20));
+                iContext.fillText(gameSettings.players[i].status, 150, 70 + (i * 20));
+                iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, 70 + (i * 20));
+                iContext.fillText(gameSettings.players[i].fishCaught, 300, 70 + (i * 20));
+                iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, 70 + (i * 20));
+                iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, 70 + (i * 20));
+            }
         }
-        iContext.fillText(gameSettings.status, 50, 150);
-    } else {
-        iContext.fillText('booting up', 50, 150);
+        if (gameSettings.debug == true) {
+            iContext.fillText(gameSettings.status, 50, 160);
+        }
     }
 }
 
