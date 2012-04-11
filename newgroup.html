@@ -8,14 +8,33 @@
         console.log("Connected to server.");
     });
 
+    function Robot(name, greed) {
+        this.name = name;
+        this.greed = greed;
+    }
+
     function gameParameters(form) {
         this.name = form.gid.value;
-        this.numFishers = form.numfishers.value;
-        this.numSeasons = form.seasons.value;
-        this.initialDelay = form.initialdelay.value;
-        this.pauseDuration = form.seasondelay.value;
-        this.spawnFactor = form.spawnfactor.value;
-        this.chanceOfCatch = form.chancecatch.value;
+        this.numFishers = parseInt(form.numfishers.value);
+        this.numHumans = parseInt(form.numhumans.value);
+        this.numSeasons = parseInt(form.seasons.value);
+        this.initialDelay = parseInt(form.initialdelay.value);
+        this.pauseDuration = parseInt(form.seasondelay.value);
+        this.spawnFactor = parseFloat(form.spawnfactor.value);
+        this.chanceOfCatch = parseFloat(form.chancecatch.value);
+        this.costDepart = parseInt(form.costdeparture.value);
+        this.costAtSea = parseInt(form.costsecond.value);
+        this.costCast = parseInt(form.costcast.value);
+        this.valueFish = parseInt(form.fishvalue.value);
+        this.seasonDuration = parseInt(form.seasonduration.value);
+        this.certainFish = parseInt(form.realfish.value);
+        this.actualMysteryFish = parseInt(form.startingmysteryfish.value);
+        this.mysteryFish = parseInt(form.mysteryfish.value);
+        this.robots = new Array();
+        this.robots[0] = new Robot(form.agent1name.value, parseFloat(form.agent1greed.value));
+        this.robots[1] = new Robot(form.agent2name.value, parseFloat(form.agent2greed.value));
+        this.robots[2] = new Robot(form.agent3name.value, parseFloat(form.agent3greed.value));
+        this.prepText = form.preptext.value;
     }
 
     function createGroup(form) {
@@ -38,17 +57,15 @@ Simulation name: <input type="text" name="gid" />
 <br>
 <h3>General settings</h3>
 
-Opponents:
-<br><input type="radio" name="opponents" value="artificial" checked/> Artificial
+Number of total fishers per ocean: <input type="number" min="0" step="1" name="numfishers" value="4" />
 <br>
-<input type="radio" name="opponents" value="human"/> Human
+Number of human fishers per ocean: <input type="number" min="0" step="1" name="numhumans" value="1" />
 <br>
-<br>
-Number of fishers: <input type="number" min="0" step="1" name="numfishers" value="4" />
-<br>
-Number of oceans: <input type="number" min="0" step="1" name="numoceans" value="1"/>
+(Not implemented) Number of oceans: <input type="number" min="0" step="1" name="numoceans" value="1"/>
 <br>
 Fishing seasons: <input type="number" min="0" step="1" name="seasons" value="4" />
+<br>
+Season length in seconds: <input type="number" min="0" step="1" name="seasonduration" value="60" />
 <br>
 Initial delay seconds: <input type="number" min="0" step="1" name="initialdelay" value="15" />
 <br>
@@ -58,6 +75,8 @@ Season delay seconds: <input type="number" min="0" step="1" name="seasondelay" v
 
 Fish value: <input type="number" min="0" step="1" name="fishvalue" value="2000" />
 <br>
+Cost to cast: <input type="number" min="0" step="1" name="costcast" value="25"/>
+<br>
 Cost per departure: <input type="number" min="0" step="1" name="costdeparture" value="25"/>
 <br>
 Cost per second: <input type="number" min="0" step="1" name="costsecond" value="10" />
@@ -65,46 +84,48 @@ Cost per second: <input type="number" min="0" step="1" name="costsecond" value="
 
 <h3>Fish Stocks and Fishing</h3>
 
-Real fish: <input type="number" min="0" step="1" name="realfish" value="120" />
+Certain fish: <input type="number" min="0" step="1" name="realfish" value="120" />
 <br>
-Mystery fish: <input type="number" min="0" step="1" name="mysteryfish" value="30" />
+Available mystery fish: <input type="number" min="0" step="1" name="startingmysteryfish" value="120" />
+<br>
+Potential mystery fish: <input type="number" min="0" step="1" name="mysteryfish" value="30" />
 <br>
 Spawn factor: <input type="number" min="0" step="0.1" name="spawnfactor" value="4.0" />
 <br>
-Chance of catch: <input type="number" min="0" step="0.01" name="chancecatch" value="1.0" />
+(Not implemented) Chance of catch: <input type="number" min="0" step="0.01" name="chancecatch" value="1.0" />
 <br>
 
 <h3>Information display</h3>
 
-Show all fishers:
+    (Not implemented) Show all fishers:
 <br><input type="radio" name="showallfishers" value="y" /> Yes
 <br>
 <input type="radio" name="showallfishers" value="n" checked/> No
 <br>
 <br>
 
-Show names:
+    (Not implemented) Show names:
 <br><input type="radio" name="shownames" value="y" checked/> Yes
 <br>
 <input type="radio" name="shownames" value="n"/> No
 <br>
 <br>
 
-Show status:
+    (Not implemented) Show status:
 <br><input type="radio" name="showstatus" value="y" checked/> Yes
 <br>
 <input type="radio" name="showstatus" value="n"/> No
 <br>
 <br>
 
-Show number caught:
+    (Not implemented) Show number caught:
 <br><input type="radio" name="shownumcaught" value="y" checked/> Yes
 <br>
 <input type="radio" name="shownumcaught" value="n"/> No
 <br>
 
 <br>
-Show balance:
+    (Not implemented) Show balance:
 <br><input type="radio" name="showbalance" value="y" checked/> Yes
 <br>
 <input type="radio" name="showbalance" value="n"/> No
@@ -117,7 +138,7 @@ Name: <input type="text" name="agent1name" value="Kermit"/>
 <br>
 Greediness: <input type="number" min="0" step="0.01" max="1" name="agent1greed" value="0.5" />
 <br>
-Initial balance: <input type="number" min="0" step="1" name="agent1balance" value="10000" />
+    (Not implemented) Initial balance: <input type="number" min="0" step="1" name="agent1balance" value="10000" />
 <br>
 
 <h4>Agent 2</h4>
@@ -126,7 +147,7 @@ Name: <input type="text" name="agent2name" value="Gonzo"/>
 <br>
 Greediness: <input type="number" min="0" step="0.01" max="1" name="agent2greed" value="0.5" />
 <br>
-Initial balance: <input type="number" min="0" step="1" name="agent2balance" value="10000" />
+    (Not implemented) Initial balance: <input type="number" min="0" step="1" name="agent2balance" value="10000" />
 <br>
 
 <h4>Agent 3</h4>
@@ -135,9 +156,21 @@ Name: <input type="text" name="agent3name" value="Fozzie"/>
 <br>
 Greediness: <input type="number" min="0" step="0.01" max="1" name="agent3greed" value="0.5" />
 <br>
-Initial balance: <input type="number" min="0" step="1" name="agent3balance" value="10000" />
+    (Not implemented) Initial balance: <input type="number" min="0" step="1" name="agent3balance" value="10000" />
 <br>
 
+<h3>Preparatory text</h3>
+    <textarea name="preptext" rows="10" cols="80">
+FISH simulates fishing in an ocean. You and the other fishers are the only fishers in this ocean. All the fishers see the same ocean that you do. At the beginning, the number of fish will be displayed on the screen. However, sometimes there is some uncertainty about the number of fish. In those cases, 'mystery fish' will be shown on the screen as well, and the number is displayed as a certain range, not as an absolute number. Once the simulation begins, you and the other fishers may catch as many of these fish as you like. Once  you have taken as many fish as you want, you return to port with your catches, and the first season ends. Then the fish spawn for the next season, if any are left to spawn (if no fish are left, they cannot spawn). For every fish left at the end of one season, two fish will be available to be caught in the next season. However, because the ocean can support only so many fish, the total number of fish will never exceed the original number of fish. Fishing can go on this way for many seasons, but all fishing permanently ceases any time that all the fish are caught.
+
+You can make money fishing. You will be paid $5 for every fish you catch. (For now, this is 'play' money...but please treat it as if it were real money.)
+
+Your job is to consider all these factors, and the other fishers, and make your own decisions about how to fish. Fish however you wish.
+
+Please ask if anything is unclear. We want you to fully understand the rules before you start fishing.
+
+If you are sure you understand all the above, you are ready to fish. Click on the Go Fishing button on the left when you are ready. Once all the fishers have clicked this button, the first season will begin. (You may have to wait briefly for all the others fishers to click the button.)
+    </textarea>
 <button type="button" onclick="createGroup(this.form)">Create this Group</button>
 </form>
 

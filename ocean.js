@@ -126,10 +126,10 @@ function engine(io) {
         io.sockets.in(gameName).emit('gamesettings', g);
     }
 
-    function aiAgent (name, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch) {
+    function aiAgent (name, greed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch) {
         this.name = name;
         this.type = 'ai';
-        this.greediness = 0.5;
+        this.greediness = greed;
         this.fishCaught = 0;
         this.fishCaughtPerSeason = new Array();
         this.startMoney = 100;
@@ -158,72 +158,89 @@ function engine(io) {
     }
 
     function gameParameters (gs) {
-        if (gs != null) {
-            this.expectedPlayers = gs.numFishers;
-            this.totalSeasons = gs.numSeasons;
-            this.initialDelay = gs.initialDelay;
-            this.pauseDuration = gs.pauseDuration;
-            this.spawnFactor = gs.spawnFactor;
-            this.chanceOfCatch = gs.chanceOfCatch;
-        } else {
-            this.expectedPlayers = 4;
-            this.totalSeasons = 4;
-            this.initialDelay = 5;
-            this.pauseDuration = 10;
-            this.spawnFactor = 4.00;
-            this.chanceOfCatch = 1.00;
-        }
-        this.expectedHumans = 1;
+        this.players = new Array();
         this.actualPlayers = 0;
         this.actualHumans = 0;
         this.timable = true;
         this.currentSeason = 0;
-        this.seasonDuration = 60;
-        this.startingFish = 40;
-        this.certainFish = 40;
-        this.mysteryFish = 10;
-        this.startingMysteryFish = 5;
-        this.actualMysteryFish = 5;
-        this.costDepart = 0;
-        this.costCast = 2;
-        this.costAtSea = 0;
-        this.valueFish = 5;
-        this.players = new Array();
         this.status = "waiting";
         this.currentSeconds = 0;
-        this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers " +
-                        "in this ocean. All the fishers see the same ocean that you do. At the beginning, the " +
-                        "number of fish will be displayed on the screen. However, sometimes there is some " +
-                        "uncertainty about the number of fish. In those cases, 'mystery fish' will be shown on " +
-                        "the screen as well, and the number is displayed as a certain range, not as an absolute " +
-                        "number. Once the simulation begins, you and the other fishers may catch as many of these " +
-                        "fish as you like. Once  you have taken as many fish as you want, you return to port " +
-                        "with your catches, and the first season ends. Then the fish spawn for the next season, " +
-                        "if any are left to spawn (if no fish are left, they cannot spawn). For every fish left " +
-                        "at the end of one season, two fish will be available to be caught in the next season. " +
-                        "However, because the ocean can support only so many fish, the total number of fish will " +
-                        "never exceed the original number of fish. Fishing can go on this way for many seasons, " +
-                        "but all fishing permanently ceases any time that all the fish are caught.\n\n" +
-                        "You can make money fishing. You will be paid $5 for every fish you catch. (For now, " +
-                        "this is 'play' money...but please treat it as if it were real money.)\n\n" +
-                        "Your job is to consider all these factors, and the other fishers, and make your own " +
-                        "decisions about how to fish. Fish however you wish.\n\n" +
-                        "Please ask if anything is unclear. We want you to fully understand the rules before you " +
-                        "start fishing.\n\n" +
-                        "If you are sure you understand all the above, you are ready to fish. Click on the Go " +
-                        "Fishing button below when you are ready. Once all the fishers have clicked this button, " +
-                        "the first season will begin. (You may have to wait briefly for all the others fishers " +
-                        "to click the button.)";
         this.debug = true;
 
-        robotNames = new Array();
-        robotNames[0] = "Leonardo";
-        robotNames[1] = "Michelangelo";
-        robotNames[2] = "Raphael";
-        robotNames[3] = "Donatello";
-        for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-            this.players[i] = new aiAgent(robotNames[i], this.expectedPlayers, this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
-            this.actualPlayers++;
+        if (gs != null) {
+            this.expectedPlayers = gs.numFishers;
+            this.expectedHumans = gs.numHumans;
+            this.totalSeasons = gs.numSeasons;
+            this.seasonDuration = gs.seasonDuration;
+            this.initialDelay = gs.initialDelay;
+            this.pauseDuration = gs.pauseDuration;
+            this.spawnFactor = gs.spawnFactor;
+            this.chanceOfCatch = gs.chanceOfCatch;
+            this.costDepart = gs.costDepart;
+            this.costAtSea = gs.costAtSea;
+            this.costCast = gs.costCast;
+            this.valueFish = gs.valueFish;
+            this.startingFish = gs.certainFish;
+            this.certainFish = gs.certainFish;
+            this.mysteryFish = gs.mysteryFish;
+            this.startingMysteryFish = gs.actualMysteryFish;
+            this.actualMysteryFish = gs.actualMysteryFish;
+            this.prepText = gs.prepText;
+            for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
+                this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, this.expectedPlayers,
+                    this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
+                this.actualPlayers++;
+            }
+     } else {
+            this.expectedPlayers = 4;
+            this.expectedHumans = 1;
+            this.totalSeasons = 4;
+            this.seasonDuration = 60;
+            this.initialDelay = 5;
+            this.pauseDuration = 10;
+            this.spawnFactor = 4.00;
+            this.chanceOfCatch = 1.00;
+            this.costDepart = 0;
+            this.costAtSea = 0;
+            this.costCast = 0;
+            this.valueFish = 3;
+            this.startingFish = 40;
+            this.certainFish = 40;
+            this.mysteryFish = 10;
+            this.startingMysteryFish = 5;
+            this.actualMysteryFish = 5;
+            this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers " +
+                "in this ocean. All the fishers see the same ocean that you do. At the beginning, the " +
+                "number of fish will be displayed on the screen. However, sometimes there is some " +
+                "uncertainty about the number of fish. In those cases, 'mystery fish' will be shown on " +
+                "the screen as well, and the number is displayed as a certain range, not as an absolute " +
+                "number. Once the simulation begins, you and the other fishers may catch as many of these " +
+                "fish as you like. Once  you have taken as many fish as you want, you return to port " +
+                "with your catches, and the first season ends. Then the fish spawn for the next season, " +
+                "if any are left to spawn (if no fish are left, they cannot spawn). For every fish left " +
+                "at the end of one season, two fish will be available to be caught in the next season. " +
+                "However, because the ocean can support only so many fish, the total number of fish will " +
+                "never exceed the original number of fish. Fishing can go on this way for many seasons, " +
+                "but all fishing permanently ceases any time that all the fish are caught.\n\n" +
+                "You can make money fishing. You will be paid $5 for every fish you catch. (For now, " +
+                "this is 'play' money...but please treat it as if it were real money.)\n\n" +
+                "Your job is to consider all these factors, and the other fishers, and make your own " +
+                "decisions about how to fish. Fish however you wish.\n\n" +
+                "Please ask if anything is unclear. We want you to fully understand the rules before you " +
+                "start fishing.\n\n" +
+                "If you are sure you understand all the above, you are ready to fish. Click on the Go " +
+                "Fishing button on the left when you are ready. Once all the fishers have clicked this button, " +
+                "the first season will begin. (You may have to wait briefly for all the others fishers " +
+                "to click the button.)";
+            robotNames = new Array();
+            robotNames[0] = "Leonardo";
+            robotNames[1] = "Michelangelo";
+            robotNames[2] = "Raphael";
+            robotNames[3] = "Donatello";
+            for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
+                this.players[i] = new aiAgent(robotNames[i], 0.5, this.expectedPlayers, this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
+                this.actualPlayers++;
+            }
         }
     }
 
