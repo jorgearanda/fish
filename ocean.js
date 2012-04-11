@@ -219,10 +219,12 @@ function engine(io) {
 
     io.sockets.on('connection', function (socket) {
         var myID;
-        socket.on('join group', function (group) {
-            socket.set('group', group, function() {
-                socket.emit("myGroup", group);
-            });
+        socket.on('join group',function (group) {
+            socket.set('group', group,
+                function() {
+                    socket.emit("myGroup", group);
+                }
+            );
             socket.join(group);
 
             if (group in games) {
@@ -238,69 +240,80 @@ function engine(io) {
             games[group].actualHumans++;
             io.sockets.in(group).emit("gamesettings", games[group]);
 
-            socket.set('gamesettings', games[group], function() {
-                socket.emit('gamesettings', games[group]);
-            });
-
-            socket.set('myID', myID, function() {
-                socket.emit('myID', myID);
-            });
-
-
-            socket.on('toSea', function (data) {
-                console.log("A player sailed to sea: " + data.id + ", gameroom " + group + ".");
-                games[group].players[data.id].status = 'At sea';
-                games[group].players[data.id].money -= games[group].costDepart;
-                games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
-                io.sockets.in(group).emit('gamesettings', games[group]);
-            });
-
-            socket.on('toPort', function (data) {
-                console.log("A player returned to port: " + data.id + ", gameroom " + group + ".");
-                games[group].players[data.id].status = 'At port';
-                io.sockets.in(group).emit('gamesettings', games[group]);
-            });
-
-            socket.on('readRules', function(data) {
-                console.log("A player read the rules and is ready to start: " + data.id + ", gameroom " + group + ".");
-                games[group].players[data.id].readRules = true;
-                allReadRules = true;
-                for (i = 0; i < games[group].players.length; i++) {
-                    if (games[group].players[i].readRules == false) {
-                        allReadRules = false;
-                    }
+            socket.set('gamesettings', games[group],
+                function() {
+                    socket.emit('gamesettings', games[group]);
                 }
-                if (games[group].actualPlayers == games[group].expectedPlayers && allReadRules) {
-                    games[group].status = 'readying';
-                    games[group].currentSeason = 1;
-                    for (i = 0; i < games[group].players.length; i++) {
-                        games[group].players[i].startMoneyPerSeason[1] = games[group].players[i].startMoney;
-                        games[group].players[i].endMoneyPerSeason[1] = games[group].players[i].startMoney;
-                        games[group].players[i].fishCaughtPerSeason[1] = 0;
-                    }
+            );
+
+            socket.set('myID', myID,
+                function() {
+                    socket.emit('myID', myID);
+                }
+            );
+
+            socket.on('toSea',
+                function (data) {
+                    console.log("A player sailed to sea: " + data.id + ", gameroom " + group + ".");
+                    games[group].players[data.id].status = 'At sea';
+                    games[group].players[data.id].money -= games[group].costDepart;
+                    games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
                     io.sockets.in(group).emit('gamesettings', games[group]);
-                    io.sockets.in(group).emit('readying', 'All agents ready - prepare!');
                 }
-            });
+            );
 
-            socket.on('fishing', function (data) {
-                console.log("A player tried to fish: " + data.id + ", gameroom " + group + ".");
-                games[group].players[data.id].money -= games[group].costCast;
-                games[group].players[data.id].actualCasts++;
-                if (games[group].certainFish + games[group].actualMysteryFish > 0) {
-                    games[group].players[data.id].money += games[group].valueFish;
-                    games[group].players[data.id].fishCaught++;
-                    games[group].players[data.id].fishCaughtPerSeason[games[group].currentSeason]++;
+            socket.on('toPort',
+                function (data) {
+                    console.log("A player returned to port: " + data.id + ", gameroom " + group + ".");
+                    games[group].players[data.id].status = 'At port';
+                    io.sockets.in(group).emit('gamesettings', games[group]);
+                }
+            );
 
-                    if (Math.floor(Math.random() * (games[group].certainFish + games[group].actualMysteryFish)) < games[group].certainFish) {
-                        games[group].certainFish -= 1;
-                    } else {
-                        games[group].actualMysteryFish -= 1;
+            socket.on('readRules',
+                function(data) {
+                    console.log("A player read the rules and is ready to start: " + data.id + ", gameroom " + group + ".");
+                    games[group].players[data.id].readRules = true;
+                    allReadRules = true;
+                    for (i = 0; i < games[group].players.length; i++) {
+                        if (games[group].players[i].readRules == false) {
+                            allReadRules = false;
+                        }
+                    }
+                    if (games[group].actualPlayers == games[group].expectedPlayers && allReadRules) {
+                        games[group].status = 'readying';
+                        games[group].currentSeason = 1;
+                        for (i = 0; i < games[group].players.length; i++) {
+                            games[group].players[i].startMoneyPerSeason[1] = games[group].players[i].startMoney;
+                            games[group].players[i].endMoneyPerSeason[1] = games[group].players[i].startMoney;
+                            games[group].players[i].fishCaughtPerSeason[1] = 0;
+                        }
+                        io.sockets.in(group).emit('gamesettings', games[group]);
+                        io.sockets.in(group).emit('readying', 'All agents ready - prepare!');
                     }
                 }
-                games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
-                io.sockets.in(group).emit('gamesettings', games[group]);
-            });
+            );
+
+            socket.on('fishing',
+                function (data) {
+                    console.log("A player tried to fish: " + data.id + ", gameroom " + group + ".");
+                    games[group].players[data.id].money -= games[group].costCast;
+                    games[group].players[data.id].actualCasts++;
+                    if (games[group].certainFish + games[group].actualMysteryFish > 0) {
+                        games[group].players[data.id].money += games[group].valueFish;
+                        games[group].players[data.id].fishCaught++;
+                        games[group].players[data.id].fishCaughtPerSeason[games[group].currentSeason]++;
+
+                        if (Math.floor(Math.random() * (games[group].certainFish + games[group].actualMysteryFish)) < games[group].certainFish) {
+                            games[group].certainFish -= 1;
+                        } else {
+                            games[group].actualMysteryFish -= 1;
+                        }
+                    }
+                    games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
+                    io.sockets.in(group).emit('gamesettings', games[group]);
+                }
+            );
 
             // Begin timekeeping
             if (beginTimer == false) {
@@ -322,7 +335,8 @@ function fish(response, io) {
             }
             response.writeHead(200);
             response.end(data);
-        });
+        }
+    );
 
     if (engineCalled == false) {
         engineCalled = true;
@@ -340,7 +354,8 @@ function mainadmin(response, io) {
             }
             response.writeHead(200);
             response.end(data);
-        });
+        }
+    );
 }
 
 function newgroup(response, io) {
@@ -353,7 +368,13 @@ function newgroup(response, io) {
             }
             response.writeHead(200);
             response.end(data);
-        });
+        }
+    );
+
+    if (engineCalled == false) {
+        engineCalled = true;
+        engine(io);
+    }
 }
 
 function certainfish(response, io) {
@@ -365,7 +386,8 @@ function certainfish(response, io) {
             }
             response.writeHead(200);
             response.end(data);
-        });
+        }
+    );
 }
 
 function mysteryfish(response, io) {
@@ -377,7 +399,8 @@ function mysteryfish(response, io) {
             }
             response.writeHead(200);
             response.end(data);
-        });
+        }
+    );
 }
 
 exports.fish = fish;
