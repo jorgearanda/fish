@@ -153,27 +153,46 @@ function controlOnClick(e) {
     x -= cCanvas.offsetLeft;
     y -= cCanvas.offsetTop;
 
-    if ((x >= 20) && (x <= 220) && (y >= 140) && (y <= 170) && sailingAllowed) {
+    if ((x >= 20) && (x <= 220) && (y >= 140) && (y <= 170) && (readRules == false)) {
+        goFishingOnClick();
+        drawAll();
+    }
+
+    if ((x >= 20) && (x <= 220) && (y >= 180) && (y <= 210) && sailingAllowed) {
         goToSeaOnClick();
         drawAll();
     }
 
-    if ((x >= 20) && (x <= 220) && (y >= 180) && (y <= 210) && returningAllowed) {
+    if ((x >= 20) && (x <= 220) && (y >= 220) && (y <= 250) && returningAllowed) {
         returnToPortOnClick();
         drawAll();
     }
 
-    if ((x >= 20) && (x <= 220) && (y >= 220) && (y <= 250) && fishingAllowed) {
+    if ((x >= 20) && (x <= 220) && (y >= 260) && (y <= 290) && fishingAllowed) {
         castForFishOnClick();
         drawAll();
     }
 
-    if ((x >= 20) && (x <= 220) && (y >= 260) && (y <= 290) && (readRules == false)) {
-        goFishingOnClick();
-        drawAll();
-    }
 }
 
+function drawButton(context, text, enabled, x1, y1, x2, y2) {
+    if (enabled) {
+        borderColor = "salmon";
+        fillColor = "lightsalmon";
+        textColor = "black"
+    } else {
+        borderColor = "darkgray";
+        fillColor = "gainsboro";
+        textColor = "darkslategray";
+    }
+    context.fillStyle = borderColor;
+    context.fillRect(x1, y1, x2, y2);
+    context.fillStyle = fillColor;
+    context.fillRect(x1 + 2, y1 + 2, x2 - 4, y2 - 4);
+    context.fillStyle = textColor;
+    context.font = "bold 14px sans-serif";
+    context.fillText(text, x1 + 10, y1 + 20);
+}
 
 function drawControl() {
     cCanvas = document.getElementById("controlCanvas");
@@ -197,62 +216,12 @@ function drawControl() {
             fishingAllowed = false;
         }
 
-        if ((gameSettings.status == "running") && (sailingAllowed)) {
-            cContext.fillStyle = "orange";
-            cContext.fillRect(20, 140, 200, 30);
-            cContext.fillStyle = "black";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Go out to sea", 30, 160);
-        } else {
-            cContext.fillStyle = "gainsboro";
-            cContext.fillRect(20, 140, 200, 30);
-            cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Go out to sea", 30, 160);
+        drawButton(cContext, "Go Fishing!", !readRules, 20, 140, 200, 30);
+        if (gameSettings.status == "running") {
+            drawButton(cContext, "Go out to sea", sailingAllowed, 20, 180, 200, 30);
+            drawButton(cContext, "Return to port", returningAllowed, 20, 220, 200, 30);
+            drawButton(cContext, "Cast for one fish", fishingAllowed, 20, 260, 200, 30);
         }
-
-        if ((gameSettings.status == "running") && (returningAllowed)) {
-            cContext.fillStyle = "orange";
-            cContext.fillRect(20, 180, 200, 30);
-            cContext.fillStyle = "black";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Return to port", 30, 200);
-        } else {
-            cContext.fillStyle = "gainsboro";
-            cContext.fillRect(20, 180, 200, 30);
-            cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Return to port", 30, 200);
-        }
-
-        if ((gameSettings.status == "running") && (fishingAllowed)) {
-            cContext.fillStyle = "orange";
-            cContext.fillRect(20, 220, 200, 30);
-            cContext.fillStyle = "black";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Cast for one fish", 30, 240);
-        } else {
-            cContext.fillStyle = "gainsboro";
-            cContext.fillRect(20, 220, 200, 30);
-            cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Cast for one fish", 30, 240);
-        }
-
-        if (readRules == false) {
-            cContext.fillStyle = "orange";
-            cContext.fillRect(20, 260, 200, 30);
-            cContext.fillStyle = "black";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Go Fishing!", 30, 280);
-        } else {
-            cContext.fillStyle = "gainsboro";
-            cContext.fillRect(20, 260, 200, 30);
-            cContext.fillStyle = "darkslategray";
-            cContext.font = "bold 14px sans-serif";
-            cContext.fillText("Go Fishing!", 30, 280);
-        }
-
     }
 }
 
