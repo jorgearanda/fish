@@ -30,7 +30,7 @@ function engine(io) {
                 console.log('Waiting for all players to read the preparatory text and click on Go Fishing, in gameroom ' + gameName);
             } else if (g.status == 'readying') {
                 g.currentSeconds += 1;
-                if (g.currentSeconds > 5) {
+                if (g.currentSeconds > g.initialDelay) {
                     g.status = 'running';
                     g.currentSeconds = 0;
                     console.log('Beginning first season in gameroom ' + gameName);
@@ -157,16 +157,28 @@ function engine(io) {
         this.readRules = false;
     }
 
-    function gameParameters () {
-        this.expectedPlayers = 4;
+    function gameParameters (gs) {
+        if (gs != null) {
+            this.expectedPlayers = gs.numFishers;
+            this.totalSeasons = gs.numSeasons;
+            this.initialDelay = gs.initialDelay;
+            this.pauseDuration = gs.pauseDuration;
+            this.spawnFactor = gs.spawnFactor;
+            this.chanceOfCatch = gs.chanceOfCatch;
+        } else {
+            this.expectedPlayers = 4;
+            this.totalSeasons = 4;
+            this.initialDelay = 5;
+            this.pauseDuration = 10;
+            this.spawnFactor = 4.00;
+            this.chanceOfCatch = 1.00;
+        }
         this.expectedHumans = 1;
         this.actualPlayers = 0;
         this.actualHumans = 0;
         this.timable = true;
-        this.totalSeasons = 4;
         this.currentSeason = 0;
         this.seasonDuration = 60;
-        this.pauseDuration = 10;
         this.startingFish = 40;
         this.certainFish = 40;
         this.mysteryFish = 10;
@@ -176,8 +188,6 @@ function engine(io) {
         this.costCast = 2;
         this.costAtSea = 0;
         this.valueFish = 5;
-        this.chanceOfCatch = 1.00;
-        this.spawnFactor = 4.00;
         this.players = new Array();
         this.status = "waiting";
         this.currentSeconds = 0;
@@ -218,8 +228,20 @@ function engine(io) {
     }
 
     io.sockets.on('connection', function (socket) {
+        // Creating a group from newgroup.html
+        socket.on('create group', function (gs) {
+            console.log("Attempting to create group " + gs.name);
+            if (gs.name in games) {
+                console.log("Group " + group + " already exists. No action taken.");
+            } else {
+                games[gs.name] = new gameParameters(gs);
+                console.log("New group added, and parameters created: " + gs.name);
+            }
+        });
+
+        // Responding to main.html
         var myID;
-        socket.on('join group',function (group) {
+        socket.on('join group', function (group) {
             socket.set('group', group,
                 function() {
                     socket.emit("myGroup", group);

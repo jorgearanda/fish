@@ -1,5 +1,31 @@
 <html>
 <head>
+<script src="/socket.io/socket.io.js"></script>
+<script language="JavaScript">
+    var socket = io.connect();
+
+    socket.on("connect", function (data) {
+        console.log("Connected to server.");
+    });
+
+    function gameParameters(form) {
+        this.name = form.gid.value;
+        this.numFishers = form.numfishers.value;
+        this.numSeasons = form.seasons.value;
+        this.initialDelay = form.initialdelay.value;
+        this.pauseDuration = form.seasondelay.value;
+        this.spawnFactor = form.spawnfactor.value;
+        this.chanceOfCatch = form.chancecatch.value;
+    }
+
+    function createGroup(form) {
+        var gid = form.gid.value;
+        var gs = new gameParameters(form);
+        console.log("Requesting server to create group " + gid);
+        socket.emit("create group", gs);
+    }
+</script>
+
 <title>Admin - New Group Screen</title>
 </head>
 
@@ -7,7 +33,7 @@
 We'll need a name for the group, as well as a long bunch of settings.
 <br>
 
-<form action="active.html">
+<form action="mainadmin">
 Simulation name: <input type="text" name="gid" />
 <br>
 <h3>General settings</h3>
@@ -112,7 +138,7 @@ Greediness: <input type="number" min="0" step="0.01" max="1" name="agent3greed" 
 Initial balance: <input type="number" min="0" step="1" name="agent3balance" value="10000" />
 <br>
 
-<button type="submit">Create this Group</button>
+<button type="button" onclick="createGroup(this.form)">Create this Group</button>
 </form>
 
 </body>
