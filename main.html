@@ -490,10 +490,12 @@ function drawInfo() {
             iContext.fillText("Overall", 500, 50);
             var skippedFishers = 0;
             var offsetFisherLine = 70;
+            var user = false;
             for (i = 0; i < gameSettings.players.length; i++) {
-                if (gameSettings.showOtherFishers || (gameSettings.players[i].name == id)) {
-                    if (gameSettings.showFisherNames || (gameSettings.players[i].name == id)) {
-                        if (gameSettings.players[i].name == id) {
+                user = (gameSettings.players[i].name == id);
+                if (gameSettings.showOtherFishers || user) {
+                    if (gameSettings.showFisherNames || user) {
+                        if (user) {
                             iContext.fillText("You", 50, offsetFisherLine);
                         } else {
                             iContext.fillText(gameSettings.players[i].name, 50, offsetFisherLine);
@@ -501,7 +503,9 @@ function drawInfo() {
                     } else {
                         iContext.fillText("?????", 50, offsetFisherLine);
                     }
-                    iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
+                    if (gameSettings.showFisherStatus || user) {
+                        iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
+                    }
                     iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
                     iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
                     iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);

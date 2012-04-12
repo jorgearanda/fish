@@ -32,6 +32,7 @@
         this.mysteryFish = parseInt(form.mysteryfish.value);
         this.showOtherFishers = form.showallfishers[0].checked;
         this.showFisherNames = form.shownames[0].checked;
+        this.showFisherStatus = form.showstatus[0].checked;
 
         this.robots = new Array();
         this.robots[0] = new Robot(form.agent1name.value, parseFloat(form.agent1greed.value));
@@ -114,7 +115,7 @@ Show names:
 <br>
 <br>
 
-    (Not implemented) Show status:
+Show status:
 <br><input type="radio" name="showstatus" value="y" checked/> Yes
 <br>
 <input type="radio" name="showstatus" value="n"/> No
