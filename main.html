@@ -492,10 +492,14 @@ function drawInfo() {
             var offsetFisherLine = 70;
             for (i = 0; i < gameSettings.players.length; i++) {
                 if (gameSettings.showOtherFishers || (gameSettings.players[i].name == id)) {
-                    if (gameSettings.players[i].name == id) {
-                        iContext.fillText("You", 50, offsetFisherLine);
+                    if (gameSettings.showFisherNames || (gameSettings.players[i].name == id)) {
+                        if (gameSettings.players[i].name == id) {
+                            iContext.fillText("You", 50, offsetFisherLine);
+                        } else {
+                            iContext.fillText(gameSettings.players[i].name, 50, offsetFisherLine);
+                        }
                     } else {
-                        iContext.fillText(gameSettings.players[i].name, 50, offsetFisherLine);
+                        iContext.fillText("?????", 50, offsetFisherLine);
                     }
                     iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
                     iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
