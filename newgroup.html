@@ -30,6 +30,8 @@
         this.certainFish = parseInt(form.realfish.value);
         this.actualMysteryFish = parseInt(form.startingmysteryfish.value);
         this.mysteryFish = parseInt(form.mysteryfish.value);
+        this.showOtherFishers = form.showallfishers[0].checked;
+
         this.robots = new Array();
         this.robots[0] = new Robot(form.agent1name.value, parseFloat(form.agent1greed.value));
         this.robots[1] = new Robot(form.agent2name.value, parseFloat(form.agent2greed.value));
@@ -97,7 +99,7 @@ Spawn factor: <input type="number" min="0" step="0.1" name="spawnfactor" value="
 
 <h3>Information display</h3>
 
-    (Not implemented) Show all fishers:
+Show all fishers:
 <br><input type="radio" name="showallfishers" value="y" /> Yes
 <br>
 <input type="radio" name="showallfishers" value="n" checked/> No

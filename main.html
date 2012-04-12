@@ -488,13 +488,22 @@ function drawInfo() {
             iContext.fillText("Profits", 400, 30);
             iContext.fillText("This season", 400, 50);
             iContext.fillText("Overall", 500, 50);
+            var skippedFishers = 0;
+            var offsetFisherLine = 70;
             for (i = 0; i < gameSettings.players.length; i++) {
-                iContext.fillText(gameSettings.players[i].name, 50, 70 + (i * 20));
-                iContext.fillText(gameSettings.players[i].status, 150, 70 + (i * 20));
-                iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, 70 + (i * 20));
-                iContext.fillText(gameSettings.players[i].fishCaught, 300, 70 + (i * 20));
-                iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, 70 + (i * 20));
-                iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, 70 + (i * 20));
+                if (gameSettings.showOtherFishers || (gameSettings.players[i].name == id)) {
+                    if (gameSettings.players[i].name == id) {
+                        iContext.fillText("You", 50, offsetFisherLine);
+                    } else {
+                        iContext.fillText(gameSettings.players[i].name, 50, offsetFisherLine);
+                    }
+                    iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, offsetFisherLine);
+                    offsetFisherLine += 20;
+                }
             }
         }
         if (gameSettings.debug == true) {
