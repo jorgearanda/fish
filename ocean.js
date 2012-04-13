@@ -100,26 +100,34 @@ function engine(io) {
         }
     }
 
-    function aiActions(g, gameName, agentID) {
-        agent = g.players[agentID];
-        if ((agent.intendedCasts > agent.actualCasts) && 	(agent.status == 'At port') && (g.certainFish + g.actualMysteryFish > 0)) {
-            console.log("A player sailed to sea: " + agent.name + ", gameroom " + gameName + ".");
-            agent.status = 'At sea';
-            agent.money -= g.costDepart;
-            agent.endMoneyPerSeason[g.currentSeason] = agent.money;
-        } else if ((agent.intendedCasts > agent.actualCasts) && 	(agent.status == 'At sea') && (g.certainFish + g.actualMysteryFish > 0)) {
-            console.log("A player tried to fish: " + agent.name + ", gameroom " + gameName + ".");
-            agent.money -= g.costCast;
-            agent.money += g.valueFish;
-            agent.endMoneyPerSeason[g.currentSeason] = agent.money;
-            agent.actualCasts ++;
+    function tryToFish(g, gameRoom, index, name) {
+        console.log("A player tried to fish: " + name + ", gameroom " + gameRoom + ".");
+        var player = g.players[index];
+        player.money -= g.costCast;
+        player.actualCasts++;
+        if ((g.certainFish + g.actualMysteryFish > 0) && Math.random() <= g.chanceOfCatch) {
+            player.money += g.valueFish;
+            player.fishCaught++;
+            player.fishCaughtPerSeason[g.currentSeason]++;
+
             if (Math.floor(Math.random() * (g.certainFish + g.actualMysteryFish)) < g.certainFish) {
                 g.certainFish -= 1;
             } else {
                 g.actualMysteryFish -= 1;
             }
-            agent.fishCaught++;
-            agent.fishCaughtPerSeason[g.currentSeason]++;
+        }
+        player.endMoneyPerSeason[g.currentSeason] = player.money;
+    }
+
+    function aiActions(g, gameName, agentID) {
+        agent = g.players[agentID];
+        if ((agent.intendedCasts > agent.actualCasts) && (agent.status == 'At port') && (g.certainFish + g.actualMysteryFish > 0)) {
+            console.log("A player sailed to sea: " + agent.name + ", gameroom " + gameName + ".");
+            agent.status = 'At sea';
+            agent.money -= g.costDepart;
+            agent.endMoneyPerSeason[g.currentSeason] = agent.money;
+        } else if ((agent.intendedCasts > agent.actualCasts) && (agent.status == 'At sea') && (g.certainFish + g.actualMysteryFish > 0)) {
+            tryToFish(g, gameName, agentID, agent.name);
         } else if (((agent.intendedCasts <= agent.actualCasts) || (g.certainFish + g.actualMysteryFish <= 0)) && agent.status == 'At sea') {
             agent.status = 'At port';
         }
@@ -341,21 +349,7 @@ function engine(io) {
 
             socket.on('fishing',
                 function (data) {
-                    console.log("A player tried to fish: " + data.id + ", gameroom " + group + ".");
-                    games[group].players[data.id].money -= games[group].costCast;
-                    games[group].players[data.id].actualCasts++;
-                    if (games[group].certainFish + games[group].actualMysteryFish > 0) {
-                        games[group].players[data.id].money += games[group].valueFish;
-                        games[group].players[data.id].fishCaught++;
-                        games[group].players[data.id].fishCaughtPerSeason[games[group].currentSeason]++;
-
-                        if (Math.floor(Math.random() * (games[group].certainFish + games[group].actualMysteryFish)) < games[group].certainFish) {
-                            games[group].certainFish -= 1;
-                        } else {
-                            games[group].actualMysteryFish -= 1;
-                        }
-                    }
-                    games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
+                    tryToFish(games[group], group, data.id, games[group].players[data.id].name);
                     io.sockets.in(group).emit('gamesettings', games[group]);
                 }
             );
