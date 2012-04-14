@@ -466,6 +466,19 @@ function clearOcean() {
     oContext.clearRect(0,0,800,500);
 }
 
+function drawInfoHeader(ctx, edgeX, topY) {
+    ctx.fillStyle = "black";
+    ctx.font = "14px sans-serif";
+    ctx.fillText("Fisher", edgeX, topY + 20);
+    ctx.fillText("Status", edgeX + 100, topY + 20);
+    ctx.fillText("Fish caught", edgeX + 150, topY);
+    ctx.fillText("This season", edgeX + 150, topY + 20);
+    ctx.fillText("Overall", edgeX + 250, topY + 20);
+    ctx.fillText("Profits", edgeX + 350, topY);
+    ctx.fillText("This season", edgeX + 350, topY + 20);
+    ctx.fillText("Overall", edgeX + 450, topY + 20);
+}
+
 function drawInfo() {
     if (gameSettings != null) {
         iCanvas = document.getElementById("infoCanvas");
@@ -477,17 +490,9 @@ function drawInfo() {
         iContext.fillRect(390, 10, 410, 135);
 
         if (gameSettings.status != "waiting") {
+            drawInfoHeader(iContext, 50, 30);
             iContext.fillStyle = "black";
             iContext.font = "14px sans-serif";
-
-            iContext.fillText("Fisher", 50, 50);
-            iContext.fillText("Status", 150, 50);
-            iContext.fillText("Fish caught", 200, 30);
-            iContext.fillText("This season", 200, 50);
-            iContext.fillText("Overall", 300, 50);
-            iContext.fillText("Profits", 400, 30);
-            iContext.fillText("This season", 400, 50);
-            iContext.fillText("Overall", 500, 50);
             var skippedFishers = 0;
             var offsetFisherLine = 70;
             var user = false;
