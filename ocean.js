@@ -197,6 +197,7 @@ function engine(io) {
             this.showFisherNames = gs.showFisherNames;
             this.showFisherStatus = gs.showFisherStatus;
             this.showFishCaught = gs.showFishCaught;
+            this.showBalance = gs.showBalance;
             this.prepText = gs.prepText;
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
                 this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, this.expectedPlayers,
@@ -225,6 +226,7 @@ function engine(io) {
             this.showFisherNames = true;
             this.showFisherStatus = true;
             this.showFishCaught = true;
+            this.showBalance = true;
             this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers " +
                 "in this ocean. All the fishers see the same ocean that you do. At the beginning, the " +
                 "number of fish will be displayed on the screen. However, sometimes there is some " +

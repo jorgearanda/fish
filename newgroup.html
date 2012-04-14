@@ -34,6 +34,7 @@
         this.showFisherNames = form.shownames[0].checked;
         this.showFisherStatus = form.showstatus[0].checked;
         this.showFishCaught = form.shownumcaught[0].checked;
+        this.showBalance = form.showbalance[0].checked;
 
         this.robots = new Array();
         this.robots[0] = new Robot(form.agent1name.value, parseFloat(form.agent1greed.value));
@@ -130,7 +131,7 @@ Show number caught:
 <br>
 
 <br>
-    (Not implemented) Show balance:
+Show balance:
 <br><input type="radio" name="showbalance" value="y" checked/> Yes
 <br>
 <input type="radio" name="showbalance" value="n"/> No
