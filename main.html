@@ -511,8 +511,10 @@ function drawInfo() {
                     if (gameSettings.showFisherStatus || user) {
                         iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
                     }
-                    iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
-                    iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
+                    if (gameSettings.showFishCaught || user) {
+                        iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
+                        iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
+                    }
                     iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);
                     iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, offsetFisherLine);
                     offsetFisherLine += 20;
