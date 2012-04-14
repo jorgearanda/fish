@@ -39,6 +39,8 @@
     var sailingAllowed = false;
     var fishingAllowed = false;
     var returningAllowed = false;
+    var pausable = true;
+    var unpausable = false;
     var readRules = false;
     var seconds;
 
@@ -85,8 +87,8 @@
         seconds = data;
     });
 
-    socket.on('pausetime', function (data) {
-        console.log('Seconds from start of pause: ' + data);
+    socket.on('resttime', function (data) {
+        console.log('Seconds from start of rest: ' + data);
         seconds = data;
     });
 
@@ -106,6 +108,21 @@
 
     socket.on('message',function(data) {
         console.log('Received a message from the server!', data);
+    });
+
+    socket.on('paused', function (data) {
+        console.log("Simulation paused by user: " + data.id);
+        pausable = false;
+        if (id == data.id) {
+            console.log("unpausable now");
+            unpausable = true;
+        }
+    });
+
+    socket.on('resumed', function (data) {
+        console.log("Simulation resumed by user: " + data.id);
+        pausable = true;
+        unpausable = false;
     });
 </script>
 
@@ -140,6 +157,16 @@ function goFishingOnClick() {
     socket.emit('readRules', {id: id});
 }
 
+function pauseSimulation() {
+    console.log("Pausing simulation");
+    socket.emit('pauseRequest', {id: id});
+}
+
+function unpauseSimulation() {
+    console.log("Unpausing simulation");
+    socket.emit('resumeRequest', {id: id});
+}
+
 function controlOnClick(e) {
     var x;
     var y;
@@ -158,21 +185,30 @@ function controlOnClick(e) {
         drawAll();
     }
 
-    if ((x >= 20) && (x <= 220) && (y >= 180) && (y <= 210) && sailingAllowed) {
+    if ((x >= 20) && (x <= 220) && (y >= 180) && (y <= 210) && sailingAllowed && (gameSettings.status != "paused")) {
         goToSeaOnClick();
         drawAll();
     }
 
-    if ((x >= 20) && (x <= 220) && (y >= 220) && (y <= 250) && returningAllowed) {
+    if ((x >= 20) && (x <= 220) && (y >= 220) && (y <= 250) && returningAllowed && (gameSettings.status != "paused")) {
         returnToPortOnClick();
         drawAll();
     }
 
-    if ((x >= 20) && (x <= 220) && (y >= 260) && (y <= 290) && fishingAllowed) {
+    if ((x >= 20) && (x <= 220) && (y >= 260) && (y <= 290) && fishingAllowed && (gameSettings.status != "paused")) {
         castForFishOnClick();
         drawAll();
     }
 
+    if ((x >= 20) && (x <= 220) && (y >= 300) && (y <= 330)) {
+        if (pausable && (gameSettings != null) && gameSettings.pauseEnabled) {
+            pauseSimulation();
+            drawAll();
+        } else if (unpausable && (gameSettings != null) && gameSettings.pauseEnabled) {
+            unpauseSimulation();
+            drawAll();
+        }
+    }
 }
 
 function drawButton(context, text, enabled, x1, y1, x2, y2) {
@@ -216,11 +252,18 @@ function drawControl() {
             fishingAllowed = false;
         }
 
-        drawButton(cContext, "Go Fishing!", !readRules, 20, 140, 200, 30);
+        if (!readRules) {
+            drawButton(cContext, "Go Fishing!", true, 20, 140, 200, 30);
+        }
         if (gameSettings.status == "running") {
             drawButton(cContext, "Go out to sea", sailingAllowed, 20, 180, 200, 30);
             drawButton(cContext, "Return to port", returningAllowed, 20, 220, 200, 30);
             drawButton(cContext, "Cast for one fish", fishingAllowed, 20, 260, 200, 30);
+        }
+        if (gameSettings.pauseEnabled && pausable && ((gameSettings.status == "running") || (gameSettings.status == "resting"))) {
+            drawButton(cContext, "Pause", true, 20, 300, 200, 30);
+        } else if (gameSettings.pauseEnabled && unpausable && (gameSettings.status == "paused")) {
+            drawButton(cContext, "Resume", true, 20, 300, 200, 30);
         }
     }
 }
@@ -399,13 +442,17 @@ function drawOcean() {
                 oContext.fillStyle = "red";
                 oContext.fillText("Warning: this season is about to end.", 480, 20);
             }
-        }
-        if (gameSettings.status == "paused") {
+        } else if (gameSettings.status == "resting") {
             oContext.fillText("We are in between seasons.", 10, 20);
-            if (gameSettings.pauseDuration - gameSettings.currentSeconds < 5) {
+            if (gameSettings.restDuration - gameSettings.currentSeconds < 5) {
                 oContext.fillStyle = "blue";
                 oContext.fillText("Get ready: the next season is about to start.", 480, 20);
             }
+        } else if (gameSettings.status == "paused") {
+            oContext.fillStyle = "darkgray";
+            oContext.fillText("SIMULATION PAUSED.", 10, 20);
+        } else {
+            oContext.fillText("Unknown state: " + gameSettings.status);
         }
 
         oContext.fillStyle = "lightblue";

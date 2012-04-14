@@ -42,7 +42,7 @@ function engine(io) {
 		this.totalSeasons = 4;
 		this.currentSeason = 0;
 		this.seasonDuration = 0;
-		this.pauseDuration = 10;
+		this.restDuration = 10;
 		this.certainFish = 40;
 		this.mysteryFish = 0;
 		this.actualMysteryFish = 0;
@@ -171,7 +171,7 @@ function engine(io) {
 				}
 			} else {
 				secondsSinceStart += 1;
-				if (games[group].pauseDuration <= secondsSinceStart) {
+				if (games[group].restDuration <= secondsSinceStart) {
 					games[group].certainFish *= games[group].spawnFactor;
 					games[group].actualMysteryFish *= games[group].spawnFactor;
 					games[group].status = 'running';

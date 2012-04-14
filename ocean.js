@@ -40,14 +40,14 @@ function engine(io) {
             } else if (g.status == 'running') {
                 g.currentSeconds += 1;
                 if (g.seasonDuration <= g.currentSeconds) {
-                    g.status = 'paused';
+                    g.status = 'resting';
                     g.currentSeconds = 0;
                     for (i = 0; i < g.players.length; i++) {
                         g.players[i].status = 'At port';
                         g.players[i].actualCasts = 0;
                     }
                     if (g.currentSeason < g.totalSeasons) {
-                        console.log('Season ended on gameroom ' + gameName + ', beginning pause period.');
+                        console.log('Season ended on gameroom ' + gameName + ', beginning rest period.');
                         io.sockets.in(gameName).emit('gamesettings', g);
                         io.sockets.in(gameName).emit('endseason', g.currentSeason);
                     } else {
@@ -71,9 +71,9 @@ function engine(io) {
                     }
                     io.sockets.in(gameName).emit('gamesettings', g);
                 }
-            } else {
+            } else if (g.status == "resting") {
                 g.currentSeconds += 1;
-                if (g.pauseDuration <= g.currentSeconds) {
+                if (g.restDuration <= g.currentSeconds) {
                     g.certainFish = Math.min(g.certainFish * g.spawnFactor, g.startingFish);
                     g.actualMysteryFish = Math.min(g.actualMysteryFish * g.spawnFactor, g.startingMysteryFish);
                     g.status = 'running';
@@ -90,10 +90,15 @@ function engine(io) {
                     console.log('Beginning new season in gameroom ' + gameName);
                     io.sockets.in(gameName).emit('begin', 'New season');
                 } else {
-                    console.log('Seconds since pausing gameroom ' + gameName + ': ' + g.currentSeconds);
-                    io.sockets.in(gameName).emit('pausetime', g.currentSeconds);
+                    console.log('Seconds since resting in gameroom ' + gameName + ': ' + g.currentSeconds);
+                    io.sockets.in(gameName).emit('resttime', g.currentSeconds);
                     io.sockets.in(gameName).emit('gamesettings', g);
                 }
+            } else if (g.status == "paused") {
+                console.log("Gameroom " + gameName + " paused by user.");
+            } else {
+                // Weird state
+                console.log("Game state unaccounted for: " + g.status);
             }
         } else {
             console.log('Waiting for players in gameroom ' + gameName);
@@ -174,6 +179,8 @@ function engine(io) {
         this.status = "waiting";
         this.currentSeconds = 0;
         this.debug = true;
+        this.unpauseState = "";
+        this.pausedBy = null;
 
         if (gs != null) {
             this.expectedPlayers = gs.numFishers;
@@ -181,7 +188,7 @@ function engine(io) {
             this.totalSeasons = gs.numSeasons;
             this.seasonDuration = gs.seasonDuration;
             this.initialDelay = gs.initialDelay;
-            this.pauseDuration = gs.pauseDuration;
+            this.restDuration = gs.restDuration;
             this.spawnFactor = gs.spawnFactor;
             this.chanceOfCatch = gs.chanceOfCatch;
             this.costDepart = gs.costDepart;
@@ -198,6 +205,7 @@ function engine(io) {
             this.showFisherStatus = gs.showFisherStatus;
             this.showFishCaught = gs.showFishCaught;
             this.showBalance = gs.showBalance;
+            this.pauseEnabled = gs.pauseEnabled;
             this.prepText = gs.prepText;
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
                 this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, this.expectedPlayers,
@@ -210,7 +218,7 @@ function engine(io) {
             this.totalSeasons = 4;
             this.seasonDuration = 60;
             this.initialDelay = 5;
-            this.pauseDuration = 10;
+            this.restDuration = 10;
             this.spawnFactor = 4.00;
             this.chanceOfCatch = 1.00;
             this.costDepart = 0;
@@ -227,6 +235,7 @@ function engine(io) {
             this.showFisherStatus = true;
             this.showFishCaught = true;
             this.showBalance = true;
+            this.pauseEnabled = true;
             this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers " +
                 "in this ocean. All the fishers see the same ocean that you do. At the beginning, the " +
                 "number of fish will be displayed on the screen. However, sometimes there is some " +
@@ -306,6 +315,35 @@ function engine(io) {
             socket.set('myID', myID,
                 function() {
                     socket.emit('myID', myID);
+                }
+            );
+
+            socket.on('pauseRequest',
+                function (data) {
+                    console.log("A player requested to pause the simulation: " + data.id + ", gameroom " + group + ".");
+                    if ((games[group].status == "running") || (games[group].status == "resting")) {
+                        games[group].unpauseState = games[group].status;
+                        games[group].status = "paused";
+                        games[group].pausedBy = data.id;
+                        console.log("Simulation '" + group + "' paused by player " + data.id);
+                        io.sockets.in(group).emit("paused", {id: data.id});
+                        io.sockets.in(group).emit('gamesettings', games[group]);
+                    } else {
+                        console.log("The simulation '" + group + "' was not in a pausable state.");
+                    }
+                }
+            );
+
+            socket.on('resumeRequest',
+                function (data) {
+                    console.log("A player requested to resume the simulation: " + data.id + ", gameroom " + group + ".");
+                    if (games[group].status == "paused" && games[group].pausedBy == data.id) {
+                        games[group].status = games[group].unpauseState;
+                        io.sockets.in(group).emit("resumed", {id: data.id});
+                        io.sockets.in(group).emit('gamesettings', games[group]);
+                    } else {
+                        console.log("The simulation '" + group + "' was not paused, or was paused by someone other than " + data.id);
+                    }
                 }
             );
 
