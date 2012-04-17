@@ -55,6 +55,7 @@ function engine(io) {
                         console.log('Simulation ended for gameroom ' + gameName);
                         io.sockets.in(gameName).emit('gamesettings', g);
                         io.sockets.in(gameName).emit('gameover', 'gameover');
+                        logRun(g, gameName);
                         g.timable = false;
                     }
                 } else {
@@ -403,6 +404,54 @@ function engine(io) {
             }
         });
     });
+
+    function logRun(g, name) {
+        // Write a log of the results of the simulation run
+        // g is the game object
+        // r is the output string
+        var currentTime = new Date();
+        var r = "";
+        r += "FISH simulation log\n";
+        r += "-------------------\n\n";
+
+        r += "Run name: " + name + "\n";
+        r += "Date and time: " + currentTime.toString() + "\n\n";
+
+        r += "Number of agents: " + g.expectedPlayers + "\n";
+        r += "Number of humans: " + g.expectedHumans + "\n";
+        r += "Number of seasons: " + g.totalSeasons + "\n";
+        r += "Season length (in seconds): " + g.seasonDuration + "\n";
+        r += "Delay to begin simulation (in seconds): " + g.initialDelay + "\n";
+        r += "Resting time between seasons (in seconds): " + g.restDuration + "\n";
+        r += "Spawn factor: " + g.spawnFactor + "\n";
+        r += "Chance of catch (0.00 to 1.00): " + g.chanceOfCatch + "\n";
+        r += "Cost to depart: " + g.costDepart + "\n";
+        r += "Cost per second at sea: " + g.costAtSea + "\n";
+        r += "Cost to cast for a fish: " + g.costCast + "\n";
+        r += "Value of fish caught: " + g.valueFish + "\n";
+        r += "Number of starting certain fish: " + g.startingFish + "\n";
+        r += "Number of starting mystery fish: " + g.startingMysteryFish + "\n";
+        r += "Number of ending certain fish: " + g.certainFish + "\n";
+        r += "Number of ending mystery fish: " + g.actualMysteryFish + "\n";
+        r += "Showing other fishers' information?: " + (g.showOtherFishers ? "Yes" : "No") + "\n";
+        r += "Showing other fishers' names?: " + (g.showFisherNames ? "Yes" : "No") + "\n";
+        r += "Showing other fishers' status?: " + (g.showFisherStatus ? "Yes" : "No") + "\n";
+        r += "Showing other fishers' number of fish caught?: " + (g.showFishCaught ? "Yes" : "No") + "\n";
+        r += "Showing other fishers' money balance?: " + (g.showBalance ? "Yes" : "No") + "\n\n";
+
+        r += "The following paragraphs were presented to participants as the preparation text:\n";
+        r += "--------------------------------------------------------------------------------\n";
+        r += g.prepText + "\n";
+        r += "--------------------------------------------------------------------------------\n\n";
+
+        fs.writeFile("data/" + name + ".txt", r, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+            console.log("Simulation run logged under data/" + name + ".txt");
+        });
+
+    }
 }
 
 

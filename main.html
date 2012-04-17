@@ -451,6 +451,9 @@ function drawOcean() {
         } else if (gameSettings.status == "paused") {
             oContext.fillStyle = "darkgray";
             oContext.fillText("SIMULATION PAUSED.", 10, 20);
+        } else if (gameSettings.status == "over") {
+            oContext.fillStyle = "darkgray";
+            oContext.fillText("Simulation over.", 10, 20);
         } else {
             oContext.fillText("Unknown state: " + gameSettings.status);
         }
