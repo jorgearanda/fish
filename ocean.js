@@ -33,6 +33,7 @@ function engine(io) {
                 if (g.currentSeconds > g.initialDelay) {
                     g.status = 'running';
                     g.currentSeconds = 0;
+                    g.seasonsData[1].initialFish = g.certainFish + g.actualMysteryFish;
                     console.log('Beginning first season in gameroom ' + gameName);
                     io.sockets.in(gameName).emit('begin', 'Beginning first season');
                     io.sockets.in(gameName).emit('gamesettings', g);
@@ -46,6 +47,7 @@ function engine(io) {
                         g.players[i].status = 'At port';
                         g.players[i].actualCasts = 0;
                     }
+                    g.seasonsData[g.currentSeason].endFish = g.certainFish + g.actualMysteryFish;
                     if (g.currentSeason < g.totalSeasons) {
                         console.log('Season ended on gameroom ' + gameName + ', beginning rest period.');
                         io.sockets.in(gameName).emit('gamesettings', g);
@@ -80,6 +82,7 @@ function engine(io) {
                     g.status = 'running';
                     g.currentSeconds = 0;
                     g.currentSeason += 1;
+                    g.seasonsData[g.currentSeason].initialFish = g.certainFish + g.actualMysteryFish;
                     for (i = 0; i < g.players.length; i++) {
                         g.players[i].fishCaughtPerSeason[g.currentSeason] = 0;
                         g.players[i].startMoneyPerSeason[g.currentSeason] = g.players[i].money;
@@ -171,8 +174,15 @@ function engine(io) {
         this.readRules = false;
     }
 
+    function seasonData (number) {
+        this.number = number;
+        this.initialFish = 0;
+        this.endFish = 0;
+    }
+
     function gameParameters (gs) {
         this.players = new Array();
+        this.seasonsData = new Array();
         this.actualPlayers = 0;
         this.actualHumans = 0;
         this.timable = true;
@@ -213,7 +223,7 @@ function engine(io) {
                     this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
                 this.actualPlayers++;
             }
-     } else {
+        } else {
             this.expectedPlayers = 4;
             this.expectedHumans = 1;
             this.totalSeasons = 4;
@@ -269,6 +279,9 @@ function engine(io) {
                 this.players[i] = new aiAgent(robotNames[i], 0.5, this.expectedPlayers, this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
                 this.actualPlayers++;
             }
+        }
+        for (i = 1; i <= this.totalSeasons; i++) {
+            this.seasonsData[i] = new seasonData(i);
         }
     }
 
@@ -405,12 +418,21 @@ function engine(io) {
         });
     });
 
+    function individualRestraint(pool, numFishers, fishCaught) {
+        return (pool - numFishers * fishCaught) / pool;
+    }
+
+    function groupRestraint(pool, endPool) {
+        return (endPool / pool);
+    }
+
     function logRun(g, name) {
         // Write a log of the results of the simulation run
         // g is the game object
         // r is the output string
         var currentTime = new Date();
         var r = "";
+        var p;
         r += "FISH simulation log\n";
         r += "-------------------\n\n";
 
@@ -443,6 +465,25 @@ function engine(io) {
         r += "--------------------------------------------------------------------------------\n";
         r += g.prepText + "\n";
         r += "--------------------------------------------------------------------------------\n\n";
+
+        r += "Measurements per fisher:\n\n";
+        r += "Fisher, Type, Greed, Season, FishInit, FishTaken, Profit, IR, GR, IE, GE\n";
+        r += "--------------------------------------------------------------------------------\n";
+        for (i = 0; i < g.expectedPlayers; i++) {
+            p = g.players[i];
+            for (j = 1; j <= g.totalSeasons; j++) {
+                r += p.name + ", ";
+                r += p.type + ", ";
+                r += ((p.type == "ai") ? p.greediness : "n/a") + ", ";
+                r += j + ", ";
+                r += g.seasonsData[j].initialFish + ", ";
+                r += p.fishCaughtPerSeason[j] + ", ";
+                r += (p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) + ", ";
+                r += individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
+                r += groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish) + ", ";
+                
+            }
+        }
 
         fs.writeFile("data/" + name + ".txt", r, function (err) {
             if (err) {
