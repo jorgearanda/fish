@@ -3,6 +3,8 @@ var engineCalled = false;
 
 function engine(io) {
     var games = new Array();
+    var logs = new Array();
+    var timestamper = new Date();
     var group;
     var t;
     var beginTimer = false;
@@ -35,6 +37,7 @@ function engine(io) {
                     g.currentSeconds = 0;
                     g.seasonsData[1].initialFish = g.certainFish + g.actualMysteryFish;
                     console.log('Beginning first season in gameroom ' + gameName);
+                    logs[gameName] += timestamper.toString() + ", Beginning first season.\n";
                     io.sockets.in(gameName).emit('begin', 'Beginning first season');
                     io.sockets.in(gameName).emit('gamesettings', g);
                 }
@@ -50,11 +53,13 @@ function engine(io) {
                     g.seasonsData[g.currentSeason].endFish = g.certainFish + g.actualMysteryFish;
                     if (g.currentSeason < g.totalSeasons) {
                         console.log('Season ended on gameroom ' + gameName + ', beginning rest period.');
+                        logs[gameName] += timestamper.toString() + ", Season ended; beginning rest period.\n";
                         io.sockets.in(gameName).emit('gamesettings', g);
                         io.sockets.in(gameName).emit('endseason', g.currentSeason);
                     } else {
                         g.status = 'over';
                         console.log('Simulation ended for gameroom ' + gameName);
+                        logs[gameName] += timestamper.toString() + ", Simulation ended.\n";
                         io.sockets.in(gameName).emit('gamesettings', g);
                         io.sockets.in(gameName).emit('gameover', 'gameover');
                         logRun(g, gameName);
@@ -88,10 +93,11 @@ function engine(io) {
                         g.players[i].startMoneyPerSeason[g.currentSeason] = g.players[i].money;
                         g.players[i].endMoneyPerSeason[g.currentSeason] = g.players[i].money;
 
-                        if (g.players[i].type = 'ai') {
+                        if (g.players[i].type == 'ai') {
                             g.players[i].intendedCasts = Math.round(((g.certainFish + g.actualMysteryFish - ((g.certainFish + g.actualMysteryFish) / g.spawnFactor)) / g.players.length) * 2 * g.players[i].greediness / g.chanceOfCatch);
                         }					}
                     console.log('Beginning new season in gameroom ' + gameName);
+                    logs[gameName] += timestamper.toString() + ", Beginning new season.\n";
                     io.sockets.in(gameName).emit('begin', 'New season');
                 } else {
                     console.log('Seconds since resting in gameroom ' + gameName + ': ' + g.currentSeconds);
@@ -115,6 +121,7 @@ function engine(io) {
         player.money -= g.costCast;
         player.actualCasts++;
         if ((g.certainFish + g.actualMysteryFish > 0) && Math.random() <= g.chanceOfCatch) {
+            logs[gameRoom] += timestamper.toString() + ", Player " + name + " tried to fish successfully.\n";
             player.money += g.valueFish;
             player.fishCaught++;
             player.fishCaughtPerSeason[g.currentSeason]++;
@@ -124,6 +131,8 @@ function engine(io) {
             } else {
                 g.actualMysteryFish -= 1;
             }
+        } else {
+            logs[gameRoom] += timestamper.toString() + ", Player " + name + " tried to fish unsuccessfully.\n";
         }
         player.endMoneyPerSeason[g.currentSeason] = player.money;
     }
@@ -132,6 +141,7 @@ function engine(io) {
         agent = g.players[agentID];
         if ((agent.intendedCasts > agent.actualCasts) && (agent.status == 'At port') && (g.certainFish + g.actualMysteryFish > 0)) {
             console.log("A player sailed to sea: " + agent.name + ", gameroom " + gameName + ".");
+            logs[gameName] += timestamper.toString() + ", Fisher " + agent.name + " sailed to sea.\n";
             agent.status = 'At sea';
             agent.money -= g.costDepart;
             agent.endMoneyPerSeason[g.currentSeason] = agent.money;
@@ -139,6 +149,8 @@ function engine(io) {
             tryToFish(g, gameName, agentID, agent.name);
         } else if (((agent.intendedCasts <= agent.actualCasts) || (g.certainFish + g.actualMysteryFish <= 0)) && agent.status == 'At sea') {
             agent.status = 'At port';
+            console.log(logs[gameName]);
+            logs[gameName] += timestamper.toString() + ", Fisher " + agent.name + " returned to port.\n";
         }
         io.sockets.in(gameName).emit('gamesettings', g);
     }
@@ -293,6 +305,7 @@ function engine(io) {
                 console.log("Group " + group + " already exists. No action taken.");
             } else {
                 games[gs.name] = new gameParameters(gs);
+                logs[gs.name] = timestamper.toString() +  ", Simulation created from newgroup page.\n";
                 console.log("New group added, and parameters created: " + gs.name);
             }
         });
@@ -311,11 +324,14 @@ function engine(io) {
                 console.log("Group " + group + " already exists; user joined.");
             } else {
                 games[group] = new gameParameters();
+                logs[group] = "";
                 console.log("New group added, and parameters created: " +group);
+                logs[group] = timestamper.toString() +  ", Simulation created from fish page.\n";
             }
             io.sockets.in(group).emit("join", "A player joined this group.");
 
             games[group].players[games[group].actualPlayers] = new humanAgent(games[group].actualPlayers);
+            logs[group] += timestamper.toString() + ", Fisher " + games[group].actualPlayers + " joined this simulation.\n";
             myID = games[group].actualPlayers++;
             games[group].actualHumans++;
             io.sockets.in(group).emit("gamesettings", games[group]);
@@ -340,6 +356,7 @@ function engine(io) {
                         games[group].status = "paused";
                         games[group].pausedBy = data.id;
                         console.log("Simulation '" + group + "' paused by player " + data.id);
+                        logs[group] += timestamper.toString() + ", Simulation paused by fisher " + data.id + ".\n";
                         io.sockets.in(group).emit("paused", {id: data.id});
                         io.sockets.in(group).emit('gamesettings', games[group]);
                     } else {
@@ -355,6 +372,7 @@ function engine(io) {
                         games[group].status = games[group].unpauseState;
                         io.sockets.in(group).emit("resumed", {id: data.id});
                         io.sockets.in(group).emit('gamesettings', games[group]);
+                        logs[group] += timestamper.toString() + ", Simulation resumed by fisher " + data.id + ".\n";
                     } else {
                         console.log("The simulation '" + group + "' was not paused, or was paused by someone other than " + data.id);
                     }
@@ -364,6 +382,7 @@ function engine(io) {
             socket.on('toSea',
                 function (data) {
                     console.log("A player sailed to sea: " + data.id + ", gameroom " + group + ".");
+                    logs[group] += timestamper.toString() + ", Fisher " + data.id + " sailed to sea.\n";
                     games[group].players[data.id].status = 'At sea';
                     games[group].players[data.id].money -= games[group].costDepart;
                     games[group].players[data.id].endMoneyPerSeason[games[group].currentSeason] = games[group].players[data.id].money;
@@ -374,6 +393,7 @@ function engine(io) {
             socket.on('toPort',
                 function (data) {
                     console.log("A player returned to port: " + data.id + ", gameroom " + group + ".");
+                    logs[group] += timestamper.toString() + ", Fisher " + data.id + " returned to port.\n";
                     games[group].players[data.id].status = 'At port';
                     io.sockets.in(group).emit('gamesettings', games[group]);
                 }
@@ -382,6 +402,7 @@ function engine(io) {
             socket.on('readRules',
                 function(data) {
                     console.log("A player read the rules and is ready to start: " + data.id + ", gameroom " + group + ".");
+                    logs[group] += timestamper.toString() + ", Fisher " + data.id + " read the rules and is ready to start.\n";
                     games[group].players[data.id].readRules = true;
                     allReadRules = true;
                     for (i = 0; i < games[group].players.length; i++) {
@@ -399,6 +420,7 @@ function engine(io) {
                         }
                         io.sockets.in(group).emit('gamesettings', games[group]);
                         io.sockets.in(group).emit('readying', 'All agents ready - prepare!');
+                        logs[group] += timestamper.toString() + ", All fishers now ready to start.\n";
                     }
                 }
             );
@@ -423,7 +445,31 @@ function engine(io) {
     }
 
     function groupRestraint(pool, endPool) {
-        return (endPool / pool);
+        return endPool / pool;
+    }
+
+    function individualEfficiency(originalPool, startPool, spawnFactor, numFishers, fishCaught) {
+        var ie;
+        if (originalPool <= spawnFactor * startPool) {
+            // Not endangered
+            ie = (startPool - fishCaught * numFishers) * spawnFactor / originalPool;
+        } else {
+            // Endangered
+            ie = (startPool - fishCaught * numFishers) / startPool;
+        }
+        return ie;
+    }
+
+    function groupEfficiency(originalPool, startPool, endPool, spawnFactor) {
+        var ge;
+        if (originalPool <= spawnFactor * startPool) {
+            // Not endangered
+            ge = endPool * spawnFactor / originalPool;
+        } else {
+            // Endangered - unclear if this is the proper interpretation
+            ge = endPool / startPool;
+        }
+        return ge;
     }
 
     function logRun(g, name) {
@@ -481,9 +527,16 @@ function engine(io) {
                 r += (p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) + ", ";
                 r += individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
                 r += groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish) + ", ";
-                
+                r += individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
+                r += groupEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.seasonsData[j].endFish, g.spawnFactor) + "\n";
             }
         }
+        r += "\n";
+        r += "--------------------------------------------------------------------------------\n\n";
+
+        r += "Logged simulation events:\n\n";
+        r += logs[name];
+
 
         fs.writeFile("data/" + name + ".txt", r, function (err) {
             if (err) {
