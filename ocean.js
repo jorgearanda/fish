@@ -330,8 +330,6 @@ function engine(io) {
                 parents[gs.name] = new Parent(gs.name, gs.numOceans);
                 for (ocean = 1; ocean <= gs.numOceans; ocean++) {
                     oceanID = gs.name + "-" + (1000 + ocean).toString().substr(1);
-                    console.log(oceanID);
-                    console.log(gs.numOceans);
                     oceans[oceanID] = new gameParameters(gs, oceanID);
                     logs[oceanID] = timestamper.toString() +  ", Simulation created from newgroup page.\n";
                 }
