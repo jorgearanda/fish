@@ -1,11 +1,27 @@
 <html>
 <head>
-<title>Admin - Main Screen</title>
-<script src="getvalue.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script language="JavaScript">
+        var socket = io.connect();
+
+        socket.on("connect", function (data) {
+            console.log("Connected to server.");
+        });
+
+    </script>
+    <title>Admin - Main Screen</title>
 </head>
 
 <body>
 <h2>Fish Administration</h2>
+
+<h3>Create a new group</h3>
+
+A new group (or simulation) contains one or more oceans, in each of which one or more fishers can fish.
+<br>
+<form>
+    <button type="button" onclick="location.href='newgroup'">Create a group</button>
+</form>
 
 <h3>Simulations in Progress</h3>
 
@@ -13,9 +29,6 @@
 <br>
 <b><a href="active.html?sim=test2">Test2</a></b> - Started on 2011/11/15 17:00 PST by Jorge.
 <br><br>
-
-You can also <a href="newgroup.html">create a new group (simulation)</a>, or <a href="newuser.html">create a new user</a>.
-
 
 <h3>Simulations Completed</h3>
 
