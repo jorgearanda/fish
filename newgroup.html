@@ -44,6 +44,7 @@
         this.robots[2] = new Robot(form.agent3name.value, parseFloat(form.agent3greed.value));
         this.prepText = form.preptext.value;
         this.depletedText = form.depletedtext.value;
+        this.endText = form.endtext.value;
     }
 
     function createGroup(form) {
@@ -185,6 +186,11 @@ Your job is to consider all these factors, and the other fishers, and make your 
 Please ask if anything is unclear. We want you to fully understand the rules before you start fishing.
 
 If you are sure you understand all the above, you are ready to fish. Click on the Go Fishing button on the left when you are ready. Once all the fishers have clicked this button, the first season will begin. (You may have to wait briefly for all the others fishers to click the button.)
+    </textarea>
+
+    <h3>End of simulation message</h3>
+    <textarea name="endtext" rows="10" cols="80">
+Seasons come and seasons go, but for now we are done.
     </textarea>
 
     <h3>Depleted fish stock text</h3>

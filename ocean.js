@@ -124,6 +124,7 @@ function engine(io) {
 
     function checkForDepletion(g, gameRoom) {
         if (g.certainFish + g.actualMysteryFish <= 0) {
+            g.depleted = true;
             endSimulation(gameRoom);
         }
     }
@@ -224,6 +225,7 @@ function engine(io) {
         this.debug = true;
         this.unpauseState = "";
         this.pausedBy = null;
+        this.depleted = false;
 
         if (gs != null) {
             this.numOceans = gs.numOceans;
@@ -252,6 +254,7 @@ function engine(io) {
             this.pauseEnabled = gs.pauseEnabled;
             this.prepText = gs.prepText;
             this.depletedText = gs.depletedText;
+            this.endText = gs.endText;
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
                 this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, this.expectedPlayers,
                     this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
@@ -306,6 +309,7 @@ function engine(io) {
                 "the first season will begin. (You may have to wait briefly for all the others fishers " +
                 "to click the button.)";
             this.depletedText = "All the fish are gone!";
+            this.endText = "Seasons come and seasons go, but for now it seems we're done.";
             robotNames = new Array();
             robotNames[0] = "Leonardo";
             robotNames[1] = "Michelangelo";
