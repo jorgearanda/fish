@@ -1,9 +1,10 @@
 var fs = require("fs");
 var engineCalled = false;
+var runningSims = "--none currently--";
 
 function engine(io) {
     var oceans = new Array();
-    var parents = new Array();
+    var parents = {};
     var logs = new Array();
     var timestamper = new Date();
     var group;
@@ -318,6 +319,14 @@ function engine(io) {
         return availableOcean;
     }
 
+    function recreateSimulationsList() {
+        runningSims = "<ul>";
+        for (parent in parents) {
+            runningSims += "<li><b>" + parent + "</b>, with " + parents[parent].numOceans + " ocean(s).</li>";
+        }
+        runningSims += "</ul>"
+    }
+
     io.sockets.on('connection', function (socket) {
         var oceanID = "";
 
@@ -328,6 +337,7 @@ function engine(io) {
                 console.log("Group " + group + " already exists. No action taken.");
             } else {
                 parents[gs.name] = new Parent(gs.name, gs.numOceans);
+                recreateSimulationsList();
                 for (ocean = 1; ocean <= gs.numOceans; ocean++) {
                     oceanID = gs.name + "-" + (1000 + ocean).toString().substr(1);
                     oceans[oceanID] = new gameParameters(gs, oceanID);
@@ -344,6 +354,7 @@ function engine(io) {
                 console.log("Group " + group + " already exists; user joined.");
             } else {
                 parents[group] = new Parent(group, 1);
+                recreateSimulationsList();
                 oceanID = group + "-001";
                 oceans[oceanID] = new gameParameters(null, oceanID);
                 logs[oceanID] = timestamper.toString() +  ", Simulation created from fish page.\n";
@@ -612,6 +623,23 @@ function mainadmin(response, io) {
             response.end(data);
         }
     );
+
+    if (engineCalled == false) {
+        engineCalled = true;
+        engine(io);
+    }
+}
+
+function runningSimulationsList(response, io) {
+    console.log("Request handler 'runningSimulationsList' was called.");
+    if (engineCalled == false) {
+        console.log("...but the simulation engine is not running!");
+        response.writeHead(500);
+        return response.end("Error trying to get list of running simulations.");
+    } else {
+        response.writeHead(200);
+        response.end(runningSims);
+    }
 }
 
 function newgroup(response, io) {
@@ -661,6 +689,7 @@ function mysteryfish(response, io) {
 
 exports.fish = fish;
 exports.mainadmin = mainadmin;
+exports.runningSimulationsList = runningSimulationsList;
 exports.newgroup = newgroup;
 exports.certainfish = certainfish;
 exports.mysteryfish = mysteryfish;

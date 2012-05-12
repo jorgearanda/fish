@@ -6,6 +6,7 @@ var handle = {};
 handle["/"] = ocean.fish;
 handle["/fish"] = ocean.fish;
 handle["/mainadmin"] = ocean.mainadmin;
+handle["/runningSimulationsList"] = ocean.runningSimulationsList;
 handle["/newgroup"] = ocean.newgroup;
 
 handle["/certain-fish.png"] = ocean.certainfish;

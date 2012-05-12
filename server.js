@@ -14,7 +14,7 @@ function start(route, handle) {
   
   srv = http.createServer(onRequest);
   io = socket.listen(srv);
-  srv.listen(80);
+  srv.listen(8080);
   console.log("Server has started.");
 }
 
