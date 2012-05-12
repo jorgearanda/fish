@@ -27,6 +27,17 @@ function engine(io) {
         }
     }
 
+    function endSimulation(gameName) {
+        g = oceans[gameName];
+        g.status = 'over';
+        console.log('Simulation ended for gameroom ' + gameName);
+        logs[gameName] += new Date().toString() + ", Simulation ended.\n";
+        io.sockets.in(gameName).emit('gamesettings', g);
+        io.sockets.in(gameName).emit('gameover', 'gameover');
+        logRun(g, gameName);
+        g.timable = false;
+    }
+
     function timeStep(gameName) {
         g = oceans[gameName];
         if (g.actualPlayers == g.expectedPlayers) {
@@ -59,13 +70,7 @@ function engine(io) {
                         io.sockets.in(gameName).emit('gamesettings', g);
                         io.sockets.in(gameName).emit('endseason', g.currentSeason);
                     } else {
-                        g.status = 'over';
-                        console.log('Simulation ended for gameroom ' + gameName);
-                        logs[gameName] += new Date().toString() + ", Simulation ended.\n";
-                        io.sockets.in(gameName).emit('gamesettings', g);
-                        io.sockets.in(gameName).emit('gameover', 'gameover');
-                        logRun(g, gameName);
-                        g.timable = false;
+                        endSimulation(gameName);
                     }
                 } else {
                     console.log('Seconds in season for gameroom ' + gameName + ': ' + g.currentSeconds);
@@ -117,26 +122,33 @@ function engine(io) {
         }
     }
 
+    function checkForDepletion(g, gameRoom) {
+        if (g.certainFish + g.actualMysteryFish <= 0) {
+            endSimulation(gameRoom);
+        }
+    }
+
     function tryToFish(g, gameRoom, index, name) {
-        console.log("A player tried to fish: " + name + ", gameroom " + gameRoom + ".");
+        console.log("A fisher tried to fish: " + name + ", gameroom " + gameRoom + ".");
         var player = g.players[index];
         player.money -= g.costCast;
         player.actualCasts++;
         if ((g.certainFish + g.actualMysteryFish > 0) && Math.random() <= g.chanceOfCatch) {
-            logs[gameRoom] += new Date().toString() + ", Player " + name + " tried to fish successfully.\n";
+            logs[gameRoom] += new Date().toString() + ", Fisher " + name + " tried to fish successfully.\n";
             player.money += g.valueFish;
             player.fishCaught++;
             player.fishCaughtPerSeason[g.currentSeason]++;
+            player.endMoneyPerSeason[g.currentSeason] = player.money;
 
             if (Math.floor(Math.random() * (g.certainFish + g.actualMysteryFish)) < g.certainFish) {
                 g.certainFish -= 1;
             } else {
                 g.actualMysteryFish -= 1;
             }
+            checkForDepletion(g, gameRoom);
         } else {
-            logs[gameRoom] += new Date().toString() + ", Player " + name + " tried to fish unsuccessfully.\n";
+            logs[gameRoom] += new Date().toString() + ", Fisher " + name + " tried to fish unsuccessfully.\n";
         }
-        player.endMoneyPerSeason[g.currentSeason] = player.money;
     }
 
     function aiActions(g, gameName, agentID) {
@@ -239,6 +251,7 @@ function engine(io) {
             this.showBalance = gs.showBalance;
             this.pauseEnabled = gs.pauseEnabled;
             this.prepText = gs.prepText;
+            this.depletedText = gs.depletedText;
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
                 this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, this.expectedPlayers,
                     this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
@@ -292,6 +305,7 @@ function engine(io) {
                 "Fishing button on the left when you are ready. Once all the fishers have clicked this button, " +
                 "the first season will begin. (You may have to wait briefly for all the others fishers " +
                 "to click the button.)";
+            this.depletedText = "All the fish are gone!";
             robotNames = new Array();
             robotNames[0] = "Leonardo";
             robotNames[1] = "Michelangelo";

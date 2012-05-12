@@ -387,6 +387,7 @@ function drawFish(oContext, image, size, x, y) {
 
 function performanceReportText() {
     rep = "This simulation is over.\n\n";
+    rep += gameSettings.depletedText + "\n\n";
     rep += "You caught " + gameSettings.players[id].fishCaught + " fish.\n";
     rep += "You ended with " + gameSettings.players[id].money + " money.\n";
     return rep;
