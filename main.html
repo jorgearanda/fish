@@ -385,6 +385,44 @@ function drawFish(oContext, image, size, x, y) {
     }
 }
 
+function performanceReportText() {
+    rep = "This simulation is over.\n\n";
+    rep += "You caught " + gameSettings.players[id].fishCaught + " fish.\n";
+    rep += "You ended with " + gameSettings.players[id].money + " money.\n";
+    return rep;
+}
+
+function writeTextblockInCanvas(ctx, txt, width, height) {
+    console.log(txt);
+    var fitWidth = width;
+    var lineHeight = height;
+    var lines = txt.split('\n');
+    var currentLine = 0;
+    for (i = 0; i < lines.length; i++) {
+        var words = lines[i].split(' ');
+        var idx = 1;
+        while (words.length > 0 && idx <= words.length) {
+            var str = words.slice(0, idx).join(' ');
+            var w = ctx.measureText(str).width;
+            if ( w > fitWidth ) {
+                if (idx==1) {
+                    idx=2;
+                }
+                ctx.fillText( words.slice(0, idx-1).join(' '), 20, 60 + (lineHeight*currentLine) );
+                currentLine++;
+                words = words.splice(idx-1);
+                idx = 1;
+            } else {
+                idx++;
+            }
+        }
+        if  (idx > 0) {
+            ctx.fillText( words.join(' '), 20, 60 + (lineHeight*currentLine) );
+            currentLine++;
+        }
+    }
+}
+
 function drawOcean() {
     oCanvas = document.getElementById("oceanCanvas");
     oContext = oCanvas.getContext("2d");
@@ -402,33 +440,7 @@ function drawOcean() {
         oContext.fillRect(0, 40, 800, 460);
         oContext.fillStyle = "black";
         oContext.font = "14px Courier";
-        var fitWidth = 760;
-        var lineHeight = 15;
-        var lines = gameSettings.prepText.split('\n');
-        var currentLine = 0;
-        for (i = 0; i < lines.length; i++) {
-            var words = lines[i].split(' ');
-            var idx = 1;
-            while (words.length > 0 && idx <= words.length) {
-                var str = words.slice(0, idx).join(' ');
-                var w = oContext.measureText(str).width;
-                if ( w > fitWidth ) {
-                    if (idx==1) {
-                        idx=2;
-                    }
-                    oContext.fillText( words.slice(0, idx-1).join(' '), 20, 60 + (lineHeight*currentLine) );
-                    currentLine++;
-                    words = words.splice(idx-1);
-                    idx = 1;
-                } else {
-                    idx++;
-                }
-            }
-            if  (idx > 0) {
-                oContext.fillText( words.join(' '), 20, 60 + (lineHeight*currentLine) );
-                currentLine++;
-            }
-        }
+        writeTextblockInCanvas(oContext, gameSettings.prepText, 760, 15);
 
         if (gameSettings.status == "readying") {
             oContext.fillStyle = "red";
@@ -436,7 +448,20 @@ function drawOcean() {
         }
     }
 
-    if (gameSettings != null && gameSettings.status != "waiting" && gameSettings.status != "readying") {
+    // Over mode --- show performance report
+    if (gameSettings != null && gameSettings.status == "over") {
+        oContext.font = "16px sans-serif";
+        oContext.fillStyle = "darkgray";
+        oContext.fillText("Simulation over.", 10, 20);
+        oContext.fillStyle = "white";
+        oContext.fillRect(0, 40, 800, 460);
+        oContext.fillStyle = "black";
+        oContext.font = "14px Courier";
+        writeTextblockInCanvas(oContext, performanceReportText(), 760, 15);
+    }
+
+    // Running, resting, or paused.
+    if (gameSettings != null && (gameSettings.status == "running" || gameSettings.status == "resting" || gameSettings.status == "paused")) {
         minFish = gameSettings.certainFish;
         maxFish = minFish + gameSettings.mysteryFish;
         oContext.font = "16px sans-serif";
@@ -456,9 +481,6 @@ function drawOcean() {
         } else if (gameSettings.status == "paused") {
             oContext.fillStyle = "darkgray";
             oContext.fillText("SIMULATION PAUSED.", 10, 20);
-        } else if (gameSettings.status == "over") {
-            oContext.fillStyle = "darkgray";
-            oContext.fillText("Simulation over.", 10, 20);
         } else {
             oContext.fillText("Unknown state: " + gameSettings.status, 10, 20);
         }
