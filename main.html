@@ -46,6 +46,7 @@
     var unpausable = false;
     var readRules = false;
     var seconds;
+    var fullroom = false;
 
     socket.on("connect", function (data) {
         socket.emit("join group", group, pid);
@@ -59,6 +60,11 @@
         console.log(gs);
         gameSettings = gs;
     });
+
+    socket.on('fullroom', function (group) {
+        console.log("The room was full.");
+        fullroom = true;
+    })
 
     socket.on('myID', function (myID) {
         console.log(myID);
@@ -436,10 +442,17 @@ function drawOcean() {
     oContext = oCanvas.getContext("2d");
 
     // Booting up
-    if (gameSettings == null) {
+    if (gameSettings == null && !fullroom) {
         oContext.fillStyle = "darkblue";
         oContext.font = "20px sans-serif";
         oContext.fillText("Please wait - loading the application", 20, 200);
+    }
+
+    // Full room
+    if (fullroom) {
+        oContext.fillStyle = "darkblue";
+        oContext.font = "20px sans-serif";
+        oContext.fillText("The group you tried to join is full. Please notify the experimenter.", 20, 200);
     }
 
     // Readying mode --- show preparation text

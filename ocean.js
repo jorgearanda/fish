@@ -384,119 +384,125 @@ function engine(io) {
                 oceanID = allocateFisherToOcean(group);
             }
 
-            socket.set('group', oceanID,
-                function() {
-                    socket.emit("myGroup", oceanID);
-                }
-            );
-            socket.join(oceanID);
-
-            oceans[oceanID].players[oceans[oceanID].actualPlayers] = new humanAgent(pid);
-            logs[oceanID] += new Date().toString() + ", Fisher " + pid + " joined this simulation.\n";
-            myID = oceans[oceanID].actualPlayers++;
-            oceans[oceanID].actualHumans++;
-            io.sockets.in(oceanID).emit("gamesettings", oceans[oceanID]);
-
-            socket.set('gamesettings', oceans[oceanID],
-                function() {
-                    socket.emit('gamesettings', oceans[oceanID]);
-                }
-            );
-
-            socket.set('myID', myID,
-                function() {
-                    socket.emit('myID', myID);
-                }
-            );
-
-            socket.on('pauseRequest',
-                function (data) {
-                    console.log("A player requested to pause the simulation: " + data.id + ", gameroom " + oceanID + ".");
-                    if ((oceans[oceanID].status == "running") || (oceans[oceanID].status == "resting")) {
-                        oceans[oceanID].unpauseState = oceans[oceanID].status;
-                        oceans[oceanID].status = "paused";
-                        oceans[oceanID].pausedBy = data.id;
-                        console.log("Simulation '" + oceanID + "' paused by player " + oceans[oceanID].players[data.id].name);
-                        logs[oceanID] += new Date().toString() + ", Simulation paused by fisher " + oceans[oceanID].players[data.id].name + ".\n";
-                        io.sockets.in(oceanID).emit("paused", {id: data.id});
-                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                    } else {
-                        console.log("The simulation '" + oceanID + "' was not in a pausable state.");
+            if (oceanID == "") {
+                // The only way we can end here is if the group is already full.
+                console.log("User tried to join a group that is already full.");
+                socket.emit('fullroom', group);
+            } else {
+                socket.set('group', oceanID,
+                    function() {
+                        socket.emit("myGroup", oceanID);
                     }
-                }
-            );
+                );
+                socket.join(oceanID);
 
-            socket.on('resumeRequest',
-                function (data) {
-                    console.log("A player requested to resume the simulation: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                    if (oceans[oceanID].status == "paused" && oceans[oceanID].pausedBy == data.id) {
-                        oceans[oceanID].status = oceans[oceanID].unpauseState;
-                        io.sockets.in(oceanID).emit("resumed", {id: data.id});
-                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                        logs[oceanID] += new Date().toString() + ", Simulation resumed by fisher " + oceans[oceanID].players[data.id].name + ".\n";
-                    } else {
-                        console.log("The simulation '" + oceanID + "' was not paused, or was paused by someone other than " + oceans[oceanID].players[data.id].name);
+                oceans[oceanID].players[oceans[oceanID].actualPlayers] = new humanAgent(pid);
+                logs[oceanID] += new Date().toString() + ", Fisher " + pid + " joined this simulation.\n";
+                myID = oceans[oceanID].actualPlayers++;
+                oceans[oceanID].actualHumans++;
+                io.sockets.in(oceanID).emit("gamesettings", oceans[oceanID]);
+
+                socket.set('gamesettings', oceans[oceanID],
+                    function() {
+                        socket.emit('gamesettings', oceans[oceanID]);
                     }
-                }
-            );
+                );
 
-            socket.on('toSea',
-                function (data) {
-                    console.log("A player sailed to sea: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                    logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " sailed to sea.\n";
-                    oceans[oceanID].players[data.id].status = 'At sea';
-                    oceans[oceanID].players[data.id].money -= oceans[oceanID].costDepart;
-                    oceans[oceanID].players[data.id].endMoneyPerSeason[oceans[oceanID].currentSeason] = oceans[oceanID].players[data.id].money;
-                    io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                }
-            );
+                socket.set('myID', myID,
+                    function() {
+                        socket.emit('myID', myID);
+                    }
+                );
 
-            socket.on('toPort',
-                function (data) {
-                    console.log("A player returned to port: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                    logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " returned to port.\n";
-                    oceans[oceanID].players[data.id].status = 'At port';
-                    io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                }
-            );
-
-            socket.on('readRules',
-                function(data) {
-                    console.log("A player read the rules and is ready to start: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                    logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " read the rules and is ready to start.\n";
-                    oceans[oceanID].players[data.id].readRules = true;
-                    allReadRules = true;
-                    for (i = 0; i < oceans[oceanID].players.length; i++) {
-                        if (oceans[oceanID].players[i].readRules == false) {
-                            allReadRules = false;
+                socket.on('pauseRequest',
+                    function (data) {
+                        console.log("A player requested to pause the simulation: " + data.id + ", gameroom " + oceanID + ".");
+                        if ((oceans[oceanID].status == "running") || (oceans[oceanID].status == "resting")) {
+                            oceans[oceanID].unpauseState = oceans[oceanID].status;
+                            oceans[oceanID].status = "paused";
+                            oceans[oceanID].pausedBy = data.id;
+                            console.log("Simulation '" + oceanID + "' paused by player " + oceans[oceanID].players[data.id].name);
+                            logs[oceanID] += new Date().toString() + ", Simulation paused by fisher " + oceans[oceanID].players[data.id].name + ".\n";
+                            io.sockets.in(oceanID).emit("paused", {id: data.id});
+                            io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
+                        } else {
+                            console.log("The simulation '" + oceanID + "' was not in a pausable state.");
                         }
                     }
-                    if (oceans[oceanID].actualPlayers == oceans[oceanID].expectedPlayers && allReadRules) {
-                        oceans[oceanID].status = 'readying';
-                        oceans[oceanID].currentSeason = 1;
+                );
+
+                socket.on('resumeRequest',
+                    function (data) {
+                        console.log("A player requested to resume the simulation: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
+                        if (oceans[oceanID].status == "paused" && oceans[oceanID].pausedBy == data.id) {
+                            oceans[oceanID].status = oceans[oceanID].unpauseState;
+                            io.sockets.in(oceanID).emit("resumed", {id: data.id});
+                            io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
+                            logs[oceanID] += new Date().toString() + ", Simulation resumed by fisher " + oceans[oceanID].players[data.id].name + ".\n";
+                        } else {
+                            console.log("The simulation '" + oceanID + "' was not paused, or was paused by someone other than " + oceans[oceanID].players[data.id].name);
+                        }
+                    }
+                );
+
+                socket.on('toSea',
+                    function (data) {
+                        console.log("A player sailed to sea: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
+                        logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " sailed to sea.\n";
+                        oceans[oceanID].players[data.id].status = 'At sea';
+                        oceans[oceanID].players[data.id].money -= oceans[oceanID].costDepart;
+                        oceans[oceanID].players[data.id].endMoneyPerSeason[oceans[oceanID].currentSeason] = oceans[oceanID].players[data.id].money;
+                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
+                    }
+                );
+
+                socket.on('toPort',
+                    function (data) {
+                        console.log("A player returned to port: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
+                        logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " returned to port.\n";
+                        oceans[oceanID].players[data.id].status = 'At port';
+                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
+                    }
+                );
+
+                socket.on('readRules',
+                    function(data) {
+                        console.log("A player read the rules and is ready to start: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
+                        logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " read the rules and is ready to start.\n";
+                        oceans[oceanID].players[data.id].readRules = true;
+                        allReadRules = true;
                         for (i = 0; i < oceans[oceanID].players.length; i++) {
-                            oceans[oceanID].players[i].startMoneyPerSeason[1] = oceans[oceanID].players[i].startMoney;
-                            oceans[oceanID].players[i].endMoneyPerSeason[1] = oceans[oceanID].players[i].startMoney;
-                            oceans[oceanID].players[i].fishCaughtPerSeason[1] = 0;
+                            if (oceans[oceanID].players[i].readRules == false) {
+                                allReadRules = false;
+                            }
                         }
-                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                        io.sockets.in(oceanID).emit('readying', 'All agents ready - prepare!');
-                        logs[oceanID] += new Date().toString() + ", All fishers now ready to start.\n";
+                        if (oceans[oceanID].actualPlayers == oceans[oceanID].expectedPlayers && allReadRules) {
+                            oceans[oceanID].status = 'readying';
+                            oceans[oceanID].currentSeason = 1;
+                            for (i = 0; i < oceans[oceanID].players.length; i++) {
+                                oceans[oceanID].players[i].startMoneyPerSeason[1] = oceans[oceanID].players[i].startMoney;
+                                oceans[oceanID].players[i].endMoneyPerSeason[1] = oceans[oceanID].players[i].startMoney;
+                                oceans[oceanID].players[i].fishCaughtPerSeason[1] = 0;
+                            }
+                            io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
+                            io.sockets.in(oceanID).emit('readying', 'All agents ready - prepare!');
+                            logs[oceanID] += new Date().toString() + ", All fishers now ready to start.\n";
+                        }
                     }
-                }
-            );
+                );
 
-            socket.on('fishing',
-                function (data) {
-                    tryToFish(oceans[oceanID], oceanID, data.id, oceans[oceanID].players[data.id].name);
-                    io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                }
-            );
+                socket.on('fishing',
+                    function (data) {
+                        tryToFish(oceans[oceanID], oceanID, data.id, oceans[oceanID].players[data.id].name);
+                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
+                    }
+                );
 
-            // Begin timekeeping
-            if (beginTimer == false) {
-                beginTimer = true;
-                timer();
+                // Begin timekeeping
+                if (beginTimer == false) {
+                    beginTimer = true;
+                    timer();
+                }
             }
         });
     });
