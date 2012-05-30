@@ -24,7 +24,10 @@
     }
 
     var group = getValue("gid");
+    var pid = getValue("pid");
     console.log("Group: " + group);
+    console.log("Participant ID: " + pid);
+
     var socket = io.connect();
     var gameSettings = null;
     var id = null;
@@ -45,7 +48,7 @@
     var seconds;
 
     socket.on("connect", function (data) {
-        socket.emit("join group", group);
+        socket.emit("join group", group, pid);
     });
 
     socket.on("join", function (data) {
@@ -579,7 +582,7 @@ function drawInfo() {
             var offsetFisherLine = 70;
             var user = false;
             for (i = 0; i < gameSettings.players.length; i++) {
-                user = (gameSettings.players[i].name == id);
+                user = (gameSettings.players[i].name == pid);
                 if (gameSettings.showOtherFishers || user) {
                     if (gameSettings.showFisherNames || user) {
                         if (user) {
