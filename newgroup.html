@@ -38,10 +38,19 @@
         this.showBalance = form.showbalance[0].checked;
         this.pauseEnabled = form.pauseenabled[0].checked;
 
+        if (form.greeduniformity[0].checked) {
+            this.greedUniformity = 0;
+        } else if (form.greeduniformity[1].checked) {
+            this.greedUniformity = 1;
+        } else {
+            this.greedUniformity = -1;
+        }
+
         this.robots = new Array();
         this.robots[0] = new Robot(form.agent1name.value, parseFloat(form.agent1greed.value));
         this.robots[1] = new Robot(form.agent2name.value, parseFloat(form.agent2greed.value));
         this.robots[2] = new Robot(form.agent3name.value, parseFloat(form.agent3greed.value));
+
         this.prepText = form.preptext.value;
         this.depletedText = form.depletedtext.value;
         this.endText = form.endtext.value;
@@ -53,6 +62,18 @@
         console.log("Requesting server to create group " + gid);
         socket.emit("create group", gs);
     }
+
+    function toggleGreed(constantGreed) {
+        document.forms["newgroup"].globalconstantgreed.disabled = !constantGreed;
+        document.forms["newgroup"].agent1greed.disabled = constantGreed;
+        document.forms["newgroup"].agent2greed.disabled = constantGreed;
+        document.forms["newgroup"].agent3greed.disabled = constantGreed;
+        if (document.forms["newgroup"].globalgreed[1].checked) {
+            document.forms["newgroup"].agent1greed.value = document.forms["newgroup"].globalconstantgreed.value;
+            document.forms["newgroup"].agent2greed.value = document.forms["newgroup"].globalconstantgreed.value;
+            document.forms["newgroup"].agent3greed.value = document.forms["newgroup"].globalconstantgreed.value;
+        }
+    }
 </script>
 
 <title>Admin - New Group Screen</title>
@@ -62,7 +83,7 @@
 Please enter the settings for the simulation you are about to create.
 <br>
 
-<form action="mainadmin">
+<form name="newgroup" action="mainadmin">
 Simulation name: <input type="text" name="gid" />
 <br>
 <h3>General settings</h3>
@@ -89,7 +110,7 @@ Allow client to pause simulation?
 
 <h3>Economics</h3>
 
-Fish value: <input type="number" min="0" step="1" name="fishvalue" value="2000" />
+Fish value: <input type="number" min="0" step="1" name="fishvalue" value="100" />
 <br>
 Cost to cast: <input type="number" min="0" step="1" name="costcast" value="25"/>
 <br>
@@ -148,8 +169,21 @@ Show balance:
 <br>
 
 <h3>Artificial agents' information</h3>
-<h4>Agent 1</h4>
-<br>
+    <h4>Overall Greediness parameters</h4>
+    The greediness parameter should...
+    <br><input type="radio" name="globalgreed" value="vary" checked onchange="toggleGreed(!this.checked);">
+    ...vary between artificial agents.
+    <br><input type="radio" name="globalgreed" value="constant" onchange="toggleGreed(this.checked);">
+    ...remain constant across artificial agents, at the following level:
+    <input type="number" min="0" step="0.01" max="1" name="globalconstantgreed" value="0.5" disabled="disabled" onchange="toggleGreed(true);"/>
+
+    <br><br>
+    The greediness of the artificial agents should...
+    <br><input type="radio" name="greeduniformity" value="uniform" checked> ...remain uniform through the seasons.
+    <br><input type="radio" name="greeduniformity" value="increasing"> ...increase as the seasons progress.
+    <br><input type="radio" name="greeduniformity" value="decreasing"> ...decrease as the seasons progress.
+
+    <h4>Agent 1</h4>
 Name: <input type="text" name="agent1name" value="Kermit"/>
 <br>
 Greediness: <input type="number" min="0" step="0.01" max="1" name="agent1greed" value="0.5" />
@@ -158,7 +192,6 @@ Greediness: <input type="number" min="0" step="0.01" max="1" name="agent1greed" 
 <br>
 
 <h4>Agent 2</h4>
-<br>
 Name: <input type="text" name="agent2name" value="Gonzo"/>
 <br>
 Greediness: <input type="number" min="0" step="0.01" max="1" name="agent2greed" value="0.5" />
@@ -167,7 +200,6 @@ Greediness: <input type="number" min="0" step="0.01" max="1" name="agent2greed" 
 <br>
 
 <h4>Agent 3</h4>
-<br>
 Name: <input type="text" name="agent3name" value="Fozzie"/>
 <br>
 Greediness: <input type="number" min="0" step="0.01" max="1" name="agent3greed" value="0.5" />
@@ -197,6 +229,7 @@ Seasons come and seasons go, but for now we are done.
     <textarea name="depletedtext" rows="10" cols="80">
 All the fish are now gone.
     </textarea>
+    <br><br>
 
     <button type="button" onclick="createGroup(this.form); location.href='mainadmin';">Create this Group</button>
 </form>

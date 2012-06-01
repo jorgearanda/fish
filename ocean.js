@@ -99,9 +99,10 @@ function engine(io) {
                         g.players[i].fishCaughtPerSeason[g.currentSeason] = 0;
                         g.players[i].startMoneyPerSeason[g.currentSeason] = g.players[i].money;
                         g.players[i].endMoneyPerSeason[g.currentSeason] = g.players[i].money;
+                        g.players[i].greedPerSeason[g.currentSeason] = seasonGreed(g.players[i].greediness, g.greedUniformity, g.currentSeason, g.totalSeasons);
 
                         if (g.players[i].type == 'ai') {
-                            g.players[i].intendedCasts = Math.round(((g.certainFish + g.actualMysteryFish - ((g.certainFish + g.actualMysteryFish) / g.spawnFactor)) / g.players.length) * 2 * g.players[i].greediness / g.chanceOfCatch);
+                            g.players[i].intendedCasts = seasonCasts(g.players[i].greedPerSeason[g.currentSeason], g.players.length, g.certainFish, g.actualMysteryFish, g.spawnFactor, g.chanceOfCatch);
                         }					}
                     console.log('Beginning new season in gameroom ' + gameName);
                     logs[gameName] += new Date().toString() + ", Beginning new season.\n";
@@ -170,7 +171,35 @@ function engine(io) {
         io.sockets.in(gameName).emit('gamesettings', g);
     }
 
-    function aiAgent (name, greed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch) {
+    function seasonGreed (overallGreed, greedUniformity, currentSeason, totalSeasons) {
+        var currentGreed = overallGreed;
+        var lowBound = overallGreed;
+        var highBound = overallGreed;
+        var increment = 0.0;
+        if (overallGreed < 0.5) {
+            lowBound = overallGreed / 2.0;
+            highBound = overallGreed + lowBound;
+        } else {
+            highBound = ((1.0 - overallGreed) / 2.0) + overallGreed;
+            lowBound = 2.0 * overallGreed - highBound;
+        }
+
+        increment = (highBound - lowBound) /  (1.0 * (totalSeasons - 1));
+        if (totalSeasons > 1) {
+            if (greedUniformity == -1) {
+                currentGreed = highBound - (increment * (currentSeason - 1));
+            } else if (greedUniformity == 1) {
+                currentGreed = lowBound + (increment * (currentSeason - 1));
+            }
+        }
+        return currentGreed;
+    }
+
+    function seasonCasts (currentGreed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch) {
+        return Math.round(((startingFish + actualMysteryFish - ((startingFish + actualMysteryFish) / spawnFactor)) / expectedPlayers) * 2 * currentGreed / chanceOfCatch);;
+    }
+
+    function aiAgent (name, greed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch, greedUniformity, totalSeasons) {
         this.name = name;
         this.type = 'ai';
         this.greediness = greed;
@@ -180,8 +209,11 @@ function engine(io) {
         this.money = 100;
         this.startMoneyPerSeason = new Array();
         this.endMoneyPerSeason = new Array();
+        this.greedPerSeason = new Array();
         this.status = 'At port';
-        this.intendedCasts = Math.round(((startingFish + actualMysteryFish - ((startingFish + actualMysteryFish) / spawnFactor)) / expectedPlayers) * 2 * this.greediness / chanceOfCatch);
+        var cGreed = seasonGreed(greed, greedUniformity, 1, totalSeasons);
+        this.greedPerSeason[1] = cGreed;
+        this.intendedCasts = seasonCasts(cGreed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch);
         this.actualCasts = 0;
         this.readRules = true;
     }
@@ -196,6 +228,7 @@ function engine(io) {
         this.money = 100;
         this.startMoneyPerSeason = new Array();
         this.endMoneyPerSeason = new Array();
+        this.greedPerSeason = new Array();
         this.status = 'At port';
         this.actualCasts = 0;
         this.readRules = false;
@@ -252,12 +285,13 @@ function engine(io) {
             this.showFishCaught = gs.showFishCaught;
             this.showBalance = gs.showBalance;
             this.pauseEnabled = gs.pauseEnabled;
+            this.greedUniformity = gs.greedUniformity;
             this.prepText = gs.prepText;
             this.depletedText = gs.depletedText;
             this.endText = gs.endText;
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
                 this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, this.expectedPlayers,
-                    this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
+                    this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch, this.greedUniformity, this.totalSeasons);
                 this.actualPlayers++;
             }
         } else {
@@ -285,6 +319,7 @@ function engine(io) {
             this.showFishCaught = true;
             this.showBalance = true;
             this.pauseEnabled = true;
+            this.greedUniformity = 0;
             this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers " +
                 "in this ocean. All the fishers see the same ocean that you do. At the beginning, the " +
                 "number of fish will be displayed on the screen. However, sometimes there is some " +
@@ -316,7 +351,7 @@ function engine(io) {
             robotNames[2] = "Raphael";
             robotNames[3] = "Donatello";
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-                this.players[i] = new aiAgent(robotNames[i], 0.5, this.expectedPlayers, this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
+                this.players[i] = new aiAgent(robotNames[i], 0.5, this.expectedPlayers, this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch, this.greedUniformity, this.totalSeasons);
                 this.actualPlayers++;
             }
         }
@@ -587,7 +622,7 @@ function engine(io) {
             for (j = 1; j <= g.totalSeasons; j++) {
                 r += p.name + ", ";
                 r += p.type + ", ";
-                r += ((p.type == "ai") ? p.greediness : "n/a") + ", ";
+                r += ((p.type == "ai") ? p.greedPerSeason[j] : "n/a") + ", ";
                 r += j + ", ";
                 r += g.seasonsData[j].initialFish + ", ";
                 r += p.fishCaughtPerSeason[j] + ", ";
