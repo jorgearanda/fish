@@ -45,6 +45,10 @@
         } else {
             this.greedUniformity = -1;
         }
+        this.erratic = form.erratic[0].checked;
+        this.hesitation = parseFloat(form.hesitation.value);
+        this.castsPerSecond = parseInt(form.castspersecond.value);
+        this.castingProbability = parseFloat(form.castingprobability.value);
 
         this.robots = new Array();
         this.robots[0] = new Robot(form.agent1name.value, parseFloat(form.agent1greed.value));
@@ -169,7 +173,7 @@ Show balance:
 <br>
 
 <h3>Artificial agents' information</h3>
-    <h4>Overall Greediness parameters</h4>
+    <h4>Overall parameters</h4>
     The greediness parameter should...
     <br><input type="radio" name="globalgreed" value="vary" checked onchange="toggleGreed(!this.checked);">
     ...vary between artificial agents.
@@ -182,6 +186,26 @@ Show balance:
     <br><input type="radio" name="greeduniformity" value="uniform" checked> ...remain uniform through the seasons.
     <br><input type="radio" name="greeduniformity" value="increasing"> ...increase as the seasons progress.
     <br><input type="radio" name="greeduniformity" value="decreasing"> ...decrease as the seasons progress.
+
+    <br><br>
+    Should the artificial agents behave "erratically" (hesitate, cast for fish at different rates)?
+    This may make them behave non-optimally.
+    <br><input type="radio" name="erratic" value="y" checked/> Yes
+    <br>
+    <input type="radio" name="erratic" value="n"/> No
+
+    <br><br>
+    Hesitation factor:
+    <input type="number" min="0.01" step="0.01" name="hesitation" value="0.4" />
+
+    <br><br>
+    What is the artificial agents maximum number of casts per second?
+    <input type="number" min="1" step="1" name="castspersecond" value="3" />
+
+    <br><br>
+    Casting probability factor:
+    <input type="number" min="0.01" step="0.01" name="castingprobability" value="0.8" />
+
 
     <h4>Agent 1</h4>
 Name: <input type="text" name="agent1name" value="Kermit"/>
@@ -231,7 +255,8 @@ All the fish are now gone.
     </textarea>
     <br><br>
 
-    <button type="button" onclick="createGroup(this.form); location.href='mainadmin';">Create this Group</button>
+    <button type="button" onclick="createGroup(this.form);">Create this Group</button>
+    <!--<button type="button" onclick="createGroup(this.form); location.href='mainadmin';">Create this Group</button>-->
 </form>
 
 </body>
