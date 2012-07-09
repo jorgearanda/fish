@@ -12,7 +12,8 @@ handle["/mainadmin"] = ocean.mainadmin;
 handle["/runningSimulationsList"] = ocean.runningSimulationsList;
 handle["/newgroup"] = ocean.newgroup;
 
-handle["/certain-fish.png"] = ocean.certainfish;
-handle["/mystery-fish.png"] = ocean.mysteryfish;
+handle["/certain-fish.gif"] = ocean.certainfish;
+handle["/mystery-fish.gif"] = ocean.mysteryfish;
+handle["/underwater.jpg"] = ocean.underwater;
 
 server.start(router.route, handle);

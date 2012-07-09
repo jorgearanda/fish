@@ -754,10 +754,10 @@ function newgroup(response, io) {
 
 function certainfish(response, io) {
     console.log("Request handler 'certainfish' was called.");
-    fs.readFile(__dirname + '/certain-fish.png',
+    fs.readFile(__dirname + '/certain-fish.gif',
         function (err, data) {
             if (err) {
-                return response.end('Error loading certain-fish.png');
+                return response.end('Error loading certain-fish.gif');
             }
             response.writeHead(200);
             response.end(data);
@@ -767,10 +767,23 @@ function certainfish(response, io) {
 
 function mysteryfish(response, io) {
     console.log("Request handler 'mysteryfish' was called.");
-    fs.readFile(__dirname + '/mystery-fish.png',
+    fs.readFile(__dirname + '/mystery-fish.gif',
         function (err, data) {
             if (err) {
-                return response.end('Error loading mystery-fish.png');
+                return response.end('Error loading mystery-fish.gif');
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+}
+
+function underwater(response, io) {
+    console.log("Request handler 'underwater' was called.");
+    fs.readFile(__dirname + '/underwater.jpg',
+        function (err, data) {
+            if (err) {
+                return response.end('Error loading underwater.jpg');
             }
             response.writeHead(200);
             response.end(data);
@@ -785,3 +798,4 @@ exports.runningSimulationsList = runningSimulationsList;
 exports.newgroup = newgroup;
 exports.certainfish = certainfish;
 exports.mysteryfish = mysteryfish;
+exports.underwater = underwater;

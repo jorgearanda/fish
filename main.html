@@ -291,8 +291,10 @@ function clearControl() {
 
 var fishImage = new Image();
 var mysteryFishImage = new Image();
-fishImage.src = "certain-fish.png";
-mysteryFishImage.src = "mystery-fish.png";
+var underwater = new Image();
+fishImage.src = "certain-fish.gif";
+mysteryFishImage.src = "mystery-fish.gif";
+underwater.src = "underwater.jpg";
 
 function Coords() {
     this.x = 0;
@@ -394,6 +396,10 @@ function drawFish(oContext, image, size, x, y) {
     }
 }
 
+function drawBackground(oContext, image, x1, y1, x2, y2) {
+    oContext.drawImage(image, x1, y1, x2, y2);
+}
+
 function performanceReportText() {
     rep = "This simulation is over.\n\n";
     if (gameSettings.depleted) {
@@ -457,7 +463,7 @@ function drawOcean() {
 
     // Readying mode --- show preparation text
     if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
-        oContext.fillStyle = "lightblue";
+        oContext.fillStyle = "white";
         oContext.fillRect(0, 40, 800, 460);
         oContext.fillStyle = "black";
         oContext.font = "14px Courier";
@@ -506,8 +512,7 @@ function drawOcean() {
             oContext.fillText("Unknown state: " + gameSettings.status, 10, 20);
         }
 
-        oContext.fillStyle = "lightblue";
-        oContext.fillRect(0, 40, 800, 460);
+        drawBackground(oContext, underwater, 0, 40, 800, 460);
 
         var certain = gameSettings.certainFish;
         var mystery = gameSettings.mysteryFish;
