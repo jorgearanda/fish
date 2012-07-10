@@ -255,20 +255,51 @@ function engine(io) {
         this.numOceans = numOceans;
     }
 
-    function gameParameters (gs, parentName) {
-        this.parent = parentName;
-        this.players = new Array();
-        this.seasonsData = new Array();
+    function gameState (gs) {
+        this.status = "waiting";
         this.actualPlayers = 0;
         this.actualHumans = 0;
         this.timable = true;
         this.currentSeason = 0;
-        this.status = "waiting";
         this.currentSeconds = 0;
         this.debug = true;
         this.unpauseState = "";
         this.pausedBy = null;
         this.depleted = false;
+        this.certainFish = gs.startingFish;
+        this.mysteryFish = gs.startingMysteryFish;
+
+        // gameState for all agents
+        this.players = new Array();
+        for (i = 0; i < gs.expectedPlayers - gs.expectedHumans; i++) {
+            this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, gs.expectedPlayers,
+                gs.startingFish, gs.startingMysteryFish, gs.spawnFactor, gs.chanceOfCatch, gs.greedUniformity,
+                gs.totalSeasons);
+            gs.actualPlayers++;
+        }
+
+        // seasons data
+        this.seasonsData = new Array();
+        for (i = 1; i <= this.totalSeasons; i++) {
+            this.seasonsData[i] = new seasonData(i);
+        }
+
+    }
+
+    function gameParameters (gs, parentName) {
+        this.parent = parentName;
+        this.players = new Array();         // gameState
+        this.seasonsData = new Array();     // gameState
+        this.actualPlayers = 0;             // gameState
+        this.actualHumans = 0;              // gameState
+        this.timable = true;                // gameState
+        this.currentSeason = 0;             // gameState
+        this.status = "waiting";            // gameState
+        this.currentSeconds = 0;            // gameState
+        this.debug = true;                  // gameState
+        this.unpauseState = "";             // gameState
+        this.pausedBy = null;               // gameState
+        this.depleted = false;              // gameState
 
         if (gs != null) {
             this.numOceans = gs.numOceans;
@@ -285,10 +316,10 @@ function engine(io) {
             this.costCast = gs.costCast;
             this.valueFish = gs.valueFish;
             this.startingFish = gs.certainFish;
-            this.certainFish = gs.certainFish;
+            this.certainFish = gs.certainFish;                  // gameState
             this.mysteryFish = gs.mysteryFish;
             this.startingMysteryFish = gs.actualMysteryFish;
-            this.actualMysteryFish = gs.actualMysteryFish;
+            this.actualMysteryFish = gs.actualMysteryFish;      // gameState
             this.showOtherFishers = gs.showOtherFishers;
             this.showFisherNames = gs.showFisherNames;
             this.showFisherStatus = gs.showFisherStatus;
@@ -458,6 +489,12 @@ function engine(io) {
                 socket.set('gamesettings', oceans[oceanID],
                     function() {
                         socket.emit('gamesettings', oceans[oceanID]);
+                    }
+                );
+
+                socket.set('gamestate', oceans[oceanID],
+                    function() {
+                        socket.emit('gamestate', oceans[oceanID]);
                     }
                 );
 
