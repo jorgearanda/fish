@@ -598,31 +598,42 @@ function drawInfo() {
             iContext.font = "14px sans-serif";
             var skippedFishers = 0;
             var offsetFisherLine = 70;
-            var user = false;
+
             for (i = 0; i < gameSettings.players.length; i++) {
-                user = (gameSettings.players[i].name == pid);
-                if (gameSettings.showOtherFishers || user) {
-                    if (gameSettings.showFisherNames || user) {
-                        if (user) {
-                            iContext.fillText("You", 50, offsetFisherLine);
-                        } else {
-                            iContext.fillText(gameSettings.players[i].name, 50, offsetFisherLine);
-                        }
-                    } else {
-                        iContext.fillText("?????", 50, offsetFisherLine);
-                    }
-                    if (gameSettings.showFisherStatus || user) {
-                        iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
-                    }
-                    if (gameSettings.showFishCaught || user) {
-                        iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
-                        iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
-                    }
-                    if (gameSettings.showBalance || user) {
-                        iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);
-                        iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, offsetFisherLine);
-                    }
+                if (gameSettings.players[i].name == pid) {
+                    // Found the record that corresponds to this player. Display it first.
+                    iContext.fillText("You", 50, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);
+                    iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, offsetFisherLine);
                     offsetFisherLine += 20;
+                }
+            }
+
+            // Go through the rest of the fishers
+            for (i = 0; i < gameSettings.players.length; i++) {
+                if (gameSettings.players[i].name != pid) {
+                    if (gameSettings.showOtherFishers) {
+                        if (gameSettings.showFisherNames) {
+                            iContext.fillText(gameSettings.players[i].name, 50, offsetFisherLine);
+                        } else {
+                            iContext.fillText("?????", 50, offsetFisherLine);
+                        }
+                        if (gameSettings.showFisherStatus) {
+                            iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
+                        }
+                        if (gameSettings.showFishCaught) {
+                            iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
+                            iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
+                        }
+                        if (gameSettings.showBalance) {
+                            iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);
+                            iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, offsetFisherLine);
+                        }
+                        offsetFisherLine += 20;
+                    }
                 }
             }
         }
