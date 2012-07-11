@@ -16,4 +16,6 @@ handle["/certain-fish.gif"] = ocean.certainfish;
 handle["/mystery-fish.gif"] = ocean.mysteryfish;
 handle["/underwater.jpg"] = ocean.underwater;
 
+handle["/js/jquery-1.7.2.min.js"] = ocean.jquery;
+
 server.start(router.route, handle);

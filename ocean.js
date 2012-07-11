@@ -446,6 +446,7 @@ function engine(io) {
                     logs[oceanID] = new Date().toString() +  ", Simulation created from newgroup page.\n";
                 }
                 console.log("New group added, and parameters created: " + gs.name);
+                socket.emit("group-created");
             }
         });
 
@@ -828,6 +829,19 @@ function underwater(response, io) {
     );
 }
 
+function jquery(response, io) {
+    console.log("Request handler 'jquery' was called.");
+    fs.readFile(__dirname + '/js/jquery-1.7.2.min.js',
+        function (err, data) {
+            if (err) {
+                return response.end('Error loading /js/jquery-1.7.2.min.js');
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+}
+
 exports.fish = fish;
 exports.welcome = welcome;
 exports.mainadmin = mainadmin;
@@ -836,3 +850,4 @@ exports.newgroup = newgroup;
 exports.certainfish = certainfish;
 exports.mysteryfish = mysteryfish;
 exports.underwater = underwater;
+exports.jquery = jquery;
