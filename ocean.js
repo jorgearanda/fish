@@ -441,6 +441,7 @@ function engine(io) {
             console.log("Attempting to create group " + gs.name);
             if (gs.name in parents) {
                 console.log("Group " + group + " already exists. No action taken.");
+                socket.emit("group-not-created");
             } else {
                 parents[gs.name] = new Parent(gs.name, gs.numOceans);
                 recreateSimulationsList();

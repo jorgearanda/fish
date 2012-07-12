@@ -24,6 +24,18 @@
             display: block;
         }
 
+        .status-message {
+            font-size: 10pt;
+        }
+
+        .blue {
+            color: blue;
+        }
+
+        .red {
+            color: red;
+        }
+
         .hidden {
             visibility: hidden;
         }
@@ -60,6 +72,12 @@
         socket.on("group-created", function() {
             // Go back to mainadmin window
             location.href = "mainadmin";
+        });
+
+        socket.on("group-not-created", function() {
+            $("#create").prop("disabled", false);
+            $(".status-message").toggleClass("red");
+            $(".status-message").text("The simulation '" + $("#gid").val() + "' could not be created. That name may already be in use; please use a different one.");
         });
 
         function Robot(name, greed) {
@@ -117,6 +135,9 @@
 
         var CreateGroup = function () {
             var gs = new gameParameters();
+            $("#create").prop("disabled", true);
+            $(".status-message").toggleClass("blue");
+            $(".status-message").text("Requesting server to create simulation " + $("#gid").val() + "...");
             console.log("Requesting server to create group " + $("#gid").val());
             socket.emit("create group", gs);
         }
@@ -442,7 +463,7 @@
     <hr/>
     <div class="break"></div>
 
-    <button type="button" id="create">Create this Group</button>
+    <button type="button" id="create">Create this Group</button> <label class="status-message"></label>
 </form>
 
 </body>
