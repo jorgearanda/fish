@@ -8,22 +8,26 @@ function engine(io) {
     var logs = new Array();
     var timestamper = new Date();
     var group;
-    var t;
-    var beginTimer = false;
-    var endTimer = false;
+    var t;  // timer function variable
+    var timerIsRunning = false;
+    var keepTimerGoing = true;
 
     function timer() {
-        if (!endTimer) {
+        // This function looks for "timable" simulations (those currently having action of any kind),
+        // and sends them to timeStep every second.
+        // When there are no more simulations to timestep, it wraps its own cycle up.
+        if (keepTimerGoing) {
+            keepTimerGoing = false;
             for (game in oceans) {
                 if (oceans[game].timable == true) {
+                    keepTimerGoing = true;
                     timeStep(game);
                 }
             }
             t = setTimeout(timer, 1000);
         } else {
             console.log('Finishing timer---we are done.');
-            beginTimer = false;
-            endTimer = true;
+            timerIsRunning = false;
         }
     }
 
@@ -590,8 +594,9 @@ function engine(io) {
                 );
 
                 // Begin timekeeping
-                if (beginTimer == false) {
-                    beginTimer = true;
+                if (timerIsRunning == false) {
+                    timerIsRunning = true;
+                    keepTimerGoing = true;
                     timer();
                 }
             }
