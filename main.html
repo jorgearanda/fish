@@ -97,18 +97,9 @@
         fishingAllowed = false;
     });
 
-    socket.on('time', function (data) {
-        console.log('Seconds from start: ' + data);
-        seconds = data;
-    });
-
-    socket.on('resttime', function (data) {
-        console.log('Seconds from start of rest: ' + data);
-        seconds = data;
-    });
-
     socket.on('endseason', function (data) {
-        console.log('Season ' + data + ' ended.');
+        console.log('Current season ended.');
+        gameSettings = data;
         sailingAllowed = false;
         fishingAllowed = false;
         returningAllowed = false;
