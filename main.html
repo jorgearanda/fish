@@ -86,7 +86,8 @@
     });
 
     socket.on('begin', function (data) {
-        console.log('begin: ' + data);
+        console.log('Begin simulation.');
+        gameSettings = data;
         sailingAllowed = true;
     });
 

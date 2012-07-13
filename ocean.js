@@ -48,25 +48,24 @@ function engine(io) {
                 console.log(oceanName + ": Waiting for all players to click on Go Fishing.");
             } else if (ocean.isReadying()) {
                 // The "readying" phase happens after everyone said they are ready, and before the simulation runs.
-                // The length of the "readying" phase is determined by the "initialDelay" parameter.
-                ocean.currentSeconds += 1;
-                if (ocean.currentSeconds > ocean.initialDelay) {
+                // Advance the clock for the ocean
+                ocean.tick();
+                if (ocean.hasReachedInitialDelay()) {
                     ocean.status = 'running';
                     // Resetting the chronometer for the new phase
-                    ocean.currentSeconds = 0;
+                    ocean.resetTimer();
                     // Ugly. We know this is the first phase, but the following lines should be reworked.
                     ocean.seasonsData[1].initialFish = ocean.certainFish + ocean.actualMysteryFish;
                     console.log(oceanName + ": Beginning first season.");
                     logs[oceanName] += new Date().toString() + ", Beginning first season.\n";
-                    // Can't I just send the ocean settings in the "begin" message?
-                    io.sockets.in(oceanName).emit('begin', 'Beginning first season');
-                    io.sockets.in(oceanName).emit('gamesettings', ocean);
+                    io.sockets.in(oceanName).emit('begin', ocean);
                 }
-            } else if (ocean.status == 'running') {
-                ocean.currentSeconds += 1;
-                if (ocean.seasonDuration <= ocean.currentSeconds) {
+            } else if (ocean.isRunning()) {
+                ocean.tick();
+                if (ocean.hasReachedSeasonDuration()) {
                     ocean.status = 'resting';
-                    ocean.currentSeconds = 0;
+                    ocean.resetTimer();
+                    // Fix this.
                     for (i = 0; i < ocean.players.length; i++) {
                         ocean.players[i].status = 'At port';
                         ocean.players[i].actualCasts = 0;
@@ -315,6 +314,12 @@ function engine(io) {
         this.isNotOver = isNotOver;
         this.isWaiting = isWaiting;
         this.isReadying = isReadying;
+        this.isRunning = isRunning;
+        this.tick = tick;
+        this.resetTimer = resetTimer;
+        this.hasReachedInitialDelay = hasReachedInitialDelay;
+        this.hasReachedInterseasonDelay = hasReachedInterseasonDelay;
+        this.hasReachedSeasonDuration = hasReachedSeasonDuration;
 
         if (gs != null) {
             this.numOceans = gs.numOceans;
@@ -456,6 +461,36 @@ function engine(io) {
     // Attached to gameParameters
     function isReadying() {
         return (this.status == "readying");
+    }
+
+    // Attached to gameParameters
+    function isRunning() {
+        return (this.status == "running");
+    }
+
+    // Attached to gameParameters
+    function tick() {
+        this.currentSeconds += 1;
+    }
+
+    // Attached to gameParameters
+    function resetTimer() {
+        this.currentSeconds = 0;
+    }
+
+    // Attached to gameParameters
+    function hasReachedInitialDelay() {
+        return (this.currentSeconds > this.initialDelay);
+    }
+
+    // Attached to gameParameters
+    function hasReachedInterseasonDelay() {
+        return (this.currentSeconds > this.seasonDelay);
+    }
+
+    // Attached to gameParameters
+    function hasReachedSeasonDuration() {
+        return (this.currentSeconds > this.seasonDuration);
     }
 
 
