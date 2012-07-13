@@ -3,8 +3,15 @@ var engineCalled = false;
 var runningSims = "--none currently--";
 
 function engine(io) {
+    // The array "oceans" holds all active simulations. If one simulation group has more than one ocean, then
+    // there is one entry for each ocean in this array.
+    // Oceans are indexed by their name.
     var oceans = new Array();
-    var parents = {};
+
+    // The "oceanGroups" object holds all active simulation groups. Every oceanGroup has at least one ocean.
+    // Every ocean has a single corresponding oceanGroup entry.
+    var oceanGroups = {};
+
     var logs = new Array();
     var timestamper = new Date();
     var group;
@@ -31,99 +38,126 @@ function engine(io) {
         }
     }
 
-    function endSimulation(gameName) {
-        g = oceans[gameName];
+    function endSimulation(oceanName) {
+        // Wrap it up for the simulation named "oceanName"
+        g = oceans[oceanName];
         g.timable = false;
         g.status = 'over';
-        console.log('Simulation ended for gameroom ' + gameName);
-        logs[gameName] += new Date().toString() + ", Simulation ended.\n";
-        io.sockets.in(gameName).emit('gamesettings', g);
-        io.sockets.in(gameName).emit('gameover', 'gameover');
-        logRun(g, gameName);
+        console.log(oceanName + ": Simulation ended.");
+        logs[oceanName] += new Date().toString() + ", Simulation ended.\n";
+        io.sockets.in(oceanName).emit('gamesettings', g);
+        io.sockets.in(oceanName).emit('gameover', 'gameover');
+
+        // Create a log file for this ocean run.
+        logRun(g, oceanName);
     }
 
-    function timeStep(gameName) {
-        g = oceans[gameName];
-        if (g.actualPlayers == g.expectedPlayers && g.status != "over") {
-            if (g.status == 'waiting') {
-                console.log('Waiting for all players to read the preparatory text and click on Go Fishing, in gameroom ' + gameName);
-            } else if (g.status == 'readying') {
-                g.currentSeconds += 1;
-                if (g.currentSeconds > g.initialDelay) {
-                    g.status = 'running';
-                    g.currentSeconds = 0;
-                    g.seasonsData[1].initialFish = g.certainFish + g.actualMysteryFish;
-                    console.log('Beginning first season in gameroom ' + gameName);
-                    logs[gameName] += new Date().toString() + ", Beginning first season.\n";
-                    io.sockets.in(gameName).emit('begin', 'Beginning first season');
-                    io.sockets.in(gameName).emit('gamesettings', g);
-                }
-            } else if (g.status == 'running') {
-                g.currentSeconds += 1;
-                if (g.seasonDuration <= g.currentSeconds) {
-                    g.status = 'resting';
-                    g.currentSeconds = 0;
-                    for (i = 0; i < g.players.length; i++) {
-                        g.players[i].status = 'At port';
-                        g.players[i].actualCasts = 0;
-                    }
-                    g.seasonsData[g.currentSeason].endFish = g.certainFish + g.actualMysteryFish;
-                    if (g.currentSeason < g.totalSeasons) {
-                        console.log('Season ended on gameroom ' + gameName + ', beginning rest period.');
-                        logs[gameName] += new Date().toString() + ", Season ended; beginning rest period.\n";
-                        io.sockets.in(gameName).emit('gamesettings', g);
-                        io.sockets.in(gameName).emit('endseason', g.currentSeason);
-                    } else {
-                        endSimulation(gameName);
-                    }
-                } else {
-                    console.log('Seconds in season for gameroom ' + gameName + ': ' + g.currentSeconds);
-                    io.sockets.in(gameName).emit('time', g.currentSeconds);
-                    for (i = 0; i < g.players.length; i++) {
-                        if (g.players[i].type == 'ai') {
-                            aiActions(g, gameName, i);
-                        }
-                        if (g.players[i].status == 'At sea') {
-                            g.players[i].money -= g.costAtSea;
-                            g.players[i].endMoneyPerSeason[g.currentSeason] = g.players[i].money;
-                        }
-                    }
-                    io.sockets.in(gameName).emit('gamesettings', g);
-                }
-            } else if (g.status == "resting") {
-                g.currentSeconds += 1;
-                if (g.restDuration <= g.currentSeconds) {
-                    g.certainFish = Math.min(g.certainFish * g.spawnFactor, g.startingFish);
-                    g.actualMysteryFish = Math.min(g.actualMysteryFish * g.spawnFactor, g.startingMysteryFish);
-                    g.status = 'running';
-                    g.currentSeconds = 0;
-                    g.currentSeason += 1;
-                    g.seasonsData[g.currentSeason].initialFish = g.certainFish + g.actualMysteryFish;
-                    for (i = 0; i < g.players.length; i++) {
-                        g.players[i].fishCaughtPerSeason[g.currentSeason] = 0;
-                        g.players[i].startMoneyPerSeason[g.currentSeason] = g.players[i].money;
-                        g.players[i].endMoneyPerSeason[g.currentSeason] = g.players[i].money;
-                        g.players[i].greedPerSeason[g.currentSeason] = seasonGreed(g.players[i].greediness, g.greedUniformity, g.currentSeason, g.totalSeasons);
+    function allPlayersLoaded(ocean) {
+        return (ocean.actualPlayers == ocean.expectedPlayers);
+    }
 
-                        if (g.players[i].type == 'ai') {
-                            g.players[i].intendedCasts = seasonCasts(g.players[i].greedPerSeason[g.currentSeason], g.players.length, g.certainFish, g.actualMysteryFish, g.spawnFactor, g.chanceOfCatch);
-                        }					}
-                    console.log('Beginning new season in gameroom ' + gameName);
-                    logs[gameName] += new Date().toString() + ", Beginning new season.\n";
-                    io.sockets.in(gameName).emit('begin', 'New season');
-                } else {
-                    console.log('Seconds since resting in gameroom ' + gameName + ': ' + g.currentSeconds);
-                    io.sockets.in(gameName).emit('resttime', g.currentSeconds);
-                    io.sockets.in(gameName).emit('gamesettings', g);
+    function isNotOver(ocean) {
+        return (ocean.status != "over");
+    }
+
+    function isWaiting(ocean) {
+        return (ocean.status == "waiting");
+    }
+
+    function isReadying(ocean) {
+        return (ocean.status == "readying");
+    }
+
+    function timeStep(oceanName) {
+        // Perform one tick of the clock for the simulation oceanName.
+        // This entails moving the timer forward one second, checking if that pushes the simulation
+        // into the next phase, and asking the bots to perform actions.
+        var ocean = oceans[oceanName];
+        if (allPlayersLoaded(ocean) && isNotOver(ocean)) {
+            if (isWaiting(ocean)) {
+                console.log(oceanName + ": Waiting for all players to click on Go Fishing.");
+            } else if (isReadying(ocean)) {
+                // The "readying" phase happens after everyone said they are ready, and before the simulation runs.
+                // The length of the "readying" phase is determined by the "initialDelay" parameter.
+                ocean.currentSeconds += 1;
+                if (ocean.currentSeconds > ocean.initialDelay) {
+                    ocean.status = 'running';
+                    // Resetting the chronometer for the new phase
+                    ocean.currentSeconds = 0;
+                    // Ugly. We know this is the first phase, but the following lines should be reworked.
+                    ocean.seasonsData[1].initialFish = ocean.certainFish + ocean.actualMysteryFish;
+                    console.log(oceanName + ": Beginning first season.");
+                    logs[oceanName] += new Date().toString() + ", Beginning first season.\n";
+                    // Can't I just send the ocean settings in the "begin" message?
+                    io.sockets.in(oceanName).emit('begin', 'Beginning first season');
+                    io.sockets.in(oceanName).emit('gamesettings', ocean);
                 }
-            } else if (g.status == "paused") {
-                console.log("Gameroom " + gameName + " paused by user.");
+            } else if (ocean.status == 'running') {
+                ocean.currentSeconds += 1;
+                if (ocean.seasonDuration <= ocean.currentSeconds) {
+                    ocean.status = 'resting';
+                    ocean.currentSeconds = 0;
+                    for (i = 0; i < ocean.players.length; i++) {
+                        ocean.players[i].status = 'At port';
+                        ocean.players[i].actualCasts = 0;
+                    }
+                    ocean.seasonsData[ocean.currentSeason].endFish = ocean.certainFish + ocean.actualMysteryFish;
+                    if (ocean.currentSeason < ocean.totalSeasons) {
+                        console.log('Season ended on gameroom ' + oceanName + ', beginning rest period.');
+                        logs[oceanName] += new Date().toString() + ", Season ended; beginning rest period.\n";
+                        io.sockets.in(oceanName).emit('gamesettings', ocean);
+                        io.sockets.in(oceanName).emit('endseason', ocean.currentSeason);
+                    } else {
+                        endSimulation(oceanName);
+                    }
+                } else {
+                    console.log('Seconds in season for gameroom ' + oceanName + ': ' + ocean.currentSeconds);
+                    io.sockets.in(oceanName).emit('time', ocean.currentSeconds);
+                    for (i = 0; i < ocean.players.length; i++) {
+                        if (ocean.players[i].type == 'ai') {
+                            aiActions(ocean, oceanName, i);
+                        }
+                        if (ocean.players[i].status == 'At sea') {
+                            ocean.players[i].money -= ocean.costAtSea;
+                            ocean.players[i].endMoneyPerSeason[ocean.currentSeason] = ocean.players[i].money;
+                        }
+                    }
+                    io.sockets.in(oceanName).emit('gamesettings', ocean);
+                }
+            } else if (ocean.status == "resting") {
+                ocean.currentSeconds += 1;
+                if (ocean.restDuration <= ocean.currentSeconds) {
+                    ocean.certainFish = Math.min(ocean.certainFish * ocean.spawnFactor, ocean.startingFish);
+                    ocean.actualMysteryFish = Math.min(ocean.actualMysteryFish * ocean.spawnFactor, ocean.startingMysteryFish);
+                    ocean.status = 'running';
+                    ocean.currentSeconds = 0;
+                    ocean.currentSeason += 1;
+                    ocean.seasonsData[ocean.currentSeason].initialFish = ocean.certainFish + ocean.actualMysteryFish;
+                    for (i = 0; i < ocean.players.length; i++) {
+                        ocean.players[i].fishCaughtPerSeason[ocean.currentSeason] = 0;
+                        ocean.players[i].startMoneyPerSeason[ocean.currentSeason] = ocean.players[i].money;
+                        ocean.players[i].endMoneyPerSeason[ocean.currentSeason] = ocean.players[i].money;
+                        ocean.players[i].greedPerSeason[ocean.currentSeason] = seasonGreed(ocean.players[i].greediness, ocean.greedUniformity, ocean.currentSeason, ocean.totalSeasons);
+
+                        if (ocean.players[i].type == 'ai') {
+                            ocean.players[i].intendedCasts = seasonCasts(ocean.players[i].greedPerSeason[ocean.currentSeason], ocean.players.length, ocean.certainFish, ocean.actualMysteryFish, ocean.spawnFactor, ocean.chanceOfCatch);
+                        }					}
+                    console.log('Beginning new season in gameroom ' + oceanName);
+                    logs[oceanName] += new Date().toString() + ", Beginning new season.\n";
+                    io.sockets.in(oceanName).emit('begin', 'New season');
+                } else {
+                    console.log('Seconds since resting in gameroom ' + oceanName + ': ' + ocean.currentSeconds);
+                    io.sockets.in(oceanName).emit('resttime', ocean.currentSeconds);
+                    io.sockets.in(oceanName).emit('gamesettings', ocean);
+                }
+            } else if (ocean.status == "paused") {
+                console.log("Gameroom " + oceanName + " paused by user.");
             } else {
                 // Weird state
-                console.log("Game state unaccounted for: " + g.status);
+                console.log("Game state unaccounted for: " + ocean.status);
             }
         } else {
-            console.log('Waiting for players in gameroom ' + gameName);
+            console.log('Waiting for players in gameroom ' + oceanName);
         }
     }
 
@@ -415,7 +449,7 @@ function engine(io) {
 
     function allocateFisherToOcean(parent) {
         var availableOcean = "";
-        for (i = 1; i <= parents[parent].numOceans; i++) {
+        for (i = 1; i <= oceanGroups[parent].numOceans; i++) {
             oID = parent + "-" + (1000 + i).toString().substr(1);
             if (oceans[oID].actualHumans < oceans[oID].expectedHumans) {
                 availableOcean = oID;
@@ -427,8 +461,8 @@ function engine(io) {
 
     function recreateSimulationsList() {
         runningSims = "<ul>";
-        for (parent in parents) {
-            runningSims += "<li><b>" + parent + "</b>, with " + parents[parent].numOceans + " ocean(s).</li>";
+        for (parent in oceanGroups) {
+            runningSims += "<li><b>" + parent + "</b>, with " + oceanGroups[parent].numOceans + " ocean(s).</li>";
         }
         runningSims += "</ul>"
     }
@@ -439,11 +473,11 @@ function engine(io) {
         // Creating a group from newgroup.html
         socket.on('create group', function (gs) {
             console.log("Attempting to create group " + gs.name);
-            if (gs.name in parents) {
+            if (gs.name in oceanGroups) {
                 console.log("Group " + group + " already exists. No action taken.");
                 socket.emit("group-not-created");
             } else {
-                parents[gs.name] = new Parent(gs.name, gs.numOceans);
+                oceanGroups[gs.name] = new Parent(gs.name, gs.numOceans);
                 recreateSimulationsList();
                 for (ocean = 1; ocean <= gs.numOceans; ocean++) {
                     oceanID = gs.name + "-" + (1000 + ocean).toString().substr(1);
@@ -458,10 +492,10 @@ function engine(io) {
         // Responding to main.html
         var myID;
         socket.on('join group', function (group, pid) {
-            if (group in parents) {
+            if (group in oceanGroups) {
                 console.log("Group " + group + " already exists; user joined.");
             } else {
-                parents[group] = new Parent(group, 1);
+                oceanGroups[group] = new Parent(group, 1);
                 recreateSimulationsList();
                 oceanID = group + "-001";
                 oceans[oceanID] = new gameParameters(null, oceanID);
