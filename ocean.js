@@ -223,8 +223,8 @@ function engine(io) {
         this.greediness = greed;
         this.fishCaught = 0;
         this.fishCaughtPerSeason = new Array();
-        this.startMoney = 100;
-        this.money = 100;
+        this.startMoney = 0;
+        this.money = 0;
         this.startMoneyPerSeason = new Array();
         this.endMoneyPerSeason = new Array();
         this.greedPerSeason = new Array();
@@ -242,8 +242,8 @@ function engine(io) {
         this.greediness = null;
         this.fishCaught = 0;
         this.fishCaughtPerSeason = new Array();
-        this.startMoney = 100;
-        this.money = 100;
+        this.startMoney = 0;
+        this.money = 0;
         this.startMoneyPerSeason = new Array();
         this.endMoneyPerSeason = new Array();
         this.greedPerSeason = new Array();
