@@ -38,45 +38,15 @@ function engine(io) {
         }
     }
 
-    function endSimulation(oceanName) {
-        // Wrap it up for the simulation named "oceanName"
-        g = oceans[oceanName];
-        g.timable = false;
-        g.status = 'over';
-        console.log(oceanName + ": Simulation ended.");
-        logs[oceanName] += new Date().toString() + ", Simulation ended.\n";
-        io.sockets.in(oceanName).emit('gamesettings', g);
-        io.sockets.in(oceanName).emit('gameover', 'gameover');
-
-        // Create a log file for this ocean run.
-        logRun(g, oceanName);
-    }
-
-    function allPlayersLoaded(ocean) {
-        return (ocean.actualPlayers == ocean.expectedPlayers);
-    }
-
-    function isNotOver(ocean) {
-        return (ocean.status != "over");
-    }
-
-    function isWaiting(ocean) {
-        return (ocean.status == "waiting");
-    }
-
-    function isReadying(ocean) {
-        return (ocean.status == "readying");
-    }
-
     function timeStep(oceanName) {
         // Perform one tick of the clock for the simulation oceanName.
         // This entails moving the timer forward one second, checking if that pushes the simulation
         // into the next phase, and asking the bots to perform actions.
         var ocean = oceans[oceanName];
-        if (allPlayersLoaded(ocean) && isNotOver(ocean)) {
-            if (isWaiting(ocean)) {
+        if (ocean.allPlayersLoaded() && ocean.isNotOver()) {
+            if (ocean.isWaiting()) {
                 console.log(oceanName + ": Waiting for all players to click on Go Fishing.");
-            } else if (isReadying(ocean)) {
+            } else if (ocean.isReadying()) {
                 // The "readying" phase happens after everyone said they are ready, and before the simulation runs.
                 // The length of the "readying" phase is determined by the "initialDelay" parameter.
                 ocean.currentSeconds += 1;
@@ -108,7 +78,7 @@ function engine(io) {
                         io.sockets.in(oceanName).emit('gamesettings', ocean);
                         io.sockets.in(oceanName).emit('endseason', ocean.currentSeason);
                     } else {
-                        endSimulation(oceanName);
+                        ocean.endSimulation();
                     }
                 } else {
                     console.log('Seconds in season for gameroom ' + oceanName + ': ' + ocean.currentSeconds);
@@ -164,7 +134,7 @@ function engine(io) {
     function checkForDepletion(g, gameRoom) {
         if (g.certainFish + g.actualMysteryFish <= 0) {
             g.depleted = true;
-            endSimulation(gameRoom);
+            g.endSimulation();
         }
     }
 
@@ -325,6 +295,7 @@ function engine(io) {
     }
 
     function gameParameters (gs, parentName) {
+        this.name = parentName;
         this.parent = parentName;
         this.players = new Array();         // gameState
         this.seasonsData = new Array();     // gameState
@@ -338,6 +309,12 @@ function engine(io) {
         this.unpauseState = "";             // gameState
         this.pausedBy = null;               // gameState
         this.depleted = false;              // gameState
+
+        this.endSimulation = endSimulation;
+        this.allPlayersLoaded = allPlayersLoaded;
+        this.isNotOver = isNotOver;
+        this.isWaiting = isWaiting;
+        this.isReadying = isReadying;
 
         if (gs != null) {
             this.numOceans = gs.numOceans;
@@ -446,6 +423,42 @@ function engine(io) {
             this.seasonsData[i] = new seasonData(i);
         }
     }
+
+    // Attached to gameParameters
+    function endSimulation() {
+        // Wrap it up for this simulation
+        this.timable = false;
+        this.status = "over";
+        console.log(this.name + ": Simulation ended.");
+        logs[this.name] += new Date().toString() + ", Simulation ended.\n";
+        io.sockets.in(this.name).emit('gamesettings', this);
+        io.sockets.in(this.name).emit('gameover', this);
+
+        // Create a log file for this ocean run.
+        logRun(this, this.name);
+    }
+
+    // Attached to gameParameters
+    function allPlayersLoaded() {
+        return (this.actualPlayers == this.expectedPlayers);
+    }
+
+    // Attached to gameParameters
+    function isNotOver() {
+        return (this.status != "over");
+    }
+
+    // Attached to gameParameters
+    function isWaiting() {
+        return (this.status == "waiting");
+    }
+
+    // Attached to gameParameters
+    function isReadying() {
+        return (this.status == "readying");
+    }
+
+
 
     function allocateFisherToOcean(parent) {
         var availableOcean = "";

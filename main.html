@@ -115,6 +115,7 @@
 
     socket.on('gameover', function (data) {
         console.log('Simulation over.');
+        gameSettings = data;
         sailingAllowed = false;
         fishingAllowed = false;
         returningAllowed = false;
@@ -413,7 +414,6 @@ function performanceReportText() {
 }
 
 function writeTextblockInCanvas(ctx, txt, width, height) {
-    console.log(txt);
     var fitWidth = width;
     var lineHeight = height;
     var lines = txt.split('\n');
