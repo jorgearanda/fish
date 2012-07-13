@@ -74,13 +74,6 @@ function engine(io) {
         }
     }
 
-    function checkForDepletion(g, gameRoom) {
-        if (g.certainFish + g.actualMysteryFish <= 0) {
-            g.depleted = true;
-            g.endSimulation();
-        }
-    }
-
     function tryToFish(g, gameRoom, index, name) {
         console.log("A fisher tried to fish: " + name + ", gameroom " + gameRoom + ".");
         var player = g.players[index];
@@ -98,7 +91,7 @@ function engine(io) {
             } else {
                 g.actualMysteryFish -= 1;
             }
-            checkForDepletion(g, gameRoom);
+            g.checkForDepletion();
         } else {
             logs[gameRoom] += new Date().toString() + ", Fisher " + name + " tried to fish unsuccessfully.\n";
         }
@@ -474,6 +467,13 @@ function engine(io) {
             }
             this.sendGameSettings();
         };
+
+        this.checkForDepletion = function () {
+            if (this.certainFish + this.actualMysteryFish <= 0) {
+                this.depleted = true;
+                this.endSimulation();
+            }
+        }
 
         this.endSimulation = function () {
             // Wrap it up for this simulation
