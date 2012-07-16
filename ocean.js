@@ -108,8 +108,18 @@ function engine(io) {
             this.endMoneyPerSeason[ocean.currentSeason] = this.money;
         };
 
-        this.goToPort = function() {
+        this.goToPort = function(ocean) {
             this.status = "At port";
+            console.log(ocean.name + ", Fisher " + this.name + " returned to port.");
+            logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " returned to port.\n";
+        };
+
+        this.goToSea = function(ocean) {
+            this.status = "At sea";
+            this.money -= ocean.costDepart;
+            this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+            console.log(ocean.name + ": Fisher " + this.name + " sailed to sea.");
+            logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " sailed to sea.\n";
         };
 
         this.tryToFish = function(ocean) {
@@ -139,12 +149,7 @@ function engine(io) {
 
             if (doSomething) {
                 if ((this.intendedCasts > this.actualCasts) && (this.status == 'At port') && (ocean.certainFish + ocean.actualMysteryFish > 0)) {
-                    // Go to sea!
-                    console.log(ocean.name + ": Fisher " + this.name + " sailed to sea.");
-                    logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " sailed to sea.\n";
-                    this.status = 'At sea';
-                    this.money -= ocean.costDepart;
-                    this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+                    this.goToSea(ocean);
                 } else if ((this.intendedCasts > this.actualCasts) && (this.status == 'At sea') && (ocean.certainFish + ocean.actualMysteryFish > 0)) {
                     // Try to fish!
                     for (castAttempts = 0; castAttempts < Math.min(ocean.castsPerSecond, this.intendedCasts - this.actualCasts); castAttempts++) {
@@ -153,15 +158,10 @@ function engine(io) {
                         }
                     }
                 } else if (((this.intendedCasts <= this.actualCasts) || (ocean.certainFish + ocean.actualMysteryFish <= 0)) && this.status == 'At sea') {
-                    // Call it quits.
-                    this.status = 'At port';
-                    console.log(ocean.name + ", Fisher " + this.name + " returned to port.");
-                    logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " returned to port.\n";
+                    this.goToPort(ocean);
                 }
             }
         }
-
-
     }
 
     function seasonData (number) {
@@ -170,12 +170,7 @@ function engine(io) {
         this.endFish = 0;
     }
 
-    function Parent (parentName, numOceans) {
-        this.name = parentName;
-        this.numOceans = numOceans;
-    }
-
-    function gameParameters (gs, parentName) {
+    function Ocean (gs, parentName) {
         this.name = parentName;
         this.parent = parentName;
         this.players = new Array();         // gameState
@@ -350,6 +345,10 @@ function engine(io) {
             return (this.currentSeconds > this.seasonDuration);
         };
 
+        this.hasRoom = function () {
+            return (this.actualHumans < this.expectedHumans);
+        };
+
         this.startNextSeason = function () {
             this.currentSeason += 1;
             console.log(this.name + ": Beginning season " + this.currentSeason);
@@ -432,7 +431,29 @@ function engine(io) {
                 this.actualMysteryFish -= 1;
             }
             this.checkForDepletion();
-        }
+        };
+
+        this.pause = function (pauseRequester) {
+            if (this.isRunning() || this.isResting()) {
+                this.unpauseState = this.status;
+                this.status = "paused";
+                this.pausedBy = pauseRequester;
+                console.log(this.name + ": Ocean paused by agent " + this.players[pauseRequester].name);
+                logs[this.name] += new Date().toString() + ", Ocean paused by agent " + this.players[pauseRequester].name + ".\n";
+                io.sockets.in(this.name).emit("paused", {id: pauseRequester});
+                io.sockets.in(this.name).emit('gamesettings', this);
+            }
+        };
+
+        this.resume = function (resumeRequester) {
+            if (this.isPaused() && this.pausedBy == resumeRequester) {
+                this.status = this.unpauseState;
+                io.sockets.in(this.name).emit("resumed", {id: resumeRequester});
+                io.sockets.in(this.name).emit('gamesettings', this);
+                console.log(this.name + ": Ocean resumed by agent " + this.players[resumeRequester].name);
+                logs[this.name] += new Date().toString() + ", Ocean resumed by agent " + this.players[resumeRequester].name + ".\n";
+            }
+        };
 
         this.timeStep = function () {
             // Perform one tick of the clock for this simulation.
@@ -471,20 +492,39 @@ function engine(io) {
 
     }
 
+    function OceanGroup (oceanGroupName, numOceans) {
+        this.name = oceanGroupName;
+        this.numOceans = numOceans;
 
-    function allocateFisherToOcean(parent) {
-        var availableOcean = "";
-        for (i = 1; i <= oceanGroups[parent].numOceans; i++) {
-            oID = parent + "-" + (1000 + i).toString().substr(1);
-            if (oceans[oID].actualHumans < oceans[oID].expectedHumans) {
-                availableOcean = oID;
-                break;
+        this.allocateFisherToOcean = function() {
+            // Warning: there's a race condition here; we check if there's room, and a bit later we assign the fisher
+            // to the ocean. Given the expected usage of FISH this should not be an issue, and in fact there could
+            // be other race conditions around. Still, something to fix eventually.
+            var availableOcean = "";
+            var oID;
+            for (i = 1; i <= this.numOceans; i++) {
+                oID = this.name + "-" + (1000 + i).toString().substr(1); // Forming IDs such as oceanname-001
+                if (oceans[oID].hasRoom()) {
+                    availableOcean = oID;
+                    break;
+                }
             }
-        }
-        return availableOcean;
+            return availableOcean; // returns the empty string if no ocean with space available was found
+        };
+
+        this.createOceans = function(oceanSettings, source) {
+            var i;
+            for (i = 1; i <= this.numOceans; i++) {
+                oceanID = this.name + "-" + (1000 + i).toString().substr(1); // Forming IDs such as oceanname-001
+                oceans[oceanID] = new Ocean(oceanSettings, oceanID);
+                logs[oceanID] = new Date().toString() +  ", ocean created from the page " + source + ".\n";
+                console.log(oceanID + ": Ocean created.");
+            }
+        };
     }
 
     function recreateSimulationsList() {
+        // We shouldn't be creating the html here.
         runningSims = "<ul>";
         for (parent in oceanGroups) {
             runningSims += "<li><b>" + parent + "</b>, with " + oceanGroups[parent].numOceans + " ocean(s).</li>";
@@ -492,24 +532,21 @@ function engine(io) {
         runningSims += "</ul>"
     }
 
+
+    // The following contains all the functions to communicate with our various clients.
     io.sockets.on('connection', function (socket) {
         var oceanID = "";
 
         // Creating a group from newgroup.html
         socket.on('create group', function (gs) {
-            console.log("Attempting to create group " + gs.name);
+            console.log("Core: Attempting to create oceanGroup " + gs.name);
             if (gs.name in oceanGroups) {
-                console.log("Group " + group + " already exists. No action taken.");
+                console.log("Core: Group " + group + " already exists. No action taken.");
                 socket.emit("group-not-created");
             } else {
-                oceanGroups[gs.name] = new Parent(gs.name, gs.numOceans);
-                recreateSimulationsList();
-                for (ocean = 1; ocean <= gs.numOceans; ocean++) {
-                    oceanID = gs.name + "-" + (1000 + ocean).toString().substr(1);
-                    oceans[oceanID] = new gameParameters(gs, oceanID);
-                    logs[oceanID] = new Date().toString() +  ", Simulation created from newgroup page.\n";
-                }
-                console.log("New group added, and parameters created: " + gs.name);
+                oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans);
+                oceanGroups[gs.name].createOceans(gs, "newgroup");
+                recreateSimulationsList(); // Ugly, but there's a ticket for this already.
                 socket.emit("group-created");
             }
         });
@@ -517,127 +554,80 @@ function engine(io) {
         // Responding to main.html
         var myID;
         socket.on('join group', function (group, pid) {
-            if (group in oceanGroups) {
-                console.log("Group " + group + " already exists; user joined.");
-            } else {
-                oceanGroups[group] = new Parent(group, 1);
+            if (!(group in oceanGroups)) {
+                // Register group
+                oceanGroups[group] = new OceanGroup(group, 1);
+                oceanGroups[group].createOceans(null, "fish");
                 recreateSimulationsList();
-                oceanID = group + "-001";
-                oceans[oceanID] = new gameParameters(null, oceanID);
-                logs[oceanID] = new Date().toString() +  ", Simulation created from fish page.\n";
-                console.log("New group added, and parameters created: " + group);
-            }
-            io.sockets.in(oceanID).emit("join", "A player joined this group.");
-
-            if (oceanID == "") {
-                oceanID = allocateFisherToOcean(group);
             }
 
-            if (oceanID == "") {
-                // The only way we can end here is if the group is already full.
-                console.log("User tried to join a group that is already full.");
-                socket.emit('fullroom', group);
-            } else {
-                socket.set('group', oceanID,
-                    function() {
-                        socket.emit("myGroup", oceanID);
-                    }
-                );
-                socket.join(oceanID);
+            var myOceanGroup = oceanGroups[group];
 
-                oceans[oceanID].players[oceans[oceanID].actualPlayers] = new Agent(pid, "human", null);
-                logs[oceanID] += new Date().toString() + ", Fisher " + pid + " joined this simulation.\n";
-                myID = oceans[oceanID].actualPlayers++;
-                oceans[oceanID].actualHumans++;
-                io.sockets.in(oceanID).emit("gamesettings", oceans[oceanID]);
+            var allocatedOcean = myOceanGroup.allocateFisherToOcean();
+            if (allocatedOcean != "") {
+                var myOcean = oceans[allocatedOcean];
+                socket.set("group", myOcean.name, function() {
+                    socket.emit("myGroup", myOcean.name);
+                });
 
-                socket.set('gamesettings', oceans[oceanID],
-                    function() {
-                        socket.emit('gamesettings', oceans[oceanID]);
-                    }
-                );
+                // Register client in the socket for the ocean it was assigned to
+                socket.join(myOcean.name);
 
-                socket.set('gamestate', oceans[oceanID],
-                    function() {
-                        socket.emit('gamestate', oceans[oceanID]);
-                    }
-                );
+                // Create object for client
+                myOcean.players[myOcean.actualPlayers] = new Agent(pid, "human", null);
+                console.log(myOcean.name + ": Fisher " + pid + " joined.");
+                logs[myOcean.name] += new Date().toString() + ", Fisher " + pid + " joined.\n";
+                myID = myOcean.actualPlayers++;
+                myOcean.actualHumans++;
 
-                socket.set('myID', myID,
-                    function() {
-                        socket.emit('myID', myID);
-                    }
-                );
+                // Done with upkeep, broadcast new state
+                io.sockets.in(myOcean.name).emit("gamesettings", myOcean);
 
-                socket.on('pauseRequest',
-                    function (data) {
-                        console.log("A player requested to pause the simulation: " + data.id + ", gameroom " + oceanID + ".");
-                        if ((oceans[oceanID].status == "running") || (oceans[oceanID].status == "resting")) {
-                            oceans[oceanID].unpauseState = oceans[oceanID].status;
-                            oceans[oceanID].status = "paused";
-                            oceans[oceanID].pausedBy = data.id;
-                            console.log("Simulation '" + oceanID + "' paused by player " + oceans[oceanID].players[data.id].name);
-                            logs[oceanID] += new Date().toString() + ", Simulation paused by fisher " + oceans[oceanID].players[data.id].name + ".\n";
-                            io.sockets.in(oceanID).emit("paused", {id: data.id});
-                            io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                        } else {
-                            console.log("The simulation '" + oceanID + "' was not in a pausable state.");
+
+                // Setting all the functions to communicate with the client
+                socket.set('gamesettings', myOcean, function() {
+                    socket.emit('gamesettings', myOcean);
+                });
+
+                socket.set('myID', myID, function() {
+                    socket.emit('myID', myID);
+                });
+
+                socket.on('pauseRequest', function (data) {
+                    myOcean.pause(data.id);
+                });
+
+                socket.on('resumeRequest', function (data) {
+                    myOcean.resume(data.id);
+                });
+
+                socket.on('toSea', function (data) {
+                    myOcean.players[data.id].goToSea(myOcean);
+                    io.sockets.in(myOcean.name).emit('gamesettings', myOcean);
+                });
+
+                socket.on('toPort', function (data) {
+                    myOcean.players[data.id].goToPort(myOcean);
+                    io.sockets.in(myOcean.name).emit('gamesettings', myOcean);
+                });
+
+                socket.on('readRules', function(data) {
+                    // THIS IS THE NEXT PART TO FIX. Use the already existing methods; continue with rest of communication functions.
+                    console.log("A player read the rules and is ready to start: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
+                    logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " read the rules and is ready to start.\n";
+                    oceans[oceanID].players[data.id].ready = true;
+                    var allReady = true;
+                    for (i = 0; i < oceans[oceanID].players.length; i++) {
+                        if (oceans[oceanID].players[i].ready == false) {
+                            allReady = false;
                         }
                     }
-                );
-
-                socket.on('resumeRequest',
-                    function (data) {
-                        console.log("A player requested to resume the simulation: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                        if (oceans[oceanID].status == "paused" && oceans[oceanID].pausedBy == data.id) {
-                            oceans[oceanID].status = oceans[oceanID].unpauseState;
-                            io.sockets.in(oceanID).emit("resumed", {id: data.id});
-                            io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                            logs[oceanID] += new Date().toString() + ", Simulation resumed by fisher " + oceans[oceanID].players[data.id].name + ".\n";
-                        } else {
-                            console.log("The simulation '" + oceanID + "' was not paused, or was paused by someone other than " + oceans[oceanID].players[data.id].name);
-                        }
+                    if (oceans[oceanID].actualPlayers == oceans[oceanID].expectedPlayers && allReady) {
+                        oceans[oceanID].status = 'readying';
+                        io.sockets.in(oceanID).emit('readying', oceans[oceanID]);
+                        logs[oceanID] += new Date().toString() + ", All fishers now ready to start.\n";
                     }
-                );
-
-                socket.on('toSea',
-                    function (data) {
-                        console.log("A player sailed to sea: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                        logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " sailed to sea.\n";
-                        oceans[oceanID].players[data.id].status = 'At sea';
-                        oceans[oceanID].players[data.id].money -= oceans[oceanID].costDepart;
-                        oceans[oceanID].players[data.id].endMoneyPerSeason[oceans[oceanID].currentSeason] = oceans[oceanID].players[data.id].money;
-                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                    }
-                );
-
-                socket.on('toPort',
-                    function (data) {
-                        console.log("A player returned to port: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                        logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " returned to port.\n";
-                        oceans[oceanID].players[data.id].status = 'At port';
-                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                    }
-                );
-
-                socket.on('readRules',
-                    function(data) {
-                        console.log("A player read the rules and is ready to start: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                        logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " read the rules and is ready to start.\n";
-                        oceans[oceanID].players[data.id].ready = true;
-                        var allReady = true;
-                        for (i = 0; i < oceans[oceanID].players.length; i++) {
-                            if (oceans[oceanID].players[i].ready == false) {
-                                allReady = false;
-                            }
-                        }
-                        if (oceans[oceanID].actualPlayers == oceans[oceanID].expectedPlayers && allReady) {
-                            oceans[oceanID].status = 'readying';
-                            io.sockets.in(oceanID).emit('readying', oceans[oceanID]);
-                            logs[oceanID] += new Date().toString() + ", All fishers now ready to start.\n";
-                        }
-                    }
-                );
+                });
 
                 socket.on('fishing',
                     function (data) {
@@ -652,6 +642,10 @@ function engine(io) {
                     keepTimerGoing = true;
                     timer();
                 }
+            } else {
+                // There were no oceanGroups with room in them.
+                console.log(group + ": A user tried to join this group, but it was already full.");
+                socket.emit("fullroom", group);
             }
         });
     });

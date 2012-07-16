@@ -52,10 +52,6 @@
         socket.emit("join group", group, pid);
     });
 
-    socket.on("join", function (data) {
-        console.log(data);
-    });
-
     socket.on('gamesettings', function (gs) {
         console.log(gs);
         gameSettings = gs;
