@@ -92,7 +92,8 @@
     });
 
     socket.on('readying', function (data) {
-        console.log('readying: ' + data);
+        console.log('readying');
+        gameSettings = data;
         sailingAllowed = false;
         fishingAllowed = false;
     });

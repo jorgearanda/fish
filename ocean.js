@@ -25,10 +25,10 @@ function engine(io) {
         // When there are no more simulations to timestep, it wraps its own cycle up.
         if (keepTimerGoing) {
             keepTimerGoing = false;
-            for (game in oceans) {
-                if (oceans[game].timable == true) {
+            for (oceanName in oceans) {
+                if (oceans[oceanName].timable == true) {
                     keepTimerGoing = true;
-                    timeStep(game);
+                    oceans[oceanName].timeStep();
                 }
             }
             t = setTimeout(timer, 1000);
@@ -38,125 +38,10 @@ function engine(io) {
         }
     }
 
-    function timeStep(oceanName) {
-        // Perform one tick of the clock for the simulation oceanName.
-        // This entails moving the timer forward one second, checking if that pushes the simulation
-        // into the next phase, and asking the bots to perform actions.
-        var ocean = oceans[oceanName];
-        if (ocean.allPlayersLoaded() && ocean.isNotOver()) {
-            if (ocean.isReadying()) {
-                // The "readying" phase happens after everyone said they are ready, and before the simulation runs.
-                // Advance the clock for the ocean
-                ocean.tick();
-                if (ocean.hasReachedInitialDelay()) {
-                    ocean.startNextSeason();
-                }
-            } else if (ocean.isRunning()) {
-                ocean.tick();
-                if (ocean.hasReachedSeasonDuration()) {
-                    ocean.endCurrentSeason(); // endCurrentSeason also ends the simulation if this is the last season.
-                } else {
-                    ocean.resolveSeasonActions();
-                }
-            } else if (ocean.isResting()) {
-                ocean.tick();
-                if (ocean.hasReachedInterseasonDelay()) {
-                    ocean.startNextSeason();
-                } else {
-                    ocean.sendGameSettings();
-                }
-            } else if (ocean.isWaiting() || ocean.isPaused()) {
-                // Do nothing (used to have a console.log message for both conditions)
-            } else {
-                // Weird state
-                console.log(ocean.name + ": Unexpected simulation state: " + ocean.status);
-            }
-        }
-    }
 
-    function tryToFish(g, gameRoom, index, name) {
-        console.log("A fisher tried to fish: " + name + ", gameroom " + gameRoom + ".");
-        var player = g.players[index];
-        player.money -= g.costCast;
-        player.actualCasts++;
-        if ((g.certainFish + g.actualMysteryFish > 0) && Math.random() <= g.chanceOfCatch) {
-            logs[gameRoom] += new Date().toString() + ", Fisher " + name + " tried to fish successfully.\n";
-            player.money += g.valueFish;
-            player.fishCaught++;
-            player.fishCaughtPerSeason[g.currentSeason]++;
-            player.endMoneyPerSeason[g.currentSeason] = player.money;
-
-            if (Math.floor(Math.random() * (g.certainFish + g.actualMysteryFish)) < g.certainFish) {
-                g.certainFish -= 1;
-            } else {
-                g.actualMysteryFish -= 1;
-            }
-            g.checkForDepletion();
-        } else {
-            logs[gameRoom] += new Date().toString() + ", Fisher " + name + " tried to fish unsuccessfully.\n";
-        }
-    }
-
-    function aiActions(g, gameName, agentID) {
-        // This function should be associated with the ai object.
-        var doSomething = true;
-        if (g.erratic) {
-            doSomething = (Math.random() < g.hesitation);
-        }
-        if (doSomething) {
-            agent = g.players[agentID];
-            if ((agent.intendedCasts > agent.actualCasts) && (agent.status == 'At port') && (g.certainFish + g.actualMysteryFish > 0)) {
-                console.log("A player sailed to sea: " + agent.name + ", gameroom " + gameName + ".");
-                logs[gameName] += new Date().toString() + ", Fisher " + agent.name + " sailed to sea.\n";
-                agent.status = 'At sea';
-                agent.money -= g.costDepart;
-                agent.endMoneyPerSeason[g.currentSeason] = agent.money;
-            } else if ((agent.intendedCasts > agent.actualCasts) && (agent.status == 'At sea') && (g.certainFish + g.actualMysteryFish > 0)) {
-                for (castAttempts = 0; castAttempts < Math.min(g.castsPerSecond, agent.intendedCasts - agent.actualCasts); castAttempts++) {
-                    if (Math.random() < g.castingProbability) {
-                        tryToFish(g, gameName, agentID, agent.name);
-                    }
-                }
-            } else if (((agent.intendedCasts <= agent.actualCasts) || (g.certainFish + g.actualMysteryFish <= 0)) && agent.status == 'At sea') {
-                agent.status = 'At port';
-                console.log(logs[gameName]);
-                logs[gameName] += new Date().toString() + ", Fisher " + agent.name + " returned to port.\n";
-            }
-            io.sockets.in(gameName).emit('gamesettings', g);
-        }
-    }
-
-    function seasonGreed (overallGreed, greedUniformity, currentSeason, totalSeasons) {
-        var currentGreed = overallGreed;
-        var lowBound = overallGreed;
-        var highBound = overallGreed;
-        var increment = 0.0;
-        if (overallGreed < 0.5) {
-            lowBound = overallGreed / 2.0;
-            highBound = overallGreed + lowBound;
-        } else {
-            highBound = ((1.0 - overallGreed) / 2.0) + overallGreed;
-            lowBound = 2.0 * overallGreed - highBound;
-        }
-
-        increment = (highBound - lowBound) /  (1.0 * (totalSeasons - 1));
-        if (totalSeasons > 1) {
-            if (greedUniformity == -1) {
-                currentGreed = highBound - (increment * (currentSeason - 1));
-            } else if (greedUniformity == 1) {
-                currentGreed = lowBound + (increment * (currentSeason - 1));
-            }
-        }
-        return currentGreed;
-    }
-
-    function seasonCasts (currentGreed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch) {
-        return Math.round(((startingFish + actualMysteryFish - ((startingFish + actualMysteryFish) / spawnFactor)) / expectedPlayers) * 2 * currentGreed / chanceOfCatch);;
-    }
-
-    function aiAgent (name, greed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch, greedUniformity, totalSeasons) {
+    function Agent (name, type, greed) {
         this.name = name;
-        this.type = 'ai';
+        this.type = type;
         this.greediness = greed;
         this.fishCaught = 0;
         this.fishCaughtPerSeason = new Array();
@@ -165,28 +50,118 @@ function engine(io) {
         this.startMoneyPerSeason = new Array();
         this.endMoneyPerSeason = new Array();
         this.greedPerSeason = new Array();
-        this.status = 'At port';
-        var cGreed = seasonGreed(greed, greedUniformity, 1, totalSeasons);
-        this.greedPerSeason[1] = cGreed;
-        this.intendedCasts = seasonCasts(cGreed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch);
+        this.status = "At port";
+        this.intendedCasts = null;
         this.actualCasts = 0;
-        this.readRules = true;
-    }
+        this.ready = false;
+        if (this.type == "ai") {
+            this.ready = true;
+        }
 
-    function humanAgent (name) {
-        this.name = name;
-        this.type = 'human';
-        this.greediness = null;
-        this.fishCaught = 0;
-        this.fishCaughtPerSeason = new Array();
-        this.startMoney = 0;
-        this.money = 0;
-        this.startMoneyPerSeason = new Array();
-        this.endMoneyPerSeason = new Array();
-        this.greedPerSeason = new Array();
-        this.status = 'At port';
-        this.actualCasts = 0;
-        this.readRules = false;
+        this.isBot = function() {
+            return (this.type == "ai");
+        };
+
+        this.calculateSeasonGreed = function (overallGreed, greedUniformity, currentSeason, totalSeasons) {
+            // greedSpread determines how far the low and high greed bounds will deviate from the mean.
+            // Perhaps it should be a simulation parameter eventually.
+            var greedSpread = 2.0;
+            var currentGreed = overallGreed;
+            var lowBound = overallGreed;
+            var highBound = overallGreed;
+            var increment = 0.0;
+            if (overallGreed < 0.5) {
+                lowBound = overallGreed / greedSpread;
+                highBound = overallGreed + lowBound;
+            } else {
+                highBound = ((1.0 - overallGreed) / greedSpread) + overallGreed;
+                lowBound = greedSpread * overallGreed - highBound;
+            }
+
+            increment = (highBound - lowBound) /  (1.0 * (totalSeasons - 1));
+            if (totalSeasons > 1) {
+                if (greedUniformity == -1) {
+                    currentGreed = highBound - (increment * (currentSeason - 1));
+                } else if (greedUniformity == 1) {
+                    currentGreed = lowBound + (increment * (currentSeason - 1));
+                }
+            }
+            return currentGreed;
+        };
+
+        this.calculateSeasonCasts = function (currentGreed, expectedPlayers, startingFish, actualMysteryFish, spawnFactor, chanceOfCatch) {
+            return Math.round(((startingFish + actualMysteryFish - ((startingFish + actualMysteryFish) / spawnFactor)) / expectedPlayers) * 2 * currentGreed / chanceOfCatch);;
+        };
+
+        this.prepareAgent = function (ocean) {
+            // This method does bookkeeping for all agents for the new season. It also calculates the greed and intended casts of bots.
+            if (this.type == "ai") {
+                this.greedPerSeason[ocean.currentSeason] =
+                    this.calculateSeasonGreed(this.greediness, ocean.greedUniformity, ocean.currentSeason, ocean.totalSeasons);
+                this.intendedCasts =
+                    this.calculateSeasonCasts(this.greedPerSeason[ocean.currentSeason], ocean.expectedPlayers, ocean.certainFish, ocean.actualMysteryFish, ocean.spawnFactor, ocean.chanceOfCatch);
+                this.ready = true; // Only for bots, as this parameter is flipped to true for humans when they read the rules.
+            }
+            this.actualCasts = 0;
+            this.fishCaughtPerSeason[ocean.currentSeason] = 0;
+            this.startMoneyPerSeason[ocean.currentSeason] = this.money;
+            this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+        };
+
+        this.goToPort = function() {
+            this.status = "At port";
+        };
+
+        this.tryToFish = function(ocean) {
+            this.money -= ocean.costCast;
+            this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+            this.actualCasts++;
+
+            if (ocean.isSuccessfulCastAttempt()) {
+                logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " cast for a fish, and succeeded.\n";
+                this.money += ocean.valueFish;
+                this.fishCaught++;
+                this.fishCaughtPerSeason[ocean.currentSeason]++;
+                this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+                ocean.takeOneFish();
+            } else {
+                logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " cast for a fish, and failed.\n";
+            }
+        };
+
+        this.botActions = function(ocean) {
+            // We assume the bot will take an action, except if it behaves erratically, in which case whether there's an action or not
+            // depends on the hesitation parameter
+            var doSomething = true;
+            if (ocean.erratic) {
+                doSomething = (Math.random() < ocean.hesitation);
+            }
+
+            if (doSomething) {
+                if ((this.intendedCasts > this.actualCasts) && (this.status == 'At port') && (ocean.certainFish + ocean.actualMysteryFish > 0)) {
+                    // Go to sea!
+                    console.log(ocean.name + ": Fisher " + this.name + " sailed to sea.");
+                    logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " sailed to sea.\n";
+                    this.status = 'At sea';
+                    this.money -= ocean.costDepart;
+                    this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+                } else if ((this.intendedCasts > this.actualCasts) && (this.status == 'At sea') && (ocean.certainFish + ocean.actualMysteryFish > 0)) {
+                    // Try to fish!
+                    for (castAttempts = 0; castAttempts < Math.min(ocean.castsPerSecond, this.intendedCasts - this.actualCasts); castAttempts++) {
+                        if (Math.random() < ocean.castingProbability) {
+                            this.tryToFish(ocean);
+                        }
+                    }
+                } else if (((this.intendedCasts <= this.actualCasts) || (ocean.certainFish + ocean.actualMysteryFish <= 0)) && this.status == 'At sea') {
+                    // Call it quits.
+                    this.status = 'At port';
+                    console.log(ocean.name + ", Fisher " + this.name + " returned to port.");
+                    logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " returned to port.\n";
+                }
+            }
+        }
+
+
     }
 
     function seasonData (number) {
@@ -198,37 +173,6 @@ function engine(io) {
     function Parent (parentName, numOceans) {
         this.name = parentName;
         this.numOceans = numOceans;
-    }
-
-    function gameState (gs) {
-        this.status = "waiting";
-        this.actualPlayers = 0;
-        this.actualHumans = 0;
-        this.timable = true;
-        this.currentSeason = 0;
-        this.currentSeconds = 0;
-        this.debug = true;
-        this.unpauseState = "";
-        this.pausedBy = null;
-        this.depleted = false;
-        this.certainFish = gs.startingFish;
-        this.mysteryFish = gs.startingMysteryFish;
-
-        // gameState for all agents
-        this.players = new Array();
-        for (i = 0; i < gs.expectedPlayers - gs.expectedHumans; i++) {
-            this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, gs.expectedPlayers,
-                gs.startingFish, gs.startingMysteryFish, gs.spawnFactor, gs.chanceOfCatch, gs.greedUniformity,
-                gs.totalSeasons);
-            gs.actualPlayers++;
-        }
-
-        // seasons data
-        this.seasonsData = new Array();
-        for (i = 1; i <= this.totalSeasons; i++) {
-            this.seasonsData[i] = new seasonData(i);
-        }
-
     }
 
     function gameParameters (gs, parentName) {
@@ -281,8 +225,7 @@ function engine(io) {
             this.depletedText = gs.depletedText;
             this.endText = gs.endText;
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-                this.players[i] = new aiAgent(gs.robots[i].name, gs.robots[i].greed, this.expectedPlayers,
-                    this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch, this.greedUniformity, this.totalSeasons);
+                this.players[i] = new Agent(gs.robots[i].name, "ai", gs.robots[i].greed);
                 this.actualPlayers++;
             }
         } else {
@@ -346,7 +289,7 @@ function engine(io) {
             robotNames[2] = "Raphael";
             robotNames[3] = "Donatello";
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-                this.players[i] = new aiAgent(robotNames[i], 0.5, this.expectedPlayers, this.startingFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch, this.greedUniformity, this.totalSeasons);
+                this.players[i] = new Agent(robotNames[i], "ai", 0.5);
                 this.actualPlayers++;
             }
         }
@@ -421,16 +364,7 @@ function engine(io) {
             }
 
             for (player in this.players) {
-                this.players[player].fishCaughtPerSeason[this.currentSeason] = 0;
-                this.players[player].startMoneyPerSeason[this.currentSeason] = this.players[player].money;
-                this.players[player].endMoneyPerSeason[this.currentSeason] = this.players[player].money;
-                this.players[player].greedPerSeason[this.currentSeason] =
-                    seasonGreed(this.players[player].greediness, this.greedUniformity, this.currentSeason, this.totalSeasons);
-
-                if (this.players[player].type == "ai") {
-                    this.players[player].intendedCasts =
-                        seasonCasts(this.players[player].greedPerSeason[this.currentSeason], this.players.length, this.certainFish, this.actualMysteryFish, this.spawnFactor, this.chanceOfCatch);
-                }
+                this.players[player].prepareAgent(this);
             }
             io.sockets.in(this.name).emit("begin", this);
         };
@@ -438,8 +372,7 @@ function engine(io) {
         this.endCurrentSeason = function () {
             // Bring all players to port; reset their casting tally
             for (player in this.players) {
-                this.players[player].status = "At port";
-                this.players[player].actualCasts = 0;
+                this.players[player].goToPort();
             }
             this.seasonsData[this.currentSeason].endFish = this.certainFish + this.actualMysteryFish;
             if (this.currentSeason < this.totalSeasons) {
@@ -456,8 +389,9 @@ function engine(io) {
         this.resolveSeasonActions = function () {
             // For all bots, prompt them to action
             for (player in this.players) {
-                if (this.players[player].type == "ai") {
-                    aiActions(this, this.name, player)
+                // May be able to send this to agent object -----------------------
+                if (this.players[player].isBot()) {
+                    this.players[player].botActions(this)
                 }
                 // Charge players that are at sea
                 if (this.players[player].status == "At sea") {
@@ -473,7 +407,7 @@ function engine(io) {
                 this.depleted = true;
                 this.endSimulation();
             }
-        }
+        };
 
         this.endSimulation = function () {
             // Wrap it up for this simulation
@@ -486,6 +420,55 @@ function engine(io) {
             // Create the log file for this ocean run.
             logRun(this, this.name);
         };
+
+        this.isSuccessfulCastAttempt = function () {
+            return ((this.certainFish + this.actualMysteryFish > 0) && Math.random() <= this.chanceOfCatch);
+        };
+
+        this.takeOneFish = function () {
+            if (Math.floor(Math.random() * (this.certainFish + this.actualMysteryFish)) < this.certainFish) {
+                this.certainFish -= 1;
+            } else {
+                this.actualMysteryFish -= 1;
+            }
+            this.checkForDepletion();
+        }
+
+        this.timeStep = function () {
+            // Perform one tick of the clock for this simulation.
+            // This entails moving the timer forward one second, checking if that pushes the simulation
+            // into the next phase, and asking the bots to perform actions.
+            if (this.allPlayersLoaded() && this.isNotOver()) {
+                if (this.isReadying()) {
+                    // The "readying" phase happens after everyone said they are ready, and before the simulation runs.
+                    // Advance the clock for the object
+                    this.tick();
+                    if (this.hasReachedInitialDelay()) {
+                        this.startNextSeason();
+                    }
+                } else if (this.isRunning()) {
+                    this.tick();
+                    if (this.hasReachedSeasonDuration()) {
+                        this.endCurrentSeason(); // endCurrentSeason also ends the simulation if this is the last season.
+                    } else {
+                        this.resolveSeasonActions();
+                    }
+                } else if (this.isResting()) {
+                    this.tick();
+                    if (this.hasReachedInterseasonDelay()) {
+                        this.startNextSeason();
+                    } else {
+                        this.sendGameSettings();
+                    }
+                } else if (this.isWaiting() || this.isPaused()) {
+                    // Do nothing (used to have a console.log message for both conditions)
+                } else {
+                    // Weird state
+                    console.log(this.name + ": Unexpected simulation state: " + this.status);
+                }
+            }
+        }
+
     }
 
 
@@ -562,7 +545,7 @@ function engine(io) {
                 );
                 socket.join(oceanID);
 
-                oceans[oceanID].players[oceans[oceanID].actualPlayers] = new humanAgent(pid);
+                oceans[oceanID].players[oceans[oceanID].actualPlayers] = new Agent(pid, "human", null);
                 logs[oceanID] += new Date().toString() + ", Fisher " + pid + " joined this simulation.\n";
                 myID = oceans[oceanID].actualPlayers++;
                 oceans[oceanID].actualHumans++;
@@ -641,17 +624,16 @@ function engine(io) {
                     function(data) {
                         console.log("A player read the rules and is ready to start: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
                         logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " read the rules and is ready to start.\n";
-                        oceans[oceanID].players[data.id].readRules = true;
-                        allReadRules = true;
+                        oceans[oceanID].players[data.id].ready = true;
+                        var allReady = true;
                         for (i = 0; i < oceans[oceanID].players.length; i++) {
-                            if (oceans[oceanID].players[i].readRules == false) {
-                                allReadRules = false;
+                            if (oceans[oceanID].players[i].ready == false) {
+                                allReady = false;
                             }
                         }
-                        if (oceans[oceanID].actualPlayers == oceans[oceanID].expectedPlayers && allReadRules) {
+                        if (oceans[oceanID].actualPlayers == oceans[oceanID].expectedPlayers && allReady) {
                             oceans[oceanID].status = 'readying';
-                            io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                            io.sockets.in(oceanID).emit('readying', 'All agents ready - prepare!');
+                            io.sockets.in(oceanID).emit('readying', oceans[oceanID]);
                             logs[oceanID] += new Date().toString() + ", All fishers now ready to start.\n";
                         }
                     }
@@ -659,7 +641,7 @@ function engine(io) {
 
                 socket.on('fishing',
                     function (data) {
-                        tryToFish(oceans[oceanID], oceanID, data.id, oceans[oceanID].players[data.id].name);
+                        oceans[oceanID].players[data.id].tryToFish(oceans[oceanID]);
                         io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
                     }
                 );
