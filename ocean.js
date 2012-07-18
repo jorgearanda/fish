@@ -583,7 +583,12 @@ function engine(io) {
             r += "Showing other fishers' names?: " + (g.showFisherNames ? "Yes" : "No") + "\n";
             r += "Showing other fishers' status?: " + (g.showFisherStatus ? "Yes" : "No") + "\n";
             r += "Showing other fishers' number of fish caught?: " + (g.showFishCaught ? "Yes" : "No") + "\n";
-            r += "Showing other fishers' money balance?: " + (g.showBalance ? "Yes" : "No") + "\n\n";
+            r += "Showing other fishers' money balance?: " + (g.showBalance ? "Yes" : "No") + "\n";
+            r += "Pause enabled?: " + (g.pauseEnabled ? "Yes" : "No") + "\n";
+            r += "Erratic behaviour enabled?: " + (g.erratic ? "Yes" : "No") + "\n";
+            r += "Hesitation enabled?: " + (g.hesitation ? "Yes" : "No") + "\n";
+            r += "Maximum bot casts per second: " + g.castsPerSecond + "\n";
+            r += "Casting probability factor: " + g.castingProbability + "\n\n";
 
             r += "The following paragraphs were presented to participants as the preparation text:\n";
             r += "--------------------------------------------------------------------------------\n";
