@@ -100,12 +100,15 @@ function engine(io) {
                     this.calculateSeasonGreed(this.greediness, ocean.greedUniformity, ocean.currentSeason, ocean.totalSeasons);
                 this.intendedCasts =
                     this.calculateSeasonCasts(this.greedPerSeason[ocean.currentSeason], ocean.expectedPlayers, ocean.certainFish, ocean.actualMysteryFish, ocean.spawnFactor, ocean.chanceOfCatch);
-                this.ready = true; // Only for bots, as this parameter is flipped to true for humans when they read the rules.
             }
             this.actualCasts = 0;
             this.fishCaughtPerSeason[ocean.currentSeason] = 0;
             this.startMoneyPerSeason[ocean.currentSeason] = this.money;
             this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+        };
+
+        this.readRules = function () {
+            this.ready = true;
         };
 
         this.goToPort = function(ocean) {
@@ -349,6 +352,26 @@ function engine(io) {
             return (this.actualHumans < this.expectedHumans);
         };
 
+        this.isEveryoneReady = function () {
+            var allReady = true;
+            if (this.actualPlayers != this.expectedPlayers) {
+                allReady = false;
+            }
+            for (player in this.players) {
+                if (!this.players[player].ready) {
+                    allReady = false;
+                }
+            }
+            return allReady;
+        };
+
+        this.getOceanReady = function () {
+            // We assume this.isEveryoneReady returned true
+            this.status = "readying";
+            io.sockets.in(this.name).emit("readying", this);
+            logs[this.name] += new Date().toString() + ", All agents now ready to start.\n";
+        };
+
         this.startNextSeason = function () {
             this.currentSeason += 1;
             console.log(this.name + ": Beginning season " + this.currentSeason);
@@ -371,7 +394,7 @@ function engine(io) {
         this.endCurrentSeason = function () {
             // Bring all players to port; reset their casting tally
             for (player in this.players) {
-                this.players[player].goToPort();
+                this.players[player].goToPort(this);
             }
             this.seasonsData[this.currentSeason].endFish = this.certainFish + this.actualMysteryFish;
             if (this.currentSeason < this.totalSeasons) {
@@ -581,7 +604,7 @@ function engine(io) {
                 myOcean.actualHumans++;
 
                 // Done with upkeep, broadcast new state
-                io.sockets.in(myOcean.name).emit("gamesettings", myOcean);
+                myOcean.sendGameSettings();
 
 
                 // Setting all the functions to communicate with the client
@@ -603,38 +626,25 @@ function engine(io) {
 
                 socket.on('toSea', function (data) {
                     myOcean.players[data.id].goToSea(myOcean);
-                    io.sockets.in(myOcean.name).emit('gamesettings', myOcean);
+                    myOcean.sendGameSettings();
                 });
 
                 socket.on('toPort', function (data) {
                     myOcean.players[data.id].goToPort(myOcean);
-                    io.sockets.in(myOcean.name).emit('gamesettings', myOcean);
+                    myOcean.sendGameSettings();
                 });
 
                 socket.on('readRules', function(data) {
-                    // THIS IS THE NEXT PART TO FIX. Use the already existing methods; continue with rest of communication functions.
-                    console.log("A player read the rules and is ready to start: " + oceans[oceanID].players[data.id].name + ", gameroom " + oceanID + ".");
-                    logs[oceanID] += new Date().toString() + ", Fisher " + oceans[oceanID].players[data.id].name + " read the rules and is ready to start.\n";
-                    oceans[oceanID].players[data.id].ready = true;
-                    var allReady = true;
-                    for (i = 0; i < oceans[oceanID].players.length; i++) {
-                        if (oceans[oceanID].players[i].ready == false) {
-                            allReady = false;
-                        }
-                    }
-                    if (oceans[oceanID].actualPlayers == oceans[oceanID].expectedPlayers && allReady) {
-                        oceans[oceanID].status = 'readying';
-                        io.sockets.in(oceanID).emit('readying', oceans[oceanID]);
-                        logs[oceanID] += new Date().toString() + ", All fishers now ready to start.\n";
+                    myOcean.players[data.id].readRules();
+                    if (myOcean.isEveryoneReady()) {
+                        myOcean.getOceanReady();
                     }
                 });
 
-                socket.on('fishing',
-                    function (data) {
-                        oceans[oceanID].players[data.id].tryToFish(oceans[oceanID]);
-                        io.sockets.in(oceanID).emit('gamesettings', oceans[oceanID]);
-                    }
-                );
+                socket.on('fishing', function (data) {
+                    myOcean.players[data.id].tryToFish(myOcean);
+                    myOcean.sendGameSettings();
+                });
 
                 // Begin timekeeping
                 if (timerIsRunning == false) {
