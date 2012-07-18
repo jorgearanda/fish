@@ -8,13 +8,14 @@ function engine(io) {
     // Oceans are indexed by their name.
     var oceans = new Array();
 
-    // The "oceanGroups" object holds all active simulation groups. Every oceanGroup has at least one ocean.
+    // The "oceanGroups" array holds all active simulation groups. Every oceanGroup has at least one ocean.
     // Every ocean has a single corresponding oceanGroup entry.
-    var oceanGroups = {};
+    var oceanGroups = new Array();
 
+    // Every ocean has a log in this array with the same index
     var logs = new Array();
+
     var timestamper = new Date();
-    var group;
     var t;  // timer function variable
     var timerIsRunning = false;
     var keepTimerGoing = true;
@@ -113,16 +114,14 @@ function engine(io) {
 
         this.goToPort = function(ocean) {
             this.status = "At port";
-            console.log(ocean.name + ", Fisher " + this.name + " returned to port.");
-            logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " returned to port.\n";
+            logs[ocean.name].addEvent("Fisher " + this.name + " returned to port.");
         };
 
         this.goToSea = function(ocean) {
             this.status = "At sea";
             this.money -= ocean.costDepart;
             this.endMoneyPerSeason[ocean.currentSeason] = this.money;
-            console.log(ocean.name + ": Fisher " + this.name + " sailed to sea.");
-            logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " sailed to sea.\n";
+            logs[ocean.name].addEvent("Fisher " + this.name + " sailed to sea.");
         };
 
         this.tryToFish = function(ocean) {
@@ -131,14 +130,14 @@ function engine(io) {
             this.actualCasts++;
 
             if (ocean.isSuccessfulCastAttempt()) {
-                logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " cast for a fish, and succeeded.\n";
+                logs[ocean.name].addEvent("Fisher " + this.name + " cast for a fish, and succeeded.");
                 this.money += ocean.valueFish;
                 this.fishCaught++;
                 this.fishCaughtPerSeason[ocean.currentSeason]++;
                 this.endMoneyPerSeason[ocean.currentSeason] = this.money;
                 ocean.takeOneFish();
             } else {
-                logs[ocean.name] += new Date().toString() + ", Fisher " + this.name + " cast for a fish, and failed.\n";
+                logs[ocean.name].addEvent("Fisher " + this.name + " cast for a fish, and failed.");
             }
         };
 
@@ -369,13 +368,12 @@ function engine(io) {
             // We assume this.isEveryoneReady returned true
             this.status = "readying";
             io.sockets.in(this.name).emit("readying", this);
-            logs[this.name] += new Date().toString() + ", All agents now ready to start.\n";
+            logs[this.name].addEvent("All agents now ready to start.");
         };
 
         this.startNextSeason = function () {
             this.currentSeason += 1;
-            console.log(this.name + ": Beginning season " + this.currentSeason);
-            logs[this.name] += new Date().toString() + ", Beginning season " + this.currentSeason + ".\n";
+            logs[this.name].addEvent("Beginning season " + this.currentSeason + ".");
             this.resetTimer();
             this.status = "running";
             this.seasonsData[this.currentSeason].initialFish = this.certainFish + this.actualMysteryFish;
@@ -400,8 +398,7 @@ function engine(io) {
             if (this.currentSeason < this.totalSeasons) {
                 this.status = "resting";
                 this.resetTimer();
-                console.log(this.name + "Ending season " + this.currentSeason);
-                logs[this.name] += new Date().toString() + ", Ending season " + this.currentSeason + ".\n";
+                logs[this.name].addEvent("Ending season " + this.currentSeason + ".");
                 io.sockets.in(this.name).emit("endseason", this);
             } else {
                 this.endSimulation();
@@ -435,12 +432,11 @@ function engine(io) {
             // Wrap it up for this simulation
             this.timable = false;
             this.status = "over";
-            console.log(this.name + ": Simulation ended.");
-            logs[this.name] += new Date().toString() + ", Simulation ended.\n";
+            logs[this.name].addEvent("Simulation ended.");
             io.sockets.in(this.name).emit('gameover', this);
 
             // Create the log file for this ocean run.
-            logRun(this, this.name);
+            logs[this.name].writeReport();
         };
 
         this.isSuccessfulCastAttempt = function () {
@@ -461,8 +457,7 @@ function engine(io) {
                 this.unpauseState = this.status;
                 this.status = "paused";
                 this.pausedBy = pauseRequester;
-                console.log(this.name + ": Ocean paused by agent " + this.players[pauseRequester].name);
-                logs[this.name] += new Date().toString() + ", Ocean paused by agent " + this.players[pauseRequester].name + ".\n";
+                logs[this.name].addEvent("Ocean paused by agent " + this.players[pauseRequester].name + ".");
                 io.sockets.in(this.name).emit("paused", {id: pauseRequester});
                 io.sockets.in(this.name).emit('gamesettings', this);
             }
@@ -473,8 +468,7 @@ function engine(io) {
                 this.status = this.unpauseState;
                 io.sockets.in(this.name).emit("resumed", {id: resumeRequester});
                 io.sockets.in(this.name).emit('gamesettings', this);
-                console.log(this.name + ": Ocean resumed by agent " + this.players[resumeRequester].name);
-                logs[this.name] += new Date().toString() + ", Ocean resumed by agent " + this.players[resumeRequester].name + ".\n";
+                logs[this.name].addEvent("Ocean resumed by agent " + this.players[resumeRequester].name + ".");
             }
         };
 
@@ -540,14 +534,101 @@ function engine(io) {
             for (i = 1; i <= this.numOceans; i++) {
                 oceanID = this.name + "-" + (1000 + i).toString().substr(1); // Forming IDs such as oceanname-001
                 oceans[oceanID] = new Ocean(oceanSettings, oceanID);
-                logs[oceanID] = new Date().toString() +  ", ocean created from the page " + source + ".\n";
-                console.log(oceanID + ": Ocean created.");
+                logs[oceanID] = new OceanLog(oceanID);
+                logs[oceanID].addEvent("Ocean created from the page " + source + ".");
             }
         };
     }
 
+
+    function OceanLog (oceanName) {
+        this.name = oceanName;
+        this.events = "";
+
+        this.addEvent = function (text) {
+            var timeStampedText = new Date().toString() + ", " + this.name + ": " + text;
+            console.log(timeStampedText);
+            this.events += timeStampedText + "\n";
+        };
+
+        this.writeReport = function () {
+            // r is the output string
+            var g = oceans[this.name];
+            var currentTime = new Date();
+            var r = "";
+            var p;
+            r += "FISH simulation log\n";
+            r += "-------------------\n\n";
+
+            r += "Run name: " + this.name + "\n";
+            r += "Date and time: " + currentTime.toString() + "\n\n";
+
+            r += "Number of agents: " + g.expectedPlayers + "\n";
+            r += "Number of humans: " + g.expectedHumans + "\n";
+            r += "Number of seasons: " + g.totalSeasons + "\n";
+            r += "Season length (in seconds): " + g.seasonDuration + "\n";
+            r += "Delay to begin simulation (in seconds): " + g.initialDelay + "\n";
+            r += "Resting time between seasons (in seconds): " + g.restDuration + "\n";
+            r += "Spawn factor: " + g.spawnFactor + "\n";
+            r += "Chance of catch (0.00 to 1.00): " + g.chanceOfCatch + "\n";
+            r += "Cost to depart: " + g.costDepart + "\n";
+            r += "Cost per second at sea: " + g.costAtSea + "\n";
+            r += "Cost to cast for a fish: " + g.costCast + "\n";
+            r += "Value of fish caught: " + g.valueFish + "\n";
+            r += "Number of starting certain fish: " + g.startingFish + "\n";
+            r += "Number of starting mystery fish: " + g.startingMysteryFish + "\n";
+            r += "Number of ending certain fish: " + g.certainFish + "\n";
+            r += "Number of ending mystery fish: " + g.actualMysteryFish + "\n";
+            r += "Showing other fishers' information?: " + (g.showOtherFishers ? "Yes" : "No") + "\n";
+            r += "Showing other fishers' names?: " + (g.showFisherNames ? "Yes" : "No") + "\n";
+            r += "Showing other fishers' status?: " + (g.showFisherStatus ? "Yes" : "No") + "\n";
+            r += "Showing other fishers' number of fish caught?: " + (g.showFishCaught ? "Yes" : "No") + "\n";
+            r += "Showing other fishers' money balance?: " + (g.showBalance ? "Yes" : "No") + "\n\n";
+
+            r += "The following paragraphs were presented to participants as the preparation text:\n";
+            r += "--------------------------------------------------------------------------------\n";
+            r += g.prepText + "\n";
+            r += "--------------------------------------------------------------------------------\n\n";
+
+            r += "Measurements per fisher:\n\n";
+            r += "Fisher, Type, Greed, Season, FishInit, FishTaken, Profit, IR, GR, IE, GE\n";
+            r += "--------------------------------------------------------------------------------\n";
+            for (agent in g.players) {
+                p = g.players[agent];
+                for (j = 1; j <= g.totalSeasons; j++) {
+                    r += p.name + ", ";
+                    r += p.type + ", ";
+                    r += ((p.type == "ai") ? p.greedPerSeason[j] : "n/a") + ", ";
+                    r += j + ", ";
+                    r += g.seasonsData[j].initialFish + ", ";
+                    r += p.fishCaughtPerSeason[j] + ", ";
+                    r += (p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) + ", ";
+                    r += individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
+                    r += groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish) + ", ";
+                    r += individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
+                    r += groupEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.seasonsData[j].endFish, g.spawnFactor) + "\n";
+                }
+            }
+            r += "\n";
+            r += "--------------------------------------------------------------------------------\n\n";
+
+            r += "Logged simulation events:\n\n";
+            r += this.events;
+
+
+            fs.writeFile("data/" + this.name + ".txt", r, function (err) {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log(this.name + ": Simulation run logged under data/" + this.name + ".txt");
+            });
+
+        };
+    }
+
+
     function recreateSimulationsList() {
-        // We shouldn't be creating the html here.
+        // We shouldn't be creating the html here. Already in issue tracker.
         runningSims = "<ul>";
         for (parent in oceanGroups) {
             runningSims += "<li><b>" + parent + "</b>, with " + oceanGroups[parent].numOceans + " ocean(s).</li>";
@@ -598,8 +679,7 @@ function engine(io) {
 
                 // Create object for client
                 myOcean.players[myOcean.actualPlayers] = new Agent(pid, "human", null);
-                console.log(myOcean.name + ": Fisher " + pid + " joined.");
-                logs[myOcean.name] += new Date().toString() + ", Fisher " + pid + " joined.\n";
+                logs[myOcean.name].addEvent("Fisher " + pid + " joined.");
                 myID = myOcean.actualPlayers++;
                 myOcean.actualHumans++;
 
@@ -660,6 +740,8 @@ function engine(io) {
         });
     });
 
+
+    // The following functions calculate the metrics that most experiments will be concerned with.
     function individualRestraint(pool, numFishers, fishCaught) {
         return (pool - numFishers * fishCaught) / pool;
     }
@@ -691,84 +773,11 @@ function engine(io) {
         }
         return ge;
     }
-
-    function logRun(g, name) {
-        // Write a log of the results of the simulation run
-        // g is the game object
-        // r is the output string
-        var currentTime = new Date();
-        var r = "";
-        var p;
-        r += "FISH simulation log\n";
-        r += "-------------------\n\n";
-
-        r += "Run name: " + name + "\n";
-        r += "Date and time: " + currentTime.toString() + "\n\n";
-
-        r += "Number of agents: " + g.expectedPlayers + "\n";
-        r += "Number of humans: " + g.expectedHumans + "\n";
-        r += "Number of seasons: " + g.totalSeasons + "\n";
-        r += "Season length (in seconds): " + g.seasonDuration + "\n";
-        r += "Delay to begin simulation (in seconds): " + g.initialDelay + "\n";
-        r += "Resting time between seasons (in seconds): " + g.restDuration + "\n";
-        r += "Spawn factor: " + g.spawnFactor + "\n";
-        r += "Chance of catch (0.00 to 1.00): " + g.chanceOfCatch + "\n";
-        r += "Cost to depart: " + g.costDepart + "\n";
-        r += "Cost per second at sea: " + g.costAtSea + "\n";
-        r += "Cost to cast for a fish: " + g.costCast + "\n";
-        r += "Value of fish caught: " + g.valueFish + "\n";
-        r += "Number of starting certain fish: " + g.startingFish + "\n";
-        r += "Number of starting mystery fish: " + g.startingMysteryFish + "\n";
-        r += "Number of ending certain fish: " + g.certainFish + "\n";
-        r += "Number of ending mystery fish: " + g.actualMysteryFish + "\n";
-        r += "Showing other fishers' information?: " + (g.showOtherFishers ? "Yes" : "No") + "\n";
-        r += "Showing other fishers' names?: " + (g.showFisherNames ? "Yes" : "No") + "\n";
-        r += "Showing other fishers' status?: " + (g.showFisherStatus ? "Yes" : "No") + "\n";
-        r += "Showing other fishers' number of fish caught?: " + (g.showFishCaught ? "Yes" : "No") + "\n";
-        r += "Showing other fishers' money balance?: " + (g.showBalance ? "Yes" : "No") + "\n\n";
-
-        r += "The following paragraphs were presented to participants as the preparation text:\n";
-        r += "--------------------------------------------------------------------------------\n";
-        r += g.prepText + "\n";
-        r += "--------------------------------------------------------------------------------\n\n";
-
-        r += "Measurements per fisher:\n\n";
-        r += "Fisher, Type, Greed, Season, FishInit, FishTaken, Profit, IR, GR, IE, GE\n";
-        r += "--------------------------------------------------------------------------------\n";
-        for (i = 0; i < g.expectedPlayers; i++) {
-            p = g.players[i];
-            for (j = 1; j <= g.totalSeasons; j++) {
-                r += p.name + ", ";
-                r += p.type + ", ";
-                r += ((p.type == "ai") ? p.greedPerSeason[j] : "n/a") + ", ";
-                r += j + ", ";
-                r += g.seasonsData[j].initialFish + ", ";
-                r += p.fishCaughtPerSeason[j] + ", ";
-                r += (p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) + ", ";
-                r += individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
-                r += groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish) + ", ";
-                r += individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
-                r += groupEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.seasonsData[j].endFish, g.spawnFactor) + "\n";
-            }
-        }
-        r += "\n";
-        r += "--------------------------------------------------------------------------------\n\n";
-
-        r += "Logged simulation events:\n\n";
-        r += logs[name];
-
-
-        fs.writeFile("data/" + name + ".txt", r, function (err) {
-            if (err) {
-                return console.log(err);
-            }
-            console.log("Simulation run logged under data/" + name + ".txt");
-        });
-
-    }
 }
 
 
+// -----------------------------------------------------------------------------------------------
+// From here on it's just boilerplate to deal with calls to different files, pages, and functions.
 function fish(response, io) {
     console.log("Request handler 'fish' was called.");
     fs.readFile(__dirname + '/main.html',
