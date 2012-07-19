@@ -20,6 +20,10 @@ function engine(io) {
     var timerIsRunning = false;
     var keepTimerGoing = true;
 
+    // Every FISH experimenter on record will have an object here
+    var users = new Array();
+    loadUsers();
+
     function timer() {
         // This function looks for "timable" simulations (those currently having action of any kind),
         // and sends them to timeStep every second.
@@ -631,6 +635,11 @@ function engine(io) {
         };
     }
 
+    function User (id, name) {
+        this.id = id;
+        this.name = name;
+    }
+
 
     function recreateSimulationsList() {
         // We shouldn't be creating the html here. Already in issue tracker.
@@ -645,6 +654,19 @@ function engine(io) {
     // The following contains all the functions to communicate with our various clients.
     io.sockets.on('connection', function (socket) {
         var oceanID = "";
+
+        // Admins trying to log in (admin.html)
+        socket.on("validate user", function (uid) {
+            console.log("Core: Validating user " + uid);
+            if (uid in users) {
+                console.log("Core: User " + uid + " exists. Logging in.");
+                socket.emit("user-valid");
+            } else {
+                console.log("Core: User " + uid + " does not exist.");
+                socket.emit("user-not-valid");
+            }
+        });
+
 
         // Creating a group from newgroup.html
         socket.on('create group', function (gs) {
@@ -778,7 +800,25 @@ function engine(io) {
         }
         return ge;
     }
-}
+
+
+    // User management
+    function loadUsers() {
+        fs.readFile("data/users.txt", encoding="utf8", function(err, data) {
+            if (err) {
+                throw err;
+            }
+            var userLines = data.split("\n");
+            var userData;
+            for (i in userLines) {
+                userData = userLines[i].split(", ");
+                if (userData.length > 1 ) {
+                    users[userData[0]] = new User(userData[0], userData[1]);
+                }
+            }
+        });
+    }
+} // engine
 
 
 // -----------------------------------------------------------------------------------------------
@@ -866,6 +906,25 @@ function newgroup(response, io) {
     }
 }
 
+function admin(response, io) {
+    console.log("Request handler 'admin' was called.");
+    fs.readFile(__dirname + '/admin.html',
+        function (err, data) {
+            if (err) {
+                response.writeHead(500);
+                return response.end('Error loading admin.html');
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+
+    if (engineCalled == false) {
+        engineCalled = true;
+        engine(io);
+    }
+}
+
 function certainfish(response, io) {
     console.log("Request handler 'certainfish' was called.");
     fs.readFile(__dirname + '/certain-fish.gif',
@@ -920,6 +979,7 @@ function jquery(response, io) {
 
 exports.fish = fish;
 exports.welcome = welcome;
+exports.admin = admin;
 exports.mainadmin = mainadmin;
 exports.runningSimulationsList = runningSimulationsList;
 exports.newgroup = newgroup;
