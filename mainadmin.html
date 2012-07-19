@@ -37,6 +37,7 @@
         });
 
         socket.on("running simulations list", function (data) {
+            $("#loadingInProgress").empty();
             runningSims = data;
             $("#inProgressList").empty();
             var item;
@@ -46,6 +47,7 @@
         });
 
         socket.on("archived simulations list", function (data) {
+            $("#loadingArchived").empty();
             archivedSims = data;
             $("#archivedList").empty();
             var item;
@@ -56,10 +58,12 @@
         });
 
         var loadRunningOceanGroups = function (user) {
+            $("#loadingInProgress").append("<em>(loading...)</em>");
             socket.emit("get running simulations", user);
         }
 
         var loadArchivedOceanGroups = function (user) {
+            $("#loadingArchived").append("<em>(loading...)</em>");
             socket.emit("get archived simulations", user);
         }
 
@@ -87,6 +91,7 @@ Click this button to go to the New Group page:
 
 <h3>Simulations in Progress</h3>
 <div id="simsInProgress">
+    <label id="loadingInProgress"></label>
     <ul id="inProgressList">
 
     </ul>
@@ -95,6 +100,7 @@ Click this button to go to the New Group page:
 
 <h3>Simulations Completed</h3>
 <div id="simsArchived">
+    <label id="loadingArchived"></label>
     <ul id="archivedList">
 
     </ul>
