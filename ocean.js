@@ -176,21 +176,21 @@ function engine(io) {
         this.endFish = 0;
     }
 
-    function Ocean (gs, parentName) {
-        this.name = parentName;
-        this.parent = parentName;
-        this.players = new Array();         // gameState
-        this.seasonsData = new Array();     // gameState
-        this.actualPlayers = 0;             // gameState
-        this.actualHumans = 0;              // gameState
-        this.timable = true;                // gameState
-        this.currentSeason = 0;             // gameState
-        this.status = "waiting";            // gameState
-        this.currentSeconds = 0;            // gameState
-        this.debug = true;                  // gameState
-        this.unpauseState = "";             // gameState
-        this.pausedBy = null;               // gameState
-        this.depleted = false;              // gameState
+    function Ocean (gs, oceanName, owner) {
+        this.name = oceanName;
+        this.owner = owner;
+        this.players = new Array();
+        this.seasonsData = new Array();
+        this.actualPlayers = 0;
+        this.actualHumans = 0;
+        this.timable = true;
+        this.currentSeason = 0;
+        this.status = "waiting";
+        this.currentSeconds = 0;
+        this.debug = true;
+        this.unpauseState = "";
+        this.pausedBy = null;
+        this.depleted = false;
 
         if (gs != null) {
             this.numOceans = gs.numOceans;
@@ -207,10 +207,10 @@ function engine(io) {
             this.costCast = gs.costCast;
             this.valueFish = gs.valueFish;
             this.startingFish = gs.certainFish;
-            this.certainFish = gs.certainFish;                  // gameState
+            this.certainFish = gs.certainFish;
             this.mysteryFish = gs.mysteryFish;
             this.startingMysteryFish = gs.actualMysteryFish;
-            this.actualMysteryFish = gs.actualMysteryFish;      // gameState
+            this.actualMysteryFish = gs.actualMysteryFish;
             this.showOtherFishers = gs.showOtherFishers;
             this.showFisherNames = gs.showFisherNames;
             this.showFisherStatus = gs.showFisherStatus;
@@ -513,9 +513,14 @@ function engine(io) {
 
     }
 
-    function OceanGroup (oceanGroupName, numOceans) {
+    function OceanGroup (oceanGroupName, numOceans, owner) {
         this.name = oceanGroupName;
         this.numOceans = numOceans;
+        this.owner = owner;
+
+        this.generateOceanID = function (idx) {
+            return this.name + "-" + (1000 + idx).toString().substr(1);
+        };
 
         this.allocateFisherToOcean = function() {
             // Warning: there's a race condition here; we check if there's room, and a bit later we assign the fisher
@@ -524,7 +529,7 @@ function engine(io) {
             var availableOcean = "";
             var oID;
             for (i = 1; i <= this.numOceans; i++) {
-                oID = this.name + "-" + (1000 + i).toString().substr(1); // Forming IDs such as oceanname-001
+                oID = this.generateOceanID(i);
                 if (oceans[oID].hasRoom()) {
                     availableOcean = oID;
                     break;
@@ -535,19 +540,21 @@ function engine(io) {
 
         this.createOceans = function(oceanSettings, source) {
             var i;
+
             for (i = 1; i <= this.numOceans; i++) {
-                oceanID = this.name + "-" + (1000 + i).toString().substr(1); // Forming IDs such as oceanname-001
-                oceans[oceanID] = new Ocean(oceanSettings, oceanID);
-                logs[oceanID] = new OceanLog(oceanID);
+                oceanID = this.generateOceanID(i);
+                oceans[oceanID] = new Ocean(oceanSettings, oceanID, this.owner);
+                logs[oceanID] = new OceanLog(oceanID, this.owner);
                 logs[oceanID].addEvent("Ocean created from the page " + source + ".");
             }
         };
     }
 
 
-    function OceanLog (oceanName) {
+    function OceanLog (oceanName, owner) {
         this.name = oceanName;
         this.events = "";
+        this.owner = owner;
 
         this.addEvent = function (text) {
             var timeStampedText = new Date().toString() + ", " + this.name + ": " + text;
@@ -625,11 +632,14 @@ function engine(io) {
             r += this.events;
 
 
-            fs.writeFile("data/" + this.name + ".txt", r, function (err) {
+            // We're assuming the user directory exists.
+            var oceanName = this.name;
+            var filename = "data/" + this.owner + "/" + oceanName + ".txt";
+            fs.writeFile(filename, r, function (err) {
                 if (err) {
                     return console.log(err);
                 }
-                console.log(this.name + ": Simulation run logged under data/" + this.name + ".txt");
+                console.log(oceanName + ": Simulation run logged under " + filename);
             });
 
         };
@@ -638,16 +648,20 @@ function engine(io) {
     function User (id, name) {
         this.id = id;
         this.name = name;
-    }
 
-
-    function recreateSimulationsList() {
-        // We shouldn't be creating the html here. Already in issue tracker.
-        runningSims = "<ul>";
-        for (parent in oceanGroups) {
-            runningSims += "<li><b>" + parent + "</b>, with " + oceanGroups[parent].numOceans + " ocean(s).</li>";
-        }
-        runningSims += "</ul>"
+        this.runningSimulationsList = function () {
+            var sims = new Object();
+            var oceanGroup;
+            for (oceanGroup in oceanGroups) {
+                if (oceanGroups[oceanGroup].owner == this.id) {
+                    sims[oceanGroup] = new Object();
+                    sims[oceanGroup].name = oceanGroups[oceanGroup].name;
+                    sims[oceanGroup].numOceans = oceanGroups[oceanGroup].numOceans;
+                    sims[oceanGroup].owner = oceanGroups[oceanGroup].owner;
+                }
+            }
+            return sims;
+        };
     }
 
 
@@ -667,6 +681,10 @@ function engine(io) {
             }
         });
 
+        // Mainadmin communication
+        socket.on("get running simulations", function (uid) {
+            socket.emit("running simulations list", users[uid].runningSimulationsList());
+        });
 
         // Creating a group from newgroup.html
         socket.on('create group', function (gs) {
@@ -675,9 +693,8 @@ function engine(io) {
                 console.log("Core: Group " + group + " already exists. No action taken.");
                 socket.emit("group-not-created");
             } else {
-                oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans);
+                oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans, gs.owner);
                 oceanGroups[gs.name].createOceans(gs, "newgroup");
-                recreateSimulationsList(); // Ugly, but there's a ticket for this already.
                 socket.emit("group-created");
             }
         });
@@ -687,9 +704,8 @@ function engine(io) {
         socket.on('join group', function (group, pid) {
             if (!(group in oceanGroups)) {
                 // Register group
-                oceanGroups[group] = new OceanGroup(group, 1);
+                oceanGroups[group] = new OceanGroup(group, 1, "na");
                 oceanGroups[group].createOceans(null, "fish");
-                recreateSimulationsList();
             }
 
             var myOceanGroup = oceanGroups[group];

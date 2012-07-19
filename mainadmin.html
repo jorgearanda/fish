@@ -1,37 +1,64 @@
 <html>
 <head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script language="JavaScript">
+        function getValue(varname) {
+            var url = window.location.href;
+            var qparts = url.split("?");
+            if (qparts.length == 0) {
+                return "";
+            }
+            var query = qparts[1];
+            var vars = query.split("&");
+            var value = "";
+            for (i = 0; i < vars.length; i++) {
+                var parts = vars[i].split("=");
+                if (parts[0] == varname) {
+                    value = parts[1];
+                    break;
+                }
+            }
+            value = unescape(value);
+            value.replace(/\+/g," ");
+            return value;
+        }
+
+        var user = getValue("uid");
+        var runningSims;
+        console.log("User: " + user);
+
+
         var socket = io.connect();
 
         socket.on("connect", function (data) {
             console.log("Connected to server.");
         });
 
-        function loadRunningSimulations()
-        {
-            var xmlhttp;
-            if (window.XMLHttpRequest) {
-                // most browsers
-                xmlhttp=new XMLHttpRequest();
-            } else {
-                // IE6, IE5
-                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        socket.on("running simulations list", function (data) {
+            runningSims = data;
+            $("#inProgressList").empty();
+            var item;
+            for (item in data) {
+                $("#inProgressList").append("<li><b>" + data[item].name + "</b>, with " + data[item].numOceans + " oceans.</li>")
             }
+        });
 
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    document.getElementById("simsInProgress").innerHTML = xmlhttp.responseText;
-                }
-            }
-            xmlhttp.open("GET", "runningSimulationsList", true);
-            xmlhttp.send();
+        var loadRunningOceanGroups = function (user) {
+            socket.emit("get running simulations", user);
         }
+
+        var Main = function() {
+            loadRunningOceanGroups(user);
+        }
+
+        $(document).ready(Main);
+
     </script>
     <title>Admin - Main Screen</title>
 </head>
 
-<body onload="loadRunningSimulations()">
+<body>
 <h2>Fish Administration</h2>
 
 <h3>Create a new group</h3>
@@ -39,11 +66,15 @@
 Click this button to go to the New Group page:
 <br>
 <form>
-    <button type="button" onclick="location.href='newgroup'">Create a group</button>
+    <button type="button" onclick="location.href='newgroup?uid=' + user">Create a group</button>
 </form>
 
 <h3>Simulations in Progress</h3>
-<div id="simsInProgress"></div>
+<div id="simsInProgress">
+    <ul id="inProgressList">
+
+    </ul>
+</div>
 <br>
 
 <h3>Simulations Completed</h3>
