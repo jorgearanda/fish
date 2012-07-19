@@ -26,6 +26,7 @@
 
         var user = getValue("uid");
         var runningSims;
+        var archivedSims;
         console.log("User: " + user);
 
 
@@ -40,7 +41,17 @@
             $("#inProgressList").empty();
             var item;
             for (item in data) {
-                $("#inProgressList").append("<li><b>" + data[item].name + "</b>, with " + data[item].numOceans + " oceans.</li>")
+                $("#inProgressList").append("<li><b>" + data[item].name + "</b>, with " + data[item].numOceans + " oceans.</li>");
+            }
+        });
+
+        socket.on("archived simulations list", function (data) {
+            archivedSims = data;
+            $("#archivedList").empty();
+            var item;
+            for (item in data) {
+                formattedItem = "<li><a href='archivedFile?" + user + "/" + data[item].name + "'>" + data[item].name + "</a></li>"
+                $("#archivedList").append(formattedItem);
             }
         });
 
@@ -48,8 +59,13 @@
             socket.emit("get running simulations", user);
         }
 
+        var loadArchivedOceanGroups = function (user) {
+            socket.emit("get archived simulations", user);
+        }
+
         var Main = function() {
             loadRunningOceanGroups(user);
+            loadArchivedOceanGroups(user);
         }
 
         $(document).ready(Main);
@@ -78,7 +94,11 @@ Click this button to go to the New Group page:
 <br>
 
 <h3>Simulations Completed</h3>
-We still need to figure out how to deal with completed simulations.
+<div id="simsArchived">
+    <ul id="archivedList">
+
+    </ul>
+</div>
 <br><br>
 </body>
 </html>

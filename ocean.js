@@ -662,6 +662,18 @@ function engine(io) {
             }
             return sims;
         };
+
+        this.archivedSimulationsList = function () {
+            var archivedSims = new Object();
+            var userDir = "data/" + this.id + "/";
+            files = fs.readdirSync(userDir);
+            var file;
+            for (file in files) {
+                archivedSims[files[file]] = new Object();
+                archivedSims[files[file]].name = files[file];
+            }
+            return archivedSims;
+        };
     }
 
 
@@ -684,6 +696,10 @@ function engine(io) {
         // Mainadmin communication
         socket.on("get running simulations", function (uid) {
             socket.emit("running simulations list", users[uid].runningSimulationsList());
+        });
+
+        socket.on("get archived simulations", function (uid) {
+            socket.emit("archived simulations list", users[uid].archivedSimulationsList());
         });
 
         // Creating a group from newgroup.html
@@ -891,18 +907,6 @@ function mainadmin(response, io) {
     }
 }
 
-function runningSimulationsList(response, io) {
-    console.log("Request handler 'runningSimulationsList' was called.");
-    if (engineCalled == false) {
-        console.log("...but the simulation engine is not running!");
-        response.writeHead(500);
-        return response.end("Error trying to get list of running simulations.");
-    } else {
-        response.writeHead(200);
-        response.end(runningSims);
-    }
-}
-
 function newgroup(response, io) {
     console.log("Request handler 'newgroup' was called.");
     fs.readFile(__dirname + '/newgroup.html',
@@ -980,6 +984,21 @@ function underwater(response, io) {
     );
 }
 
+function archivedFile(query, response, io) {
+    var filenameWanted = "data/" + query.substr(1);
+    console.log("Request handler 'archivedFile' was called for file " + filenameWanted + ".");
+    fs.readFile(filenameWanted,
+        function (err, data) {
+            if (err) {
+                response.writeHead(500);
+                return response.end('Error loading ' + filenameWanted);
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+}
+
 function jquery(response, io) {
     console.log("Request handler 'jquery' was called.");
     fs.readFile(__dirname + '/js/jquery-1.7.2.min.js',
@@ -997,9 +1016,9 @@ exports.fish = fish;
 exports.welcome = welcome;
 exports.admin = admin;
 exports.mainadmin = mainadmin;
-exports.runningSimulationsList = runningSimulationsList;
 exports.newgroup = newgroup;
 exports.certainfish = certainfish;
 exports.mysteryfish = mysteryfish;
 exports.underwater = underwater;
+exports.archivedFile = archivedFile;
 exports.jquery = jquery;
