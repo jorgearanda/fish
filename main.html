@@ -1,5 +1,66 @@
 <html>
 <head>
+<style>
+    .controls {
+        width: 11.7em;
+        float: left;
+        display: block;
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+
+    .separator {
+        clear: both;
+    }
+
+    fieldset {
+        border: 0px;
+    }
+
+    .status-label {
+        font-size: 14pt;
+    }
+
+    .costs-label {
+        visibility: hidden;
+    }
+
+    .info-label {
+        width: 5.5em;
+        text-align: left;
+        display: inline-block;
+    }
+
+    #oceanbox {
+        width: 800px;
+        float: left;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #controlbox {
+        width: 800px;
+        float: left;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #costsbox {
+        width: 200px;
+        float: left;
+        display: block;
+    }
+
+    #infobox {
+        width: 600px;
+        float: left;
+        display: block;
+    }
+
+</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script language="JavaScript">
     function getValue(varname) {
@@ -644,10 +705,65 @@ function drawAll() {
 <div width="1210" height="760" style="overflow: auto">
     <canvas id="controlCanvas" width="300" height="700" style="position: absolute; left: 0; top: 0"></canvas>
 
-    <canvas id="oceanCanvas" width="800" height="500" style="position: absolute; left: 300; top: 0"></canvas>
-
     <canvas id="infoCanvas" width="800" height="200" style="position: absolute; left: 300; top: 500"></canvas>
 </div>
+<div id="statusbox">
+    <label class="status-label">Status goes here.</label>
+</div>
+<div class="separator">
+</div>
+<div id="oceanbox">
+    <canvas id="oceanCanvas" width="800" height="400"></canvas>
+</div>
+<div class="separator">
+</div>
+<div id="controlbox">
+    <fieldset>
+        <button class="controls">Read rules</button>
+        <button class="controls">Go to sea</button>
+        <button class="controls">Cast for one fish</button>
+        <button class="controls">Return to port</button>
+        <button class="controls">Pause</button>
+    </fieldset>
+</div>
+<div class="separator">
+</div>
+<div id="costsbox">
+    <fieldset>
+        <label class="costs-label" id="fish-value">Each fish earns you $</label>
+        <br>
+        <label class="costs-label" id="cost-cast">Casting for a fish costs $</label>
+        <br>
+        <label class="costs-label" id="cost-second">Each second at sea costs $</label>
+        <br>
+        <label class="costs-label" id="cost-leave">Leaving port costs $</label>
+    </fieldset>
+</div>
+<div id="infobox">
+    <fieldset>
+        <label class="info-label fisher-name-label"></label>
+        <label class="info-label fisher-status-label"></label>
+        <label class="info-label fish-caught-season-label"><b>Fish caught</b></label>
+        <label class="info-label fish-caught-all-label"></label>
+        <label class="info-label profits-season-label"><b>Profits</b></label>
+        <label class="info-label profits-all-label"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label"><b>Fisher</b></label>
+        <label class="info-label fisher-status-label"><b>Location</b></label>
+        <label class="info-label fish-caught-season-label"><b>Season</b></label>
+        <label class="info-label fish-caught-all-label"><b>Overall</b></label>
+        <label class="info-label profits-season-label"><b>Season</b></label>
+        <label class="info-label profits-all-label"><b>Overall</b></label>
 
+        <br>
+        <label>Agent 1</label>
+        <br>
+        <label>Agent 2</label>
+        <br>
+        <label>Agent 3</label>
+        <br>
+        <label>Agent 4</label>
+    </fieldset>
+</div>
 </body>
 </html>
