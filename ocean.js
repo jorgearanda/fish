@@ -3,17 +3,17 @@ var engineCalled = false;
 var runningSims = "--none currently--";
 
 function engine(io) {
-    // The array "oceans" holds all active simulations. If one simulation group has more than one ocean, then
+    // The object "oceans" holds all active simulations. If one simulation group has more than one ocean, then
     // there is one entry for each ocean in this array.
     // Oceans are indexed by their name.
-    var oceans = new Array();
+    var oceans = new Object();
 
-    // The "oceanGroups" array holds all active simulation groups. Every oceanGroup has at least one ocean.
+    // The "oceanGroups" object holds all active simulation groups. Every oceanGroup has at least one ocean.
     // Every ocean has a single corresponding oceanGroup entry.
-    var oceanGroups = new Array();
+    var oceanGroups = new Object();
 
-    // Every ocean has a log in this array with the same index
-    var logs = new Array();
+    // Every ocean has a log in this object with the same index
+    var logs = new Object();
 
     var timestamper = new Date();
     var t;  // timer function variable
@@ -21,7 +21,7 @@ function engine(io) {
     var keepTimerGoing = true;
 
     // Every FISH experimenter on record will have an object here
-    var users = new Array();
+    var users = new Object();
     loadUsers();
 
     function timer() {
@@ -176,8 +176,9 @@ function engine(io) {
         this.endFish = 0;
     }
 
-    function Ocean (gs, oceanName, owner) {
+    function Ocean (gs, oceanName, oceanGroup, owner) {
         this.name = oceanName;
+        this.oceanGroup = oceanGroup;
         this.owner = owner;
         this.players = new Array();
         this.seasonsData = new Array();
@@ -441,6 +442,11 @@ function engine(io) {
 
             // Create the log file for this ocean run.
             logs[this.name].writeReport();
+
+            // Check if oceanGroup needs to be taken down.
+            if (oceanGroups[this.oceanGroup].allOver()) {
+                delete oceanGroups[this.oceanGroup];
+            }
         };
 
         this.isSuccessfulCastAttempt = function () {
@@ -543,11 +549,23 @@ function engine(io) {
 
             for (i = 1; i <= this.numOceans; i++) {
                 oceanID = this.generateOceanID(i);
-                oceans[oceanID] = new Ocean(oceanSettings, oceanID, this.owner);
+                oceans[oceanID] = new Ocean(oceanSettings, oceanID, this.name, this.owner);
                 logs[oceanID] = new OceanLog(oceanID, this.owner);
                 logs[oceanID].addEvent("Ocean created from the page " + source + ".");
             }
         };
+
+        this.allOver = function() {
+            var isAllOver = true;
+            var oID;
+            for (i = 1; i <= this.numOceans; i++) {
+                oID = this.generateOceanID(i);
+                if (oceans[oID].status != "over") {
+                    isAllOver = false;
+                }
+            }
+            return isAllOver;
+        }
     }
 
 
