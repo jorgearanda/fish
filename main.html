@@ -581,7 +581,7 @@ function drawInfo() {
         iContext.fillRect(190, 10, 190, 135);
         iContext.fillRect(390, 10, 410, 135);
 
-        if (gameSettings.status != "waiting") {
+        if (gameSettings.status != "waiting" && gameSettings.status != "readying") {
             drawInfoHeader(iContext, 50, 30);
             iContext.fillStyle = "black";
             iContext.font = "14px sans-serif";
