@@ -72,15 +72,6 @@
         group = myGroup;
     });
 
-    socket.on('agents', function (ags) {
-        console.log(ags);
-        agents = ags;
-    });
-
-    socket.on('news', function (data) {
-        console.log(data);
-    });
-
     socket.on('begin', function (data) {
         console.log('Begin simulation.');
         gameSettings = data;
@@ -108,10 +99,6 @@
         sailingAllowed = false;
         fishingAllowed = false;
         returningAllowed = false;
-    });
-
-    socket.on('message',function(data) {
-        console.log('Received a message from the server!', data);
     });
 
     socket.on('paused', function (data) {
