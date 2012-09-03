@@ -22,7 +22,7 @@
     }
 
     .costs-label {
-        visibility: hidden;
+        font-size: 10pt;
     }
 
     .info-label {
@@ -115,7 +115,7 @@
 
     socket.on('gamesettings', function (gs) {
         console.log(gs);
-        gameSettings = gs;
+        updateGameSettings(gs);
     });
 
     socket.on('fullroom', function (group) {
@@ -135,198 +135,176 @@
 
     socket.on('begin', function (data) {
         console.log('Begin simulation.');
-        gameSettings = data;
         sailingAllowed = true;
+        updateGameSettings(data);
     });
 
     socket.on('readying', function (data) {
         console.log('readying');
-        gameSettings = data;
         sailingAllowed = false;
         fishingAllowed = false;
+        updateGameSettings(data);
     });
 
     socket.on('endseason', function (data) {
         console.log('Current season ended.');
-        gameSettings = data;
         sailingAllowed = false;
         fishingAllowed = false;
         returningAllowed = false;
+        updateGameSettings(data);
     });
 
     socket.on('gameover', function (data) {
         console.log('Simulation over.');
-        gameSettings = data;
         sailingAllowed = false;
         fishingAllowed = false;
         returningAllowed = false;
+        updateGameSettings(data);
     });
 
     socket.on('paused', function (data) {
         console.log("Simulation paused by user: " + data.id);
         pausable = false;
         if (id == data.id) {
-            console.log("unpausable now");
             unpausable = true;
         }
+        pauseMode("resume");
     });
 
     socket.on('resumed', function (data) {
         console.log("Simulation resumed by user: " + data.id);
         pausable = true;
         unpausable = false;
+        pauseMode("pause");
     });
+
+    var pauseMode = function(mode) {
+        if (mode == "pause") {
+            $("#pause").val("Pause");
+            $("#pause").click(pauseClick);
+
+        } else {
+            $("#pause").val("Resume");
+            $("#pause").click(unpauseClick);
+        }
+    }
+
+    var updateGameSettings = function(gs) {
+        gameSettings = gs;
+        displayCosts();
+        buttonEnabler();
+    }
+
+    var buttonEnabler = function() {
+        if (sailingAllowed && gameSettings != null && gameSettings.status != "paused") {
+            $("#tosea").removeAttr("disabled");
+        } else {
+            $("#tosea").attr("disabled", "disabled");
+        }
+
+        if (fishingAllowed && gameSettings != null && gameSettings.status != "paused" &&
+                gameSettings.certainFish + gameSettings.actualMysteryFish > 0) {
+            $("#castfish").removeAttr("disabled");
+        } else {
+            $("#castfish").attr("disabled", "disabled");
+        }
+
+        if (returningAllowed && gameSettings != null && gameSettings.status != "paused") {
+            $("#toport").removeAttr("disabled");
+        } else {
+            $("#toport").attr("disabled", "disabled");
+        }
+
+        if (readRules) {
+            $("#readrules").attr("disabled", "disabled");
+        } else {
+            $("#readrules").removeAttr("disabled");
+        }
+
+        if (pausable && gameSettings != null && gameSettings.pauseEnabled) {
+            $("#pause").removeAttr("disabled");
+        } else if (unpausable && gameSettings != null && gameSettings.pauseEnabled) {
+            $("#pause").removeAttr("disabled");
+        } else {
+            $("#pause").attr("disabled", "disabled");
+        }
+    }
+
+    var goToSeaClick = function() {
+        console.log("clicked on go to sea");
+        socket.emit("toSea", {id: id});
+        sailingAllowed = false;
+        fishingAllowed = true;
+        returningAllowed = true;
+    }
+
+    var returnToPortClick = function() {
+        socket.emit("toPort", {id: id});
+        sailingAllowed = true;
+        fishingAllowed = false;
+        returningAllowed = false;
+    }
+
+    var castForFishClick = function() {
+        if (gameSettings.certainFish + gameSettings.actualMysteryFish <= 1) {
+            fishingAllowed = false;
+        }
+        socket.emit("fishing", {id: id});
+    }
+
+    var readRulesClick = function() {
+        console.log("clicked on read rules");
+        readRules = true;
+        gameSettings.players[id].readRules = true;  // TODO: Can I simplify this?
+        socket.emit("readRules", {id: id});
+    }
+
+    var pauseClick = function() {
+        socket.emit("pauseRequest", {id: id});
+    }
+
+    var unpauseClick = function() {
+        socket.emit("resumeRequest", {id: id});
+    }
+
+    var displayCosts = function() {
+        if (gameSettings != null) {
+            console.log("displaying costs...");
+            $("#fish-value").text("Each fish earns you $" + gameSettings.valueFish);
+
+            if (gameSettings.costCast > 0) {
+                $("#cost-cast").text("Casting for a fish costs $" + gameSettings.costCast);
+            }
+
+            if (gameSettings.costAtSea > 0) {
+                $("#cost-second").text("Each second at sea costs $" + gameSettings.costAtSea);
+            }
+
+            if (gameSettings.costDepart > 0) {
+                $("#cost-leave").text("Leaving port costs $" + gameSettings.costDepart);
+            }
+        }
+    }
+
+
+    var Main = function() {
+        buttonEnabler();
+        $("#tosea").click(goToSeaClick);
+        $("#toport").click(returnToPortClick);
+        $("#castfish").click(castForFishClick);
+        $("#readrules").click(readRulesClick);
+        $("#pause").click(pauseClick);
+    }
+
+    $(document).ready(Main);
+
 </script>
 
 <title>Client - Main Screen</title>
 
 <script language="JavaScript">
 
-function goToSeaOnClick() {
-    socket.emit('toSea', {id: id});
-    sailingAllowed = false;
-    fishingAllowed = true;
-    returningAllowed = true;
-}
-
-function returnToPortOnClick() {
-    socket.emit('toPort', {id: id});
-    sailingAllowed = true;
-    fishingAllowed = false;
-    returningAllowed = false;
-}
-
-function castForFishOnClick() {
-    if (gameSettings.certainFish + gameSettings.actualMysteryFish <= 1) {
-        fishingAllowed = false;
-    }
-    socket.emit('fishing', {id: id});
-}
-
-function goFishingOnClick() {
-    readRules = true;
-    gameSettings.players[id].readRules = true;
-    socket.emit('readRules', {id: id});
-}
-
-function pauseSimulation() {
-    console.log("Pausing simulation");
-    socket.emit('pauseRequest', {id: id});
-}
-
-function unpauseSimulation() {
-    console.log("Unpausing simulation");
-    socket.emit('resumeRequest', {id: id});
-}
-
-function controlOnClick(e) {
-    var x;
-    var y;
-    if (e.pageX != undefined && e.pageY != undefined) {
-        x = e.pageX;
-        y = e.pageY;
-    } else {
-        x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-        y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-    }
-    x -= cCanvas.offsetLeft;
-    y -= cCanvas.offsetTop;
-
-    if ((x >= 20) && (x <= 220) && (y >= 140) && (y <= 170) && (readRules == false)) {
-        goFishingOnClick();
-        drawAll();
-    }
-
-    if ((x >= 20) && (x <= 220) && (y >= 180) && (y <= 210) && sailingAllowed && (gameSettings.status != "paused")) {
-        goToSeaOnClick();
-        drawAll();
-    }
-
-    if ((x >= 20) && (x <= 220) && (y >= 220) && (y <= 250) && returningAllowed && (gameSettings.status != "paused")) {
-        returnToPortOnClick();
-        drawAll();
-    }
-
-    if ((x >= 20) && (x <= 220) && (y >= 260) && (y <= 290) && fishingAllowed && (gameSettings.status != "paused")) {
-        castForFishOnClick();
-        drawAll();
-    }
-
-    if ((x >= 20) && (x <= 220) && (y >= 300) && (y <= 330)) {
-        if (pausable && (gameSettings != null) && gameSettings.pauseEnabled) {
-            pauseSimulation();
-            drawAll();
-        } else if (unpausable && (gameSettings != null) && gameSettings.pauseEnabled) {
-            unpauseSimulation();
-            drawAll();
-        }
-    }
-}
-
-function drawButton(context, text, enabled, x1, y1, x2, y2) {
-    if (enabled) {
-        borderColor = "salmon";
-        fillColor = "lightsalmon";
-        textColor = "black"
-    } else {
-        borderColor = "darkgray";
-        fillColor = "gainsboro";
-        textColor = "darkslategray";
-    }
-    context.fillStyle = borderColor;
-    context.fillRect(x1, y1, x2, y2);
-    context.fillStyle = fillColor;
-    context.fillRect(x1 + 2, y1 + 2, x2 - 4, y2 - 4);
-    context.fillStyle = textColor;
-    context.font = "bold 14px sans-serif";
-    context.fillText(text, x1 + 10, y1 + 20);
-}
-
-function drawControl() {
-    cCanvas = document.getElementById("controlCanvas");
-    cCanvas.addEventListener("click", controlOnClick, false);
-    cContext = cCanvas.getContext("2d");
-    cContext.font = "14px sans-serif";
-
-    if (gameSettings != null) {
-        cContext.fillText("Each fish earns you $" + gameSettings.valueFish, 20, 60);
-        if (gameSettings.costCast > 0) {
-            cContext.fillText("Casting for a fish costs $" + gameSettings.costCast, 20, 80);
-        }
-        if (gameSettings.costAtSea > 0) {
-            cContext.fillText("Each minute at sea costs $" + gameSettings.costAtSea, 20, 100);
-        }
-        if (gameSettings.costDepart > 0) {
-            cContext.fillText("Leaving port costs $" + gameSettings.costDepart, 20, 120);
-        }
-
-        if (gameSettings.certainFish + gameSettings.actualMysteryFish < 1) {
-            fishingAllowed = false;
-        }
-
-        if (!readRules) {
-            drawButton(cContext, "Go Fishing!", true, 20, 140, 200, 30);
-        }
-        if (gameSettings.status == "running") {
-            drawButton(cContext, "Go out to sea", sailingAllowed, 20, 180, 200, 30);
-            drawButton(cContext, "Return to port", returningAllowed, 20, 220, 200, 30);
-            drawButton(cContext, "Cast for one fish", fishingAllowed, 20, 260, 200, 30);
-        }
-        if (gameSettings.pauseEnabled && pausable && ((gameSettings.status == "running") || (gameSettings.status == "resting"))) {
-            drawButton(cContext, "Pause", true, 20, 300, 200, 30);
-        } else if (gameSettings.pauseEnabled && unpausable && (gameSettings.status == "paused")) {
-            drawButton(cContext, "Resume", true, 20, 300, 200, 30);
-        }
-    }
-}
-
-function clearControl() {
-    cCanvas = document.getElementById("controlCanvas");
-    cContext = cCanvas.getContext("2d");
-    cContext.clearRect(0,0,300,700);
-}
-
-
+// TODO: Move to the top?
 var fishImage = new Image();
 var mysteryFishImage = new Image();
 var underwater = new Image();
@@ -334,6 +312,9 @@ fishImage.src = "certain-fish.gif";
 mysteryFishImage.src = "mystery-fish.gif";
 underwater.src = "underwater.jpg";
 
+
+// TODO: Rewrite the assignment of coordinates of fish in the screen.
+// We'll have only 'small' fish images, each representing one fish.
 function Coords() {
     this.x = 0;
     this.y = 0;
@@ -415,6 +396,7 @@ tinyFishSpots[6].y = 420;
 tinyFishSpots[7].x = 320;
 tinyFishSpots[7].y = 120;
 
+// TODO: This function will need to be updated with the new fish drawing approach.
 function drawFish(oContext, image, size, x, y) {
     oContext.fillStyle = "black";
     if (size == 100) {
@@ -438,6 +420,7 @@ function drawBackground(oContext, image, x1, y1, x2, y2) {
     oContext.drawImage(image, x1, y1, x2, y2);
 }
 
+// TODO: As per issue #89, this will need a currency symbol parameter.
 function performanceReportText() {
     rep = "This simulation is over.\n\n";
     if (gameSettings.depleted) {
@@ -450,6 +433,7 @@ function performanceReportText() {
     return rep;
 }
 
+// TODO: See if I can get rid of this silliness with a text box I can hide later.
 function writeTextblockInCanvas(ctx, txt, width, height) {
     var fitWidth = width;
     var lineHeight = height;
@@ -480,6 +464,7 @@ function writeTextblockInCanvas(ctx, txt, width, height) {
     }
 }
 
+// TODO: Rewrite. Handling of status messages is now separate from drawing the ocean.
 function drawOcean() {
     oCanvas = document.getElementById("oceanCanvas");
     oContext = oCanvas.getContext("2d");
@@ -606,6 +591,7 @@ function clearOcean() {
     oContext.clearRect(0,0,800,500);
 }
 
+// TODO: This will not be necessary.
 function drawInfoHeader(ctx, edgeX, topY) {
     ctx.fillStyle = "black";
     ctx.font = "14px sans-serif";
@@ -619,6 +605,7 @@ function drawInfoHeader(ctx, edgeX, topY) {
     ctx.fillText("Overall", edgeX + 450, topY + 20);
 }
 
+// TODO: This will be superseded by the info box.
 function drawInfo() {
     if (gameSettings != null) {
         iCanvas = document.getElementById("infoCanvas");
@@ -680,20 +667,16 @@ function drawInfo() {
     }
 }
 
+// TODO: This will be superseded by the info box.
 function clearInfo() {
     iCanvas = document.getElementById("infoCanvas");
     iContext = iCanvas.getContext("2d");
     iContext.clearRect(0,0,800,200);
 }
 
-
 function drawAll() {
-    clearControl();
-    drawControl();
     clearOcean();
     drawOcean();
-    clearInfo();
-    drawInfo();
     loop = setTimeout('drawAll()', 1000);
 }
 </script>
@@ -701,12 +684,6 @@ function drawAll() {
 
 
 <body onload="drawAll()">
-
-<div width="1210" height="760" style="overflow: auto">
-    <canvas id="controlCanvas" width="300" height="700" style="position: absolute; left: 0; top: 0"></canvas>
-
-    <canvas id="infoCanvas" width="800" height="200" style="position: absolute; left: 300; top: 500"></canvas>
-</div>
 <div id="statusbox">
     <label class="status-label">Status goes here.</label>
 </div>
@@ -719,24 +696,24 @@ function drawAll() {
 </div>
 <div id="controlbox">
     <fieldset>
-        <button class="controls">Read rules</button>
-        <button class="controls">Go to sea</button>
-        <button class="controls">Cast for one fish</button>
-        <button class="controls">Return to port</button>
-        <button class="controls">Pause</button>
+        <input type="button" class="controls" id="readrules" value="Read rules">
+        <input type="button" class="controls" id="tosea" value="Go to sea">
+        <input type="button" class="controls" id="castfish" value="Cast for one fish">
+        <input type="button" class="controls" id="toport" value="Return to port">
+        <input type="button" class="controls" id="pause" value="Pause">
     </fieldset>
 </div>
 <div class="separator">
 </div>
 <div id="costsbox">
     <fieldset>
-        <label class="costs-label" id="fish-value">Each fish earns you $</label>
+        <label class="costs-label" id="fish-value"></label>
         <br>
-        <label class="costs-label" id="cost-cast">Casting for a fish costs $</label>
+        <label class="costs-label" id="cost-cast"></label>
         <br>
-        <label class="costs-label" id="cost-second">Each second at sea costs $</label>
+        <label class="costs-label" id="cost-second"></label>
         <br>
-        <label class="costs-label" id="cost-leave">Leaving port costs $</label>
+        <label class="costs-label" id="cost-leave"></label>
     </fieldset>
 </div>
 <div id="infobox">
@@ -756,13 +733,13 @@ function drawAll() {
         <label class="info-label profits-all-label"><b>Overall</b></label>
 
         <br>
-        <label>Agent 1</label>
+        <label>Fisher 1</label>
         <br>
-        <label>Agent 2</label>
+        <label>Fisher 2</label>
         <br>
-        <label>Agent 3</label>
+        <label>Fisher 3</label>
         <br>
-        <label>Agent 4</label>
+        <label>Fisher 4</label>
     </fieldset>
 </div>
 </body>
