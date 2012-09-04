@@ -59,33 +59,35 @@
         display: block;
     }
 
+    .red {
+        color: red;
+    }
+
+    .blue {
+        color: darkblue;
+    }
+
+    .black {
+        color: black;
+    }
+
+    .gray {
+        color: darkgray;
+    }
+
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script language="JavaScript">
-    function getValue(varname) {
-        var url = window.location.href;
-        var qparts = url.split("?");
-        if (qparts.length == 0) {
-            return "";
-        }
-        var query = qparts[1];
-        var vars = query.split("&");
-        var value = "";
-        for (i = 0; i < vars.length; i++) {
-            var parts = vars[i].split("=");
-            if (parts[0] == varname) {
-                value = parts[1];
-                break;
-            }
-        }
-        value = unescape(value);
-        value.replace(/\+/g," ");
-        return value;
+
+    function getURLParameter(name) {
+        return decodeURI(
+                (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+        );
     }
 
-    var group = getValue("gid");
-    var pid = getValue("pid");
+    var group = getURLParameter("gid");
+    var pid = getURLParameter("pid");
     console.log("Group: " + group);
     console.log("Participant ID: " + pid);
 
@@ -103,11 +105,18 @@
     var sailingAllowed = false;
     var fishingAllowed = false;
     var returningAllowed = false;
-    var pausable = true;
+    var pausable = false;
     var unpausable = false;
     var readRules = false;
     var seconds;
     var fullroom = false;
+
+    var fishImage = new Image();
+    var mysteryFishImage = new Image();
+    var underwater = new Image();
+    fishImage.src = "certain-fish.gif";
+    mysteryFishImage.src = "mystery-fish.gif";
+    underwater.src = "underwater.jpg";
 
     socket.on("connect", function (data) {
         socket.emit("join group", group, pid);
@@ -136,6 +145,7 @@
     socket.on('begin', function (data) {
         console.log('Begin simulation.');
         sailingAllowed = true;
+        pausable = true;
         updateGameSettings(data);
     });
 
@@ -217,6 +227,7 @@
 
         if (readRules) {
             $("#readrules").attr("disabled", "disabled");
+            $("#readrules").hide();
         } else {
             $("#readrules").removeAttr("disabled");
         }
@@ -255,7 +266,7 @@
     var readRulesClick = function() {
         console.log("clicked on read rules");
         readRules = true;
-        gameSettings.players[id].readRules = true;  // TODO: Can I simplify this?
+        gameSettings.players[id].readRules = true;
         socket.emit("readRules", {id: id});
     }
 
@@ -286,6 +297,53 @@
         }
     }
 
+    var displayStatus = function() {
+        if (gameSettings == null && !fullroom) {
+            $("#status-box").addClass("blue");
+            $("#status-box").text("Please wait - loading the application");
+        } else if (fullroom) {
+            $("#status-box").addClass("blue");
+            $("#status-box").text("The group you tried to join is full. Please notify the experimenter.");
+        } else if (gameSettings != null && gameSettings.status == "readying") {
+            $("#status-box").addClass("red");
+            $("#status-box").text("Get ready! The simulation is about to start.");
+        } else if (gameSettings != null && gameSettings.status == "running") {
+            minFish = gameSettings.certainFish;
+            maxFish = minFish + gameSettings.mysteryFish;
+            $("#status-box").addClass("black");
+            if (minFish == maxFish) {
+                $("#status-box").text("This is season " + gameSettings.currentSeason + ". " +
+                        "There are " + minFish + " fish remaining.");
+            } else {
+                $("#status-box").text("This is season " + gameSettings.currentSeason + ". " +
+                        "There are between " + minFish + " and " + maxFish + " fish remaining.");
+            }
+        } else if (gameSettings != null && gameSettings.status == "resting") {
+            $("#status-box").addClass("black");
+            $("#status-box").text("We are in between seasons.")
+        } else if (gameSettings != null && gameSettings.status == "paused") {
+            $("#status-box").addClass("gray");
+            $("#status-box").text("Simulation paused.");
+        } else {
+            // Other states (over, waiting) have an empty status box
+            $("#status-box").text("");
+        }
+        displayWarning();
+    }
+
+    var displayWarning = function() {
+        if (gameSettings != null && gameSettings.status == "running"
+                && gameSettings.seasonDuration - gameSettings.currentSeconds < 10) {
+            $("#warning-box").addClass("red");
+            $("#warning-box").text("   Warning: this season is about to end.");
+        } else if (gameSettings != null && gameSettings.status == "resting"
+                && gameSettings.restDuration - gameSettings.currentSeconds < 5) {
+            $("#warning-box").addClass("blue");
+            $("#warning-box").text("   Get ready: the next season is about to start.");
+        } else {
+            $("#warning-box").text("");
+        }
+    }
 
     var Main = function() {
         buttonEnabler();
@@ -300,19 +358,9 @@
 
 </script>
 
-<title>Client - Main Screen</title>
+<title>FISH</title>
 
 <script language="JavaScript">
-
-// TODO: Move to the top?
-var fishImage = new Image();
-var mysteryFishImage = new Image();
-var underwater = new Image();
-fishImage.src = "certain-fish.gif";
-mysteryFishImage.src = "mystery-fish.gif";
-underwater.src = "underwater.jpg";
-
-
 // TODO: Rewrite the assignment of coordinates of fish in the screen.
 // We'll have only 'small' fish images, each representing one fish.
 function Coords() {
@@ -468,33 +516,15 @@ function writeTextblockInCanvas(ctx, txt, width, height) {
 function drawOcean() {
     oCanvas = document.getElementById("oceanCanvas");
     oContext = oCanvas.getContext("2d");
-
-    // Booting up
-    if (gameSettings == null && !fullroom) {
-        oContext.fillStyle = "darkblue";
-        oContext.font = "20px sans-serif";
-        oContext.fillText("Please wait - loading the application", 20, 200);
-    }
-
-    // Full room
-    if (fullroom) {
-        oContext.fillStyle = "darkblue";
-        oContext.font = "20px sans-serif";
-        oContext.fillText("The group you tried to join is full. Please notify the experimenter.", 20, 200);
-    }
+    displayStatus();
 
     // Readying mode --- show preparation text
     if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
         oContext.fillStyle = "white";
         oContext.fillRect(0, 40, 800, 460);
         oContext.fillStyle = "black";
-        oContext.font = "14px Courier";
+        oContext.font = "12px Courier";
         writeTextblockInCanvas(oContext, gameSettings.prepText, 760, 15);
-
-        if (gameSettings.status == "readying") {
-            oContext.fillStyle = "red";
-            oContext.fillText("Get ready! The simulation is about to start.", 20, 480);
-        }
     }
 
     // Over mode --- show performance report
@@ -511,29 +541,6 @@ function drawOcean() {
 
     // Running, resting, or paused.
     if (gameSettings != null && (gameSettings.status == "running" || gameSettings.status == "resting" || gameSettings.status == "paused")) {
-        minFish = gameSettings.certainFish;
-        maxFish = minFish + gameSettings.mysteryFish;
-        oContext.font = "16px sans-serif";
-        oContext.fillStyle = "black";
-        if (gameSettings.status == "running") {
-            oContext.fillText("This is season " + gameSettings.currentSeason + ". There are between " + minFish + " and " + maxFish + " fish remaining.", 10, 20);
-            if (gameSettings.seasonDuration - gameSettings.currentSeconds < 10) {
-                oContext.fillStyle = "red";
-                oContext.fillText("Warning: this season is about to end.", 480, 20);
-            }
-        } else if (gameSettings.status == "resting") {
-            oContext.fillText("We are in between seasons.", 10, 20);
-            if (gameSettings.restDuration - gameSettings.currentSeconds < 5) {
-                oContext.fillStyle = "blue";
-                oContext.fillText("Get ready: the next season is about to start.", 480, 20);
-            }
-        } else if (gameSettings.status == "paused") {
-            oContext.fillStyle = "darkgray";
-            oContext.fillText("SIMULATION PAUSED.", 10, 20);
-        } else {
-            oContext.fillText("Unknown state: " + gameSettings.status, 10, 20);
-        }
-
         drawBackground(oContext, underwater, 0, 40, 800, 460);
 
         var certain = gameSettings.certainFish;
@@ -667,13 +674,6 @@ function drawInfo() {
     }
 }
 
-// TODO: This will be superseded by the info box.
-function clearInfo() {
-    iCanvas = document.getElementById("infoCanvas");
-    iContext = iCanvas.getContext("2d");
-    iContext.clearRect(0,0,800,200);
-}
-
 function drawAll() {
     clearOcean();
     drawOcean();
@@ -685,18 +685,19 @@ function drawAll() {
 
 <body onload="drawAll()">
 <div id="statusbox">
-    <label class="status-label">Status goes here.</label>
+    <label class="status-label" id="status-box"></label>
+    <label class="status-label" id="warning-box"></label>
 </div>
 <div class="separator">
 </div>
 <div id="oceanbox">
-    <canvas id="oceanCanvas" width="800" height="400"></canvas>
+    <canvas id="oceanCanvas" width="800" height="460"></canvas>
 </div>
 <div class="separator">
 </div>
 <div id="controlbox">
     <fieldset>
-        <input type="button" class="controls" id="readrules" value="Read rules">
+        <input type="button" class="controls" id="readrules" value="Go fishing!">
         <input type="button" class="controls" id="tosea" value="Go to sea">
         <input type="button" class="controls" id="castfish" value="Cast for one fish">
         <input type="button" class="controls" id="toport" value="Return to port">
