@@ -281,18 +281,15 @@
     var displayCosts = function() {
         if (gameSettings != null) {
             console.log("displaying costs...");
-            $("#fish-value").text("Each fish earns you $" + gameSettings.valueFish);
-
+            $("#fish-value").text("Each fish earns you " + gameSettings.currencySymbol + gameSettings.valueFish);
             if (gameSettings.costCast > 0) {
-                $("#cost-cast").text("Casting for a fish costs $" + gameSettings.costCast);
+                $("#cost-cast").text("Casting for a fish costs " + gameSettings.currencySymbol + gameSettings.costCast);
             }
-
             if (gameSettings.costAtSea > 0) {
-                $("#cost-second").text("Each second at sea costs $" + gameSettings.costAtSea);
+                $("#cost-second").text("Each second at sea costs " + gameSettings.currencySymbol + gameSettings.costAtSea);
             }
-
             if (gameSettings.costDepart > 0) {
-                $("#cost-leave").text("Leaving port costs $" + gameSettings.costDepart);
+                $("#cost-leave").text("Leaving port costs " + gameSettings.currencySymbol + gameSettings.costDepart);
             }
         }
     }
@@ -355,8 +352,8 @@
                     $("#f1-status").text(gameSettings.players[i].status);
                     $("#f1-caught-season").text(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason]);
                     $("#f1-caught-all").text(gameSettings.players[i].fishCaught);
-                    $("#f1-profits-season").text(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
-                    $("#f1-profits-all").text(gameSettings.players[i].money);
+                    $("#f1-profits-season").text(gameSettings.currencySymbol + gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
+                    $("#f1-profits-all").text(gameSettings.currencySymbol + gameSettings.players[i].money);
                 } else {
                     if (gameSettings.showOtherFishers) {
                         if (gameSettings.showFisherNames) {
@@ -372,8 +369,8 @@
                             $("#f" + currentFisher + "-caught-all").text(gameSettings.players[i].fishCaught);
                         }
                         if (gameSettings.showBalance) {
-                            $("#f" + currentFisher + "-profits-season").text(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
-                            $("#f" + currentFisher + "-profits-all").text(gameSettings.players[i].money);
+                            $("#f" + currentFisher + "-profits-season").text(gameSettings.currencySymbol + gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
+                            $("#f" + currentFisher + "-profits-all").text(gameSettings.currencySymbol + gameSettings.players[i].money);
                         }
                         currentFisher += 1;
                     }
@@ -505,7 +502,6 @@ function drawBackground(oContext, image, x1, y1, x2, y2) {
     oContext.drawImage(image, x1, y1, x2, y2);
 }
 
-// TODO: As per issue #89, this will need a currency symbol parameter.
 function performanceReportText() {
     rep = "This simulation is over.\n\n";
     if (gameSettings.depleted) {
@@ -514,7 +510,7 @@ function performanceReportText() {
         rep += gameSettings.endText + "\n\n";
     }
     rep += "You caught " + gameSettings.players[id].fishCaught + " fish.\n";
-    rep += "You ended with " + gameSettings.players[id].money + " money.\n";
+    rep += "You ended with " + gameSettings.currencySymbol + gameSettings.players[id].money + ".\n";
     return rep;
 }
 

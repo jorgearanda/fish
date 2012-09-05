@@ -125,6 +125,7 @@
             this.costAtSea = parseInt($("#costsecond").val());
             this.costCast = parseInt($("#costcast").val());
             this.valueFish = parseInt($("#fishvalue").val());
+            this.currencySymbol = $("#currencysymbol").val();
             this.seasonDuration = parseInt($("#seasonduration").val());
             this.certainFish = parseInt($("#realfish").val());
             this.actualMysteryFish = parseInt($("#startingmysteryfish").val());
@@ -268,6 +269,11 @@
         <p>
             <label for="costsecond" class="left-side-label">Cost per second at sea</label>
             <input type="number" min="0" step="1" id="costsecond" value="0"/>
+        </p>
+
+        <p>
+            <label for="currencysymbol" class="left-side-label">Currency symbol</label>
+            <input type="text" id="currencysymbol" value="$"/>
         </p>
     </fieldset>
 

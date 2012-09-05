@@ -207,6 +207,7 @@ function engine(io) {
             this.costAtSea = gs.costAtSea;
             this.costCast = gs.costCast;
             this.valueFish = gs.valueFish;
+            this.currencySymbol = gs.currencySymbol;
             this.startingFish = gs.certainFish;
             this.certainFish = gs.certainFish;
             this.mysteryFish = gs.mysteryFish;
@@ -244,6 +245,7 @@ function engine(io) {
             this.costAtSea = 0;
             this.costCast = 0;
             this.valueFish = 3;
+            this.currencySymbol = "$";
             this.startingFish = 40;
             this.certainFish = 40;
             this.mysteryFish = 10;
@@ -600,10 +602,11 @@ function engine(io) {
             r += "Resting time between seasons (in seconds): " + g.restDuration + "\n";
             r += "Spawn factor: " + g.spawnFactor + "\n";
             r += "Chance of catch (0.00 to 1.00): " + g.chanceOfCatch + "\n";
-            r += "Cost to depart: " + g.costDepart + "\n";
-            r += "Cost per second at sea: " + g.costAtSea + "\n";
-            r += "Cost to cast for a fish: " + g.costCast + "\n";
-            r += "Value of fish caught: " + g.valueFish + "\n";
+            r += "Currency symbol: " + g.currencySymbol + "\n";
+            r += "Cost to depart: " + g.currencySymbol + g.costDepart + "\n";
+            r += "Cost per second at sea: " + g.currencySymbol + g.costAtSea + "\n";
+            r += "Cost to cast for a fish: " + g.currencySymbol + g.costCast + "\n";
+            r += "Value of fish caught: " + g.currencySymbol + g.valueFish + "\n";
             r += "Number of starting certain fish: " + g.startingFish + "\n";
             r += "Number of starting mystery fish: " + g.startingMysteryFish + "\n";
             r += "Number of ending certain fish: " + g.certainFish + "\n";
@@ -636,7 +639,7 @@ function engine(io) {
                     r += j + ", ";
                     r += g.seasonsData[j].initialFish + ", ";
                     r += p.fishCaughtPerSeason[j] + ", ";
-                    r += (p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) + ", ";
+                    r += g.currencySymbol + (p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) + ", ";
                     r += individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
                     r += groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish) + ", ";
                     r += individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
