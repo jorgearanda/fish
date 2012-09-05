@@ -345,6 +345,43 @@
         }
     }
 
+    var displayInfo = function() {
+        if (gameSettings != null && gameSettings.status != "waiting" && gameSettings.status != "readying") {
+            var currentFisher = 2;
+            for (i = 0; i < gameSettings.players.length; i++) {
+                if (gameSettings.players[i].name == pid) {
+                    // Found the record that corresponds to this player. Display it first.
+                    $("#f1-name").text("You");
+                    $("#f1-status").text(gameSettings.players[i].status);
+                    $("#f1-caught-season").text(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason]);
+                    $("#f1-caught-all").text(gameSettings.players[i].fishCaught);
+                    $("#f1-profits-season").text(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
+                    $("#f1-profits-all").text(gameSettings.players[i].money);
+                } else {
+                    if (gameSettings.showOtherFishers) {
+                        if (gameSettings.showFisherNames) {
+                            $("#f" + currentFisher + "-name").text(gameSettings.players[i].name);
+                        } else {
+                            $("#f" + currentFisher + "-name").text("?????");
+                        }
+                        if (gameSettings.showFisherStatus) {
+                            $("#f" + currentFisher + "-status").text(gameSettings.players[i].status);
+                        }
+                        if (gameSettings.showFishCaught) {
+                            $("#f" + currentFisher + "-caught-season").text(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason]);
+                            $("#f" + currentFisher + "-caught-all").text(gameSettings.players[i].fishCaught);
+                        }
+                        if (gameSettings.showBalance) {
+                            $("#f" + currentFisher + "-profits-season").text(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
+                            $("#f" + currentFisher + "-profits-all").text(gameSettings.players[i].money);
+                        }
+                        currentFisher += 1;
+                    }
+                }
+            }
+        }
+    }
+
     var Main = function() {
         buttonEnabler();
         $("#tosea").click(goToSeaClick);
@@ -512,11 +549,11 @@ function writeTextblockInCanvas(ctx, txt, width, height) {
     }
 }
 
-// TODO: Rewrite. Handling of status messages is now separate from drawing the ocean.
 function drawOcean() {
     oCanvas = document.getElementById("oceanCanvas");
     oContext = oCanvas.getContext("2d");
     displayStatus();
+    displayInfo();
 
     // Readying mode --- show preparation text
     if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
@@ -598,82 +635,6 @@ function clearOcean() {
     oContext.clearRect(0,0,800,500);
 }
 
-// TODO: This will not be necessary.
-function drawInfoHeader(ctx, edgeX, topY) {
-    ctx.fillStyle = "black";
-    ctx.font = "14px sans-serif";
-    ctx.fillText("Fisher", edgeX, topY + 20);
-    ctx.fillText("Status", edgeX + 100, topY + 20);
-    ctx.fillText("Fish caught", edgeX + 150, topY);
-    ctx.fillText("This season", edgeX + 150, topY + 20);
-    ctx.fillText("Overall", edgeX + 250, topY + 20);
-    ctx.fillText("Profits", edgeX + 350, topY);
-    ctx.fillText("This season", edgeX + 350, topY + 20);
-    ctx.fillText("Overall", edgeX + 450, topY + 20);
-}
-
-// TODO: This will be superseded by the info box.
-function drawInfo() {
-    if (gameSettings != null) {
-        iCanvas = document.getElementById("infoCanvas");
-        iContext = iCanvas.getContext("2d");
-
-        iContext.fillStyle = "aliceblue";
-        iContext.fillRect(0, 10, 380, 135);
-        iContext.fillRect(190, 10, 190, 135);
-        iContext.fillRect(390, 10, 410, 135);
-
-        if (gameSettings.status != "waiting" && gameSettings.status != "readying") {
-            drawInfoHeader(iContext, 50, 30);
-            iContext.fillStyle = "black";
-            iContext.font = "14px sans-serif";
-            var skippedFishers = 0;
-            var offsetFisherLine = 70;
-
-            for (i = 0; i < gameSettings.players.length; i++) {
-                if (gameSettings.players[i].name == pid) {
-                    // Found the record that corresponds to this player. Display it first.
-                    iContext.fillText("You", 50, offsetFisherLine);
-                    iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
-                    iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
-                    iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
-                    iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);
-                    iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, offsetFisherLine);
-                    offsetFisherLine += 20;
-                }
-            }
-
-            // Go through the rest of the fishers
-            for (i = 0; i < gameSettings.players.length; i++) {
-                if (gameSettings.players[i].name != pid) {
-                    if (gameSettings.showOtherFishers) {
-                        if (gameSettings.showFisherNames) {
-                            iContext.fillText(gameSettings.players[i].name, 50, offsetFisherLine);
-                        } else {
-                            iContext.fillText("?????", 50, offsetFisherLine);
-                        }
-                        if (gameSettings.showFisherStatus) {
-                            iContext.fillText(gameSettings.players[i].status, 150, offsetFisherLine);
-                        }
-                        if (gameSettings.showFishCaught) {
-                            iContext.fillText(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason], 200, offsetFisherLine);
-                            iContext.fillText(gameSettings.players[i].fishCaught, 300, offsetFisherLine);
-                        }
-                        if (gameSettings.showBalance) {
-                            iContext.fillText(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] - gameSettings.players[i].startMoneyPerSeason[gameSettings.currentSeason], 400, offsetFisherLine);
-                            iContext.fillText(gameSettings.players[i].money - gameSettings.players[i].startMoney, 500, offsetFisherLine);
-                        }
-                        offsetFisherLine += 20;
-                    }
-                }
-            }
-        }
-        if (gameSettings.debug == true) {
-            iContext.fillText(gameSettings.status, 50, 160);
-        }
-    }
-}
-
 function drawAll() {
     clearOcean();
     drawOcean();
@@ -697,11 +658,11 @@ function drawAll() {
 </div>
 <div id="controlbox">
     <fieldset>
-        <input type="button" class="controls" id="readrules" value="Go fishing!">
         <input type="button" class="controls" id="tosea" value="Go to sea">
         <input type="button" class="controls" id="castfish" value="Cast for one fish">
         <input type="button" class="controls" id="toport" value="Return to port">
         <input type="button" class="controls" id="pause" value="Pause">
+        <input type="button" class="controls" id="readrules" value="Go fishing!">
     </fieldset>
 </div>
 <div class="separator">
@@ -732,15 +693,34 @@ function drawAll() {
         <label class="info-label fish-caught-all-label"><b>Overall</b></label>
         <label class="info-label profits-season-label"><b>Season</b></label>
         <label class="info-label profits-all-label"><b>Overall</b></label>
-
-        <br>
-        <label>Fisher 1</label>
-        <br>
-        <label>Fisher 2</label>
-        <br>
-        <label>Fisher 3</label>
-        <br>
-        <label>Fisher 4</label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f1-name"></label>
+        <label class="info-label fisher-status-label" id="f1-status"></label>
+        <label class="info-label fisher-caught-season-label" id="f1-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f1-caught-all"></label>
+        <label class="info-label profits-season-label" id="f1-profits-season"></label>
+        <label class="info-label profits-all-label" id="f1-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f2-name"></label>
+        <label class="info-label fisher-status-label" id="f2-status"></label>
+        <label class="info-label fisher-caught-season-label" id="f2-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f2-caught-all"></label>
+        <label class="info-label profits-season-label" id="f2-profits-season"></label>
+        <label class="info-label profits-all-label" id="f2-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f3-name"></label>
+        <label class="info-label fisher-status-label" id="f3-status"></label>
+        <label class="info-label fisher-caught-season-label" id="f3-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f3-caught-all"></label>
+        <label class="info-label profits-season-label" id="f3-profits-season"></label>
+        <label class="info-label profits-all-label" id="f3-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f4-name"></label>
+        <label class="info-label fisher-status-label" id="f4-status"></label>
+        <label class="info-label fisher-caught-season-label" id="f4-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f4-caught-all"></label>
+        <label class="info-label profits-season-label" id="f4-profits-season"></label>
+        <label class="info-label profits-all-label" id="f4-profits-all"></label>
     </fieldset>
 </div>
 </body>
