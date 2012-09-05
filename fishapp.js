@@ -17,6 +17,9 @@ handle["/admin.html"] = ocean.admin;
 handle["/certain-fish.gif"] = ocean.certainfish;
 handle["/mystery-fish.gif"] = ocean.mysteryfish;
 handle["/underwater.jpg"] = ocean.underwater;
+handle["/anchor.png"] = ocean.anchor;
+handle["/world.png"] = ocean.world;
+handle["/bullet_white.png"] = ocean.bullet;
 
 handle["/archivedFile"] = ocean.archivedFile;
 

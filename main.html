@@ -345,11 +345,21 @@
     var displayInfo = function() {
         if (gameSettings != null && gameSettings.status != "waiting" && gameSettings.status != "readying") {
             var currentFisher = 2;
+            var $image;
             for (i = 0; i < gameSettings.players.length; i++) {
                 if (gameSettings.players[i].name == pid) {
                     // Found the record that corresponds to this player. Display it first.
                     $("#f1-name").text("You");
-                    $("#f1-status").text(gameSettings.players[i].status);
+                    $image = $("#f1-status").children("img");
+                    if (gameSettings.players[i].status == "At port") {
+                        if ($image.attr("src") != "anchor.png") {
+                            $image.attr("src", "anchor.png");
+                        }
+                    } else {
+                        if ($image.attr("src") != "world.png") {
+                            $image.attr("src", "world.png");
+                        }
+                    }
                     $("#f1-caught-season").text(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason]);
                     $("#f1-caught-all").text(gameSettings.players[i].fishCaught);
                     $("#f1-profits-season").text(gameSettings.currencySymbol + gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
@@ -362,7 +372,18 @@
                             $("#f" + currentFisher + "-name").text("?????");
                         }
                         if (gameSettings.showFisherStatus) {
-                            $("#f" + currentFisher + "-status").text(gameSettings.players[i].status);
+                            $image = $("#f" + currentFisher + "-status").children("img");
+                            if (gameSettings.players[i].status == "At port") {
+                                if ($image.attr("src") != "anchor.png") {
+                                    $image.attr("src", "anchor.png");
+                                }
+                            } else {
+                                if ($image.attr("src") != "world.png") {
+                                    $image.attr("src", "world.png");
+                                }
+                            }
+                        } else {
+                            $("#f" + currentFisher + "-status").html('<img src="bullet_white.png">');
                         }
                         if (gameSettings.showFishCaught) {
                             $("#f" + currentFisher + "-caught-season").text(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason]);
@@ -691,28 +712,28 @@ function drawAll() {
         <label class="info-label profits-all-label"><b>Overall</b></label>
         <div class="separator"></div>
         <label class="info-label fisher-name-label" id="f1-name"></label>
-        <label class="info-label fisher-status-label" id="f1-status"></label>
+        <label class="info-label fisher-status-label" id="f1-status"><img src="bullet_white.png"></label>
         <label class="info-label fisher-caught-season-label" id="f1-caught-season"></label>
         <label class="info-label fisher-caught-all-label" id="f1-caught-all"></label>
         <label class="info-label profits-season-label" id="f1-profits-season"></label>
         <label class="info-label profits-all-label" id="f1-profits-all"></label>
         <div class="separator"></div>
         <label class="info-label fisher-name-label" id="f2-name"></label>
-        <label class="info-label fisher-status-label" id="f2-status"></label>
+        <label class="info-label fisher-status-label" id="f2-status"><img src="bullet_white.png"></label>
         <label class="info-label fisher-caught-season-label" id="f2-caught-season"></label>
         <label class="info-label fisher-caught-all-label" id="f2-caught-all"></label>
         <label class="info-label profits-season-label" id="f2-profits-season"></label>
         <label class="info-label profits-all-label" id="f2-profits-all"></label>
         <div class="separator"></div>
         <label class="info-label fisher-name-label" id="f3-name"></label>
-        <label class="info-label fisher-status-label" id="f3-status"></label>
+        <label class="info-label fisher-status-label" id="f3-status"><img src="bullet_white.png"></label>
         <label class="info-label fisher-caught-season-label" id="f3-caught-season"></label>
         <label class="info-label fisher-caught-all-label" id="f3-caught-all"></label>
         <label class="info-label profits-season-label" id="f3-profits-season"></label>
         <label class="info-label profits-all-label" id="f3-profits-all"></label>
         <div class="separator"></div>
         <label class="info-label fisher-name-label" id="f4-name"></label>
-        <label class="info-label fisher-status-label" id="f4-status"></label>
+        <label class="info-label fisher-status-label" id="f4-status"><img src="bullet_white.png"></label>
         <label class="info-label fisher-caught-season-label" id="f4-caught-season"></label>
         <label class="info-label fisher-caught-all-label" id="f4-caught-all"></label>
         <label class="info-label profits-season-label" id="f4-profits-season"></label>

@@ -1005,6 +1005,45 @@ function underwater(response, io) {
     );
 }
 
+function anchor(response, io) {
+    console.log("Request handler 'anchor' was called.");
+    fs.readFile(__dirname + '/anchor.png',
+        function (err, data) {
+            if (err) {
+                return response.end('Error loading anchor.png');
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+}
+
+function world(response, io) {
+    console.log("Request handler 'world' was called.");
+    fs.readFile(__dirname + '/world.png',
+        function (err, data) {
+            if (err) {
+                return response.end('Error loading world.png');
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+}
+
+function bullet(response, io) {
+    console.log("Request handler 'bullet' was called.");
+    fs.readFile(__dirname + '/bullet_white.png',
+        function (err, data) {
+            if (err) {
+                return response.end('Error loading bullet_white.png');
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+}
+
 function archivedFile(query, response, io) {
     var filenameWanted = "data/" + query.substr(1);
     console.log("Request handler 'archivedFile' was called for file " + filenameWanted + ".");
@@ -1041,5 +1080,8 @@ exports.newgroup = newgroup;
 exports.certainfish = certainfish;
 exports.mysteryfish = mysteryfish;
 exports.underwater = underwater;
+exports.anchor = anchor;
+exports.world = world;
+exports.bullet = bullet;
 exports.archivedFile = archivedFile;
 exports.jquery = jquery;
