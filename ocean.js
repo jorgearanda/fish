@@ -176,6 +176,11 @@ function engine(io) {
         this.endFish = 0;
     }
 
+    function fishSpot (minX, minY, maxX, maxY) {
+        this.x = 10 * Math.floor(minX + Math.random() * (maxX - minX));
+        this.y = 10 * Math.floor(minY + Math.random() * (maxY - minY));
+    }
+
     function Ocean (gs, oceanName, oceanGroup, owner) {
         this.name = oceanName;
         this.oceanGroup = oceanGroup;
@@ -301,6 +306,11 @@ function engine(io) {
             this.seasonsData[i] = new seasonData(i);
         }
 
+        this.fishSpots = new Array();
+        for (i = 1; i <= this.certainFish + this.mysteryFish; i++) {
+            this.fishSpots[i] = new fishSpot(5, 5, 75, 40);
+        }
+
         // Object methods
         this.sendGameSettings = function () {
             io.sockets.in(this.name).emit('gamesettings', this);
@@ -383,11 +393,17 @@ function engine(io) {
             logs[this.name].addEvent("Beginning season " + this.currentSeason + ".");
             this.resetTimer();
             this.status = "running";
-            this.seasonsData[this.currentSeason].initialFish = this.certainFish + this.actualMysteryFish;
 
             if (this.currentSeason > 1) {
                 this.certainFish = Math.min(this.certainFish * this.spawnFactor, this.startingFish);
                 this.actualMysteryFish = Math.min(this.actualMysteryFish * this.spawnFactor, this.startingMysteryFish);
+            }
+            this.seasonsData[this.currentSeason].initialFish = this.certainFish + this.actualMysteryFish;
+
+            // Repeating this, which is not good.
+            this.fishSpots = new Array();
+            for (i = 1; i <= this.certainFish + this.mysteryFish; i++) {
+                this.fishSpots[i] = new fishSpot(5, 5, 75, 40);
             }
 
             for (player in this.players) {

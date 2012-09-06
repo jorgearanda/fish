@@ -400,6 +400,101 @@
         }
     }
 
+    function drawFish(oContext, image, x, y) {
+        oContext.drawImage(image, x, y, 50, 50);
+    }
+
+    function drawBackground(oContext, image, x1, y1, x2, y2) {
+        oContext.drawImage(image, x1, y1, x2, y2);
+    }
+
+    function performanceReportText() {
+        rep = "This simulation is over.\n\n";
+        if (gameSettings.depleted) {
+            rep += gameSettings.depletedText + "\n\n";
+        } else {
+            rep += gameSettings.endText + "\n\n";
+        }
+        rep += "You caught " + gameSettings.players[id].fishCaught + " fish.\n";
+        rep += "You ended with " + gameSettings.currencySymbol + gameSettings.players[id].money + ".\n";
+        return rep;
+    }
+
+    function writeTextblockInCanvas(ctx, txt, width, height) {
+        var fitWidth = width;
+        var lineHeight = height;
+        var lines = txt.split('\n');
+        var currentLine = 0;
+        for (i = 0; i < lines.length; i++) {
+            var words = lines[i].split(' ');
+            var idx = 1;
+            while (words.length > 0 && idx <= words.length) {
+                var str = words.slice(0, idx).join(' ');
+                var w = ctx.measureText(str).width;
+                if ( w > fitWidth ) {
+                    if (idx==1) {
+                        idx=2;
+                    }
+                    ctx.fillText( words.slice(0, idx-1).join(' '), 20, 60 + (lineHeight*currentLine) );
+                    currentLine++;
+                    words = words.splice(idx-1);
+                    idx = 1;
+                } else {
+                    idx++;
+                }
+            }
+            if  (idx > 0) {
+                ctx.fillText( words.join(' '), 20, 60 + (lineHeight*currentLine) );
+                currentLine++;
+            }
+        }
+    }
+
+    function drawOcean() {
+        oCanvas = document.getElementById("oceanCanvas");
+        oContext = oCanvas.getContext("2d");
+        displayStatus();
+        displayInfo();
+
+        // Readying mode --- show preparation text
+        if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
+            oContext.fillStyle = "white";
+            oContext.fillRect(0, 0, 800, 460);
+            oContext.fillStyle = "black";
+            oContext.font = "12px Courier";
+            writeTextblockInCanvas(oContext, gameSettings.prepText, 760, 15);
+        }
+
+        // Over mode --- show performance report
+        if (gameSettings != null && gameSettings.status == "over") {
+            oContext.fillStyle = "white";
+            oContext.fillRect(0, 0, 800, 460);
+            oContext.fillStyle = "black";
+            oContext.font = "14px Courier";
+            writeTextblockInCanvas(oContext, performanceReportText(), 760, 15);
+        }
+
+        // Running, resting, or paused.
+        if (gameSettings != null && (gameSettings.status == "running" || gameSettings.status == "resting" || gameSettings.status == "paused")) {
+            drawBackground(oContext, underwater, 0, 0, 800, 460);
+            for (fishSpot = 1; fishSpot <= gameSettings.certainFish + gameSettings.mysteryFish; fishSpot++) {
+                drawFish(oContext, fishImage, gameSettings.fishSpots[fishSpot].x, gameSettings.fishSpots[fishSpot].y);
+            }
+        }
+    }
+
+    function clearOcean() {
+        oCanvas = document.getElementById("oceanCanvas");
+        oContext = oCanvas.getContext("2d");
+        oContext.clearRect(0,0,800,460);
+    }
+
+    function drawAll() {
+        clearOcean();
+        drawOcean();
+        loop = setTimeout('drawAll()', 1000);
+    }
+
     var Main = function() {
         buttonEnabler();
         $("#tosea").click(goToSeaClick);
@@ -407,6 +502,7 @@
         $("#castfish").click(castForFishClick);
         $("#readrules").click(readRulesClick);
         $("#pause").click(pauseClick);
+        drawAll();
     }
 
     $(document).ready(Main);
@@ -414,254 +510,9 @@
 </script>
 
 <title>FISH</title>
-
-<script language="JavaScript">
-// TODO: Rewrite the assignment of coordinates of fish in the screen.
-// We'll have only 'small' fish images, each representing one fish.
-function Coords() {
-    this.x = 0;
-    this.y = 0;
-}
-
-var largeFishSpots = new Array();
-for (i = 0; i < 6; i++) {
-    largeFishSpots[i] = new Coords();
-}
-largeFishSpots[0].x = 100;
-largeFishSpots[0].y = 100;
-largeFishSpots[1].x = 500;
-largeFishSpots[1].y = 300;
-largeFishSpots[2].x = 300;
-largeFishSpots[2].y = 100;
-largeFishSpots[3].x = 500;
-largeFishSpots[3].y = 100;
-largeFishSpots[4].x = 100;
-largeFishSpots[4].y = 300;
-largeFishSpots[5].x = 300;
-largeFishSpots[5].y = 300;
-
-var midFishSpots = new Array();
-for (i = 0; i < 6; i++) {
-    midFishSpots[i] = new Coords();
-}
-midFishSpots[0].x = 100;
-midFishSpots[0].y = 400;
-midFishSpots[1].x = 200;
-midFishSpots[1].y = 400;
-midFishSpots[2].x = 400;
-midFishSpots[2].y = 200;
-midFishSpots[3].x = 600;
-midFishSpots[3].y = 200;
-midFishSpots[4].x = 200;
-midFishSpots[4].y = 200;
-midFishSpots[5].x = 600;
-midFishSpots[5].y = 400;
-
-var smallFishSpots = new Array();
-for (i = 0; i < 8; i++) {
-    smallFishSpots[i] = new Coords();
-}
-smallFishSpots[0].x = 490;
-smallFishSpots[0].y = 290;
-smallFishSpots[1].x = 290;
-smallFishSpots[1].y = 90;
-smallFishSpots[2].x = 590;
-smallFishSpots[2].y = 90;
-smallFishSpots[3].x = 590;
-smallFishSpots[3].y = 390;
-smallFishSpots[4].x = 90;
-smallFishSpots[4].y = 90;
-smallFishSpots[5].x = 90;
-smallFishSpots[5].y = 390;
-smallFishSpots[6].x = 490;
-smallFishSpots[6].y = 390;
-smallFishSpots[7].x = 190;
-smallFishSpots[7].y = 190;
-
-var tinyFishSpots = new Array();
-for (i = 0; i < 8; i++) {
-    tinyFishSpots[i] = new Coords();
-}
-tinyFishSpots[0].x = 620;
-tinyFishSpots[0].y = 120;
-tinyFishSpots[1].x = 20;
-tinyFishSpots[1].y = 220;
-tinyFishSpots[2].x = 20;
-tinyFishSpots[2].y = 420;
-tinyFishSpots[3].x = 420;
-tinyFishSpots[3].y = 320;
-tinyFishSpots[4].x = 420;
-tinyFishSpots[4].y = 120;
-tinyFishSpots[5].x = 720;
-tinyFishSpots[5].y = 120;
-tinyFishSpots[6].x = 720;
-tinyFishSpots[6].y = 420;
-tinyFishSpots[7].x = 320;
-tinyFishSpots[7].y = 120;
-
-// TODO: This function will need to be updated with the new fish drawing approach.
-function drawFish(oContext, image, size, x, y) {
-    oContext.fillStyle = "black";
-    if (size == 100) {
-        oContext.font = "14px sans-serif";
-        oContext.drawImage(image, x, y);
-        oContext.fillText("100", x + 80, y + 110);
-    } else if (size == 25) {
-        oContext.font = "14px sans-serif";
-        oContext.drawImage(image, x, y, 100, 100);
-        oContext.fillText("25", x + 40, y + 55);
-    } else if (size == 5) {
-        oContext.font = "10px sans-serif";
-        oContext.drawImage(image, x, y, 50, 50);
-        oContext.fillText("5", x + 20, y + 30);
-    } else {
-        oContext.drawImage(image, x, y, 25, 25);
-    }
-}
-
-function drawBackground(oContext, image, x1, y1, x2, y2) {
-    oContext.drawImage(image, x1, y1, x2, y2);
-}
-
-function performanceReportText() {
-    rep = "This simulation is over.\n\n";
-    if (gameSettings.depleted) {
-        rep += gameSettings.depletedText + "\n\n";
-    } else {
-        rep += gameSettings.endText + "\n\n";
-    }
-    rep += "You caught " + gameSettings.players[id].fishCaught + " fish.\n";
-    rep += "You ended with " + gameSettings.currencySymbol + gameSettings.players[id].money + ".\n";
-    return rep;
-}
-
-// TODO: See if I can get rid of this silliness with a text box I can hide later.
-function writeTextblockInCanvas(ctx, txt, width, height) {
-    var fitWidth = width;
-    var lineHeight = height;
-    var lines = txt.split('\n');
-    var currentLine = 0;
-    for (i = 0; i < lines.length; i++) {
-        var words = lines[i].split(' ');
-        var idx = 1;
-        while (words.length > 0 && idx <= words.length) {
-            var str = words.slice(0, idx).join(' ');
-            var w = ctx.measureText(str).width;
-            if ( w > fitWidth ) {
-                if (idx==1) {
-                    idx=2;
-                }
-                ctx.fillText( words.slice(0, idx-1).join(' '), 20, 60 + (lineHeight*currentLine) );
-                currentLine++;
-                words = words.splice(idx-1);
-                idx = 1;
-            } else {
-                idx++;
-            }
-        }
-        if  (idx > 0) {
-            ctx.fillText( words.join(' '), 20, 60 + (lineHeight*currentLine) );
-            currentLine++;
-        }
-    }
-}
-
-function drawOcean() {
-    oCanvas = document.getElementById("oceanCanvas");
-    oContext = oCanvas.getContext("2d");
-    displayStatus();
-    displayInfo();
-
-    // Readying mode --- show preparation text
-    if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
-        oContext.fillStyle = "white";
-        oContext.fillRect(0, 40, 800, 460);
-        oContext.fillStyle = "black";
-        oContext.font = "12px Courier";
-        writeTextblockInCanvas(oContext, gameSettings.prepText, 760, 15);
-    }
-
-    // Over mode --- show performance report
-    if (gameSettings != null && gameSettings.status == "over") {
-        oContext.font = "16px sans-serif";
-        oContext.fillStyle = "darkgray";
-        oContext.fillText("Simulation over.", 10, 20);
-        oContext.fillStyle = "white";
-        oContext.fillRect(0, 40, 800, 460);
-        oContext.fillStyle = "black";
-        oContext.font = "14px Courier";
-        writeTextblockInCanvas(oContext, performanceReportText(), 760, 15);
-    }
-
-    // Running, resting, or paused.
-    if (gameSettings != null && (gameSettings.status == "running" || gameSettings.status == "resting" || gameSettings.status == "paused")) {
-        drawBackground(oContext, underwater, 0, 40, 800, 460);
-
-        var certain = gameSettings.certainFish;
-        var mystery = gameSettings.mysteryFish;
-        var idxLarge = 0;
-        var idxMid = 0;
-        var idxSmall = 0;
-        var idxTiny = 0;
-        while (certain >= 100) {
-            drawFish(oContext, fishImage, 100, largeFishSpots[idxLarge].x, largeFishSpots[idxLarge].y);
-            idxLarge++;
-            certain -= 100;
-        }
-        while (certain >= 25) {
-            drawFish(oContext, fishImage, 25, midFishSpots[idxMid].x, midFishSpots[idxMid].y);
-            idxMid++;
-            certain -= 25;
-        }
-        while (certain >= 5) {
-            drawFish(oContext, fishImage, 5, smallFishSpots[idxSmall].x, smallFishSpots[idxSmall].y);
-            idxSmall++;
-            certain -= 5;
-        }
-        while (certain > 0) {
-            drawFish(oContext, fishImage, 1, tinyFishSpots[idxTiny].x, tinyFishSpots[idxTiny].y);
-            idxTiny++;
-            certain -= 1;
-        }
-        while (mystery >= 100) {
-            drawFish(oContext, mysteryFishImage, 100, largeFishSpots[idxLarge].x, largeFishSpots[idxLarge].y);
-            idxLarge++;
-            mystery -= 100;
-        }
-        while (mystery >= 25) {
-            drawFish(oContext, mysteryFishImage, 25, midFishSpots[idxMid].x, midFishSpots[idxMid].y);
-            idxMid++;
-            mystery -= 25;
-        }
-        while (mystery >= 5) {
-            drawFish(oContext, mysteryFishImage, 5, smallFishSpots[idxSmall].x, smallFishSpots[idxSmall].y);
-            idxSmall++;
-            mystery -= 5;
-        }
-        while (mystery > 0) {
-            drawFish(oContext, mysteryFishImage, 1, tinyFishSpots[idxTiny].x, tinyFishSpots[idxTiny].y);
-            idxTiny++;
-            mystery -= 1;
-        }
-    }
-}
-
-function clearOcean() {
-    oCanvas = document.getElementById("oceanCanvas");
-    oContext = oCanvas.getContext("2d");
-    oContext.clearRect(0,0,800,500);
-}
-
-function drawAll() {
-    clearOcean();
-    drawOcean();
-    loop = setTimeout('drawAll()', 1000);
-}
-</script>
 </head>
 
-
-<body onload="drawAll()">
+<body>
 <div id="statusbox">
     <label class="status-label" id="status-box"></label>
     <label class="status-label" id="warning-box"></label>
