@@ -225,11 +225,12 @@
             $("#toport").attr("disabled", "disabled");
         }
 
-        if (readRules) {
+        if (readRules || gameSettings == null) {
             $("#readrules").attr("disabled", "disabled");
             $("#readrules").hide();
         } else {
             $("#readrules").removeAttr("disabled");
+            $("#readrules").show();
         }
 
         if (pausable && gameSettings != null && gameSettings.pauseEnabled) {

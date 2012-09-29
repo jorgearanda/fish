@@ -33,7 +33,14 @@ function engine(io) {
             for (oceanName in oceans) {
                 if (oceans[oceanName].timable == true) {
                     keepTimerGoing = true;
-                    oceans[oceanName].timeStep();
+                    try {
+                        oceans[oceanName].timeStep();
+                    } catch (err) {
+                        console.log("Exception processing ocean " + oceanName + ":");
+                        console.log(err.message);
+                        console.log("Taking " + oceanName + " out of the timable set of oceans.");
+                        oceans[oceanName].timable == false;
+                    }
                 }
             }
             t = setTimeout(timer, 1000);
@@ -743,7 +750,7 @@ function engine(io) {
         socket.on('create group', function (gs) {
             console.log("Core: Attempting to create oceanGroup " + gs.name);
             if (gs.name in oceanGroups) {
-                console.log("Core: Group " + group + " already exists. No action taken.");
+                console.log("Core: Group " + gs.name + " already exists. No action taken.");
                 socket.emit("group-not-created");
             } else {
                 oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans, gs.owner);
