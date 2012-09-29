@@ -24,5 +24,6 @@ handle["/bullet_white.png"] = ocean.bullet;
 handle["/archivedFile"] = ocean.archivedFile;
 
 handle["/js/jquery-1.7.2.min.js"] = ocean.jquery;
+handle["/socket.io/socket.io.js"] = ocean.socketio;
 
 server.start(router.route, handle);

@@ -1088,6 +1088,19 @@ function jquery(response, io) {
     );
 }
 
+function socketio(response, io) {
+    console.log("Request handler '/socket.io/socket.io.js' was called.");
+    fs.readFile(__dirname + '/socket.io/socket.io.js',
+        function (err, data) {
+            if (err) {
+                return response.end('Error loading /socket.io/socket.io.js');
+            }
+            response.writeHead(200);
+            response.end(data);
+        }
+    );
+}
+
 exports.fish = fish;
 exports.welcome = welcome;
 exports.admin = admin;
@@ -1101,3 +1114,4 @@ exports.world = world;
 exports.bullet = bullet;
 exports.archivedFile = archivedFile;
 exports.jquery = jquery;
+exports.socketio = socketio;

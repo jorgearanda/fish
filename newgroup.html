@@ -159,13 +159,35 @@
             this.endText = $("#endtext").val();
         }
 
+        function validateParameters() {
+            var invalidMessage = "";
+            if ($("#gid").val().indexOf(" ") >= 0) {
+                invalidMessage += "The simulation name cannot contain spaces.\n";
+            }
+            if ($("#gid").val().length < 1) {
+                invalidMessage += "The simulation name cannot be empty.\n";
+            }
+            if (parseInt($("#numfishers").val()) > 4 || parseInt($("#numfishers").val()) < 1) {
+                invalidMessage += "The number of fishers per ocean must be between 1 and 4.\n";
+            }
+            if (parseInt($("#numhumans").val()) > parseInt($("#numfishers").val()) || parseInt($("#numfishers").val()) < 1) {
+                invalidMessage += "The number of humans per ocean must be at least 1 and at most equal to the total number of fishers.\n";
+            }
+            return invalidMessage;
+        }
+
         var CreateGroup = function () {
-            var gs = new gameParameters();
-            $("#create").prop("disabled", true);
-            $(".status-message").toggleClass("blue");
-            $(".status-message").text("Requesting server to create simulation " + $("#gid").val() + "...");
-            console.log("Requesting server to create group " + $("#gid").val());
-            socket.emit("create group", gs);
+            var invalidMessage = validateParameters();
+            if (invalidMessage == "") {
+                var gs = new gameParameters();
+                $("#create").prop("disabled", true);
+                $(".status-message").toggleClass("blue");
+                $(".status-message").text("Requesting server to create simulation " + $("#gid").val() + "...");
+                console.log("Requesting server to create group " + $("#gid").val());
+                socket.emit("create group", gs);
+            } else {
+                alert(invalidMessage);
+            }
         }
 
         var ToggleGreed = function() {
