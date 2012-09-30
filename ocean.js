@@ -1092,7 +1092,7 @@ function archivedFile(query, response, io) {
                 response.writeHead(500);
                 return response.end('Error loading ' + filenameWanted);
             }
-            response.writeHead(200);
+            response.writeHead(200, {'Content-Type': 'text/plain'});
             response.end(data);
         }
     );
