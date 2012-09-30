@@ -2,6 +2,10 @@ var fs = require("fs");
 var engineCalled = false;
 var runningSims = "--none currently--";
 
+process.on('uncaughtException', function(err) {
+    console.log(err);
+});
+
 function engine(io) {
     // The object "oceans" holds all active simulations. If one simulation group has more than one ocean, then
     // there is one entry for each ocean in this array.
@@ -710,11 +714,17 @@ function engine(io) {
         this.archivedSimulationsList = function () {
             var archivedSims = new Object();
             var userDir = "data/" + this.id + "/";
-            files = fs.readdirSync(userDir);
-            var file;
-            for (file in files) {
-                archivedSims[files[file]] = new Object();
-                archivedSims[files[file]].name = files[file];
+            try {
+                files = fs.readdirSync(userDir);
+                var file;
+                for (file in files) {
+                    archivedSims[files[file]] = new Object();
+                    archivedSims[files[file]].name = files[file];
+                }
+
+            } catch (err) {
+                console.log("Error reading simulations for user " + this.id);
+                console.log(err.message);
             }
             return archivedSims;
         };
@@ -749,13 +759,19 @@ function engine(io) {
         // Creating a group from newgroup.html
         socket.on('create group', function (gs) {
             console.log("Core: Attempting to create oceanGroup " + gs.name);
-            if (gs.name in oceanGroups) {
-                console.log("Core: Group " + gs.name + " already exists. No action taken.");
+            try {
+                if (gs.name in oceanGroups) {
+                    console.log("Core: Group " + gs.name + " already exists. No action taken.");
+                    socket.emit("group-not-created");
+                } else {
+                    oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans, gs.owner);
+                    oceanGroups[gs.name].createOceans(gs, "newgroup");
+                    socket.emit("group-created");
+                }
+            } catch (err) {
+                console.log("Exception raised when attempting to create oceanGroup " + gs.name);
+                console.log(err.message);
                 socket.emit("group-not-created");
-            } else {
-                oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans, gs.owner);
-                oceanGroups[gs.name].createOceans(gs, "newgroup");
-                socket.emit("group-created");
             }
         });
 
