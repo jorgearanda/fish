@@ -61,18 +61,22 @@
 
     .red {
         color: red;
+        font-weight: bold;
     }
 
     .blue {
         color: darkblue;
+        font-weight: normal;
     }
 
     .black {
         color: black;
+        font-weight: normal;
     }
 
     .gray {
         color: darkgray;
+        font-weight: normal;
     }
 
 </style>
@@ -243,7 +247,6 @@
     }
 
     var goToSeaClick = function() {
-        console.log("clicked on go to sea");
         socket.emit("toSea", {id: id});
         sailingAllowed = false;
         fishingAllowed = true;
@@ -265,7 +268,6 @@
     }
 
     var readRulesClick = function() {
-        console.log("clicked on read rules");
         readRules = true;
         gameSettings.players[id].readRules = true;
         socket.emit("readRules", {id: id});
@@ -281,7 +283,6 @@
 
     var displayCosts = function() {
         if (gameSettings != null) {
-            console.log("displaying costs...");
             $("#fish-value").text("Each fish earns you " + gameSettings.currencySymbol + gameSettings.valueFish);
             if (gameSettings.costCast > 0) {
                 $("#cost-cast").text("Casting for a fish costs " + gameSettings.currencySymbol + gameSettings.costCast);
@@ -332,10 +333,12 @@
     var displayWarning = function() {
         if (gameSettings != null && gameSettings.status == "running"
                 && gameSettings.seasonDuration - gameSettings.currentSeconds < 10) {
+            $("#warning-box").removeClass("blue");
             $("#warning-box").addClass("red");
             $("#warning-box").text("   Warning: this season is about to end.");
         } else if (gameSettings != null && gameSettings.status == "resting"
                 && gameSettings.restDuration - gameSettings.currentSeconds < 5) {
+            $("#warning-box").removeClass("red");
             $("#warning-box").addClass("blue");
             $("#warning-box").text("   Get ready: the next season is about to start.");
         } else {
