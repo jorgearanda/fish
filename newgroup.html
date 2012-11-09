@@ -121,10 +121,10 @@
             this.restDuration = parseInt($("#seasondelay").val());
             this.spawnFactor = parseFloat($("#spawnfactor").val());
             this.chanceOfCatch = parseFloat($("#chancecatch").val());
-            this.costDepart = parseInt($("#costdeparture").val());
-            this.costAtSea = parseInt($("#costsecond").val());
-            this.costCast = parseInt($("#costcast").val());
-            this.valueFish = parseInt($("#fishvalue").val());
+            this.costDepart = parseFloat($("#costdeparture").val());
+            this.costAtSea = parseFloat($("#costsecond").val());
+            this.costCast = parseFloat($("#costcast").val());
+            this.valueFish = parseFloat($("#fishvalue").val());
             this.currencySymbol = $("#currencysymbol").val();
             this.seasonDuration = parseInt($("#seasonduration").val());
             this.certainFish = parseInt($("#realfish").val());
@@ -275,22 +275,22 @@
         <legend>Economics</legend>
         <p>
             <label for="fishvalue" class="left-side-label">Fish value</label>
-            <input type="number" min="0" step="1" id="fishvalue" value="3" />
+            <input type="number" min="0.00" step="1.00" id="fishvalue" value="3.00" />
         </p>
 
         <p>
             <label for="costcast" class="left-side-label">Cost to cast</label>
-            <input type="number" min="0" step="1" id="costcast" value="0"/>
+            <input type="number" min="0.00" step="1.00" id="costcast" value="0.00"/>
         </p>
 
         <p>
             <label for="costdeparture" class="left-side-label">Cost per departure</label>
-            <input type="number" min="0" step="1" id="costdeparture" value="0"/>
+            <input type="number" min="0.00" step="1.00" id="costdeparture" value="0.00"/>
         </p>
 
         <p>
             <label for="costsecond" class="left-side-label">Cost per second at sea</label>
-            <input type="number" min="0" step="1" id="costsecond" value="0"/>
+            <input type="number" min="0.00" step="1.00" id="costsecond" value="0.00"/>
         </p>
 
         <p>

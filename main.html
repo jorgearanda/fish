@@ -366,8 +366,8 @@
                     }
                     $("#f1-caught-season").text(gameSettings.players[i].fishCaughtPerSeason[gameSettings.currentSeason]);
                     $("#f1-caught-all").text(gameSettings.players[i].fishCaught);
-                    $("#f1-profits-season").text(gameSettings.currencySymbol + gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
-                    $("#f1-profits-all").text(gameSettings.currencySymbol + gameSettings.players[i].money);
+                    $("#f1-profits-season").text(gameSettings.currencySymbol + (Math.round(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] * 100)/100).toFixed(2));
+                    $("#f1-profits-all").text(gameSettings.currencySymbol + (Math.round(gameSettings.players[i].money * 100)/100).toFixed(2));
                 } else {
                     if (gameSettings.showOtherFishers) {
                         if (gameSettings.showFisherNames) {
@@ -394,8 +394,8 @@
                             $("#f" + currentFisher + "-caught-all").text(gameSettings.players[i].fishCaught);
                         }
                         if (gameSettings.showBalance) {
-                            $("#f" + currentFisher + "-profits-season").text(gameSettings.currencySymbol + gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason]);
-                            $("#f" + currentFisher + "-profits-all").text(gameSettings.currencySymbol + gameSettings.players[i].money);
+                            $("#f" + currentFisher + "-profits-season").text(gameSettings.currencySymbol + (Math.round(gameSettings.players[i].endMoneyPerSeason[gameSettings.currentSeason] * 100)/100).toFixed(2));
+                            $("#f" + currentFisher + "-profits-all").text(gameSettings.currencySymbol + (Math.round(gameSettings.players[i].money * 100)/100).toFixed(2));
                         }
                         currentFisher += 1;
                     }
@@ -420,7 +420,7 @@
             rep += gameSettings.endText + "\n\n";
         }
         rep += "You caught " + gameSettings.players[id].fishCaught + " fish.\n";
-        rep += "You ended with " + gameSettings.currencySymbol + gameSettings.players[id].money + ".\n";
+        rep += "You ended with " + gameSettings.currencySymbol + (Math.round(gameSettings.players[id].money * 100) /100).toFixed(2) + ".\n";
         return rep;
     }
 

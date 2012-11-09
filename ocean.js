@@ -257,10 +257,10 @@ function engine(io) {
             this.restDuration = 10;
             this.spawnFactor = 4.00;
             this.chanceOfCatch = 1.00;
-            this.costDepart = 0;
-            this.costAtSea = 0;
-            this.costCast = 0;
-            this.valueFish = 3;
+            this.costDepart = 0.00;
+            this.costAtSea = 0.00;
+            this.costCast = 0.00;
+            this.valueFish = 3.00;
             this.currencySymbol = "$";
             this.startingFish = 40;
             this.certainFish = 40;
@@ -406,8 +406,8 @@ function engine(io) {
             this.status = "running";
 
             if (this.currentSeason > 1) {
-                this.certainFish = Math.min(this.certainFish * this.spawnFactor, this.startingFish);
-                this.actualMysteryFish = Math.min(this.actualMysteryFish * this.spawnFactor, this.startingMysteryFish);
+                this.certainFish = Math.round(Math.min(this.certainFish * this.spawnFactor, this.startingFish));
+                this.actualMysteryFish = Math.round(Math.min(this.actualMysteryFish * this.spawnFactor, this.startingMysteryFish));
             }
             this.seasonsData[this.currentSeason].initialFish = this.certainFish + this.actualMysteryFish;
 
@@ -666,7 +666,7 @@ function engine(io) {
                     r += j + ", ";
                     r += g.seasonsData[j].initialFish + ", ";
                     r += p.fishCaughtPerSeason[j] + ", ";
-                    r += g.currencySymbol + (p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) + ", ";
+                    r += g.currencySymbol + (Math.round((p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) * 100) / 100).toFixed(2) + ", ";
                     r += individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
                     r += groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish) + ", ";
                     r += individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
