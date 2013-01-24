@@ -275,9 +275,9 @@ function engine(io) {
             this.pauseEnabled = true;
             this.greedUniformity = 0;
             this.erratic = true;
-            this.hesitation = 0.4;
+            this.hesitation = 0.40;
             this.castsPerSecond = 3;
-            this.castingProbability = 0.8;
+            this.castingProbability = 0.80;
             this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers " +
                 "in this ocean. All the fishers see the same ocean that you do. At the beginning, the " +
                 "number of fish will be displayed on the screen. However, sometimes there is some " +
@@ -309,7 +309,7 @@ function engine(io) {
             robotNames[2] = "Raphael";
             robotNames[3] = "Donatello";
             for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-                this.players[i] = new Agent(robotNames[i], "ai", 0.5);
+                this.players[i] = new Agent(robotNames[i], "ai", 0.50);
                 this.actualPlayers++;
             }
         }
