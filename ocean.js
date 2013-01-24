@@ -621,7 +621,7 @@ function engine(io) {
             r += "Run name: " + this.name + "\n";
             r += "Date and time: " + currentTime.toString() + "\n\n";
 
-            r += "Number of agents: " + g.expectedPlayers + "\n";
+            r += "Number of fishers: " + g.expectedPlayers + "\n";
             r += "Number of humans: " + g.expectedHumans + "\n";
             r += "Number of seasons: " + g.totalSeasons + "\n";
             r += "Season length (in seconds): " + g.seasonDuration + "\n";
