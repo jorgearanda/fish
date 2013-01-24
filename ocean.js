@@ -1,6 +1,8 @@
 var fs = require("fs");
 var engineCalled = false;
 var runningSims = "--none currently--";
+var _ = require("underscore");
+_.str = require("underscore.string");
 
 process.on('uncaughtException', function(err) {
     console.log(err);
@@ -655,26 +657,26 @@ function engine(io) {
             r += "--------------------------------------------------------------------------------\n\n";
 
             r += "Measurements per fisher:\n\n";
-            r += "Fisher, Type, Greed, Season, FishInit, FishTaken, Profit, IR, GR, IE, GE\n";
-            r += "--------------------------------------------------------------------------------\n";
+            r += "    Fisher,  Type, Greed, Season, FishInit, FishTaken,     Profit,    IR,    GR,    IE,    GE\n";
+            r += "---------------------------------------------------------------------------------------------\n";
             for (agent in g.players) {
                 p = g.players[agent];
                 for (j = 1; j <= g.totalSeasons; j++) {
-                    r += p.name + ", ";
-                    r += ((p.type == "ai") ? "bot" : "human") + ", ";
-                    r += ((p.type == "ai") ? p.greedPerSeason[j] : "n/a") + ", ";
-                    r += j + ", ";
-                    r += g.seasonsData[j].initialFish + ", ";
-                    r += p.fishCaughtPerSeason[j] + ", ";
-                    r += g.currencySymbol + (Math.round((p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) * 100) / 100).toFixed(2) + ", ";
-                    r += individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
-                    r += groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish) + ", ";
-                    r += individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]) + ", ";
-                    r += groupEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.seasonsData[j].endFish, g.spawnFactor) + "\n";
+                    r += _.str.pad(p.name, 10) + ", ";
+                    r += ((p.type == "ai") ? "  bot" : "human") + ", ";
+                    r += ((p.type == "ai") ? _.str.pad(p.greedPerSeason[j], 5) : "  n/a") + ", ";
+                    r += _.str.pad(j, 6) + ", ";
+                    r += _.str.pad(g.seasonsData[j].initialFish, 8) + ", ";
+                    r += _.str.pad(p.fishCaughtPerSeason[j], 9) + ", ";
+                    r += _.str.pad(g.currencySymbol + (Math.round((p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) * 100) / 100).toFixed(2), 10) + ", ";
+                    r += _.str.pad(individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]), 5) + ", ";
+                    r += _.str.pad(groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish), 5) + ", ";
+                    r += _.str.pad(individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]), 5) + ", ";
+                    r += _.str.pad(groupEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.seasonsData[j].endFish, g.spawnFactor), 5) + "\n";
                 }
             }
             r += "\n";
-            r += "--------------------------------------------------------------------------------\n\n";
+            r += "---------------------------------------------------------------------------------------------\n\n";
 
             r += "Logged simulation events:\n\n";
             r += this.events;
