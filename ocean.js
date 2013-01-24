@@ -661,7 +661,7 @@ function engine(io) {
                 p = g.players[agent];
                 for (j = 1; j <= g.totalSeasons; j++) {
                     r += p.name + ", ";
-                    r += p.type + ", ";
+                    r += ((p.type == "ai") ? "bot" : "human") + ", ";
                     r += ((p.type == "ai") ? p.greedPerSeason[j] : "n/a") + ", ";
                     r += j + ", ";
                     r += g.seasonsData[j].initialFish + ", ";
