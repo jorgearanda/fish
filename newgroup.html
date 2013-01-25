@@ -136,6 +136,7 @@
             this.showFishCaught = $("#shownumcaught-yes").prop("checked");
             this.showBalance = $("#showbalance-yes").prop("checked");
             this.pauseEnabled = $("#pauseenabled-yes").prop("checked");
+            this.earlyEndEnabled = $("#earlyendenabled-yes").prop("checked");
 
             if ($("#greeduniformity-uniform").prop("checked")) {
                 this.greedUniformity = 0;
@@ -269,6 +270,21 @@
             <input type="radio" name="pauseenabled" id="pauseenabled-no" value="n"/>
             <label for="pauseenabled-no" class="radio-button-label">No</label>
         </p>
+
+        <p>
+            <label for="earlyendenabled" class="left-side-label">Allow early season end?</label>
+            <input type="radio" name="earlyendenabled" id="earlyendenabled-yes" value="y" checked/>
+            <label for="earlyendenabled-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Allow early season end?</label>
+            <input type="radio" name="earlyendenabled" id="earlyendenabled-no" value="n"/>
+            <label for="earlyendenabled-no" class="radio-button-label">No</label>
+            <br/>
+            <em>Note: allowing an early season end causes the program to end the current
+            season if (a) all fishers have left to sea and returned to port at least once, and
+            (b) there has been no further activity for three seconds.</em>
+        </p>
+
     </fieldset>
 
     <fieldset class="floating">

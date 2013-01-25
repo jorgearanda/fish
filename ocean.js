@@ -72,6 +72,7 @@ function engine(io) {
         this.intendedCasts = null;
         this.actualCasts = 0;
         this.ready = false;
+        this.hasLeftAndReturned = false;
         if (this.type == "ai") {
             this.ready = true;
         }
@@ -123,6 +124,7 @@ function engine(io) {
             this.fishCaughtPerSeason[ocean.currentSeason] = 0;
             this.startMoneyPerSeason[ocean.currentSeason] = this.money;
             this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+            this.hasLeftAndReturned = false;
         };
 
         this.readRules = function () {
@@ -131,6 +133,7 @@ function engine(io) {
 
         this.goToPort = function(ocean) {
             this.status = "At port";
+            this.hasLeftAndReturned = true;
             logs[ocean.name].addEvent("Fisher " + this.name + " returned to port.");
         };
 
@@ -210,6 +213,7 @@ function engine(io) {
         this.unpauseState = "";
         this.pausedBy = null;
         this.depleted = false;
+        this.timeSinceEveryoneReturned = 0;
 
         if (gs != null) {
             this.numOceans = gs.numOceans;
@@ -237,6 +241,7 @@ function engine(io) {
             this.showFishCaught = gs.showFishCaught;
             this.showBalance = gs.showBalance;
             this.pauseEnabled = gs.pauseEnabled;
+            this.earlyEndEnabled = gs.earlyEndEnabled;
             this.greedUniformity = gs.greedUniformity;
             this.erratic = gs.erratic;
             this.hesitation = gs.hesitation;
@@ -275,6 +280,7 @@ function engine(io) {
             this.showFishCaught = true;
             this.showBalance = true;
             this.pauseEnabled = true;
+            this.earlyEndEnabled = true;
             this.greedUniformity = 0;
             this.erratic = true;
             this.hesitation = 0.40;
@@ -374,7 +380,8 @@ function engine(io) {
         };
 
         this.hasReachedSeasonDuration = function () {
-            return (this.currentSeconds > this.seasonDuration);
+            return (this.currentSeconds > this.seasonDuration) ||
+                (this.earlyEndEnabled && this.timeSinceEveryoneReturned >= 3);
         };
 
         this.hasRoom = function () {
@@ -394,11 +401,21 @@ function engine(io) {
             return allReady;
         };
 
+        this.hasEveryoneLeftAndReturned = function () {
+            var everyoneReturned = true;
+            for (player in this.players) {
+                if (!this.players[player].hasLeftAndReturned) {
+                    everyoneReturned = false;
+                }
+            }
+            return everyoneReturned;
+        }
+
         this.getOceanReady = function () {
             // We assume this.isEveryoneReady returned true
             this.status = "readying";
             io.sockets.in(this.name).emit("readying", this);
-            logs[this.name].addEvent("All agents now ready to start.");
+            logs[this.name].addEvent("All fishers now ready to start.");
         };
 
         this.startNextSeason = function () {
@@ -406,6 +423,7 @@ function engine(io) {
             logs[this.name].addEvent("Beginning season " + this.currentSeason + ".");
             this.resetTimer();
             this.status = "running";
+            this.timeSinceEveryoneReturned = 0;
 
             if (this.currentSeason > 1) {
                 this.certainFish = Math.round(Math.min(this.certainFish * this.spawnFactor, this.startingFish));
@@ -498,7 +516,7 @@ function engine(io) {
                 this.unpauseState = this.status;
                 this.status = "paused";
                 this.pausedBy = pauseRequester;
-                logs[this.name].addEvent("Ocean paused by agent " + this.players[pauseRequester].name + ".");
+                logs[this.name].addEvent("Ocean paused by fisher " + this.players[pauseRequester].name + ".");
                 io.sockets.in(this.name).emit("paused", {id: pauseRequester});
                 io.sockets.in(this.name).emit('gamesettings', this);
             }
@@ -509,7 +527,7 @@ function engine(io) {
                 this.status = this.unpauseState;
                 io.sockets.in(this.name).emit("resumed", {id: resumeRequester});
                 io.sockets.in(this.name).emit('gamesettings', this);
-                logs[this.name].addEvent("Ocean resumed by agent " + this.players[resumeRequester].name + ".");
+                logs[this.name].addEvent("Ocean resumed by fisher " + this.players[resumeRequester].name + ".");
             }
         };
 
@@ -531,6 +549,9 @@ function engine(io) {
                         this.endCurrentSeason(); // endCurrentSeason also ends the simulation if this is the last season.
                     } else {
                         this.resolveSeasonActions();
+                        if (this.hasEveryoneLeftAndReturned()) {
+                            this.timeSinceEveryoneReturned += 1;
+                        }
                     }
                 } else if (this.isResting()) {
                     this.tick();
