@@ -81,7 +81,7 @@ function engine(io) {
             return (this.type == "ai");
         };
 
-        this.calculateSeasonGreed = function (overallGreed, greedUniformity, currentSeason, totalSeasons) {
+        this.calculateSeasonGreed = function (overallGreed, greedUniformity, currentSeason, totalSeasons, erratic) {
             // greedSpread determines how far the low and high greed bounds will deviate from the mean.
             // Perhaps it should be a simulation parameter eventually.
             var greedSpread = 2.0;
@@ -105,6 +105,11 @@ function engine(io) {
                     currentGreed = lowBound + (increment * (currentSeason - 1));
                 }
             }
+
+            if (erratic) {
+                var variation = 1.0 + ((Math.random() - 0.5) / 2.0);
+                currentGreed = currentGreed * variation;
+            }
             return currentGreed;
         };
 
@@ -116,7 +121,7 @@ function engine(io) {
             // This method does bookkeeping for all agents for the new season. It also calculates the greed and intended casts of bots.
             if (this.type == "ai") {
                 this.greedPerSeason[ocean.currentSeason] =
-                    this.calculateSeasonGreed(this.greediness, ocean.greedUniformity, ocean.currentSeason, ocean.totalSeasons);
+                    this.calculateSeasonGreed(this.greediness, ocean.greedUniformity, ocean.currentSeason, ocean.totalSeasons, ocean.erratic);
                 this.intendedCasts =
                     this.calculateSeasonCasts(this.greedPerSeason[ocean.currentSeason], ocean.expectedPlayers, ocean.certainFish, ocean.actualMysteryFish, ocean.spawnFactor, ocean.chanceOfCatch);
             }
@@ -621,15 +626,15 @@ function engine(io) {
                 for (j = 1; j <= g.totalSeasons; j++) {
                     r += _.str.pad(p.name, 10) + ", ";
                     r += ((p.type == "ai") ? "  bot" : "human") + ", ";
-                    r += ((p.type == "ai") ? _.str.pad(p.greedPerSeason[j], 5) : "  n/a") + ", ";
+                    r += ((p.type == "ai") ? _.str.pad(p.greedPerSeason[j].toFixed(2), 5) : "  n/a") + ", ";
                     r += _.str.pad(j, 6) + ", ";
                     r += _.str.pad(g.seasonsData[j].initialFish, 8) + ", ";
                     r += _.str.pad(p.fishCaughtPerSeason[j], 9) + ", ";
                     r += _.str.pad(g.currencySymbol + (Math.round((p.endMoneyPerSeason[j] - p.startMoneyPerSeason[j]) * 100) / 100).toFixed(2), 10) + ", ";
-                    r += _.str.pad(individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]), 5) + ", ";
-                    r += _.str.pad(groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish), 5) + ", ";
-                    r += _.str.pad(individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]), 5) + ", ";
-                    r += _.str.pad(groupEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.seasonsData[j].endFish, g.spawnFactor), 5) + "\n";
+                    r += _.str.pad(individualRestraint(g.seasonsData[j].initialFish, g.expectedPlayers, p.fishCaughtPerSeason[j]).toFixed(2), 5) + ", ";
+                    r += _.str.pad(groupRestraint(g.seasonsData[j].initialFish, g.seasonsData[j].endFish).toFixed(2), 5) + ", ";
+                    r += _.str.pad(individualEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.spawnFactor, g.expectedPlayers, p.fishCaughtPerSeason[j]).toFixed(2), 5) + ", ";
+                    r += _.str.pad(groupEfficiency(g.startingFish + g.startingMysteryFish, g.seasonsData[j].initialFish, g.seasonsData[j].endFish, g.spawnFactor).toFixed(2), 5) + "\n";
                 }
             }
             r += "\n";
