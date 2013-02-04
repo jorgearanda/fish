@@ -1,20 +1,92 @@
 <html>
 <head>
-<title>Welcome to FISH!</title>
+    <style>
+        legend {
+            text-align: center;
+            font-size: 16pt;
+        }
+
+        .left-side-label {
+            width: 8em;
+            float: left;
+            text-align: right;
+            margin-right: 0.5em;
+            display: block;
+        }
+
+        fieldset {
+            border: 1px solid #dadada;
+            width: 24em;
+        }
+
+        .status-message {
+            font-size: 10pt;
+            color: red;
+        }
+
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" language="JavaScript">
+        var socket = io.connect();
+
+        socket.on("connect", function (data) {
+            console.log("Connected to server.");
+        });
+
+        socket.on("valid-group", function() {
+            // Go to main window
+            location.href = "main.html?gid=" + $("#gid").val() +
+                    "&pid=" + $("#pid").val();
+        });
+
+        socket.on("invalid-group", function() {
+            $("#login").prop("disabled", false);
+            $(".status-message").toggleClass("red");
+            $(".status-message").text("Group name invalid. Please try again.");
+        });
+
+        var ValidateGroupAndUser = function () {
+            var gid = $("#gid").val()
+            $("#login").prop("disabled", true);
+            $(".status-message").text("Validating");
+            console.log("Requesting server to validate group id " + gid);
+            socket.emit("validate group", gid);
+
+            // TODO - validate user
+        }
+
+        var Main = function() {
+            $("#login").click(ValidateGroupAndUser);
+        }
+
+        $(document).ready(Main);
+
+    </script>
+
+    <title>Welcome to FISH!</title>
 </head>
 
 <body>
-<h2>Welcome to FISH, and thanks for participating!</h2>
-<br>
-Before proceeding, please wait for the experimenter to explain the next steps.
-When you are ready, enter the name of your group, and your participant ID.
-<br><br>
 <form action="fish">
-    Simulation name: <input type="text" name="gid" autofocus/>
-    <br>
-    Participant ID: <input type="text" name="pid"/>
-    <br><br>
-    <button type="submit">Get Started!</button>
+    <fieldset>
+        <legend>
+            Welcome to FISH, and thanks for participating!
+        </legend>
+        <br>
+        Before proceeding, please wait for the experimenter to explain the next steps.
+        When you are ready, enter the name of your group, and your participant ID.
+        <br><br>
+        <label for="gid" class="left-side-label">Simulation name: </label>
+        <input type="text" name="gid" id="gid" autofocus/>
+        <br>
+        <label for="pid" class="left-side-label">Participant ID: </label>
+        <input type="text" name="pid" id="pid"/>
+        <br><br>
+        <button type="button" id="login">Get Started!</button>
+        <br>
+        <label class="status-message"></label>
+    </fieldset>
 </form>
 </body>
 </html>

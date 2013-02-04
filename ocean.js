@@ -215,111 +215,44 @@ function engine(io) {
         this.depleted = false;
         this.timeSinceEveryoneReturned = 0;
 
-        if (gs != null) {
-            this.numOceans = gs.numOceans;
-            this.expectedPlayers = gs.numFishers;
-            this.expectedHumans = gs.numHumans;
-            this.totalSeasons = gs.numSeasons;
-            this.seasonDuration = gs.seasonDuration;
-            this.initialDelay = gs.initialDelay;
-            this.restDuration = gs.restDuration;
-            this.spawnFactor = gs.spawnFactor;
-            this.chanceOfCatch = gs.chanceOfCatch;
-            this.costDepart = gs.costDepart;
-            this.costAtSea = gs.costAtSea;
-            this.costCast = gs.costCast;
-            this.valueFish = gs.valueFish;
-            this.currencySymbol = gs.currencySymbol;
-            this.startingFish = gs.certainFish;
-            this.certainFish = gs.certainFish;
-            this.mysteryFish = gs.mysteryFish;
-            this.startingMysteryFish = gs.actualMysteryFish;
-            this.actualMysteryFish = gs.actualMysteryFish;
-            this.showOtherFishers = gs.showOtherFishers;
-            this.showFisherNames = gs.showFisherNames;
-            this.showFisherStatus = gs.showFisherStatus;
-            this.showFishCaught = gs.showFishCaught;
-            this.showBalance = gs.showBalance;
-            this.pauseEnabled = gs.pauseEnabled;
-            this.earlyEndEnabled = gs.earlyEndEnabled;
-            this.greedUniformity = gs.greedUniformity;
-            this.erratic = gs.erratic;
-            this.hesitation = gs.hesitation;
-            this.castsPerSecond = gs.castsPerSecond;
-            this.castingProbability = gs.castingProbability;
-            this.prepText = gs.prepText;
-            this.depletedText = gs.depletedText;
-            this.endText = gs.endText;
-            for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-                this.players[i] = new Agent(gs.robots[i].name, "ai", gs.robots[i].greed);
-                this.actualPlayers++;
-            }
-        } else {
-            this.numOceans = 1;
-            this.expectedPlayers = 4;
-            this.expectedHumans = 1;
-            this.totalSeasons = 4;
-            this.seasonDuration = 60;
-            this.initialDelay = 5;
-            this.restDuration = 10;
-            this.spawnFactor = 4.00;
-            this.chanceOfCatch = 1.00;
-            this.costDepart = 0.00;
-            this.costAtSea = 0.00;
-            this.costCast = 0.00;
-            this.valueFish = 3.00;
-            this.currencySymbol = "$";
-            this.startingFish = 40;
-            this.certainFish = 40;
-            this.mysteryFish = 10;
-            this.startingMysteryFish = 5;
-            this.actualMysteryFish = 5;
-            this.showOtherFishers = true;
-            this.showFisherNames = true;
-            this.showFisherStatus = true;
-            this.showFishCaught = true;
-            this.showBalance = true;
-            this.pauseEnabled = true;
-            this.earlyEndEnabled = true;
-            this.greedUniformity = 0;
-            this.erratic = true;
-            this.hesitation = 0.40;
-            this.castsPerSecond = 3;
-            this.castingProbability = 0.80;
-            this.prepText = "FISH simulates fishing in an ocean. You and the other fishers are the only fishers " +
-                "in this ocean. All the fishers see the same ocean that you do. At the beginning, the " +
-                "number of fish will be displayed on the screen. However, sometimes there is some " +
-                "uncertainty about the number of fish. In those cases, 'mystery fish' will be shown on " +
-                "the screen as well, and the number is displayed as a certain range, not as an absolute " +
-                "number. Once the simulation begins, you and the other fishers may catch as many of these " +
-                "fish as you like. Once  you have taken as many fish as you want, you return to port " +
-                "with your catches, and the first season ends. Then the fish spawn for the next season, " +
-                "if any are left to spawn (if no fish are left, they cannot spawn). For every fish left " +
-                "at the end of one season, two fish will be available to be caught in the next season. " +
-                "However, because the ocean can support only so many fish, the total number of fish will " +
-                "never exceed the original number of fish. Fishing can go on this way for many seasons, " +
-                "but all fishing permanently ceases any time that all the fish are caught.\n\n" +
-                "You can make money fishing. You will be paid $5 for every fish you catch. (For now, " +
-                "this is 'play' money...but please treat it as if it were real money.)\n\n" +
-                "Your job is to consider all these factors, and the other fishers, and make your own " +
-                "decisions about how to fish. Fish however you wish.\n\n" +
-                "Please ask if anything is unclear. We want you to fully understand the rules before you " +
-                "start fishing.\n\n" +
-                "If you are sure you understand all the above, you are ready to fish. Click on the Go " +
-                "Fishing button on the left when you are ready. Once all the fishers have clicked this button, " +
-                "the first season will begin. (You may have to wait briefly for all the others fishers " +
-                "to click the button.)";
-            this.depletedText = "All the fish are gone!";
-            this.endText = "Seasons come and seasons go, but for now it seems we're done.";
-            robotNames = new Array();
-            robotNames[0] = "Leonardo";
-            robotNames[1] = "Michelangelo";
-            robotNames[2] = "Raphael";
-            robotNames[3] = "Donatello";
-            for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
-                this.players[i] = new Agent(robotNames[i], "ai", 0.50);
-                this.actualPlayers++;
-            }
+        // Parameters from gameSettings object
+        this.numOceans = gs.numOceans;
+        this.expectedPlayers = gs.numFishers;
+        this.expectedHumans = gs.numHumans;
+        this.totalSeasons = gs.numSeasons;
+        this.seasonDuration = gs.seasonDuration;
+        this.initialDelay = gs.initialDelay;
+        this.restDuration = gs.restDuration;
+        this.spawnFactor = gs.spawnFactor;
+        this.chanceOfCatch = gs.chanceOfCatch;
+        this.costDepart = gs.costDepart;
+        this.costAtSea = gs.costAtSea;
+        this.costCast = gs.costCast;
+        this.valueFish = gs.valueFish;
+        this.currencySymbol = gs.currencySymbol;
+        this.startingFish = gs.certainFish;
+        this.certainFish = gs.certainFish;
+        this.mysteryFish = gs.mysteryFish;
+        this.startingMysteryFish = gs.actualMysteryFish;
+        this.actualMysteryFish = gs.actualMysteryFish;
+        this.showOtherFishers = gs.showOtherFishers;
+        this.showFisherNames = gs.showFisherNames;
+        this.showFisherStatus = gs.showFisherStatus;
+        this.showFishCaught = gs.showFishCaught;
+        this.showBalance = gs.showBalance;
+        this.pauseEnabled = gs.pauseEnabled;
+        this.earlyEndEnabled = gs.earlyEndEnabled;
+        this.greedUniformity = gs.greedUniformity;
+        this.erratic = gs.erratic;
+        this.hesitation = gs.hesitation;
+        this.castsPerSecond = gs.castsPerSecond;
+        this.castingProbability = gs.castingProbability;
+        this.prepText = gs.prepText;
+        this.depletedText = gs.depletedText;
+        this.endText = gs.endText;
+        for (i = 0; i < this.expectedPlayers - this.expectedHumans; i++) {
+            this.players[i] = new Agent(gs.robots[i].name, "ai", gs.robots[i].greed);
+            this.actualPlayers++;
         }
         for (i = 0; i <= this.totalSeasons; i++) {
             this.seasonsData[i] = new seasonData(i);
@@ -597,13 +530,16 @@ function engine(io) {
         };
 
         this.createOceans = function(oceanSettings, source) {
-            var i;
-
-            for (i = 1; i <= this.numOceans; i++) {
-                oceanID = this.generateOceanID(i);
-                oceans[oceanID] = new Ocean(oceanSettings, oceanID, this.name, this.owner);
-                logs[oceanID] = new OceanLog(oceanID, this.owner);
-                logs[oceanID].addEvent("Ocean created from the page " + source + ".");
+            if (oceanSettings != null) {
+                var i;
+                for (i = 1; i <= this.numOceans; i++) {
+                    oceanID = this.generateOceanID(i);
+                    oceans[oceanID] = new Ocean(oceanSettings, oceanID, this.name, this.owner);
+                    logs[oceanID] = new OceanLog(oceanID, this.owner);
+                    logs[oceanID].addEvent("Ocean created from the page " + source + ".");
+                }
+            } else {
+                console.log("The method createOceans was called without any parameters. Aborting.");
             }
         };
 
@@ -767,6 +703,18 @@ function engine(io) {
             } else {
                 console.log("Core: User " + uid + " does not exist.");
                 socket.emit("user-not-valid");
+            }
+        });
+
+        // Participants trying to log in (index.html)
+        socket.on("validate group", function (gid) {
+            console.log("Core: Validating group from participant input " + gid);
+            if (gid in oceanGroups) {
+                console.log("Core: Group " + gid + " exists. Logging participant in.");
+                socket.emit("valid-group");
+            } else {
+                console.log("Core: Group" + gid + " does not exist.");
+                socket.emit("invalid-group");
             }
         });
 
@@ -969,6 +917,12 @@ function welcome(response, io) {
             response.end(data);
         }
     );
+
+    if (engineCalled == false) {
+        engineCalled = true;
+        engine(io);
+    }
+
 }
 
 function mainadmin(response, io) {
