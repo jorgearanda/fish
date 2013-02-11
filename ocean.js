@@ -9,17 +9,22 @@ process.on('uncaughtException', function(err) {
 });
 
 function engine(io) {
-    // The object "oceans" holds all active simulations. If one simulation group has more than one ocean, then
-    // there is one entry for each ocean in this array.
-    // Oceans are indexed by their name.
-    var oceans = new Object();
+    // The object "settings" holds the ocean settings for each simulation. It is used to regenerate the oceans object.
+    var settings = loadSettings();
+
+    // Every ocean has a log in this object with the same index
+    var logs = new Object();
 
     // The "oceanGroups" object holds all active simulation groups. Every oceanGroup has at least one ocean.
     // Every ocean has a single corresponding oceanGroup entry.
     var oceanGroups = new Object();
+    loadOceanGroups();
 
-    // Every ocean has a log in this object with the same index
-    var logs = new Object();
+    // The object "oceans" holds all active simulations. If one simulation group has more than one ocean, then
+    // there is one entry for each ocean in this array.
+    // Oceans are indexed by their name.
+    var oceans = new Object();
+    loadOceans();
 
     var timestamper = new Date();
     var t;  // timer function variable
@@ -426,6 +431,8 @@ function engine(io) {
             this.status = "over";
             logs[this.name].addEvent("Simulation ended.");
             io.sockets.in(this.name).emit('gameover', this);
+            delete settings[this.name];
+            oceanGroups[this.oceanGroup].remainingOceans -= 1;
 
             // Create the log file for this ocean run.
             logs[this.name].writeReport();
@@ -434,6 +441,7 @@ function engine(io) {
             if (oceanGroups[this.oceanGroup].allOver()) {
                 delete oceanGroups[this.oceanGroup];
             }
+            saveCurrentOceans();
         };
 
         this.isSuccessfulCastAttempt = function () {
@@ -506,12 +514,17 @@ function engine(io) {
                 }
             }
         }
-
     }
 
-    function OceanGroup (oceanGroupName, numOceans, owner) {
+    function Settings (oceanSettings, oceanID) {
+        this.name = oceanID;
+        this.settings = oceanSettings;
+    }
+
+    function OceanGroup (oceanGroupName, numOceans, remainingOceans, owner) {
         this.name = oceanGroupName;
         this.numOceans = numOceans;
+        this.remainingOceans = remainingOceans;
         this.owner = owner;
 
         this.generateOceanID = function (idx) {
@@ -526,7 +539,7 @@ function engine(io) {
             var oID;
             for (i = 1; i <= this.numOceans; i++) {
                 oID = this.generateOceanID(i);
-                if (oceans[oID].hasRoom()) {
+                if (oceans[oID] != null && oceans[oID].hasRoom()) {
                     availableOcean = oID;
                     break;
                 }
@@ -542,7 +555,19 @@ function engine(io) {
                     oceans[oceanID] = new Ocean(oceanSettings, oceanID, this.name, this.owner);
                     logs[oceanID] = new OceanLog(oceanID, this.owner);
                     logs[oceanID].addEvent("Ocean created from the page " + source + ".");
+                    settings[oceanID] = new Settings(oceanSettings, oceanID);
                 }
+            } else {
+                console.log("The method createOceans was called without any parameters. Aborting.");
+            }
+        };
+
+        this.createSingleOcean = function(oceanSettings, oceanID, source) {
+            if (oceanSettings != null) {
+                oceans[oceanID] = new Ocean(oceanSettings, oceanID, this.name, this.owner);
+                logs[oceanID] = new OceanLog(oceanID, this.owner);
+                logs[oceanID].addEvent("Ocean created from the page " + source + ".");
+                settings[oceanID] = new Settings(oceanSettings, oceanID);
             } else {
                 console.log("The method createOceans was called without any parameters. Aborting.");
             }
@@ -553,7 +578,7 @@ function engine(io) {
             var oID;
             for (i = 1; i <= this.numOceans; i++) {
                 oID = this.generateOceanID(i);
-                if (oceans[oID].status != "over") {
+                if (oceans[oID] != null && oceans[oID].status != "over") {
                     isAllOver = false;
                 }
             }
@@ -626,7 +651,7 @@ function engine(io) {
                 for (j = 1; j <= g.totalSeasons; j++) {
                     r += _.str.pad(p.name, 10) + ", ";
                     r += ((p.type == "ai") ? "  bot" : "human") + ", ";
-                    r += ((p.type == "ai") ? _.str.pad(p.greedPerSeason[j].toFixed(2), 5) : "  n/a") + ", ";
+                    r += ((p.type == "ai" && p.greedPerSeason[j] != null) ? _.str.pad(p.greedPerSeason[j].toFixed(2), 5) : "  n/a") + ", ";
                     r += _.str.pad(j, 6) + ", ";
                     r += _.str.pad(g.seasonsData[j].initialFish, 8) + ", ";
                     r += _.str.pad(p.fishCaughtPerSeason[j], 9) + ", ";
@@ -669,6 +694,7 @@ function engine(io) {
                     sims[oceanGroup] = new Object();
                     sims[oceanGroup].name = oceanGroups[oceanGroup].name;
                     sims[oceanGroup].numOceans = oceanGroups[oceanGroup].numOceans;
+                    sims[oceanGroup].remainingOceans = oceanGroups[oceanGroup].remainingOceans;
                     sims[oceanGroup].owner = oceanGroups[oceanGroup].owner;
                 }
             }
@@ -740,9 +766,11 @@ function engine(io) {
                     console.log("Core: Group " + gs.name + " already exists. No action taken.");
                     socket.emit("group-not-created");
                 } else {
-                    oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans, gs.owner);
+                    oceanGroups[gs.name] = new OceanGroup(gs.name, gs.numOceans, gs.numOceans, gs.owner);
+                    console.log("Second");
                     oceanGroups[gs.name].createOceans(gs, "newgroup");
                     socket.emit("group-created");
+                    saveCurrentOceans();
                 }
             } catch (err) {
                 console.log("Exception raised when attempting to create oceanGroup " + gs.name);
@@ -756,7 +784,7 @@ function engine(io) {
         socket.on('join group', function (group, pid) {
             if (!(group in oceanGroups)) {
                 // Register group
-                oceanGroups[group] = new OceanGroup(group, 1, "na");
+                oceanGroups[group] = new OceanGroup(group, 1, 1, "na");
                 oceanGroups[group].createOceans(null, "fish");
             }
 
@@ -827,6 +855,8 @@ function engine(io) {
                     keepTimerGoing = true;
                     timer();
                 }
+
+                saveCurrentOceans();
             } else {
                 // There were no oceanGroups with room in them.
                 console.log(group + ": A user tried to join this group, but it was already full.");
@@ -885,6 +915,85 @@ function engine(io) {
                 }
             }
         });
+    }
+
+    function loadOceanGroups() {
+        var allSavedFiles = fs.readdirSync("saved");
+        var lastGroupsFile = null;
+        for (savedFile in allSavedFiles) {
+            if (_.str.startsWith(allSavedFiles[savedFile], "groups")) {
+                if (lastGroupsFile == null || lastGroupsFile < allSavedFiles[savedFile]) {
+                    lastGroupsFile = allSavedFiles[savedFile];
+                }
+            }
+        }
+
+        var groupsString = null;
+        if (lastGroupsFile != null) {
+            console.log("Loading groups from saved/" + lastGroupsFile);
+            groupsString = fs.readFileSync("saved/" + lastGroupsFile, encoding="utf8");
+            console.log(groupsString);
+        }
+
+        var oceanGroupsDetails = null;
+        if (groupsString != null) {
+            oceanGroupsDetails = JSON.parse(groupsString);
+            for (detail in oceanGroupsDetails) {
+                console.log("Restoring ocean group " + oceanGroupsDetails[detail].name);
+                oceanGroups[oceanGroupsDetails[detail].name] = new OceanGroup(
+                    oceanGroupsDetails[detail].name,
+                    oceanGroupsDetails[detail].numOceans,
+                    oceanGroupsDetails[detail].remainingOceans,
+                    oceanGroupsDetails[detail].owner);
+            }
+        }
+    }
+
+    function loadSettings() {
+        var allSavedFiles = fs.readdirSync("saved");
+        var lastOceanFile = null;
+        for (savedFile in allSavedFiles) {
+            if (_.str.startsWith(allSavedFiles[savedFile], "oceans")) {
+                if (lastOceanFile == null || lastOceanFile < allSavedFiles[savedFile]) {
+                    lastOceanFile = allSavedFiles[savedFile];
+                }
+            }
+        }
+        var oceansString = null;
+        if (lastOceanFile != null) {
+            console.log("Loading oceans from saved/" + lastOceanFile);
+            oceansString = fs.readFileSync("saved/" + lastOceanFile, encoding="utf8");
+            console.log(oceansString);
+        }
+        return oceansString != null ? JSON.parse(oceansString) : new Object();
+    }
+
+    function loadOceans() {
+        console.log(JSON.stringify(settings));
+        for (oceanID in settings) {
+            console.log("oceanID: " + oceanID);
+            console.log("oceanGroup: " + settings[oceanID].oceanGroup);
+            console.log("settings: " + JSON.stringify(settings[oceanID]));
+            oceanGroups[settings[oceanID].settings.name].createSingleOcean(settings[oceanID].settings, oceanID, "restart");
+        }
+    }
+
+    function saveCurrentOceans() {
+        var ts = new Date().getTime().toString();
+        var filenameGroups = "saved/groups" + ts + ".txt"
+        var filenameOceans = "saved/oceans" + ts + ".txt"
+        fs.writeFile(filenameGroups, JSON.stringify(oceanGroups), function (err) {
+            if (err) {
+                return console.log(err);
+            }
+        });
+        fs.writeFile(filenameOceans, JSON.stringify(settings), function (err) {
+            if (err) {
+                return console.log(err);
+            }
+        });
+        console.log("Current simulation settings logged under " + filenameGroups +
+            " and " + filenameOceans + ".");
     }
 } // engine
 

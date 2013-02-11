@@ -42,7 +42,9 @@
             $("#inProgressList").empty();
             var item;
             for (item in data) {
-                $("#inProgressList").append("<li><b>" + data[item].name + "</b>, with " + data[item].numOceans + " oceans.</li>");
+                $("#inProgressList").append("<li><b>" + data[item].name +
+                        "</b>, with " + data[item].numOceans + " oceans (" +
+                        data[item].remainingOceans + " still available).</li>");
             }
         });
 
