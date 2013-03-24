@@ -7,7 +7,7 @@
         }
 
         .left-side-label {
-            width: 8em;
+            width: 12em;
             float: left;
             text-align: right;
             margin-right: 0.5em;
@@ -16,7 +16,7 @@
 
         fieldset {
             border: 1px solid #dadada;
-            width: 24em;
+            width: 28em;
         }
 
         .status-message {
@@ -27,7 +27,38 @@
     </style>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" charset="utf-8" src="localization.js"></script>
     <script type="text/javascript" language="JavaScript">
+        function getValue(varname) {
+            var url = window.location.href;
+            var qparts = url.split("?");
+            if (qparts.length < 2) {
+                return "";
+            }
+            var query = qparts[1];
+            var vars = query.split("&");
+            var value = "";
+            for (i = 0; i < vars.length; i++) {
+                var parts = vars[i].split("=");
+                if (parts[0] == varname) {
+                    value = parts[1];
+                    break;
+                }
+            }
+            value = unescape(value);
+            value.replace(/\+/g," ");
+            return value;
+        }
+
+        var lang = getValue("lang").toLowerCase();
+        var messages;
+        if (lang != "" && lang in langs) {
+            messages = langs[lang];
+        } else {
+            messages = langs['en'];
+            lang = "en";
+        }
+
         var socket = io.connect();
 
         socket.on("connect", function (data) {
@@ -37,19 +68,20 @@
         socket.on("valid-group", function() {
             // Go to main window
             location.href = "main.html?gid=" + $("#gid").val() +
-                    "&pid=" + $("#pid").val();
+                    "&pid=" + $("#pid").val() +
+                    "&lang=" + lang;
         });
 
         socket.on("invalid-group", function() {
             $("#login").prop("disabled", false);
             $(".status-message").toggleClass("red");
-            $(".status-message").text("Group name invalid. Please try again.");
+            $(".status-message").text(messages['login_invalidGroup']);
         });
 
         var ValidateGroupAndUser = function () {
             var gid = $("#gid").val()
             $("#login").prop("disabled", true);
-            $(".status-message").text("Validating");
+            $(".status-message").text(messages['login_validating']);
             console.log("Requesting server to validate group id " + gid);
             socket.emit("validate group", gid);
 
@@ -57,6 +89,13 @@
         }
 
         var Main = function() {
+            document.title = messages['login_title'];
+            $("#welcome").text(messages['login_welcome']);
+            $("#welcome").text(messages['login_welcome']);
+            $("#instructions").text(messages['login_instructions']);
+            $("#gid_label").text(messages['login_simulationName'] + " ");
+            $("#pid_label").text(messages['login_participantId'] + " ");
+            $("#login").text(messages['login_getStarted']);
             $("#login").click(ValidateGroupAndUser);
         }
 
@@ -64,28 +103,26 @@
 
     </script>
 
-    <title>Welcome to FISH!</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
 </head>
 
 <body>
 <form action="fish">
     <fieldset>
-        <legend>
-            Welcome to FISH, and thanks for participating!
-        </legend>
+        <legend id="welcome"></legend>
         <br>
-        Before proceeding, please wait for the experimenter to explain the next steps.
-        When you are ready, enter the name of your group, and your participant ID.
+        <div id="instructions"></div>
         <br><br>
-        <label for="gid" class="left-side-label">Simulation name: </label>
+        <label id="gid_label" for="gid" class="left-side-label"></label>
         <input type="text" name="gid" id="gid" autofocus/>
         <br>
-        <label for="pid" class="left-side-label">Participant ID: </label>
+        <label id="pid_label" for="pid" class="left-side-label"></label>
         <input type="text" name="pid" id="pid"/>
         <br><br>
-        <button type="button" id="login">Get Started!</button>
+        <button type="button" id="login"></button>
         <br>
-        <label class="status-message"></label>
+        <label id="status_message" class="status-message"></label>
     </fieldset>
 </form>
 </body>

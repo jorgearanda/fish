@@ -79,9 +79,14 @@
         font-weight: normal;
     }
 
+    .bold {
+        font-weight:bold;
+    }
+
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" charset="utf-8" src="localization.js"></script>
 <script language="JavaScript">
 
     function getURLParameter(name) {
@@ -94,6 +99,15 @@
     var pid = getURLParameter("pid");
     console.log("Group: " + group);
     console.log("Participant ID: " + pid);
+
+    var lang = getURLParameter("lang").toLowerCase();
+    var messages;
+    if (lang != "" && lang in langs) {
+        messages = langs[lang];
+    } else {
+        messages = langs['en'];
+        lang = "en";
+    }
 
     var socket = io.connect();
     var gameSettings = null;
@@ -194,11 +208,11 @@
 
     var pauseMode = function(mode) {
         if (mode == "pause") {
-            $("#pause").val("Pause");
+            $("#pause").val(messages['buttons_pause']);
             $("#pause").click(pauseClick);
 
         } else {
-            $("#pause").val("Resume");
+            $("#pause").val(messages['buttons_resume']);
             $("#pause").click(unpauseClick);
         }
     }
@@ -283,15 +297,15 @@
 
     var displayCosts = function() {
         if (gameSettings != null) {
-            $("#fish-value").text("Each fish earns you " + gameSettings.currencySymbol + gameSettings.valueFish);
+            $("#fish-value").text(messages['costs_fishValue'] + " " + gameSettings.currencySymbol + gameSettings.valueFish);
             if (gameSettings.costCast > 0) {
-                $("#cost-cast").text("Casting for a fish costs " + gameSettings.currencySymbol + gameSettings.costCast);
+                $("#cost-cast").text(messages['costs_costCast'] + " " + gameSettings.currencySymbol + gameSettings.costCast);
             }
             if (gameSettings.costAtSea > 0) {
-                $("#cost-second").text("Each second at sea costs " + gameSettings.currencySymbol + gameSettings.costAtSea);
+                $("#cost-second").text(messages['costs_costSecond'] + " " + gameSettings.currencySymbol + gameSettings.costAtSea);
             }
             if (gameSettings.costDepart > 0) {
-                $("#cost-leave").text("Leaving port costs " + gameSettings.currencySymbol + gameSettings.costDepart);
+                $("#cost-leave").text(messages['costs_costLeave'] + " " + gameSettings.currencySymbol + gameSettings.costDepart);
             }
         }
     }
@@ -299,30 +313,31 @@
     var displayStatus = function() {
         if (gameSettings == null && !fullroom) {
             $("#status-box").addClass("blue");
-            $("#status-box").text("Please wait - loading the application");
+            $("#status-box").text(messages['status_wait']);
         } else if (fullroom) {
             $("#status-box").addClass("blue");
-            $("#status-box").text("The group you tried to join is full. Please notify the experimenter.");
+            $("#status-box").text(messages['status_full']);
         } else if (gameSettings != null && gameSettings.status == "readying") {
             $("#status-box").addClass("red");
-            $("#status-box").text("Get ready! The simulation is about to start.");
+            $("#status-box").text(messages['status_getReady']);
         } else if (gameSettings != null && gameSettings.status == "running") {
             minFish = gameSettings.certainFish;
             maxFish = minFish + gameSettings.mysteryFish;
             $("#status-box").addClass("black");
             if (minFish == maxFish) {
-                $("#status-box").text("This is season " + gameSettings.currentSeason + ". " +
-                        "There are " + minFish + " fish remaining.");
+                $("#status-box").text(messages['status_season'] + ' ' + gameSettings.currentSeason + ". " +
+                        messages['status_fishMax'] + ' ' + minFish + " " + messages['status_fishRemaining']);
             } else {
-                $("#status-box").text("This is season " + gameSettings.currentSeason + ". " +
-                        "There are between " + minFish + " and " + maxFish + " fish remaining.");
+                $("#status-box").text(messages['status_season'] + ' ' + gameSettings.currentSeason + ". " +
+                        messages['status_fishBetween'] + ' ' + minFish + ' ' + messages['status_fishAnd'] + ' ' +
+                        maxFish + " " + messages['status_fishRemaining']);
             }
         } else if (gameSettings != null && gameSettings.status == "resting") {
             $("#status-box").addClass("black");
-            $("#status-box").text("We are between seasons, fish are now spawning.")
+            $("#status-box").text(messages['status_spawning'])
         } else if (gameSettings != null && gameSettings.status == "paused") {
             $("#status-box").addClass("gray");
-            $("#status-box").text("Simulation paused.");
+            $("#status-box").text(messages['status_paused']);
         } else {
             // Other states (over, waiting) have an empty status box
             $("#status-box").text("");
@@ -335,12 +350,12 @@
                 && gameSettings.seasonDuration - gameSettings.currentSeconds < 10) {
             $("#warning-box").removeClass("blue");
             $("#warning-box").addClass("red");
-            $("#warning-box").text("   Warning: this season is about to end.");
+            $("#warning-box").text("   " + messages['warning_seasonEnd']);
         } else if (gameSettings != null && gameSettings.status == "resting"
                 && gameSettings.restDuration - gameSettings.currentSeconds < 5) {
             $("#warning-box").removeClass("red");
             $("#warning-box").addClass("blue");
-            $("#warning-box").text("   Get ready: the next season is about to start.");
+            $("#warning-box").text("   " + messages['warning_seasonStart']);
         } else {
             $("#warning-box").text("");
         }
@@ -353,7 +368,7 @@
             for (i = 0; i < gameSettings.players.length; i++) {
                 if (gameSettings.players[i].name == pid) {
                     // Found the record that corresponds to this player. Display it first.
-                    $("#f1-name").text("You");
+                    $("#f1-name").text(messages['info_you']);
                     $image = $("#f1-status").children("img");
                     if (gameSettings.players[i].status == "At port") {
                         if ($image.attr("src") != "anchor.png") {
@@ -413,14 +428,14 @@
     }
 
     function performanceReportText() {
-        rep = "This simulation is over.\n\n";
+        rep = messages['end_over'] + "\n\n";
         if (gameSettings.depleted) {
             rep += gameSettings.depletedText + "\n\n";
         } else {
             rep += gameSettings.endText + "\n\n";
         }
-        rep += "You caught " + gameSettings.players[id].fishCaught + " fish.\n";
-        rep += "You ended with " + gameSettings.currencySymbol + (Math.round(gameSettings.players[id].money * 100) /100).toFixed(2) + ".\n";
+        rep += messages['end_caught'] + ' ' + gameSettings.players[id].fishCaught + " " + messages['end_fish'] + "\n";
+        rep += messages['end_money'] + ' ' + gameSettings.currencySymbol + (Math.round(gameSettings.players[id].money * 100) /100).toFixed(2) + ".\n";
         return rep;
     }
 
@@ -500,6 +515,21 @@
     }
 
     var Main = function() {
+        $("#tosea").val(messages['buttons_goToSea']);
+        $("#toport").val(messages['buttons_return']);
+        $("#castfish").val(messages['buttons_castFish']);
+        $("#readrules").val(messages['buttons_goFishing']);
+        $("#pause").val(messages['buttons_pause']);
+
+        $("#fish_caught_header").text(messages['info_fishCaught']);
+        $("#profits_header").text(messages['info_profits']);
+        $("#fisher_header").text(messages['info_fisher']);
+        $("#location_header").text(messages['info_location']);
+        $("#fish_season_header").text(messages['info_season']);
+        $("#fish_total_header").text(messages['info_overall']);
+        $("#profits_season_header").text(messages['info_season']);
+        $("#profits_total_header").text(messages['info_overall']);
+
         buttonEnabler();
         $("#tosea").click(goToSeaClick);
         $("#toport").click(returnToPortClick);
@@ -554,17 +584,17 @@
     <fieldset>
         <label class="info-label fisher-name-label"></label>
         <label class="info-label fisher-status-label"></label>
-        <label class="info-label fish-caught-season-label"><b>Fish caught</b></label>
+        <label id="fish_caught_header" class="bold info-label fish-caught-season-label"></label>
         <label class="info-label fish-caught-all-label"></label>
-        <label class="info-label profits-season-label"><b>Profits</b></label>
+        <label id="profits_header" class="bold info-label profits-season-label"></label>
         <label class="info-label profits-all-label"></label>
         <div class="separator"></div>
-        <label class="info-label fisher-name-label"><b>Fisher</b></label>
-        <label class="info-label fisher-status-label"><b>Location</b></label>
-        <label class="info-label fish-caught-season-label"><b>Season</b></label>
-        <label class="info-label fish-caught-all-label"><b>Overall</b></label>
-        <label class="info-label profits-season-label"><b>Season</b></label>
-        <label class="info-label profits-all-label"><b>Overall</b></label>
+        <label id="fisher_header" class="bold info-label fisher-name-label"></label>
+        <label id="location_header" class="bold info-label fisher-status-label"></label>
+        <label id="fish_season_header" class="bold info-label fish-caught-season-label"></label>
+        <label id="fish_total_header" class="bold info-label fish-caught-all-label"></label>
+        <label id="profits_season_header" class="bold info-label profits-season-label"></label>
+        <label id="profits_total_header" class="bold info-label profits-all-label"></label>
         <div class="separator"></div>
         <label class="info-label fisher-name-label" id="f1-name"></label>
         <label class="info-label fisher-status-label" id="f1-status"><img src="bullet_white.png"></label>

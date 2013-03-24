@@ -1,6 +1,7 @@
 var server = require("./server");
 var router = require("./router");
 var ocean = require("./ocean");
+var localization = require("./localization");
 
 var handle = {};
 handle["/"] = ocean.welcome;
@@ -24,6 +25,8 @@ handle["/world.png"] = ocean.world;
 handle["/bullet_white.png"] = ocean.bullet;
 
 handle["/archivedFile"] = ocean.archivedFile;
+
+handle["/localization.js"] = ocean.localization;
 
 handle["/js/jquery-1.7.2.min.js"] = ocean.jquery;
 handle["/socket.io/socket.io.js"] = ocean.socketio;

@@ -1215,6 +1215,19 @@ function socketio(response, io) {
     );
 }
 
+function localization(response, io) {
+    console.log("Request handler '/localization.js' was called.");
+    fs.readFile(__dirname + '/localization.js',
+        function (err, data) {
+            if (err) {
+                return response.end('Error loading /localization.js');
+            }
+            response.writeHead(200, {"Content-Type": "text/javascript", "charset": "utf-8"});
+            response.end(data);
+        }
+    );
+}
+
 exports.fish = fish;
 exports.welcome = welcome;
 exports.admin = admin;
@@ -1229,3 +1242,4 @@ exports.bullet = bullet;
 exports.archivedFile = archivedFile;
 exports.jquery = jquery;
 exports.socketio = socketio;
+exports.localization = localization;
