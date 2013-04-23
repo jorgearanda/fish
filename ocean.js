@@ -132,8 +132,8 @@ function engine(io) {
             }
             this.actualCasts = 0;
             this.fishCaughtPerSeason[ocean.currentSeason] = 0;
-            this.startMoneyPerSeason[ocean.currentSeason] = this.money;
-            this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+            this.startMoneyPerSeason[ocean.currentSeason] = 0;
+            this.endMoneyPerSeason[ocean.currentSeason] = 0;
             this.hasLeftAndReturned = false;
         };
 
@@ -150,13 +150,13 @@ function engine(io) {
         this.goToSea = function(ocean) {
             this.status = "At sea";
             this.money -= ocean.costDepart;
-            this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+            this.endMoneyPerSeason[ocean.currentSeason] -= ocean.costDepart;
             logs[ocean.name].addEvent("Fisher " + this.name + " sailed to sea.");
         };
 
         this.tryToFish = function(ocean) {
             this.money -= ocean.costCast;
-            this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+            this.endMoneyPerSeason[ocean.currentSeason] -= ocean.costCast;
             this.actualCasts++;
 
             if (ocean.isSuccessfulCastAttempt()) {
@@ -164,7 +164,7 @@ function engine(io) {
                 this.money += ocean.valueFish;
                 this.fishCaught++;
                 this.fishCaughtPerSeason[ocean.currentSeason]++;
-                this.endMoneyPerSeason[ocean.currentSeason] = this.money;
+                this.endMoneyPerSeason[ocean.currentSeason] += ocean.valueFish;
                 ocean.takeOneFish();
             } else {
                 logs[ocean.name].addEvent("Fisher " + this.name + " cast for a fish, and failed.");
@@ -412,7 +412,7 @@ function engine(io) {
                 // Charge players that are at sea
                 if (this.players[player].status == "At sea") {
                     this.players[player].money -= this.costAtSea;
-                    this.players[player].endMoneyPerSeason[this.currentSeason] = this.players[player].money;
+                    this.players[player].endMoneyPerSeason[this.currentSeason] -= this.costAtSea;
                 }
             }
             this.sendGameSettings();
