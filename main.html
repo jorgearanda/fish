@@ -83,6 +83,10 @@
         font-weight:bold;
     }
 
+    .nodisplay {
+        display: none;
+    }
+
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -282,6 +286,7 @@
     }
 
     var readRulesClick = function() {
+        // TODO - waiting for other players message
         readRules = true;
         gameSettings.players[id].readRules = true;
         socket.emit("readRules", {id: id});
@@ -415,6 +420,10 @@
                         currentFisher += 1;
                     }
                 }
+            }
+
+            for (i = gameSettings.players.length + 1; i <= 13; i++) {
+                $("#f" + i + "-status").addClass("nodisplay");
             }
         }
     }
@@ -623,6 +632,69 @@
         <label class="info-label fisher-caught-all-label" id="f4-caught-all"></label>
         <label class="info-label profits-season-label" id="f4-profits-season"></label>
         <label class="info-label profits-all-label" id="f4-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f5-name"></label>
+        <label class="info-label fisher-status-label" id="f5-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f5-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f5-caught-all"></label>
+        <label class="info-label profits-season-label" id="f5-profits-season"></label>
+        <label class="info-label profits-all-label" id="f5-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f6-name"></label>
+        <label class="info-label fisher-status-label" id="f6-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f6-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f6-caught-all"></label>
+        <label class="info-label profits-season-label" id="f6-profits-season"></label>
+        <label class="info-label profits-all-label" id="f6-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f7-name"></label>
+        <label class="info-label fisher-status-label" id="f7-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f7-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f7-caught-all"></label>
+        <label class="info-label profits-season-label" id="f7-profits-season"></label>
+        <label class="info-label profits-all-label" id="f7-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f8-name"></label>
+        <label class="info-label fisher-status-label" id="f8-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f8-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f8-caught-all"></label>
+        <label class="info-label profits-season-label" id="f8-profits-season"></label>
+        <label class="info-label profits-all-label" id="f8-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f9-name"></label>
+        <label class="info-label fisher-status-label" id="f9-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f9-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f9-caught-all"></label>
+        <label class="info-label profits-season-label" id="f9-profits-season"></label>
+        <label class="info-label profits-all-label" id="f9-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f10-name"></label>
+        <label class="info-label fisher-status-label" id="f10-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f10-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f10-caught-all"></label>
+        <label class="info-label profits-season-label" id="f10-profits-season"></label>
+        <label class="info-label profits-all-label" id="f10-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f11-name"></label>
+        <label class="info-label fisher-status-label" id="f11-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f11-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f11-caught-all"></label>
+        <label class="info-label profits-season-label" id="f11-profits-season"></label>
+        <label class="info-label profits-all-label" id="f11-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f12-name"></label>
+        <label class="info-label fisher-status-label" id="f12-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f12-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f12-caught-all"></label>
+        <label class="info-label profits-season-label" id="f12-profits-season"></label>
+        <label class="info-label profits-all-label" id="f12-profits-all"></label>
+        <div class="separator"></div>
+        <label class="info-label fisher-name-label" id="f13-name"></label>
+        <label class="info-label fisher-status-label" id="f13-status"><img src="bullet_white.png"></label>
+        <label class="info-label fisher-caught-season-label" id="f13-caught-season"></label>
+        <label class="info-label fisher-caught-all-label" id="f13-caught-all"></label>
+        <label class="info-label profits-season-label" id="f13-profits-season"></label>
+        <label class="info-label profits-all-label" id="f13-profits-all"></label>
     </fieldset>
 </div>
 </body>

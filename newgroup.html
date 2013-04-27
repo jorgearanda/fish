@@ -12,7 +12,7 @@
         }
 
         h2 {
-            text-align: left;
+            text-align: center;
             font-size: 14pt;
         }
 
@@ -22,6 +22,14 @@
             text-align: right;
             margin-right: 0.5em;
             display: block;
+        }
+
+        .bot-name {
+            width: 8em;
+        }
+
+        .greed-box {
+            width: 4em;
         }
 
         .status-message {
@@ -58,6 +66,9 @@
             margin-bottom: 3px;
         }
 
+        div.bot-data {
+            padding: 2px;
+        }
 
     </style>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -154,6 +165,15 @@
             this.robots[0] = new Robot($("#agent1name").val(), parseFloat($("#agent1greed").val()));
             this.robots[1] = new Robot($("#agent2name").val(), parseFloat($("#agent2greed").val()));
             this.robots[2] = new Robot($("#agent3name").val(), parseFloat($("#agent3greed").val()));
+            this.robots[3] = new Robot($("#agent4name").val(), parseFloat($("#agent4greed").val()));
+            this.robots[4] = new Robot($("#agent5name").val(), parseFloat($("#agent5greed").val()));
+            this.robots[5] = new Robot($("#agent6name").val(), parseFloat($("#agent6greed").val()));
+            this.robots[6] = new Robot($("#agent7name").val(), parseFloat($("#agent7greed").val()));
+            this.robots[7] = new Robot($("#agent8name").val(), parseFloat($("#agent8greed").val()));
+            this.robots[8] = new Robot($("#agent9name").val(), parseFloat($("#agent9greed").val()));
+            this.robots[9] = new Robot($("#agent10name").val(), parseFloat($("#agent10greed").val()));
+            this.robots[10] = new Robot($("#agent11name").val(), parseFloat($("#agent11greed").val()));
+            this.robots[11] = new Robot($("#agent12name").val(), parseFloat($("#agent12greed").val()));
 
             this.prepText = $("#preptext").val();
             this.depletedText = $("#depletedtext").val();
@@ -168,8 +188,8 @@
             if ($("#gid").val().length < 1) {
                 invalidMessage += "The simulation name cannot be empty.\n";
             }
-            if (parseInt($("#numfishers").val()) > 4 || parseInt($("#numfishers").val()) < 1) {
-                invalidMessage += "The number of fishers per ocean must be between 1 and 4.\n";
+            if (parseInt($("#numfishers").val()) > 13 || parseInt($("#numfishers").val()) < 1) {
+                invalidMessage += "The number of fishers per ocean must be between 1 and 13.\n";
             }
             if (parseInt($("#numhumans").val()) > parseInt($("#numfishers").val()) || parseInt($("#numfishers").val()) < 1) {
                 invalidMessage += "The number of humans per ocean must be at least 1 and at most equal to the total number of fishers.\n";
@@ -228,12 +248,12 @@
 
         <p>
             <label for="numfishers" class="left-side-label">Total fishers per ocean</label>
-            <input type="number" min="0" step="1" max="4" id="numfishers" value="4" />
+            <input type="number" min="0" step="1" max="13" id="numfishers" value="4" />
         </p>
 
         <p>
             <label for="numhumans" class="left-side-label">Human fishers per ocean</label>
-            <input type="number" min="0" step="1" max="4" id="numhumans" value="1" />
+            <input type="number" min="0" step="1" max="13" id="numhumans" value="1" />
         </p>
 
         <p>
@@ -463,36 +483,82 @@
 
     <fieldset class="floating">
         <legend>Individual bot details</legend>
-        <p>
-            <label for="agent1name" class="left-side-label">Bot 1's name</label>
-            <input type="text" id="agent1name" value="Kermit"/>
-        </p>
 
-        <p>
-            <label for="agent1greed" class="left-side-label">Bot 1's greed</label>
-            <input type="number" min="0" step="0.01" max="1" id="agent1greed" value="0.50" class="agentgreed" />
-        </p>
+        <label class="left-side-label"><b>Bot</b></label>
+        <label><b>Name and greed</b></label>
+        <div/>
 
-        <p>
-            <label for="agent2name" class="left-side-label">Bot 2's name</label>
-            <input type="text" id="agent2name" value="Gonzo"/>
-        </p>
+        <div class="bot-data">
+            <label for="agent1name" class="left-side-label">Bot 1</label>
+            <input type="text" id="agent1name" class="bot-name" value="Kermit"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent1greed" value="0.50" class="agentgreed greed-box" />
+        </div>
 
-        <p>
-            <label for="agent2greed" class="left-side-label">Bot 2's greed</label>
-            <input type="number" min="0" step="0.01" max="1" id="agent2greed" value="0.50" class="agentgreed" />
-        </p>
+        <div class="bot-data">
+            <label for="agent2name" class="left-side-label">Bot 2</label>
+            <input type="text" id="agent2name" class="bot-name" value="Gonzo"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent2greed" value="0.50" class="agentgreed greed-box" />
+        </div>
 
-        <p>
-            <label for="agent3name" class="left-side-label">Bot 3's name</label>
-            <input type="text" id="agent3name" value="Piggy"/>
-        </p>
+        <div class="bot-data">
+            <label for="agent3name" class="left-side-label">Bot 3</label>
+            <input type="text" id="agent3name" class="bot-name" value="Piggy"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent3greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
 
-        <p>
-            <label for="agent3greed" class="left-side-label">Bot 3's greed</label>
-            <input type="number" min="0" step="0.01" max="1" id="agent3greed" value="0.50" class="agentgreed"/>
-        </p>
+        <div class="bot-data">
+            <label for="agent4name" class="left-side-label">Bot 4</label>
+            <input type="text" id="agent4name" class="bot-name" value="Fozzie"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent4greed" value="0.50" class="agentgreed greed-box" />
+        </div>
 
+        <div class="bot-data">
+            <label for="agent5name" class="left-side-label">Bot 5</label>
+            <input type="text" id="agent5name" class="bot-name" value="Beaker"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent5greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent6name" class="left-side-label">Bot 6</label>
+            <input type="text" id="agent6name" class="bot-name" value="Chef"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent6greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
+
+        <div class="bot-data">
+            <label for="agent7name" class="left-side-label">Bot 7</label>
+            <input type="text" id="agent7name" class="bot-name" value="Rowlf"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent7greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent8name" class="left-side-label">Bot 8</label>
+            <input type="text" id="agent8name" class="bot-name" value="Camilla"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent8greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent9name" class="left-side-label">Bot 9</label>
+            <input type="text" id="agent9name" class="bot-name" value="Animal"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent9greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
+
+        <div class="bot-data">
+            <label for="agent10name" class="left-side-label">Bot 10</label>
+            <input type="text" id="agent10name" class="bot-name" value="Beauregard"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent10greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent11name" class="left-side-label">Bot 11</label>
+            <input type="text" id="agent11name" class="bot-name" value="Dr Bunsen"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent11greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent12name" class="left-side-label">Bot 12</label>
+            <input type="text" id="agent12name" class="bot-name" value="Waldorf"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent12greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
     </fieldset>
 
     <div class="break"></div>
