@@ -1098,10 +1098,10 @@ function admin(response, io) {
 
 function certainfish(response, io) {
     console.log("Request handler 'certainfish' was called.");
-    fs.readFile(__dirname + '/certain-fish.gif',
+    fs.readFile(__dirname + '/certain-fish.png',
         function (err, data) {
             if (err) {
-                return response.end('Error loading certain-fish.gif');
+                return response.end('Error loading certain-fish.png');
             }
             response.writeHead(200);
             response.end(data);
@@ -1111,10 +1111,10 @@ function certainfish(response, io) {
 
 function mysteryfish(response, io) {
     console.log("Request handler 'mysteryfish' was called.");
-    fs.readFile(__dirname + '/mystery-fish.gif',
+    fs.readFile(__dirname + '/mystery-fish.png',
         function (err, data) {
             if (err) {
-                return response.end('Error loading mystery-fish.gif');
+                return response.end('Error loading mystery-fish.png');
             }
             response.writeHead(200);
             response.end(data);

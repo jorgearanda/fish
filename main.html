@@ -136,8 +136,8 @@
     var fishImage = new Image();
     var mysteryFishImage = new Image();
     var underwater = new Image();
-    fishImage.src = "certain-fish.gif";
-    mysteryFishImage.src = "mystery-fish.gif";
+    fishImage.src = "certain-fish.png";
+    mysteryFishImage.src = "mystery-fish.png";
     underwater.src = "underwater.jpg";
 
     socket.on("connect", function (data) {
@@ -565,30 +565,6 @@
 <div id="oceanbox">
     <canvas id="oceanCanvas" width="800" height="460"></canvas>
 </div>
-<div class="separator">
-</div>
-<div id="controlbox">
-    <fieldset>
-        <input type="button" class="controls" id="tosea" value="Go to sea">
-        <input type="button" class="controls" id="castfish" value="Cast for one fish">
-        <input type="button" class="controls" id="toport" value="Return to port">
-        <input type="button" class="controls" id="pause" value="Pause">
-        <input type="button" class="controls" id="readrules" value="Go fishing!">
-    </fieldset>
-</div>
-<div class="separator">
-</div>
-<div id="costsbox">
-    <fieldset>
-        <label class="costs-label" id="fish-value"></label>
-        <br>
-        <label class="costs-label" id="cost-cast"></label>
-        <br>
-        <label class="costs-label" id="cost-second"></label>
-        <br>
-        <label class="costs-label" id="cost-leave"></label>
-    </fieldset>
-</div>
 <div id="infobox">
     <fieldset>
         <label class="info-label fisher-name-label"></label>
@@ -695,6 +671,30 @@
         <label class="info-label fisher-caught-all-label" id="f13-caught-all"></label>
         <label class="info-label profits-season-label" id="f13-profits-season"></label>
         <label class="info-label profits-all-label" id="f13-profits-all"></label>
+    </fieldset>
+</div>
+<div class="separator">
+</div>
+<div id="controlbox">
+    <fieldset>
+        <input type="button" class="controls" id="tosea" value="Go to sea">
+        <input type="button" class="controls" id="castfish" value="Cast for one fish">
+        <input type="button" class="controls" id="toport" value="Return to port">
+        <input type="button" class="controls" id="pause" value="Pause">
+        <input type="button" class="controls" id="readrules" value="Go fishing!">
+    </fieldset>
+</div>
+<div class="separator">
+</div>
+<div id="costsbox">
+    <fieldset>
+        <label class="costs-label" id="fish-value"></label>
+        <br>
+        <label class="costs-label" id="cost-cast"></label>
+        <br>
+        <label class="costs-label" id="cost-second"></label>
+        <br>
+        <label class="costs-label" id="cost-leave"></label>
     </fieldset>
 </div>
 </body>

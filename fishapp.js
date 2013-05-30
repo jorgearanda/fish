@@ -17,8 +17,8 @@ handle["/newgroup"] = ocean.newgroup;
 handle["/admin"] = ocean.admin;
 handle["/admin.html"] = ocean.admin;
 
-handle["/certain-fish.gif"] = ocean.certainfish;
-handle["/mystery-fish.gif"] = ocean.mysteryfish;
+handle["/certain-fish.png"] = ocean.certainfish;
+handle["/mystery-fish.png"] = ocean.mysteryfish;
 handle["/underwater.jpg"] = ocean.underwater;
 handle["/anchor.png"] = ocean.anchor;
 handle["/world.png"] = ocean.world;
