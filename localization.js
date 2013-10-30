@@ -159,12 +159,9 @@ en['login_welcome'] = 'Welcome to FISH, and thanks for participating!';
 pt['login_welcome'] = 'Bem vindo ao FISH, e obrigado por participar!';
 es['login_welcome'] = '¡Bienvenido(a) a FISH, y gracias por participar!';
 
-en['login_instructions'] = 'Before proceeding, please wait for the experimenter to explain the next steps. ' +
-    'When you are ready, enter the name of your group, and your participant ID.';
-pt['login_instructions'] = 'Antes de prosseguir, por favor espere o experimentador explicar os próximos passos. ' +
-    'Quando você estiver pronto, entre o nome do seu grupo, e sua identificação de participante.';
-es['login_instructions'] = 'Antes de continuar, por favor espera a que el experimentador explique los siguientes pasos. ' +
-    'Cuando estés preparado(a), escribe el nombre de tu grupo, y tu identificación de participante.';
+en['login_instructions'] = 'Enter the name of your group and your participant ID.';
+pt['login_instructions'] = 'Quando você estiver pronto, entre o nome do seu grupo, e sua identificação de participante.';
+es['login_instructions'] = 'Cuando estés preparado(a), escribe el nombre de tu grupo, y tu identificación de participante.';
 
 en['login_simulationName'] = 'Simulation name';
 pt['login_simulationName'] = 'Nome da simulação';

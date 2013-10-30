@@ -242,6 +242,7 @@ function engine(io) {
         this.currencySymbol = gs.currencySymbol;
         this.startingFish = gs.certainFish;
         this.certainFish = gs.certainFish;
+        this.maximumFish = gs.maximumFish ? gs.maximumFish : gs.certainFish;
         this.mysteryFish = gs.mysteryFish;
         this.startingMysteryFish = gs.actualMysteryFish;
         this.actualMysteryFish = gs.actualMysteryFish;
@@ -270,7 +271,7 @@ function engine(io) {
 
         this.fishSpots = new Array();
         for (i = 1; i <= this.certainFish + this.mysteryFish; i++) {
-            this.fishSpots[i] = new fishSpot(5, 5, 75, 40);
+            this.fishSpots[i] = new fishSpot(5, 5, 60, 40);
         }
 
         // Object methods
@@ -369,7 +370,7 @@ function engine(io) {
             this.timeSinceEveryoneReturned = 0;
 
             if (this.currentSeason > 1) {
-                this.certainFish = Math.round(Math.min(this.certainFish * this.spawnFactor, this.startingFish));
+                this.certainFish = Math.round(Math.min(this.certainFish * this.spawnFactor, this.maximumFish ? this.maximumFish : this.startingFish));
                 this.actualMysteryFish = Math.round(Math.min(this.actualMysteryFish * this.spawnFactor, this.startingMysteryFish));
             }
             this.seasonsData[this.currentSeason].initialFish = this.certainFish + this.actualMysteryFish;
@@ -627,6 +628,7 @@ function engine(io) {
             r += "Number of starting mystery fish: " + g.startingMysteryFish + "\n";
             r += "Number of ending certain fish: " + g.certainFish + "\n";
             r += "Number of ending mystery fish: " + g.actualMysteryFish + "\n";
+            r += "Maxumum number of fish in ocean: " + g.maximumFish ? g.maximumFish : g.startingFish + "\n";
             r += "Showing other fishers' information?: " + (g.showOtherFishers ? "Yes" : "No") + "\n";
             r += "Showing other fishers' names?: " + (g.showFisherNames ? "Yes" : "No") + "\n";
             r += "Showing other fishers' status?: " + (g.showFisherStatus ? "Yes" : "No") + "\n";
@@ -919,11 +921,15 @@ function engine(io) {
 
     function loadOceanGroups() {
         var allSavedFiles = fs.readdirSync("saved");
+        var firstGroupsFile = null;
         var lastGroupsFile = null;
         for (savedFile in allSavedFiles) {
             if (_.str.startsWith(allSavedFiles[savedFile], "groups")) {
                 if (lastGroupsFile == null || lastGroupsFile < allSavedFiles[savedFile]) {
                     lastGroupsFile = allSavedFiles[savedFile];
+                }
+                if (firstGroupsFile == null || firstGroupsFile > allSavedFiles[savedFile]) {
+                    firstGroupsFile = allSavedFiles[savedFile];
                 }
             }
         }
@@ -947,15 +953,24 @@ function engine(io) {
                     oceanGroupsDetails[detail].owner);
             }
         }
+
+        if (firstGroupsFile !== lastGroupsFile && allSavedFiles.length >= 12) {
+           // Take out oldest log file
+           fs.unlink('saved/' + firstGroupsFile);
+        }
     }
 
     function loadSettings() {
         var allSavedFiles = fs.readdirSync("saved");
+        var firstOceanFile = null;
         var lastOceanFile = null;
         for (savedFile in allSavedFiles) {
             if (_.str.startsWith(allSavedFiles[savedFile], "oceans")) {
                 if (lastOceanFile == null || lastOceanFile < allSavedFiles[savedFile]) {
                     lastOceanFile = allSavedFiles[savedFile];
+                }
+                if (firstOceanFile == null || firstOceanFile > allSavedFiles[savedFile]) {
+                   firstOceanFile = allSavedFiles[savedFile];
                 }
             }
         }
@@ -963,8 +978,13 @@ function engine(io) {
         if (lastOceanFile != null) {
             console.log("Loading oceans from saved/" + lastOceanFile);
             oceansString = fs.readFileSync("saved/" + lastOceanFile, encoding="utf8");
-            console.log(oceansString);
         }
+
+        if (firstOceanFile !== lastOceanFile && allSavedFiles.length >= 12) {
+           // Take out oldest log file
+           fs.unlink('saved/' + firstOceanFile);
+        }
+
         return oceansString != null ? JSON.parse(oceansString) : new Object();
     }
 
@@ -982,7 +1002,30 @@ function engine(io) {
         var ts = new Date().getTime().toString();
         var filenameGroups = "saved/groups" + ts + ".txt"
         var filenameOceans = "saved/oceans" + ts + ".txt"
-        fs.writeFile(filenameGroups, JSON.stringify(oceanGroups), function (err) {
+
+       var allSavedFiles = fs.readdirSync("saved");
+       var firstGroupsFile = null;
+       var firstOceansFile = null;
+       for (var savedFile in allSavedFiles) {
+          if (_.str.startsWith(allSavedFiles[savedFile], "groups")) {
+             if (firstGroupsFile == null || firstGroupsFile > allSavedFiles[savedFile]) {
+                firstGroupsFile = allSavedFiles[savedFile];
+             }
+          }
+          if (_.str.startsWith(allSavedFiles[savedFile], "oceans")) {
+             if (firstOceansFile == null || firstOceansFile > allSavedFiles[savedFile]) {
+                firstOceansFile = allSavedFiles[savedFile];
+             }
+          }
+       }
+
+       if (firstOceansFile && firstGroupsFile && allSavedFiles.length >= 12) {
+          // Take out oldest log files
+          fs.unlink('saved/' + firstOceansFile);
+          fs.unlink('saved/' + firstGroupsFile);
+       }
+
+       fs.writeFile(filenameGroups, JSON.stringify(oceanGroups), function (err) {
             if (err) {
                 return console.log(err);
             }

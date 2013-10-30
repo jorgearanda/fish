@@ -139,6 +139,7 @@
             this.currencySymbol = $("#currencysymbol").val();
             this.seasonDuration = parseInt($("#seasonduration").val());
             this.certainFish = parseInt($("#realfish").val());
+            this.maximumFish = parseInt($("#maxfish").val());
             this.actualMysteryFish = parseInt($("#startingmysteryfish").val());
             this.mysteryFish = parseInt($("#mysteryfish").val());
             this.showOtherFishers = $("#showallfishers-yes").prop("checked");
@@ -341,6 +342,11 @@
         <p>
             <label for="realfish" class="left-side-label">Certain fish</label>
             <input type="number" min="0" step="1" id="realfish" value="40" />
+        </p>
+
+        <p>
+            <label for="maxfish" class="left-side-label">Maximum fish</label>
+            <input type="number" min="0" step="1" id="maxfish" value="40" />
         </p>
 
         <p>

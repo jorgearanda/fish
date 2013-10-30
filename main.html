@@ -2,7 +2,7 @@
 <head>
 <style>
     .controls {
-        width: 11.7em;
+        width: 10em;
         float: left;
         display: block;
         margin-left: 1em;
@@ -26,13 +26,13 @@
     }
 
     .info-label {
-        width: 5.5em;
+        width: 4.5em;
         text-align: left;
         display: inline-block;
     }
 
     #oceanbox {
-        width: 800px;
+        width: 700px;
         float: left;
         display: block;
         margin-left: auto;
@@ -40,7 +40,7 @@
     }
 
     #controlbox {
-        width: 800px;
+        width: 700px;
         float: left;
         display: block;
         margin-left: auto;
@@ -54,7 +54,7 @@
     }
 
     #infobox {
-        width: 600px;
+        width: 500px;
         float: left;
         display: block;
     }
@@ -487,24 +487,24 @@
         // Readying mode --- show preparation text
         if (gameSettings != null && (gameSettings.status == "waiting" || gameSettings.status == "readying")) {
             oContext.fillStyle = "white";
-            oContext.fillRect(0, 0, 800, 460);
+            oContext.fillRect(0, 0, 700, 460);
             oContext.fillStyle = "black";
             oContext.font = "12px Courier";
-            writeTextblockInCanvas(oContext, gameSettings.prepText, 760, 15);
+            writeTextblockInCanvas(oContext, gameSettings.prepText, 660, 15);
         }
 
         // Over mode --- show performance report
         if (gameSettings != null && gameSettings.status == "over") {
             oContext.fillStyle = "white";
-            oContext.fillRect(0, 0, 800, 460);
+            oContext.fillRect(0, 0, 700, 460);
             oContext.fillStyle = "black";
             oContext.font = "14px Courier";
-            writeTextblockInCanvas(oContext, performanceReportText(), 760, 15);
+            writeTextblockInCanvas(oContext, performanceReportText(), 660, 15);
         }
 
         // Running, resting, or paused.
         if (gameSettings != null && (gameSettings.status == "running" || gameSettings.status == "resting" || gameSettings.status == "paused")) {
-            drawBackground(oContext, underwater, 0, 0, 800, 460);
+            drawBackground(oContext, underwater, 0, 0, 700, 460);
             for (fishSpot = 1; fishSpot <= gameSettings.certainFish + gameSettings.mysteryFish; fishSpot++) {
                 drawFish(oContext, fishImage, gameSettings.fishSpots[fishSpot].x, gameSettings.fishSpots[fishSpot].y);
             }
@@ -514,7 +514,7 @@
     function clearOcean() {
         oCanvas = document.getElementById("oceanCanvas");
         oContext = oCanvas.getContext("2d");
-        oContext.clearRect(0,0,800,460);
+        oContext.clearRect(0,0,700,460);
     }
 
     function drawAll() {
@@ -563,7 +563,7 @@
 <div class="separator">
 </div>
 <div id="oceanbox">
-    <canvas id="oceanCanvas" width="800" height="460"></canvas>
+    <canvas id="oceanCanvas" width="700" height="460"></canvas>
 </div>
 <div id="infobox">
     <fieldset>
