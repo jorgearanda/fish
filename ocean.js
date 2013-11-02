@@ -204,6 +204,9 @@ function engine(io) {
 
     function fishSpot (minX, minY, maxX, maxY) {
         this.x = 10 * Math.floor(minX + Math.random() * (maxX - minX));
+       if (this.x > 600) {
+          console.log(this.x + ' because ' + minX + ' and ' + maxX);
+       }
         this.y = 10 * Math.floor(minY + Math.random() * (maxY - minY));
     }
 
@@ -271,7 +274,7 @@ function engine(io) {
 
         this.fishSpots = new Array();
         for (i = 1; i <= this.certainFish + this.mysteryFish; i++) {
-            this.fishSpots[i] = new fishSpot(5, 5, 60, 40);
+            this.fishSpots[i] = new fishSpot(1, 1, 65, 40);
         }
 
         // Object methods
@@ -378,7 +381,7 @@ function engine(io) {
             // Repeating this, which is not good.
             this.fishSpots = new Array();
             for (i = 1; i <= this.certainFish + this.mysteryFish; i++) {
-                this.fishSpots[i] = new fishSpot(5, 5, 75, 40);
+                this.fishSpots[i] = new fishSpot(1, 1, 65, 40);
             }
 
             for (player in this.players) {

@@ -506,7 +506,11 @@
         if (gameSettings != null && (gameSettings.status == "running" || gameSettings.status == "resting" || gameSettings.status == "paused")) {
             drawBackground(oContext, underwater, 0, 0, 700, 460);
             for (fishSpot = 1; fishSpot <= gameSettings.certainFish + gameSettings.mysteryFish; fishSpot++) {
-                drawFish(oContext, fishImage, gameSettings.fishSpots[fishSpot].x, gameSettings.fishSpots[fishSpot].y);
+                if (fishSpot <= gameSettings.mysteryFish) {
+                    drawFish(oContext, mysteryFishImage, gameSettings.fishSpots[fishSpot].x, gameSettings.fishSpots[fishSpot].y);
+                } else {
+                    drawFish(oContext, fishImage, gameSettings.fishSpots[fishSpot].x, gameSettings.fishSpots[fishSpot].y);
+                }
             }
         }
     }
