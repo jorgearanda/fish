@@ -795,6 +795,8 @@ function engine(io) {
             var allocatedOcean = myOceanGroup.allocateFisherToOcean();
             if (allocatedOcean != "") {
                 var myOcean = oceans[allocatedOcean];
+               var mySpot = myOcean.actualPlayers;
+
                 socket.set("group", myOcean.name, function() {
                     socket.emit("myGroup", myOcean.name);
                 });
@@ -803,7 +805,7 @@ function engine(io) {
                 socket.join(myOcean.name);
 
                 // Create object for client
-                myOcean.players[myOcean.actualPlayers] = new Agent(pid, "human", null);
+                myOcean.players[mySpot] = new Agent(pid, "human", null);
                 logs[myOcean.name].addEvent("Fisher " + pid + " joined.");
                 myID = myOcean.actualPlayers++;
                 myOcean.actualHumans++;
@@ -850,6 +852,23 @@ function engine(io) {
                     myOcean.players[data.id].tryToFish(myOcean);
                     myOcean.sendGameSettings();
                 });
+
+               socket.on('disconnect', function () {
+                  logs[myOcean.name].addEvent('Fisher ' + pid + ' disconnected.');
+                  if (myOcean.status === 'waiting') {
+                     logs[myOcean.name].addEvent('Freeing space from disconnected fisher.');
+                     myOcean.actualPlayers--;
+                     myOcean.actualHumans--;
+
+                     // Shift players array
+                     for (var i = mySpot; i < myOcean.players.length - 1; i++) {
+                        myOcean.players[i] = myOcean.players[i + 1];
+                     }
+                     delete myOcean.players[myOcean.players.length - 1]
+                  } else {
+                     logs[myOcean.name].addEvent('Proceeding with simulation anyway.');
+                  }
+               });
 
                 // Begin timekeeping
                 if (timerIsRunning == false) {
@@ -938,7 +957,6 @@ function engine(io) {
         if (lastGroupsFile != null) {
             console.log("Loading groups from saved/" + lastGroupsFile);
             groupsString = fs.readFileSync("saved/" + lastGroupsFile, encoding="utf8");
-            console.log(groupsString);
         }
 
         var oceanGroupsDetails = null;
@@ -989,11 +1007,7 @@ function engine(io) {
     }
 
     function loadOceans() {
-        console.log(JSON.stringify(settings));
         for (oceanID in settings) {
-            console.log("oceanID: " + oceanID);
-            console.log("oceanGroup: " + settings[oceanID].oceanGroup);
-            console.log("settings: " + JSON.stringify(settings[oceanID]));
             oceanGroups[settings[oceanID].settings.name].createSingleOcean(settings[oceanID].settings, oceanID, "restart");
         }
     }
