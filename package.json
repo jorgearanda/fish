@@ -1,0 +1,29 @@
+{
+   "name": "fish",
+   "version": "4.1.0",
+   "private": true,
+   "scripts": {
+      "start": "node server.js",
+      "test": "node_modules/.bin/mocha"
+   },
+   "dependencies": {
+      "async": "0.2.9",
+      "chance": "0.5.3",
+      "ejs": "0.8.4",
+      "express": "3.4.4",
+      "moment": "2.4.0",
+      "request": "2.27.0",
+      "socket.io": "0.9.16",
+      "winston": "0.7.2"
+   },
+   "devDependencies": {
+      "mocha": "1.14.0",
+      "should": "2.0.2",
+      "superagent": "0.15.7",
+      "supertest": "0.8.1",
+      "zombie": "2.0.x"
+   },
+   "engines": {
+      "node": "0.10.x"
+   }
+}
