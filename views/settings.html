@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/public/css/base.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/public/js/purl.js"></script>
+    <script type="text/javascript" src="/public/js/settings.js"></script>
+
+    <title>Settings for a new simulation</title>
+</head>
+
+<body>
+<div id="title">Settings for a new simulation</div>
+
+<hr/>
+<div class="break"></div>
+
+<form name="newgroup">
+    <fieldset class="floating">
+        <legend>General settings</legend>
+        <p>
+            <label for="gid" class="left-side-label">Simulation name</label>
+            <input type="text" id="gid"/>
+        </p>
+
+        <p>
+            <label for="numfishers" class="left-side-label">Total fishers per ocean</label>
+            <input type="number" min="0" step="1" max="13" id="numfishers" value="4" />
+        </p>
+
+        <p>
+            <label for="numhumans" class="left-side-label">Human fishers per ocean</label>
+            <input type="number" min="0" step="1" max="13" id="numhumans" value="1" />
+        </p>
+
+        <p>
+            <label for="numoceans" class="left-side-label">Oceans</label>
+            <input type="number" min="0" step="1" id="numoceans" value="1"/>
+        </p>
+
+        <p>
+            <label for="seasons" class="left-side-label">Fishing seasons</label>
+            <input type="number" min="0" step="1" id="seasons" value="4" />
+        </p>
+
+        <p>
+            <label for="seasonduration" class="left-side-label">Season length in seconds</label>
+            <input type="number" min="0" step="1" id="seasonduration" value="60" />
+        </p>
+
+        <p>
+            <label for="initialdelay" class="left-side-label">Initial delay seconds</label>
+            <input type="number" min="0" step="1" id="initialdelay" value="10" />
+        </p>
+
+        <p>
+            <label for="seasondelay" class="left-side-label">Season delay seconds</label>
+            <input type="number" min="0" step="1" id="seasondelay" value="10" />
+        </p>
+
+        <p>
+            <label for="pauseenabled" class="left-side-label">Allow client to pause?</label>
+            <input type="radio" name="pauseenabled" id="pauseenabled-yes" value="y" checked/>
+            <label for="pauseenabled-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Allow client to pause? </label>
+            <input type="radio" name="pauseenabled" id="pauseenabled-no" value="n"/>
+            <label for="pauseenabled-no" class="radio-button-label">No</label>
+        </p>
+
+        <p>
+            <label for="earlyendenabled" class="left-side-label">Allow early season end?</label>
+            <input type="radio" name="earlyendenabled" id="earlyendenabled-yes" value="y" checked/>
+            <label for="earlyendenabled-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Allow early season end?</label>
+            <input type="radio" name="earlyendenabled" id="earlyendenabled-no" value="n"/>
+            <label for="earlyendenabled-no" class="radio-button-label">No</label>
+            <br/>
+            <em>Note: allowing an early season end causes the program to end the current
+            season if (a) all fishers have left to sea and returned to port at least once, and
+            (b) there has been no further activity for three seconds.</em>
+        </p>
+
+    </fieldset>
+
+    <fieldset class="floating">
+        <legend>Economics</legend>
+        <p>
+            <label for="fishvalue" class="left-side-label">Fish value</label>
+            <input type="number" min="0.00" step="1.00" id="fishvalue" value="3.00" />
+        </p>
+
+        <p>
+            <label for="costcast" class="left-side-label">Cost to cast</label>
+            <input type="number" min="0.00" step="1.00" id="costcast" value="0.00"/>
+        </p>
+
+        <p>
+            <label for="costdeparture" class="left-side-label">Cost per departure</label>
+            <input type="number" min="0.00" step="1.00" id="costdeparture" value="0.00"/>
+        </p>
+
+        <p>
+            <label for="costsecond" class="left-side-label">Cost per second at sea</label>
+            <input type="number" min="0.00" step="1.00" id="costsecond" value="0.00"/>
+        </p>
+
+        <p>
+            <label for="currencysymbol" class="left-side-label">Currency symbol</label>
+            <input type="text" id="currencysymbol" value="$"/>
+        </p>
+    </fieldset>
+
+    <fieldset class="floating">
+        <legend>Fish stocks and fishing</legend>
+
+        <p>
+            <label for="realfish" class="left-side-label">Certain fish</label>
+            <input type="number" min="0" step="1" id="realfish" value="40" />
+        </p>
+
+        <p>
+            <label for="maxfish" class="left-side-label">Maximum fish</label>
+            <input type="number" min="0" step="1" id="maxfish" value="40" />
+        </p>
+
+        <p>
+            <label for="startingmysteryfish" class="left-side-label">Available mystery fish</label>
+            <input type="number" min="0" step="1" id="startingmysteryfish" value="0" />
+        </p>
+
+        <p>
+            <label for="mysteryfish" class="left-side-label">Potential mystery fish</label>
+            <input type="number" min="0" step="1" id="mysteryfish" value="0" />
+        </p>
+
+        <p>
+            <label for="spawnfactor" class="left-side-label">Spawn factor</label>
+            <input type="number" min="0" step="0.10" id="spawnfactor" value="2.00" />
+        </p>
+
+        <p>
+            <label for="chancecatch" class="left-side-label">Chance of catch</label>
+            <input type="number" min="0" step="0.01" id="chancecatch" value="1.00" />
+        </p>
+    </fieldset>
+
+    <div class="break"></div>
+    <hr/>
+    <div class="break"></div>
+
+    <fieldset class="floating">
+        <legend>Information display</legend>
+
+        <p>
+            <label for="showallfishers" class="left-side-label">Show all fishers?</label>
+            <input type="radio" name="showallfishers" id="showallfishers-yes" value="y" checked/>
+            <label for="showallfishers-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Show all fishers? </label>
+            <input type="radio" name="showallfishers" id="showallfishers-no" value="n"/>
+            <label for="showallfishers-no" class="radio-button-label">No</label>
+        </p>
+
+        <p>
+            <label for="shownames" class="left-side-label">Show their names?</label>
+            <input type="radio" name="shownames" id="shownames-yes" value="y" checked/>
+            <label for="shownames-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Show their names? </label>
+            <input type="radio" name="shownames" id="shownames-no" value="n"/>
+            <label for="shownames-no" class="radio-button-label">No</label>
+        </p>
+
+        <p>
+            <label for="showstatus" class="left-side-label">Show their status?</label>
+            <input type="radio" name="showstatus" id="showstatus-yes" value="y" checked/>
+            <label for="showstatus-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Show their status? </label>
+            <input type="radio" name="showstatus" id="showstatus-no" value="n"/>
+            <label for="showstatus-no" class="radio-button-label">No</label>
+        </p>
+
+        <p>
+            <label for="shownumcaught" class="left-side-label">Show their number of fish caught?</label>
+            <input type="radio" name="shownumcaught" id="shownumcaught-yes" value="y" checked/>
+            <label for="shownumcaught-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Show their number of fish caught? </label>
+            <input type="radio" name="shownumcaught" id="shownumcaught-no" value="n"/>
+            <label for="shownumcaught-no" class="radio-button-label">No</label>
+        </p>
+
+        <p>
+            <label for="showbalance" class="left-side-label">Show their balance?</label>
+            <input type="radio" name="showbalance" id="showbalance-yes" value="y" checked/>
+            <label for="showbalance-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Show their balance? </label>
+            <input type="radio" name="showbalance" id="showbalance-no" value="n"/>
+            <label for="showbalance-no" class="radio-button-label">No</label>
+        </p>
+    </fieldset>
+
+    <fieldset class="floating">
+        <legend>Bot information</legend>
+
+        <p>
+            <label for="globalgreed" class="left-side-label">Greediness should...</label>
+            <input type="radio" class="greedtoggler" name="globalgreed" id="globalgreed-vary" value="vary" checked />
+            <label for="globalgreed-vary" class="radio-button-label">vary between bots</label>
+            <br/>
+            <label for="globalgreed" class="left-side-label hidden">Greediness should...</label>
+            <input type="radio" class="greedtoggler" name="globalgreed" id="globalgreed-constant" value="constant" />
+            <label for="globalgreed-constant" class="radio-button-label">be consistent at </label>
+            <br/>
+            <label class="left-side-label hidden">Constant greed level</label>
+            <input type="number" min="0" step="0.01" max="1" class="greedtoggler" name="globalconstantgreed" id="globalconstantgreed" value="0.50" disabled="disabled" />
+        </p>
+
+        <p>
+            <label for="greeduniformity" class="left-side-label">Greediness should...</label>
+            <input type="radio" name="greeduniformity" id="greeduniformity-uniform" value="uniform" checked />
+            <label for="greeduniformity-uniform" class="radio-button-label">remain stable</label>
+            <br/>
+            <label for="greeduniformity" class="left-side-label hidden">Greediness should...</label>
+            <input type="radio" name="greeduniformity" id="greeduniformity-increasing" value="increasing" />
+            <label for="greeduniformity-increasng" class="radio-button-label">progressively increase</label>
+            <br/>
+            <label for="greeduniformity" class="left-side-label hidden">Greediness should...</label>
+            <input type="radio" name="greeduniformity" id="greeduniformity-decreasing" value="decreasing" />
+            <label for="greeduniformity-decreasing" class="radio-button-label">progressively decrease</label>
+        </p>
+
+        <p>
+            <label for="erratic" class="left-side-label">Should bots be erratic?</label>
+            <input type="radio" name="erratic" id="erratic-yes" value="y" checked/>
+            <label for="erratic-yes" class="radio-button-label">Yes</label>
+            <br/>
+            <label class="left-side-label hidden"> Should bots be erratic? </label>
+            <input type="radio" name="erratic" id="erratic-no" value="n"/>
+            <label for="erratic-no" class="radio-button-label">No</label>
+            <br/>
+            <em>Note: erratic bots hesitate and cast for fish at different rates.
+            This causes them to behave non-optimally.</em>
+        </p>
+
+        <p>
+            <label for="hesitation" class="left-side-label">Hesitation factor</label>
+            <input type="number" min="0.01" step="0.01" id="hesitation" value="0.40" />
+        </p>
+
+        <p>
+            <label for="castspersecond" class="left-side-label">Maximum casts per second</label>
+            <input type="number" min="1" step="1" id="castspersecond" value="3" />
+        </p>
+
+        <p>
+            <label for="castingprobability" class="left-side-label">Casting probability factor</label>
+            <input type="number" min="0.01" step="0.01" id="castingprobability" value="0.80" />
+        </p>
+    </fieldset>
+
+    <fieldset class="floating">
+        <legend>Individual bot details</legend>
+
+        <label class="left-side-label"><b>Bot</b></label>
+        <label><b>Name and greed</b></label>
+        <div/>
+
+        <div class="bot-data">
+            <label for="agent1name" class="left-side-label">Bot 1</label>
+            <input type="text" id="agent1name" class="bot-name" value="Kermit"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent1greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent2name" class="left-side-label">Bot 2</label>
+            <input type="text" id="agent2name" class="bot-name" value="Gonzo"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent2greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent3name" class="left-side-label">Bot 3</label>
+            <input type="text" id="agent3name" class="bot-name" value="Piggy"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent3greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
+
+        <div class="bot-data">
+            <label for="agent4name" class="left-side-label">Bot 4</label>
+            <input type="text" id="agent4name" class="bot-name" value="Fozzie"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent4greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent5name" class="left-side-label">Bot 5</label>
+            <input type="text" id="agent5name" class="bot-name" value="Beaker"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent5greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent6name" class="left-side-label">Bot 6</label>
+            <input type="text" id="agent6name" class="bot-name" value="Chef"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent6greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
+
+        <div class="bot-data">
+            <label for="agent7name" class="left-side-label">Bot 7</label>
+            <input type="text" id="agent7name" class="bot-name" value="Rowlf"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent7greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent8name" class="left-side-label">Bot 8</label>
+            <input type="text" id="agent8name" class="bot-name" value="Camilla"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent8greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent9name" class="left-side-label">Bot 9</label>
+            <input type="text" id="agent9name" class="bot-name" value="Animal"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent9greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
+
+        <div class="bot-data">
+            <label for="agent10name" class="left-side-label">Bot 10</label>
+            <input type="text" id="agent10name" class="bot-name" value="Beauregard"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent10greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent11name" class="left-side-label">Bot 11</label>
+            <input type="text" id="agent11name" class="bot-name" value="Dr Bunsen"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent11greed" value="0.50" class="agentgreed greed-box" />
+        </div>
+
+        <div class="bot-data">
+            <label for="agent12name" class="left-side-label">Bot 12</label>
+            <input type="text" id="agent12name" class="bot-name" value="Waldorf"/>
+            <input type="number" min="0" step="0.01" max="1" id="agent12greed" value="0.50" class="agentgreed greed-box"/>
+        </div>
+    </fieldset>
+
+    <div class="break"></div>
+    <hr/>
+    <div class="break"></div>
+
+    <fieldset class="floating">
+        <legend>Preparatory text</legend>
+        <textarea id="preptext" rows="35" cols="50">
+FISH simulates fishing in an ocean. You and the other fishers are the only fishers in this ocean. All the fishers see the same ocean that you do. At the beginning, the number of fish will be displayed on the screen. However, sometimes there is some uncertainty about the number of fish. In those cases, 'mystery fish' will be shown on the screen as well, and the number is displayed as a certain range, not as an absolute number. Once the simulation begins, you and the other fishers may catch as many of these fish as you like. Once  you have taken as many fish as you want, you return to port with your catches, and the first season ends. Then the fish spawn for the next season, if any are left to spawn (if no fish are left, they cannot spawn). For every fish left at the end of one season, two fish will be available to be caught in the next season. However, because the ocean can support only so many fish, the total number of fish will never exceed the original number of fish. Fishing can go on this way for many seasons, but all fishing permanently ceases any time that all the fish are caught.
+
+You can make money fishing. You will be paid $5 for every fish you catch. (For now, this is 'play' money...but please treat it as if it were real money.)
+
+Your job is to consider all these factors, and the other fishers, and make your own decisions about how to fish. Fish however you wish.
+
+Please ask if anything is unclear. We want you to fully understand the rules before you start fishing.
+
+If you are sure you understand all the above, you are ready to fish. Click on the Go Fishing button on the right when you are ready. Once all the fishers have clicked this button, the first season will begin. (You may have to wait briefly for all the others fishers to click the button.)
+        </textarea>
+    </fieldset>
+
+    <fieldset class="floating">
+        <legend>End of simulation message</legend>
+        <textarea id="endtext" rows="35" cols="50">
+Seasons come and seasons go, but for now we are done.
+        </textarea>
+    </fieldset>
+
+    <fieldset class="floating">
+        <legend>Depleted fish stock text</legend>
+        <textarea id="depletedtext" rows="35" cols="50">
+All the fish are now gone.
+        </textarea>
+    </fieldset>
+
+    <div class="break"></div>
+    <hr/>
+    <div class="break"></div>
+
+    <button type="button" id="create">Create this Group</button> <label class="status-message"></label>
+</form>
+
+</body>
+</html>

@@ -60,8 +60,19 @@ app.get('/admin', function (req, res) { res.render('admin.html'); });
 app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 
 app.get('/account/:accountId', function (req, res) {
+   // TODO
    res.render('dashboard.html');
 });
+app.get('/account/:accountId/new/settings', function (req, res) {
+   res.render('settings.html');
+});
+app.post('/account/:accountId/settings', function (req, res) {
+   // TODO
+});
+app.put('/account/:accountId/settings/:settingsId', function (req, res) {
+   // TODO
+});
+
 
 // Server
 var server = http.createServer(app);
