@@ -1,3 +1,0 @@
-CREATE DATABASE fish;
-USE fish;
-CREATE TABLE user(name varchar(30), password varchar(30), isadmin bool);

@@ -1,3 +1,4 @@
 *.log
-*.idea
 node_modules/
+fish.sublime-project
+fish.sublime-workspace

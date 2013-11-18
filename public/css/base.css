@@ -3,6 +3,11 @@ legend {
     font-size: 16pt;
 }
 
+fieldset {
+    border: 1px solid #dadada;
+    width: 28em;
+}
+
 .left-side-label {
     width: 12em;
     float: left;
@@ -11,9 +16,12 @@ legend {
     display: block;
 }
 
-fieldset {
-    border: 1px solid #dadada;
-    width: 28em;
+.left-side-label-4em {
+    width: 4em;
+    float: left;
+    text-align: right;
+    margin-right: 0.5em;
+    display: block;
 }
 
 .status-message {

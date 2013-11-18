@@ -56,8 +56,12 @@ app.configure(function() {
 ///////////////////////////////////////////////////////////////////////////////
 
 app.get('/', function (req, res) { res.render('welcome.html'); });
+app.get('/admin', function (req, res) { res.render('admin.html'); });
 app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 
+app.get('/account/:accountId', function (req, res) {
+   res.render('dashboard.html');
+});
 
 // Server
 var server = http.createServer(app);
@@ -70,5 +74,5 @@ io.set('logger', {
 });
 
 server.listen(app.get('port'), function () {
-   logger.info("Fish server listening on port " + app.get('port'));
+   logger.info('Fish server listening on port ' + app.get('port'));
 });
