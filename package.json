@@ -1,7 +1,8 @@
 {
-   "name": "fish",
+   "name": "fishsim",
    "version": "4.1.0",
    "private": true,
+   "repository": "git://github.com/yorchopolis/fish.git",
    "scripts": {
       "start": "node server.js",
       "test": "node_modules/.bin/mocha"
