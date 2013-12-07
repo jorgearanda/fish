@@ -7,6 +7,8 @@ var logger = require('winston');
 var path = require('path');
 var socketio = require('socket.io');
 
+var sessions = require('./routes/sessions');
+
 var app = exports.app = express();
 
 
@@ -58,6 +60,8 @@ app.configure(function() {
 app.get('/', function (req, res) { res.render('welcome.html'); });
 app.get('/admin', function (req, res) { res.render('admin.html'); });
 app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
+
+app.post('/sessions', sessions.createSession);
 
 app.get('/account/:accountId', function (req, res) {
    // TODO
