@@ -4,6 +4,8 @@
 var express = require('express');
 var http = require('http');
 var logger = require('winston');
+var mongoose = require('mongoose');
+var MongoStore = require('connect-mongo')(express);
 var path = require('path');
 var socketio = require('socket.io');
 
@@ -37,6 +39,8 @@ app.configure(function() {
 
    app.set('port', process.env.PORT || 8080);
 
+   mongoose.connect('mongodb://localhost/fish');
+
    app.set('views', __dirname + '/views');
    app.engine('html', require('ejs').renderFile);
 
@@ -44,6 +48,13 @@ app.configure(function() {
    app.use(express.json());
    app.use(express.urlencoded());
    app.use(express.methodOverride());
+
+   app.use(express.cookieParser('life is better under the sea'));
+   app.use(express.session({
+      secret: 'life is better under the sea',
+      store: new MongoStore({ mongoose_connection: mongoose.connections[0] }),
+      cookie: { maxAge: null }
+   }));
 
    app.use(app.router);
    app.use('/public', express.static(path.join(__dirname, 'public')));
