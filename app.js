@@ -10,6 +10,7 @@ var path = require('path');
 var socketio = require('socket.io');
 
 var sessions = require('./routes/sessions');
+var simTypes = require('./routes/sim-types');
 
 var app = exports.app = express();
 
@@ -74,17 +75,22 @@ app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 
 app.post('/sessions', sessions.createSession);
 
-app.get('/account/:accountId', function (req, res) {
-   // TODO
+app.get('/a/:accountId', function (req, res) {
    res.render('dashboard.html');
 });
-app.get('/account/:accountId/new/settings', function (req, res) {
+app.get('/a/:accountId/dashboard', function (req, res) {
+   res.render('dashboard.html')
+});
+
+app.get('/sim-types', simTypes.list);
+
+app.get('/a/:accountId/new/settings', function (req, res) {
    res.render('settings.html');
 });
-app.post('/account/:accountId/settings', function (req, res) {
+app.post('/a/:accountId/settings', function (req, res) {
    // TODO
 });
-app.put('/account/:accountId/settings/:settingsId', function (req, res) {
+app.put('/a/:accountId/settings/:settingsId', function (req, res) {
    // TODO
 });
 
