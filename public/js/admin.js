@@ -6,7 +6,6 @@ var successfulLogin = function (user) {
 };
 
 var badLogin = function (jqXHR) {
-   console.log(jqXHR.responseText);
    var errors = JSON.parse(jqXHR.responseText).errors;
    alert(errors);
 };

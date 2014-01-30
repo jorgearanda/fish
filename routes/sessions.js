@@ -44,6 +44,7 @@ exports.createSession = function (req, res) {
       }
 
       req.session.username = username;
+      req.session.userId = exp._id;
       log.info('Valid login for ' + username);
       return res.status(200).send(exp);
    });

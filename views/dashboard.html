@@ -24,7 +24,23 @@
         <hr>
 
         <h3>Simulation types being tested</h3>
-        <p>No simulation types are currently being tested.</p>
+        <div id='sim-types-test'>
+            <div id='sim-types-test-loading'>
+                <p><em>Loading...</em></p>
+            </div>
+            <div id='sim-types-test-none' class='collapse'>
+                <p>No simulations are currently being tested.</p>
+            </div>
+            <div id='sim-types-test-table' class='collapse table-responsive'>
+                <table class='table table-bordered table-hover'>
+                    <thead>
+                        <th>Name</th>
+                    </thead>
+                    <tbody id='sim-types-test-table-rows'>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <button id='new-sim-type' class='btn btn-primary' type='submit'>
             New Simulation Type
         </button>

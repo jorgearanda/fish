@@ -15,6 +15,7 @@ var simTypeSchema = new Schema({
       username: String
    },
    desc: String,
+   status: String,
    dateCreated: Date,
    dateActive: Date,
    dateArchived: Date,
