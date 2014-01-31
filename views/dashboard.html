@@ -9,6 +9,7 @@
 
     <script src='/bower/jquery/jquery.min.js'></script>
     <script scr='/bower/bootstrap/dist/js/bootstrap.min.js'></script>
+    <script src='/bower/moment/min/moment.min.js'></script>
     <script type='text/javascript' src='/public/js/dashboard.js'></script>
 </head>
 
@@ -35,6 +36,7 @@
                 <table class='table table-bordered table-hover'>
                     <thead>
                         <th>Name</th>
+                        <th>Description</th>
                     </thead>
                     <tbody id='sim-types-test-table-rows'>
                     </tbody>
@@ -48,7 +50,29 @@
         <hr>
 
         <h3>Active simulation types</h3>
-        <p>The following simulation types are accessible to participants.</p>
+        <div id='sim-types-active'>
+            <div id='sim-types-active-loading'>
+                <p><em>Loading...</em></p>
+            </div>
+            <div id='sim-types-active-none' class='collapse'>
+                <p>No simulations are currently active.</p>
+            </div>
+            <div id='sim-types-active-table' class='collapse table-responsive'>
+                <p>The following simulation types are accessible to 
+                participants.</p>
+                <table class='table table-bordered table-hover'>
+                    <thead>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Start Date</th>
+                        <th>Completed</th>
+                        <th>Interrupted</th>
+                    </thead>
+                    <tbody id='sim-types-active-table-rows'>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <hr>
 

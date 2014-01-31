@@ -1,29 +1,51 @@
 'use strict';
-/*global document:true, location:true, $:true, alert:true*/
+/*global document:true, location:true, $:true, alert:true, moment:true*/
+
+var df = 'YYYY-MM-DD';
 
 var simTypesSuccess = function (simTypes) {
-   console.log(simTypes);
-   var numTest = 0;
+   var anyTest = false;
+   var anyActive = false;
    var testTable = '';
+   var activeTable = '';
 
    for (var i in simTypes) {
       if (simTypes[i].status === 'test') {
-         numTest += 1;
+         anyTest = true;
          testTable += '<tr onclick="location.href=\'/sim-types/' + 
-            simTypes[i]._id + '\'"><td>' + simTypes[i].name + '</td></tr>';
-      } else {
-         console.log('non test: ' + simTypes[i]);
+            simTypes[i]._id + '\'"><td>' + simTypes[i].name + '</td>' +
+            '<td>' + simTypes[i].desc + '</td></tr>';
+      }
+
+      if (simTypes[i].status === 'active') {
+         anyActive = true;
+         activeTable += '<tr onclick="location.href=\'/sim-types/' + 
+            simTypes[i]._id + '\'"><td>' + simTypes[i].name + '</td>' + 
+            '<td>' + simTypes[i].desc + '</td>' +
+            '<td>' + moment(simTypes[i].dateActive).format(df) + '</td>' + 
+            '<td>' + simTypes[i].numCompleted + '</td>' + 
+            '<td>' + simTypes[i].numAborted + '</td></tr>';
       }
    }
 
    $('#sim-types-test-loading').addClass('collapse');
-   if (numTest === 0) {
-      $('#sim-types-test-none').removeClass('collapse');
-      $('#sim-types-test-table').addClass('collapse');
-   } else {
+   if (anyTest) {
       $('#sim-types-test-none').addClass('collapse');
       $('#sim-types-test-table-rows').html(testTable);
       $('#sim-types-test-table').removeClass('collapse');
+   } else {
+      $('#sim-types-test-none').removeClass('collapse');
+      $('#sim-types-test-table').addClass('collapse');
+   }
+
+   $('#sim-types-active-loading').addClass('collapse');
+   if (anyActive) {
+      $('#sim-types-active-none').addClass('collapse');
+      $('#sim-types-active-table-rows').html(activeTable);
+      $('#sim-types-active-table').removeClass('collapse');
+   } else {
+      $('#sim-types-active-none').removeClass('collapse');
+      $('#sim-types-active-table').addClass('collapse');
    }
 };
 

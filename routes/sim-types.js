@@ -11,7 +11,6 @@ exports.list = function (req, res) {
 
    var query = { 'experimenter._id': req.session.userId };
    if (req.query.status) query.status = req.query.status;
-   console.log(query);
 
    SimType.find().exec(function findCb(err, simTypes) {
       if (err) {
