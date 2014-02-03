@@ -6,8 +6,10 @@ var df = 'YYYY-MM-DD';
 var simTypesSuccess = function (simTypes) {
    var anyTest = false;
    var anyActive = false;
+   var anyArchived = false;
    var testTable = '';
    var activeTable = '';
+   var archivedTable = '';
 
    for (var i in simTypes) {
       if (simTypes[i].status === 'test') {
@@ -20,6 +22,16 @@ var simTypesSuccess = function (simTypes) {
       if (simTypes[i].status === 'active') {
          anyActive = true;
          activeTable += '<tr onclick="location.href=\'/sim-types/' + 
+            simTypes[i]._id + '\'"><td>' + simTypes[i].name + '</td>' + 
+            '<td>' + simTypes[i].desc + '</td>' +
+            '<td>' + moment(simTypes[i].dateActive).format(df) + '</td>' + 
+            '<td>' + simTypes[i].numCompleted + '</td>' + 
+            '<td>' + simTypes[i].numAborted + '</td></tr>';
+      }
+
+      if (simTypes[i].status === 'archived') {
+         anyArchived = true;
+         archivedTable += '<tr onclick="location.href=\'/sim-types/' + 
             simTypes[i]._id + '\'"><td>' + simTypes[i].name + '</td>' + 
             '<td>' + simTypes[i].desc + '</td>' +
             '<td>' + moment(simTypes[i].dateActive).format(df) + '</td>' + 
@@ -46,6 +58,16 @@ var simTypesSuccess = function (simTypes) {
    } else {
       $('#sim-types-active-none').removeClass('collapse');
       $('#sim-types-active-table').addClass('collapse');
+   }
+
+   $('#sim-types-archived-loading').addClass('collapse');
+   if (anyArchived) {
+      $('#sim-types-archived-none').addClass('collapse');
+      $('#sim-types-archived-table-rows').html(archivedTable);
+      $('#sim-types-archived-table').removeClass('collapse');
+   } else {
+      $('#sim-types-archived-none').removeClass('collapse');
+      $('#sim-types-archived-table').addClass('collapse');
    }
 };
 

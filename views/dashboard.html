@@ -58,8 +58,7 @@
                 <p>No simulations are currently active.</p>
             </div>
             <div id='sim-types-active-table' class='collapse table-responsive'>
-                <p>The following simulation types are accessible to 
-                participants.</p>
+                <p>These are accessible to your participants.</p>
                 <table class='table table-bordered table-hover'>
                     <thead>
                         <th>Name</th>
@@ -77,9 +76,29 @@
         <hr>
 
         <h3>Archived simulations</h3>
-        <p>The following simulation types have been archived.
-        To download their results, re-activate them, or clone them,
-        click on their corresponding row.</p>
+        <div id='sim-types-archived'>
+            <div id='sim-types-archived-loading'>
+                <p><em>Loading...</em></p>
+            </div>
+            <div id='sim-types-archived-none' class='collapse'>
+                <p>No simulations are currently archived.</p>
+            </div>
+            <div id='sim-types-archived-table' class='collapse table-responsive'>
+                <p>To download results, re-activate, or clone these
+                simulation types, click on their corresponding row.</p>
+                <table class='table table-bordered table-hover'>
+                    <thead>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Start Date</th>
+                        <th>Completed</th>
+                        <th>Interrupted</th>
+                    </thead>
+                    <tbody id='sim-types-archived-table-rows'>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </form>
 </body>
