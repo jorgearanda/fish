@@ -2,8 +2,13 @@
 /*global document:true, location:true, $:true, alert:true, moment:true*/
 
 var df = 'YYYY-MM-DD';
+var st = [];
 
 var simTypesSuccess = function (simTypes) {
+   if (_.isEqual(st, simTypes)) return;
+
+   st = simTypes;
+
    var anyTest = false;
    var anyActive = false;
    var anyArchived = false;
@@ -77,14 +82,14 @@ var simTypesError = function (jqXHR) {
 };
 
 var getSimTypes = function () {
-   $('#sim-types-test-loading').removeClass('collapse');
-
    $.ajax({
       type: 'GET',
       url: '/sim-types',
       error: simTypesError,
       success: simTypesSuccess
    });
+
+   setTimeout(getSimTypes, 60000);
 };
 
 var overrideSubmit = function () {
