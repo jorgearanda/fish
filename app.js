@@ -82,18 +82,20 @@ app.get('/a/:accountId/dashboard', function (req, res) {
    res.render('dashboard.html')
 });
 
+app.get('/a/:accountId/new/sim-type', function (req, res) {
+   res.render('sim-type.html');
+});
+app.post('/a/:accountId/sim-types', function (req, res) {
+   // TODO
+});
+app.put('/a/:accountId/sim-types/:settingsId', function (req, res) {
+   // TODO
+});
+
 app.get('/sim-types', simTypes.list);
 
-app.get('/a/:accountId/new/settings', function (req, res) {
-   res.render('settings.html');
-});
-app.post('/a/:accountId/settings', function (req, res) {
-   // TODO
-});
-app.put('/a/:accountId/settings/:settingsId', function (req, res) {
-   // TODO
-});
-
+// Take out
+app.get('/settings', function (req, res) { res.render('settings.html')});
 
 // Server
 var server = http.createServer(app);
