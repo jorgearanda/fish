@@ -8,7 +8,8 @@
     <link rel='stylesheet' href='/public/css/grid.css'>
 
     <script src='/bower/jquery/jquery.min.js'></script>
-    <script scr='/bower/bootstrap/dist/js/bootstrap.min.js'></script>
+    <script src='/bower/bootstrap/dist/js/bootstrap.min.js'></script>
+    <script src='/bower/bootstrap/js/tooltip.js'></script>
     <script src='/bower/moment/min/moment.min.js'></script>
     <script src='/bower/underscore/underscore-min.js'></script>
     <script type='text/javascript' src='/public/js/sim-type.js'></script>
@@ -29,7 +30,252 @@
                 After saving your changes,
                 this simulation type will be available for testing.
 
-                You can edit the simulation's parameters after saving.
+                You can change its parameters after saving.
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <h3>General settings</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='name' class='form-label col-md-6'>Name</label>
+                        <div class='col-md-6'>
+                            <input id='name' class='form-control' type='text' autofocus/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='num-fishers' class='form-label col-md-6'>Fishers per simulation</label>
+                        <div class='col-md-6'>
+                            <input id='num-fishers' class='form-control' type='number' min='1' step='1' max='13' value='4'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='num-humans' class='form-label col-md-6'>Humans per simulation</label>
+                        <div class='col-md-6'>
+                            <input id='num-humans' class='form-control' type='number' min='0' step='1' max='13' value='1'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='num-seasons' class='form-label col-md-6'>Seasons</label>
+                        <div class='col-md-6'>
+                            <input id='num-seasons' class='form-control' type='number' min='1' step='1' value='4'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='season-duration' class='form-label col-md-6'>Season duration (seconds)</label>
+                        <div class='col-md-6'>
+                            <input id='season-duration' class='form-control' type='number' min='1' step='1' value='60'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='initial-delay' class='form-label col-md-6'>Initial delay (seconds)</label>
+                        <div class='col-md-6'>
+                            <input id='initial-delay' class='form-control' type='number' min='1' step='1' value='5'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='season-delay' class='form-label col-md-6'>Delay between seasons (seconds)</label>
+                        <div class='col-md-6'>
+                            <input id='season-delay' class='form-control' type='number' min='1' step='1' value='10'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Enable pausing
+                            <input id='enable-pause' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Allow seasons to <a id='early-end-tooltip' title='Finish a season if all fishers have returned to port and there has been no activity for three seconds.' data-toggle='tooltip' data-placement='top'>end early</a>
+                            <input id='enable-early-end' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class='col-md-4'>
+                <h3>Economics</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='fish-value' class='form-label col-md-6'>Fish value</label>
+                        <div class='col-md-6'>
+                            <input id='fish-value' class='form-control' type='number' min='0.00' step='0.01' value='3.00'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='cost-cast' class='form-label col-md-6'>Cost to attempt to fish</label>
+                        <div class='col-md-6'>
+                            <input id='cost-cast' class='form-control' type='number' min='0.00' step='0.01' value='0.00'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='cost-departure' class='form-label col-md-6'>Cost to set sail</label>
+                        <div class='col-md-6'>
+                            <input id='cost-departure' class='form-control' type='number' min='0.00' step='0.01' value='0.00'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='cost-second' class='form-label col-md-6'>Cost per second at sea</label>
+                        <div class='col-md-6'>
+                            <input id='cost-second' class='form-control' type='number' min='0.00' step='0.01' value='0.00'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='currency-symbol' class='form-label col-md-6'>Currency symbol</label>
+                        <div class='col-md-6'>
+                            <input id='currency-simbol' class='form-control' type='text' value='$'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class='col-md-4'>
+                <h3>Fish stocks and fishing</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='certain-fish' class='form-label col-md-6'>Certain fish at start</label>
+                        <div class='col-md-6'>
+                            <input id='certain-fish' class='form-control' type='number' min='0' step='1' value='40'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='available-mystery-fish' class='form-label col-md-6'><a id='available-mystery-tooltip' title='The real number of mystery fish that fishers can catch.' data-toggle='tooltip' data-placement='top'>Available</a> mystery fish at start</label>
+                        <div class='col-md-6'>
+                            <input id='available-mystery-fish' class='form-control' type='number' min='0' step='1' value='0'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='reported-mystery-fish' class='form-label col-md-6'><a id='reported-mystery-tooltip' title='The number of mystery fish that fishers are told potentially exist in the ocean.' data-toggle='tooltip' data-placement='top'>Reported</a> mystery fish</label>
+                        <div class='col-md-6'>
+                            <input id='reported-mystery-fish' class='form-control' type='number' min='0' step='1' value='0'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='max-fish' class='form-label col-md-6'><a id='max-fish-tooltip' title='The number of fish in the ocean can never exceed this amount. Must be equal to or higher than the sum of certain and available mystery fish at start.' data-toggle='tooltip' data-placement='top'>Maximum</a> fish capacity of ocean</label>
+                        <div class='col-md-6'>
+                            <input id='max-fish' class='form-control' type='number' min='0' step='1' value='40'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='spawn-factor' class='form-label col-md-6'><a id='spawn-factor-tooltip' title='If there are 10 fishes at the end of a season, with a spawn factor of 1.5 there will be 15 at the start of the next.' data-toggle='tooltip' data-placement='top'>Spawn factor</a></label>
+                        <div class='col-md-6'>
+                            <input id='spawn-factor' class='form-control' type='number' min='0' step='0.01' value='2.00'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='chance-catch' class='form-label col-md-6'><a id='chance-catch-tooltip' title='If the chance of catch is 1.0, every fishing attempt is successful. If it is 0.5, half of them are.' data-toggle='tooltip' data-placement='top'>Chance of catch</a></label>
+                        <div class='col-md-6'>
+                            <input id='chance-catch' class='form-control' type='number' min='0' step='0.01' value='1.00'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <h3>Information display</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Show all fishers
+                            <input id='show-fishers' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Show their names
+                            <input id='show-fisher-names' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Show their <a id='show-fisher-status-tooltip' title='At port or at sea' data-toggle='tooltip' data-placement='top'>status</a>
+                            <input id='show-fisher-status' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Show their number of fish caught
+                            <input id='show-num-caught' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Show their balance
+                            <input id='show-fisher-balance' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
