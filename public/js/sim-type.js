@@ -8,6 +8,7 @@ var main = function () {
    $('#spawn-factor-tooltip').tooltip();
    $('#chance-catch-tooltip').tooltip();
    $('#show-fisher-status-tooltip').tooltip();
+   $('#erratic-tooltip').tooltip();
 };
 
 $(document).ready(main);

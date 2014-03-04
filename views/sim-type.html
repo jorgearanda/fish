@@ -277,6 +277,87 @@
                     </div>
                 </div>
             </div>
+
+            <div class='col-md-4'>
+                <h3>Bot behaviour</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='global-greed' class='form-label col-md-6'>Greediness uniformity</label>
+                        <div class='col-md-6'>
+                            <div class='radio'>
+                                <label>
+                                    <input id='global-greed-uniform' type='radio' value='uniform'> Same for all bots
+                                </label>
+                            </div>
+                            <div class='radio'>
+                                <label>
+                                    <input id='global-greed-vary' type='radio' value='vary'> Varying per bot
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='greed-trend' class='form-label col-md-6'>Greediness trend</label>
+                        <div class='col-md-6'>
+                            <div class='radio'>
+                                <label>
+                                    <input id='greed-trend-stable' type='radio' value='stable'> Remain stable through the seasons
+                                </label>
+                            </div>
+                            <div class='radio'>
+                                <label>
+                                    <input id='greed-trend-increase' type='radio' value='increase'> Progressively increase
+                                </label>
+                            </div>
+                            <div class='radio'>
+                                <label>
+                                    <input id='greed-trend-decrease' type='radio' value='decrease'> Progressively decrease
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class='col-md-10'>
+                            <label class='form-label checkbox'>Allow bots to behave <a id='erratic-tooltip' title='If checked, bots will behave non-optimally: they will hesitate before acting and will try to fish at variable (but configurable) rates. This makes them appear more life-like' data-toggle='tooltip' data-placement='top'>irregularly</a>
+                            <input id='erratic' type='checkbox' checked></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='probability-action' class='form-label col-md-6'><a id='probability-action-tooltip' title='If bots behave irregularly, this determines the likelihood that they will perform an action on any given second' data-toggle='tooltip' data-placement='top'>Probability of action</a></label>
+                        <div class='col-md-6'>
+                            <input id='probability-action' class='form-control' type='number' min='0.01' step='0.01' value='0.40'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='casts-per-second' class='form-label col-md-6'><a id='casts-per-second-tooltip' title='If bots behave irregularly, this determines the maximum number of times that a bot may "click" the fishing button per second' data-toggle='tooltip' data-placement='top'>Maximum fishing attempts per second</a></label>
+                        <div class='col-md-6'>
+                            <input id='casts-per-second' class='form-control' type='number' min='1' step='1' value='3'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='cast-probability' class='form-label col-md-6'><a id='cast-probability-tooltip' title='If bots behave irregularly, this factor is the probability that a bot will carry through with a possible fishing attempt. For instance, a factor of 0.50 for ... TODO: finish' data-toggle='tooltip' data-placement='top'>Maximum fishing attempts per second</a></label>
+                        <div class='col-md-6'>
+                            <input id='casts-per-second' class='form-control' type='number' min='1' step='1' value='3'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
