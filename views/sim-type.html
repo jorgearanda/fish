@@ -27,10 +27,16 @@
             </div>
 
             <div id='sim-type-panel-body' class='panel-body'>
-                After saving your changes,
-                this simulation type will be available for testing.
+                <div class='col-md-9'>
+                    After saving your changes,
+                    this simulation type will be available for testing.
 
-                You can change its parameters after saving.
+                    You can change its parameters after saving.
+                </div>
+                <div class='col-md-3 btn-toolbar'>
+                    <button id='create' type='submit' class='btn btn-success'>Create</button>
+                    <button id='cancel' type='button' class='btn btn-default'>Cancel</button>
+                </div>
             </div>
         </div>
 
@@ -450,6 +456,25 @@
                             <textarea id='end-depletion-text' class='form-control'></textarea>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='panel panel-info'>
+            <div id='sim-type-panel-2-title' class='panel-heading'>
+                You are creating a new simulation type
+            </div>
+
+            <div id='sim-type-panel-2-body' class='panel-body'>
+                <div class='col-md-9'>
+                    After saving your changes,
+                    this simulation type will be available for testing.
+
+                    You can change its parameters after saving.
+                </div>
+                <div class='col-md-3 btn-toolbar'>
+                    <button id='create-2' type='submit' class='btn btn-success'>Create</button>
+                    <button id='cancel-2' type='button' class='btn btn-default'>Cancel</button>
                 </div>
             </div>
         </div>
