@@ -245,6 +245,47 @@
 
         <div class='row'>
             <div class='col-md-4'>
+                <h3>Preparation text</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='preparation-text' class='form-label col-md-12'>This text is shown to all participants before starting the simulation</label>
+                        <div class='col-md-12'>
+                            <textarea id='preparation-text' class='form-control'></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class='col-md-4'>
+                <h3>End (by time) text</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='end-time-text' class='form-label col-md-12'>This text is shown if the simulation ends because all seasons have passed</label>
+                        <div class='col-md-12'>
+                            <textarea id='end-time-text' class='form-control'></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class='col-md-4'>
+                <h3>End (by depletion) text</h3>
+
+                <div class='row'>
+                    <div class='form-group'>
+                        <label for='end-depletion-text' class='form-label col-md-12'>This text is shown if the simulation ends because the fish have been depleted</label>
+                        <div class='col-md-12'>
+                            <textarea id='end-depletion-text' class='form-control'></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'>
                 <h3>Information display</h3>
 
                 <div class='row'>
@@ -307,7 +348,7 @@
 
                 <div id='bot-1-row' class='row bot-row'>
                     <div class='col-md-2'>
-                        <input id='bot-1-name' class='form-control' type='text' value='Kermit'/>
+                        <input id='bot-1-name' class='form-control' type='text' value='Dolphin'/>
                     </div>
                     <div class='col-md-2'>
                         <input id='bot-1-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
@@ -335,7 +376,7 @@
 
                 <div id='bot-2-row' class='row bot-row'>
                     <div class='col-md-2'>
-                        <input id='bot-2-name' class='form-control' type='text' value='Gonzo'/>
+                        <input id='bot-2-name' class='form-control' type='text' value='Shark'/>
                     </div>
                     <div class='col-md-2'>
                         <input id='bot-2-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
@@ -363,7 +404,7 @@
 
                 <div id='bot-3-row' class='row bot-row'>
                     <div class='col-md-2'>
-                        <input id='bot-3-name' class='form-control' type='text' value='Piggy'/>
+                        <input id='bot-3-name' class='form-control' type='text' value='Octopus'/>
                     </div>
                     <div class='col-md-2'>
                         <input id='bot-3-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
@@ -386,6 +427,146 @@
                     </div>
                     <div class='col-md-2'>
                         <input id='bot-3-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
+                <div id='bot-4-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-4-name' class='form-control' type='text' value='Whale'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-4-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-4-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-4-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-4-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-4-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
+                <div id='bot-5-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-5-name' class='form-control' type='text' value='Seagull'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-5-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-5-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-5-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-5-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-5-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
+                <div id='bot-6-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-6-name' class='form-control' type='text' value='Penguin'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-6-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-6-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-6-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-6-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-6-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
+                <div id='bot-7-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-7-name' class='form-control' type='text' value='Walrus'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-7-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-7-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-7-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-7-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-7-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
+                <div id='bot-8-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-8-name' class='form-control' type='text' value='Stingray'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-8-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-8-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-8-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-8-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-8-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
                     </div>
                 </div>
 
@@ -422,47 +603,6 @@
                         <div class='form-group'>
                             <label class='form-label checkbox'>Uniform
                             <input id='uniform-attempts-second' type='checkbox'></label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class='row'>
-            <div class='col-md-4'>
-                <h3>Preparation text</h3>
-
-                <div class='row'>
-                    <div class='form-group'>
-                        <label for='preparation-text' class='form-label col-md-12'>This text is shown to all participants before starting the simulation</label>
-                        <div class='col-md-12'>
-                            <textarea id='preparation-text' class='form-control'></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class='col-md-4'>
-                <h3>End (by time) text</h3>
-
-                <div class='row'>
-                    <div class='form-group'>
-                        <label for='end-time-text' class='form-label col-md-12'>This text is shown if the simulation ends because all seasons have passed</label>
-                        <div class='col-md-12'>
-                            <textarea id='end-time-text' class='form-control'></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class='col-md-4'>
-                <h3>End (by depletion) text</h3>
-
-                <div class='row'>
-                    <div class='form-group'>
-                        <label for='end-depletion-text' class='form-label col-md-12'>This text is shown if the simulation ends because the fish have been depleted</label>
-                        <div class='col-md-12'>
-                            <textarea id='end-depletion-text' class='form-control'></textarea>
                         </div>
                     </div>
                 </div>

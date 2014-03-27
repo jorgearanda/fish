@@ -11,6 +11,26 @@ function readyTooltips() {
    $('#erratic-tooltip').tooltip();
 }
 
+function changeBotRowVisibility() {
+   var maxBot = 8;
+   var numFishers = parseInt($('#num-fishers').val(), 10);
+   var numHumans = parseInt($('#num-humans').val(), 10);
+
+   if (numFishers < 1) numFishers = 1;
+   if (numFishers > maxBot + numHumans) {
+      numFishers = maxBot + numHumans;
+   }
+   if (numHumans > numFishers) numHumans = numFishers;
+
+   for (var i = 1; i <= numFishers - numHumans; i++) {
+      $('#bot-' + i + '-row').removeClass('collapse');
+   }
+
+   for (var i = numFishers - numHumans + 1; i <= maxBot; i++) {
+      $('#bot-' + i + '-row').addClass('collapse');
+   }
+}
+
 function validate() {
    var errors = [];
 
@@ -198,9 +218,15 @@ function setButtons() {
    $('#create-2').click(createSimType);
 }
 
+function setOnPageChanges() {
+   $('#num-fishers').on('change', changeBotRowVisibility);
+   $('#num-humans').on('change', changeBotRowVisibility);
+}
+
 function main() {
    readyTooltips();
    setButtons();
+   setOnPageChanges();
 }
 
 $(document).ready(main);
