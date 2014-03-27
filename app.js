@@ -93,6 +93,7 @@ app.put('/a/:accountId/sim-types/:settingsId', function (req, res) {
 });
 
 app.get('/sim-types', simTypes.list);
+app.post('/sim-types', simTypes.create);
 
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});
