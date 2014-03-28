@@ -12,6 +12,7 @@
     <script src='/bower/bootstrap/js/tooltip.js'></script>
     <script src='/bower/moment/min/moment.min.js'></script>
     <script src='/bower/underscore/underscore-min.js'></script>
+    <script type='text/javascript' src='/public/js/default-text.js'></script>
     <script type='text/javascript' src='/public/js/sim-type.js'></script>
 </head>
 
@@ -251,7 +252,7 @@
                     <div class='form-group'>
                         <label for='preparation-text' class='form-label col-md-12'>This text is shown to all participants before starting the simulation</label>
                         <div class='col-md-12'>
-                            <textarea id='preparation-text' class='form-control'></textarea>
+                            <textarea id='preparation-text' class='form-control' rows='30'></textarea>
                         </div>
                     </div>
                 </div>
@@ -264,7 +265,7 @@
                     <div class='form-group'>
                         <label for='end-time-text' class='form-label col-md-12'>This text is shown if the simulation ends because all seasons have passed</label>
                         <div class='col-md-12'>
-                            <textarea id='end-time-text' class='form-control'></textarea>
+                            <textarea id='end-time-text' class='form-control' rows='30'></textarea>
                         </div>
                     </div>
                 </div>
@@ -277,7 +278,7 @@
                     <div class='form-group'>
                         <label for='end-depletion-text' class='form-label col-md-12'>This text is shown if the simulation ends because the fish have been depleted</label>
                         <div class='col-md-12'>
-                            <textarea id='end-depletion-text' class='form-control'></textarea>
+                            <textarea id='end-depletion-text' class='form-control' rows='30'></textarea>
                         </div>
                     </div>
                 </div>
@@ -339,11 +340,11 @@
 
                 <div class='row'>
                     <label class='form-label col-md-2'>Name</label>
-                    <label class='form-label col-md-2'>Greed</label>
-                    <label class='form-label col-md-2'>Trend</label>
-                    <label class='form-label col-md-2'>Predictability</label>
-                    <label class='form-label col-md-2'>Probability of action</label>
-                    <label class='form-label col-md-2'>Maximum casts per second</label>
+                    <label class='form-label col-md-2'><a id='greed-tooltip' title='Between 0 and 1. The higher the value, the more greedily this bot will behave. A value of 0.5 takes as many fish as possible while still behaving sustainably.' data-toggle='tooltip' data-placement='top'>Greed</a></label>
+                    <label class='form-label col-md-2'><a id='trend-tooltip' title='A bot with a stable trend will behave the same way at the beginning and at the end of the simulation. A bot with an increasing trend will be more greedy as time goes by (while still being as greedy as specified in its Greed parameter, on average), and one with a decreasing trend will be less greedy in later seasons.' data-toggle='tooltip' data-placement='top'>Trend</a></label>
+                    <label class='form-label col-md-2'><a id='predictability-tooltip' title='Erratic bots appear more lifelike, but they may behave non-optimally.' data-toggle='tooltip' data-placement='top'>Predictability</a></label>
+                    <label class='form-label col-md-2'><a id='prob-action-tooltip' title='If bots behave erratically, this parameter (between 0 and 1) controls how frequently they act. The lower the value, the more they will appear to hesitate.' data-toggle='tooltip' data-placement='top'>Probability of action</a></label>
+                    <label class='form-label col-md-2'><a id='attempts-second-tooltip' title='If bots behave erratically, this controls the maximum number of fish they will try to catch in any second, provided they are doing something that second. If bots behave regularly, this controls how many fish they will try to catch every second (until they fulfill their quota).' data-toggle='tooltip' data-placement='top'>Maximum casts per second</a></label>
                 </div>
 
                 <div id='bot-1-row' class='row bot-row'>
@@ -570,39 +571,123 @@
                     </div>
                 </div>
 
+                <div id='bot-9-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-9-name' class='form-control' type='text' value='Orca'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-9-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-9-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-9-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-9-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-9-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
+                <div id='bot-10-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-10-name' class='form-control' type='text' value='Seal'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-10-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-10-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-10-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-10-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-10-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
+                <div id='bot-11-row' class='row bot-row collapse'>
+                    <div class='col-md-2'>
+                        <input id='bot-11-name' class='form-control' type='text' value='Polar Bear'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-11-greed' class='form-control' type='number' min='0' step='0.01' value='0.50'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-11-trend' class='form-control'>
+                            <option value='stable'>Stable</option>
+                            <option value='decrease'>Decrease</option>
+                            <option value='increase'>Increase</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <select id='bot-11-predictability' class='form-control'>
+                            <option value='erratic'>Erratic</option>
+                            <option value='regular'>Regular</option>
+                        </select>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-11-prob-action' class='form-control' type='number' min='0' step='0.01' value='0.80'/>
+                    </div>
+                    <div class='col-md-2'>
+                        <input id='bot-11-attempts-second' class='form-control' type='number' min='0' step='1' value='3'/>
+                    </div>
+                </div>
+
                 <div class='row'>
                     <div class='col-md-2 col-md-offset-2'>
                         <div class='form-group'>
                             <label class='form-label checkbox'>Uniform
-                            <input id='uniform-greed' type='checkbox'></label>
+                            <input id='uniform-greed' type='checkbox' checked></label>
                         </div>
                     </div>
 
                     <div class='col-md-2'>
                         <div class='form-group'>
                             <label class='form-label checkbox'>Uniform
-                            <input id='uniform-trend' type='checkbox'></label>
+                            <input id='uniform-trend' type='checkbox' checked></label>
                         </div>
                     </div>
 
                     <div class='col-md-2'>
                         <div class='form-group'>
                             <label class='form-label checkbox'>Uniform
-                            <input id='uniform-predictability' type='checkbox'></label>
+                            <input id='uniform-predictability' type='checkbox' checked></label>
                         </div>
                     </div>
 
                     <div class='col-md-2'>
                         <div class='form-group'>
                             <label class='form-label checkbox'>Uniform
-                            <input id='uniform-prob-action' type='checkbox'></label>
+                            <input id='uniform-prob-action' type='checkbox' checked></label>
                         </div>
                     </div>
 
                     <div class='col-md-2'>
                         <div class='form-group'>
                             <label class='form-label checkbox'>Uniform
-                            <input id='uniform-attempts-second' type='checkbox'></label>
+                            <input id='uniform-attempts-second' type='checkbox' checked></label>
                         </div>
                     </div>
                 </div>

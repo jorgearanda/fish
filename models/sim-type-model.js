@@ -14,6 +14,7 @@ var simTypeSchema = new Schema({
       _id: ObjectId,
       username: String
    },
+   code: String,
    desc: String,
    status: String,
    dateCreated: Date,

@@ -21,6 +21,7 @@ var simTypesSuccess = function (simTypes) {
          anyTest = true;
          testTable += '<tr onclick="location.href=\'/sim-types/' + 
             simTypes[i]._id + '\'"><td>' + simTypes[i].name + '</td>' +
+            '<td>' + simTypes[i].code + '</td>' +
             '<td>' + simTypes[i].desc + '</td></tr>';
       }
 

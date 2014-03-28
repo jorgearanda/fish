@@ -1,5 +1,7 @@
 'use strict';
 
+var maxBot = 11;
+
 function readyTooltips() {
    $('#early-end-tooltip').tooltip();
    $('#max-fish-tooltip').tooltip();
@@ -9,10 +11,14 @@ function readyTooltips() {
    $('#chance-catch-tooltip').tooltip();
    $('#show-fisher-status-tooltip').tooltip();
    $('#erratic-tooltip').tooltip();
+   $('#greed-tooltip').tooltip();
+   $('#trend-tooltip').tooltip();
+   $('#predictability-tooltip').tooltip();
+   $('#prob-action-tooltip').tooltip();
+   $('#attempts-second-tooltip').tooltip();
 }
 
 function changeBotRowVisibility() {
-   var maxBot = 8;
    var numFishers = parseInt($('#num-fishers').val(), 10);
    var numHumans = parseInt($('#num-humans').val(), 10);
 
@@ -28,6 +34,71 @@ function changeBotRowVisibility() {
 
    for (var i = numFishers - numHumans + 1; i <= maxBot; i++) {
       $('#bot-' + i + '-row').addClass('collapse');
+   }
+}
+
+function changeGreedUniformity() {
+   if ($('#uniform-greed').prop('checked') === true) {
+      var greed = $('#bot-1-greed').val();
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-greed').val(greed).attr('disabled', true);
+      }
+   } else {
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-greed').attr('disabled', false);
+      }
+   }
+}
+
+function changeTrendUniformity() {
+   if ($('#uniform-trend').prop('checked') === true) {
+      var trend = $('#bot-1-trend').val();
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-trend').val(trend).attr('disabled', true);
+      }
+   } else {
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-trend').attr('disabled', false);
+      }
+   }
+}
+
+function changePredictabilityUniformity() {
+   if ($('#uniform-predictability').prop('checked') === true) {
+      var predictability = $('#bot-1-predictability').val();
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-predictability').val(predictability).attr('disabled', true);
+      }
+   } else {
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-predictability').attr('disabled', false);
+      }
+   }
+}
+
+function changeProbActionUniformity() {
+   if ($('#uniform-prob-action').prop('checked') === true) {
+      var probAction = $('#bot-1-prob-action').val();
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-prob-action').val(probAction).attr('disabled', true);
+      }
+   } else {
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-prob-action').attr('disabled', false);
+      }
+   }
+}
+
+function changeAttemptsSecondUniformity() {
+   if ($('#uniform-attempts-second').prop('checked') === true) {
+      var attemptsSecond = $('#bot-1-attempts-second').val();
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-attempts-second').val(attemptsSecond).attr('disabled', true);
+      }
+   } else {
+      for (var i = 2; i <= maxBot; i++) {
+         $('#bot-' + i + '-attempts-second').attr('disabled', false);
+      }
    }
 }
 
@@ -221,12 +292,35 @@ function setButtons() {
 function setOnPageChanges() {
    $('#num-fishers').on('change', changeBotRowVisibility);
    $('#num-humans').on('change', changeBotRowVisibility);
+   $('#uniform-greed').on('change', changeGreedUniformity);
+   $('#bot-1-greed').on('input', changeGreedUniformity);
+   $('#uniform-trend').on('change', changeTrendUniformity);
+   $('#bot-1-trend').on('change', changeTrendUniformity);
+   $('#uniform-predictability').on('change', changePredictabilityUniformity);
+   $('#bot-1-predictability').on('change', changePredictabilityUniformity);
+   $('#uniform-prob-action').on('change', changeProbActionUniformity);
+   $('#bot-1-prob-action').on('input', changeProbActionUniformity);
+   $('#uniform-attempts-second').on('change', changeAttemptsSecondUniformity);
+   $('#bot-1-attempts-second').on('input', changeAttemptsSecondUniformity);
+}
+
+function loadTexts() {
+   $('#preparation-text').val(prepText);
+   $('#end-time-text').val(endTimeText);
+   $('#end-depletion-text').val(endDepletedText);
 }
 
 function main() {
+   changeGreedUniformity();
+   changeTrendUniformity();
+   changePredictabilityUniformity();
+   changeProbActionUniformity();   
+   changeAttemptsSecondUniformity();
+
    readyTooltips();
    setButtons();
    setOnPageChanges();
+   loadTexts();
 }
 
 $(document).ready(main);
