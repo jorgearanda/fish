@@ -6,23 +6,23 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var microworldSchema = new Schema({
-   name: {
-      type: String,
-      unique: true
-   },
-   experimenter: {
-      _id: ObjectId,
-      username: String
-   },
-   code: String,
-   desc: String,
-   status: String,
-   dateCreated: Date,
-   dateActive: Date,
-   dateArchived: Date,
-   numCompleted: Number,
-   numAborted: Number,
-   params: {} // TODO: Fill out
+    name: {
+        type: String,
+        unique: true
+    },
+    experimenter: {
+        _id: ObjectId,
+        username: String
+    },
+    code: String,
+    desc: String,
+    status: String,
+    dateCreated: Date,
+    dateActive: Date,
+    dateArchived: Date,
+    numCompleted: Number,
+    numAborted: Number,
+    params: {} // TODO: Fill out
 });
 
 exports.Microworld = mongoose.model('Microworld', microworldSchema);
