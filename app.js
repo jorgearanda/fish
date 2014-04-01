@@ -9,8 +9,11 @@ var MongoStore = require('connect-mongo')(express);
 var path = require('path');
 var socketio = require('socket.io');
 
+var access = require('./middlewares/access');
 var microworlds = require('./routes/microworlds');
 var sessions = require('./routes/sessions');
+
+var isUser = access.isUser;
 
 var app = exports.app = express();
 
@@ -92,8 +95,8 @@ app.put('/a/:accountId/microworlds/:settingsId', function (req, res) {
    // TODO
 });
 
-app.get('/microworlds', microworlds.list);
-app.post('/microworlds', microworlds.create);
+app.get('/microworlds', isUser, microworlds.list);
+app.post('/microworlds', isUser, microworlds.create);
 
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});

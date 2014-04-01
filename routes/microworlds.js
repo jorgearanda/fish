@@ -5,33 +5,27 @@ var Chance = require('chance');
 var logger = require('winston');
 var mongoose = require('mongoose');
 
-var SimType = require('../models/sim-type-model').SimType;
+var Microworld = require('../models/microworld-model').Microworld;
 
-// GET /sim-types
+// GET /microworlds
 exports.list = function (req, res) {
-   if (!req.session || !req.session.userId) return res.send(401);
-
    var query = { 'experimenter._id': req.session.userId };
    if (req.query.status) query.status = req.query.status;
 
-   SimType.find().exec(function findCb(err, simTypes) {
+   Microworld.find().exec(function findCb(err, microworlds) {
       if (err) {
-         logger.error('Error on GET /sim-types', err);
+         logger.error('Error on GET /microworlds', err);
          return res.send(500);
       }
 
-      return res.status(200).send(simTypes);
+      return res.status(200).send(microworlds);
    });
 };
 
 
-// POST /sim-types
+// POST /microworlds
 exports.create = function (req, res) {
-   // TODO - these session validations can be performed by middleware
-   if (!req.session || !req.session.userId) return res.send(401);
-
-   // TODO - validate here again
-
+   // For now at least, we assume validation client-side
    var st = {
       name: req.body.name,
       experimenter: {
@@ -67,7 +61,7 @@ exports.create = function (req, res) {
                });
                tries += 1;
 
-               SimType.findOne(
+               Microworld.findOne(
                   {'code': st.code},
                   function onFound(err, found) {
                      if (err) return cb(err);
@@ -88,16 +82,20 @@ exports.create = function (req, res) {
                return next();
             }
          );
-      }, function createSimType(next) {
-         SimType.create(st, function onCreate(err, stRes) {
+      }, function createMicroworld(next) {
+         Microworld.create(st, function onCreate(err, stRes) {
             if (err) return next({status: 500, message: err.message});
 
             return next(null, stRes);
          });
       }
    ], function resolve(err, stRes) {
-      // TODO - log errors
-      if (err) return res.status(err.status).send(err.message);
+      if (err) {
+         if (err.status === 500) {
+            logger.error('Error on POST /microworlds: ', err);
+         }
+         return res.status(err.status).send(err.message);
+      }
       return res.status(200).send(stRes);
    });
 }

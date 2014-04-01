@@ -2,7 +2,7 @@
 /*global document:true, location:true, $:true, alert:true, moment:true*/
 
 var df = 'YYYY-MM-DD';
-var lastMwRes = [];
+var lastMwRes = null;
 
 var microworldsSuccess = function (mws) {
    if (_.isEqual(lastMwRes, mws)) return;

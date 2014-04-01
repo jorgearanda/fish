@@ -185,24 +185,45 @@ function validate() {
       errors.push('The spawn factor cannot be negative.');
    }
 
-   if (parseFloat($('#chance-catch').val()) < 0 ||
-         parseFloat($('#chance-catch').val()) > 1) {
+   var chanceCatch = parseFloat($('#chance-catch').val());
+   if (chanceCatch < 0 || chanceCatch > 1) {
       errors.push('The chance of catch must be a number between 0 and 1.');
    }
 
-   for (var i = 0; i < (numFishers - numHumans); i++) {
-      // Bot checkin'
+   if ($('#preparation-text').val().length < 1) {
+      errors.push('The preparation text is missing.');
    }
 
-   // Remaining fields to validate:
-   //
-   // Bot names
-   // Bot greeds
-   // Bot probability of action
-   // Bot attempts per second
-   // Preparation text
-   // End (by time) text
-   // End (by depletion) text
+   if ($('#end-time-text').val().length < 1) {
+      errors.push('The text for ending on time is missing.');
+   }
+
+   if ($('#end-depletion-text').val().length < 1) {
+      errors.push('The text for ending on depletion is missing.');
+   }
+
+   for (var i = 1; i <= (numFishers - numHumans); i++) {
+      if ($('#bot-' + i + '-name').val().length < 1) {
+         errors.push('Bot ' + i + ' needs a name.');
+      }
+
+      var botGreed = parseFloat($('#bot-' + i + '-greed').val());
+      if (botGreed < 0 || botGreed > 1) {
+         errors.push('The greed of bot ' + i + ' must be between 0 and 1.');
+      }
+
+      var botProbAction = parseFloat($('#bot-' + i + '-prob-action').val());
+      if (botProbAction < 0 || botProbAction > 1) {
+         errors.push('The probability of action of bot ' + i +
+            ' must be between 0 and 1.');
+      }
+
+      var botAttempts = parseFloat($('#bot-' + i + '-attempts-second').val());
+      if (botAttempts < 1) {
+         errors.push('The attempts per second of bot ' + i +
+            ' must be between at least 1.');
+      }
+   }
 
    if (errors.length === 0) return null;
    return errors;
@@ -255,8 +276,18 @@ function prepareMicroworldObject() {
    return mw;
 }
 
+function reportErrors(err) {
+      var errMessage = 'The form has the following errors:\n\n';
+      for (var i in err) {
+         errMessage += err[i] + '\n';
+      }
+      alert(errMessage);
+      return;
+}
+
 function badMicroworld(jqXHR) {
-   // TODO - report on reasons for failure
+   reportErrors(JSON.parse(jqXHR.responseText).errors);
+   return;
 }
 
 function goodMicroworld() {
@@ -266,11 +297,7 @@ function goodMicroworld() {
 function createMicroworld() {
    var err = validate();
    if (err) {
-      var errMessage = 'The form has the following errors:\n\n';
-      for (var i in err) {
-         errMessage += err[i] + '\n';
-      }
-      alert(errMessage);
+      reportErrors(err);
       return;
    }
 
