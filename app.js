@@ -9,8 +9,8 @@ var MongoStore = require('connect-mongo')(express);
 var path = require('path');
 var socketio = require('socket.io');
 
+var microworlds = require('./routes/microworlds');
 var sessions = require('./routes/sessions');
-var simTypes = require('./routes/sim-types');
 
 var app = exports.app = express();
 
@@ -82,18 +82,18 @@ app.get('/a/:accountId/dashboard', function (req, res) {
    res.render('dashboard.html')
 });
 
-app.get('/a/:accountId/new/sim-type', function (req, res) {
-   res.render('sim-type.html');
+app.get('/a/:accountId/new/microworld', function (req, res) {
+   res.render('microworld.html');
 });
-app.post('/a/:accountId/sim-types', function (req, res) {
+app.post('/a/:accountId/microworlds', function (req, res) {
    // TODO
 });
-app.put('/a/:accountId/sim-types/:settingsId', function (req, res) {
+app.put('/a/:accountId/microworlds/:settingsId', function (req, res) {
    // TODO
 });
 
-app.get('/sim-types', simTypes.list);
-app.post('/sim-types', simTypes.create);
+app.get('/microworlds', microworlds.list);
+app.post('/microworlds', microworlds.create);
 
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});

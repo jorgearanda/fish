@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
-var simTypeSchema = new Schema({
+var microworldSchema = new Schema({
    name: {
       type: String,
       unique: true
@@ -25,4 +25,4 @@ var simTypeSchema = new Schema({
    params: {} // TODO: Fill out
 });
 
-exports.SimType = mongoose.model('SimType', simTypeSchema);
+exports.Microworld = mongoose.model('Microworld', microworldSchema);

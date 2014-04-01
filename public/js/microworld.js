@@ -106,7 +106,7 @@ function validate() {
    var errors = [];
 
    if ($('#name').val().length < 1) {
-      errors.push('The simulation type name is missing.');
+      errors.push('The microworld name is missing.');
    }
 
    var numFishers = parseInt($('#num-fishers').val(), 10);
@@ -208,41 +208,41 @@ function validate() {
    return errors;
 }
 
-function prepareSimTypeObject() {
-   var st = {};
-   st.name = $('#name').val();
-   st.desc = $('#desc').val();
-   st.numFishers = $('#num-fishers').val();
-   st.numHumans = $('#num-humans').val();
-   st.numSeasons = $('#num-seasons').val();
-   st.seasonDuration = $('#season-duration').val();
-   st.initialDelay = $('#initial-delay').val();
-   st.seasonDelay = $('#season-delay').val();
-   st.enablePause = $('#enable-pause').val();
-   st.enableEarlyEnd = $('#enable-early-end').val();
-   st.fishValue = $('#fish-value').val();
-   st.costCast = $('#cost-cast').val();
-   st.costDeparture = $('#cost-departure').val();
-   st.costSecond = $('#cost-second').val();
-   st.currencySymbol = $('#currency-symbol').val();
-   st.certainFish = $('#certain-fish').val();
-   st.availableMysteryFish = $('#available-mystery-fish').val();
-   st.reportedMysteryFish = $('#reported-mystery-fish').val();
-   st.maxFish = $('#max-fish').val();
-   st.spawnFactor = $('#spawn-factor').val();
-   st.chanceCatch = $('#chance-catch').val();
-   st.showFishers = $('#show-fishers').val();
-   st.showFisherNames = $('#show-fisher-names').val();
-   st.showFisherStatus = $('#show-fisher-status').val();
-   st.showNumCaught = $('#show-num-caught').val();
-   st.showFisherBalance = $('#show-fisher-balance').val();
-   st.preparationText = $('#preparation-text').val();
-   st.endTimeText = $('#end-time-text').val();
-   st.endDepletionText = $('#end-depletion-text').val();
-   st.bots = []
-   for (var i = 0; i <= st.numFishers - st.numHumans; i++) {
+function prepareMicroworldObject() {
+   var mw = {};
+   mw.name = $('#name').val();
+   mw.desc = $('#desc').val();
+   mw.numFishers = $('#num-fishers').val();
+   mw.numHumans = $('#num-humans').val();
+   mw.numSeasons = $('#num-seasons').val();
+   mw.seasonDuration = $('#season-duration').val();
+   mw.initialDelay = $('#initial-delay').val();
+   mw.seasonDelay = $('#season-delay').val();
+   mw.enablePause = $('#enable-pause').val();
+   mw.enableEarlyEnd = $('#enable-early-end').val();
+   mw.fishValue = $('#fish-value').val();
+   mw.costCast = $('#cost-cast').val();
+   mw.costDeparture = $('#cost-departure').val();
+   mw.costSecond = $('#cost-second').val();
+   mw.currencySymbol = $('#currency-symbol').val();
+   mw.certainFish = $('#certain-fish').val();
+   mw.availableMysteryFish = $('#available-mystery-fish').val();
+   mw.reportedMysteryFish = $('#reported-mystery-fish').val();
+   mw.maxFish = $('#max-fish').val();
+   mw.spawnFactor = $('#spawn-factor').val();
+   mw.chanceCatch = $('#chance-catch').val();
+   mw.showFishers = $('#show-fishers').val();
+   mw.showFisherNames = $('#show-fisher-names').val();
+   mw.showFisherStatus = $('#show-fisher-status').val();
+   mw.showNumCaught = $('#show-num-caught').val();
+   mw.showFisherBalance = $('#show-fisher-balance').val();
+   mw.preparationText = $('#preparation-text').val();
+   mw.endTimeText = $('#end-time-text').val();
+   mw.endDepletionText = $('#end-depletion-text').val();
+   mw.bots = []
+   for (var i = 0; i <= mw.numFishers - mw.numHumans; i++) {
       var botPrefix = '#bot-' + i + '-';
-      st.bots.push({
+      mw.bots.push({
          name: $(botPrefix + 'name').val(),
          greed: $(botPrefix + 'greed').val(),
          trend: $(botPrefix + 'trend').val(),
@@ -252,18 +252,18 @@ function prepareSimTypeObject() {
       });
    }
 
-   return st;
+   return mw;
 }
 
-function badSimType(jqXHR) {
+function badMicroworld(jqXHR) {
    // TODO - report on reasons for failure
 }
 
-function goodSimType() {
+function goodMicroworld() {
    location.href = '../dashboard';
 }
 
-function createSimType() {
+function createMicroworld() {
    var err = validate();
    if (err) {
       var errMessage = 'The form has the following errors:\n\n';
@@ -274,19 +274,19 @@ function createSimType() {
       return;
    }
 
-   var st = prepareSimTypeObject();
+   var st = prepareMicroworldObject();
    $.ajax({
       type: 'POST',
-      url: '/sim-types',
+      url: '/microworlds',
       data: st,
-      error: badSimType,
-      success: goodSimType
+      error: badMicroworld,
+      success: goodMicroworld
    });
 }
 
 function setButtons() {
-   $('#create').click(createSimType);
-   $('#create-2').click(createSimType);
+   $('#create').click(createMicroworld);
+   $('#create-2').click(createMicroworld);
 }
 
 function setOnPageChanges() {

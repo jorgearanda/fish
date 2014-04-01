@@ -20,20 +20,20 @@
             <h1>Dashboard</h1>
         </div>
 
-        <h3>Ongoing simulations</h3>
-        <p>No simulations are currently being executed.</p>
+        <h3>Ongoing microworld runs</h3>
+        <p>No microworlds are currently being executed.</p>
 
         <hr>
 
-        <h3>Simulation types being tested</h3>
-        <div id='sim-types-test'>
-            <div id='sim-types-test-loading'>
+        <h3>Microworlds being tested</h3>
+        <div id='microworlds-test'>
+            <div id='microworlds-test-loading'>
                 <p><em>Loading...</em></p>
             </div>
-            <div id='sim-types-test-none' class='collapse'>
-                <p>No simulations are currently being tested.</p>
+            <div id='microworlds-test-none' class='collapse'>
+                <p>No microworlds are currently being tested.</p>
             </div>
-            <div id='sim-types-test-table' class='collapse table-responsive'>
+            <div id='microworlds-test-table' class='collapse table-responsive'>
                 <p>These are accesible, but their results are not stored and their parameters can still be changed. To activate them or modify their parameters, click on their corresponding row.</p>
                 <table class='table table-bordered table-hover'>
                     <thead>
@@ -41,26 +41,26 @@
                         <th>Experiment Code</th>
                         <th>Description</th>
                     </thead>
-                    <tbody id='sim-types-test-table-rows'>
+                    <tbody id='microworlds-test-table-rows'>
                     </tbody>
                 </table>
             </div>
         </div>
-        <button id='new-sim-type' class='btn btn-primary' type='submit' onclick='location.href="./new/sim-type"'>
-            New Simulation Type
+        <button id='new-microworld' class='btn btn-primary' type='submit' onclick='location.href="./new/microworld"'>
+            New Microworld
         </button>
 
         <hr>
 
-        <h3>Active simulation types</h3>
-        <div id='sim-types-active'>
-            <div id='sim-types-active-loading'>
+        <h3>Active microworlds</h3>
+        <div id='microworlds-active'>
+            <div id='microworlds-active-loading'>
                 <p><em>Loading...</em></p>
             </div>
-            <div id='sim-types-active-none' class='collapse'>
-                <p>No simulations are currently active.</p>
+            <div id='microworlds-active-none' class='collapse'>
+                <p>No microworlds are currently active.</p>
             </div>
-            <div id='sim-types-active-table' class='collapse table-responsive'>
+            <div id='microworlds-active-table' class='collapse table-responsive'>
                 <p>These are accessible to your participants.</p>
                 <table class='table table-bordered table-hover'>
                     <thead>
@@ -70,7 +70,7 @@
                         <th>Completed</th>
                         <th>Interrupted</th>
                     </thead>
-                    <tbody id='sim-types-active-table-rows'>
+                    <tbody id='microworlds-active-table-rows'>
                     </tbody>
                 </table>
             </div>
@@ -78,17 +78,17 @@
 
         <hr>
 
-        <h3>Archived simulations</h3>
-        <div id='sim-types-archived'>
-            <div id='sim-types-archived-loading'>
+        <h3>Archived microworlds</h3>
+        <div id='microworlds-archived'>
+            <div id='microworlds-archived-loading'>
                 <p><em>Loading...</em></p>
             </div>
-            <div id='sim-types-archived-none' class='collapse'>
-                <p>No simulations are currently archived.</p>
+            <div id='microworlds-archived-none' class='collapse'>
+                <p>No microworlds are currently archived.</p>
             </div>
-            <div id='sim-types-archived-table' class='collapse table-responsive'>
+            <div id='microworlds-archived-table' class='collapse table-responsive'>
                 <p>To download results, re-activate, or clone these
-                simulation types, click on their corresponding row.</p>
+                microworlds, click on their corresponding row.</p>
                 <table class='table table-bordered table-hover'>
                     <thead>
                         <th>Name</th>
@@ -97,7 +97,7 @@
                         <th>Completed</th>
                         <th>Interrupted</th>
                     </thead>
-                    <tbody id='sim-types-archived-table-rows'>
+                    <tbody id='microworlds-archived-table-rows'>
                     </tbody>
                 </table>
             </div>
