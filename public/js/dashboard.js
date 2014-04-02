@@ -19,7 +19,7 @@ var microworldsSuccess = function (mws) {
     for (var i in mws) {
         if (mws[i].status === 'test') {
             anyTest = true;
-            testTable += '<tr onclick="location.href=\'/microworlds/' + 
+            testTable += '<tr onclick="location.href=\'./microworlds/' + 
                 mws[i]._id + '\'"><td>' + mws[i].name + '</td>' +
                 '<td>' + mws[i].code + '</td>' +
                 '<td>' + mws[i].desc + '</td></tr>';
@@ -27,7 +27,7 @@ var microworldsSuccess = function (mws) {
 
         if (mws[i].status === 'active') {
             anyActive = true;
-            activeTable += '<tr onclick="location.href=\'/microworlds/' + 
+            activeTable += '<tr onclick="location.href=\'./microworlds/' + 
                 mws[i]._id + '\'"><td>' + mws[i].name + '</td>' + 
                 '<td>' + mws[i].desc + '</td>' +
                 '<td>' + moment(mws[i].dateActive).format(df) + '</td>' + 
@@ -37,7 +37,7 @@ var microworldsSuccess = function (mws) {
 
         if (mws[i].status === 'archived') {
             anyArchived = true;
-            archivedTable += '<tr onclick="location.href=\'/microworlds/' + 
+            archivedTable += '<tr onclick="location.href=\'./microworlds/' + 
                 mws[i]._id + '\'"><td>' + mws[i].name + '</td>' + 
                 '<td>' + mws[i].desc + '</td>' +
                 '<td>' + moment(mws[i].dateActive).format(df) + '</td>' + 

@@ -1,3 +1,42 @@
+var pageHeader = {
+    new: 'New Microworld',
+    test: 'Microworld in Testing: ',
+    active: 'Active Microworld: ',
+    archived: 'Archived Microworld'
+};
+
+var panelTitle = {
+    new: 'You are creating a new microworld',
+    test: 'You are viewing a microworld in testing. ' +
+        'It is available for testing with the code ',
+    active: 'You are viewing an active microworld. ' +
+        'It is available for participants with the code ',
+    archived: 'You are viewing an archived microworld'
+};
+
+var panelBody = {
+    new: 'After saving your changes, ' +
+        'this microworld will be available for testing. ' +
+        'You can change its parameters after saving.',
+    test: 'You can still make changes to this microworld. ' +
+        'You can also perform a dry-run of the microworld ' +
+        'with its current parameters, clone the microworld, ' +
+        'activate it, or delete it. ' +
+        'Notes: no data from dry-runs is kept by this system. ' +
+        'Once you activate the microworld ' +
+        'you won\'t be able to change its parameters anymore ' +
+        '(though you will still be able to clone it)',
+    active: 'To preserve the same conditions for all participants, ' +
+        'you cannot make any changes to the parameters of ' +
+        'this microworld anymore. ' +
+        'However, you can clone it, and change the parameters ' +
+        'of the clone. ' +
+        'You can also archive or delete this microworld.',
+    archived: 'This microworld is no longer accessible to participants. ' +
+        'You can re-activate this microworld, ' +
+        'clone it, or delete it.'
+};
+
 var prepText = 'FISH simulates fishing in an ocean. ' +
     'You and the other fishers are the only fishers in this ocean. ' +
     'All the fishers see the same ocean that you do. ' +

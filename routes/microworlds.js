@@ -23,6 +23,21 @@ exports.list = function (req, res) {
 };
 
 
+// GET /microworlds/:id
+exports.show = function (req, res) {
+    Microworld.findOne({
+        _id: req.params.id
+    }, function foundCb(err, mw) {
+        if (err) {
+            logger.error('Error on GET /microworlds/' + req.params.id, err);
+            return res.send(500);
+        }
+
+        return res.status(200).send(mw);
+    });
+};
+
+
 // POST /microworlds
 exports.create = function (req, res) {
     // For now at least, we assume validation client-side

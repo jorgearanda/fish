@@ -84,19 +84,17 @@ app.get('/a/:accountId', function (req, res) {
 app.get('/a/:accountId/dashboard', function (req, res) {
     res.render('dashboard.html')
 });
-
+app.get('/a/:accountId/microworlds/:microworldId', function (req, res) {
+    res.render('microworld.html');
+});
 app.get('/a/:accountId/new/microworld', function (req, res) {
     res.render('microworld.html');
 });
-app.post('/a/:accountId/microworlds', function (req, res) {
-    // TODO
-});
-app.put('/a/:accountId/microworlds/:settingsId', function (req, res) {
-    // TODO
-});
 
 app.get('/microworlds', isUser, microworlds.list);
+app.get('/microworlds/:id', isUser, microworlds.show);
 app.post('/microworlds', isUser, microworlds.create);
+
 
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});

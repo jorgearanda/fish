@@ -22,7 +22,43 @@ var microworldSchema = new Schema({
     dateArchived: Date,
     numCompleted: Number,
     numAborted: Number,
-    params: {} // TODO: Fill out
+    params: {
+        numFishers: Number,
+        numHumans: Number,
+        numSeasons: Number,
+        seasonDuration: Number,
+        initialDelay: Number,
+        seasonDelay: Number,
+        enableEarlyEnd: Boolean,
+        enablePause: Boolean,
+        fishValue: Number,
+        costDeparture: Number,
+        costSecond: Number,
+        costCast: Number,
+        currencySymbol: String,
+        certainFish: Number,
+        availableMysteryFish: Number,
+        reportedMysteryFish: Number,
+        maxFish: Number,
+        spawnFactor: Number,
+        chanceCatch: Number,
+        showFishers: Boolean,
+        showFisherNames: Boolean,
+        showFisherStatus: Boolean,
+        showNumCaught: Boolean,
+        showFisherBalance: Boolean,
+        preparationText: String,
+        endDepletionText: String,
+        endTimeText: String,
+        bots: [{
+            name: String,
+            greed: Number,
+            trend: String,
+            predictability: String,
+            probAction: Number,
+            attemptsSecond: Number
+        }]
+    }
 });
 
 exports.Microworld = mongoose.model('Microworld', microworldSchema);

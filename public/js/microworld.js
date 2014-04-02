@@ -1,6 +1,17 @@
 'use strict';
 
 var maxBot = 11;
+var mode;
+var mw = {};
+var mwId;
+
+function getMwId() {
+    mwId = $.url().segment(4);
+}
+
+function isNewMicroworld() {
+    return ($.url().segment(3) === 'new');
+}
 
 function readyTooltips() {
     $('#early-end-tooltip').tooltip();
@@ -239,8 +250,8 @@ function prepareMicroworldObject() {
     mw.seasonDuration = $('#season-duration').val();
     mw.initialDelay = $('#initial-delay').val();
     mw.seasonDelay = $('#season-delay').val();
-    mw.enablePause = $('#enable-pause').val();
-    mw.enableEarlyEnd = $('#enable-early-end').val();
+    mw.enablePause = $('#enable-pause').prop('checked');
+    mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
@@ -252,16 +263,16 @@ function prepareMicroworldObject() {
     mw.maxFish = $('#max-fish').val();
     mw.spawnFactor = $('#spawn-factor').val();
     mw.chanceCatch = $('#chance-catch').val();
-    mw.showFishers = $('#show-fishers').val();
-    mw.showFisherNames = $('#show-fisher-names').val();
-    mw.showFisherStatus = $('#show-fisher-status').val();
-    mw.showNumCaught = $('#show-num-caught').val();
-    mw.showFisherBalance = $('#show-fisher-balance').val();
+    mw.showFishers = $('#show-fishers').prop('checked');
+    mw.showFisherNames = $('#show-fisher-names').prop('checked');
+    mw.showFisherStatus = $('#show-fisher-status').prop('checked');
+    mw.showNumCaught = $('#show-num-caught').prop('checked');
+    mw.showFisherBalance = $('#show-fisher-balance').prop('checked');
     mw.preparationText = $('#preparation-text').val();
     mw.endTimeText = $('#end-time-text').val();
     mw.endDepletionText = $('#end-depletion-text').val();
-    mw.bots = []
-    for (var i = 0; i <= mw.numFishers - mw.numHumans; i++) {
+    mw.bots = [];
+    for (var i = 1; i <= mw.numFishers - mw.numHumans; i++) {
         var botPrefix = '#bot-' + i + '-';
         mw.bots.push({
             name: $(botPrefix + 'name').val(),
@@ -301,13 +312,82 @@ function createMicroworld() {
         return;
     }
 
-    var st = prepareMicroworldObject();
+    var mw = prepareMicroworldObject();
     $.ajax({
         type: 'POST',
         url: '/microworlds',
-        data: st,
+        data: mw,
         error: badMicroworld,
         success: goodMicroworld
+    });
+}
+
+function populatePage() {
+    $('#name').val(mw.name);
+    $('#desc').val(mw.desc);
+    $('#num-fishers').val(mw.params.numFishers);
+    $('#num-humans').val(mw.params.numHumans);
+    $('#num-seasons').val(mw.params.numSeasons);
+    $('#season-duration').val(mw.params.seasonDuration);
+    $('#initial-delay').val(mw.params.initialDelay);
+    $('#season-delay').val(mw.params.seasonDelay);
+    $('#enable-pause').prop('checked', mw.params.enablePause);
+    $('#enable-early-end').prop('checked', mw.params.enableEarlyEnd);
+    $('#fish-value').val(mw.params.fishValue);
+    $('#cost-cast').val(mw.params.costCast);
+    $('#cost-departure').val(mw.params.costDeparture);
+    $('#cost-second').val(mw.params.costSecond);
+    $('#currency-symbol').val(mw.params.currencySymbol);
+    $('#certain-fish').val(mw.params.certainFish);
+    $('#available-mystery-fish').val(mw.params.availableMysteryFish);
+    $('#reported-mystery-fish').val(mw.params.reportedMysteryFish);
+    $('#max-fish').val(mw.params.maxFish);
+    $('#spawn-factor').val(mw.params.spawnFactor);
+    $('#chance-catch').val(mw.params.chanceCatch);
+    $('#preparation-text').val(mw.params.preparationText);
+    $('#end-time-text').val(mw.params.endTimeText);
+    $('#end-depletion-text').val(mw.params.endDepletionText);
+    $('#show-fishers').prop('checked', mw.params.showFishers);
+    $('#show-fisher-names').prop('checked', mw.params.showFisherNames);
+    $('#show-fisher-status').prop('checked', mw.params.showFisherStatus);
+    $('#show-num-caught').prop('checked', mw.params.showNumCaught);
+    $('#show-fisher-balance').prop('checked', mw.params.showFisherBalance);
+
+    $('#uniform-greed').prop('checked', false);
+    $('#uniform-trend').prop('checked', false);
+    $('#uniform-predictability').prop('checked', false);
+    $('#uniform-prob-action').prop('checked', false);
+    $('#uniform-attempts-second').prop('checked', false);
+
+    for (var i = 1; i <= mw.numFishers - mw.numHumans; i++) {
+        var botPrefix = '#bot-' + i + '-';
+        $(botPrefix + 'name').val(mw.params.bots[i - 1].name);
+        $(botPrefix + 'greed').val(mw.params.bots[i - 1].greed);
+        $(botPrefix + 'trend').val(mw.params.bots[i - 1].trend);
+        $(botPrefix + 'predictability').val(mw.params.bots[i - 1].predictability);
+        $(botPrefix + 'prob-action').val(mw.params.bots[i - 1].probAction);
+        $(botPrefix + 'attempts-second').val(mw.params.bots[i - 1].attemptsSecond);
+    }
+
+}
+
+function noMicroworld(jqXHR) {
+    alert(jqXHR.responseText);
+}
+
+function gotMicroworld(m) {
+    mw = m;
+    mode = mw.status;
+    populatePage();
+    prepareControls();
+}
+
+function getMicroworld() {
+    $.ajax({
+        type: 'GET',
+        url: '/microworlds/' + mwId,
+        error: noMicroworld,
+        success: gotMicroworld
     });
 }
 
@@ -337,17 +417,78 @@ function loadTexts() {
     $('#end-depletion-text').val(endDepletedText);
 }
 
-function main() {
+function prepareControls() {
+    $('#microworld-panel-body-text').text(panelBody[mode]);
+    $('#microworld-panel-2-body-text').text(panelBody[mode]);
+
+    if (mode === 'new') {
+        $('#microworld-header').text(pageHeader[mode]);
+        $('#microworld-panel-title').text(panelTitle[mode]);
+        $('#microworld-panel-2-title').text(panelTitle[mode]);
+        loadTexts();
+        $('#create').removeClass('collapse');
+        $('#create-2').removeClass('collapse');
+    } else if (mode === 'test') {
+        $('#microworld-header').text(pageHeader[mode] + mw.code);
+        $('#microworld-panel-title').text(panelTitle[mode] + mw.code);
+        $('#microworld-panel-2-title').text(panelTitle[mode] + mw.code);
+        $('#save').removeClass('collapse');
+        $('#save-2').removeClass('collapse');
+        $('#clone').removeClass('collapse');
+        $('#clone-2').removeClass('collapse');
+        $('#activate').removeClass('collapse');
+        $('#activate-2').removeClass('collapse');
+        $('#delete').removeClass('collapse');
+        $('#delete-2').removeClass('collapse');
+    } else if (mode === 'active') {
+        $('#microworld-header').text(pageHeader[mode] + mw.code);
+        $('#microworld-panel-title').text(panelTitle[mode] + mw.code);
+        $('#microworld-panel-2-title').text(panelTitle[mode] + mw.code);
+        $('#clone').removeClass('collapse');
+        $('#clone-2').removeClass('collapse');
+        $('#archive').removeClass('collapse');
+        $('#archive-2').removeClass('collapse');
+        $('#delete').removeClass('collapse');
+        $('#delete-2').removeClass('collapse');
+    } else if (mode === 'archived') {
+        $('#microworld-header').text(pageHeader[mode]);
+        $('#microworld-panel-title').text(panelTitle[mode]);
+        $('#microworld-panel-2-title').text(panelTitle[mode]);
+        $('#clone').removeClass('collapse');
+        $('#clone-2').removeClass('collapse');
+        $('#activate').removeClass('collapse');
+        $('#activate-2').removeClass('collapse');
+        $('#delete').removeClass('collapse');
+        $('#delete-2').removeClass('collapse');
+    }
+
+    uniformityChanges();
+}
+
+function loadData() {
+    if (isNewMicroworld()) {
+        mode = 'new';
+        prepareControls();
+    } else {
+        getMicroworld(); // will eventually call prepareControls()
+    }
+}
+
+function uniformityChanges() {
     changeGreedUniformity();
     changeTrendUniformity();
     changePredictabilityUniformity();
     changeProbActionUniformity();   
     changeAttemptsSecondUniformity();
+}
 
+function main() {
+    getMwId();
+    isNewMicroworld()
     readyTooltips();
     setButtons();
     setOnPageChanges();
-    loadTexts();
+    loadData();
 }
 
 $(document).ready(main);

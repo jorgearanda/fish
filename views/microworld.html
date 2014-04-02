@@ -8,6 +8,7 @@
     <link rel='stylesheet' href='/public/css/grid.css'>
 
     <script src='/bower/jquery/jquery.min.js'></script>
+    <script src='/bower/purl/purl.js'></script>
     <script src='/bower/bootstrap/dist/js/bootstrap.min.js'></script>
     <script src='/bower/bootstrap/js/tooltip.js'></script>
     <script src='/bower/moment/min/moment.min.js'></script>
@@ -19,23 +20,25 @@
 <body>
     <div class='container'>
         <div class='page-header'>
-            <h1 id='microworld-header'>New Microworld</h1>
+            <h1 id='microworld-header'>Page Header</h1>
         </div>
 
         <div class='panel panel-info'>
             <div id='microworld-panel-title' class='panel-heading'>
-                You are creating a new microworld
+                Panel Title
             </div>
 
             <div id='microworld-panel-body' class='panel-body'>
-                <div class='col-md-9'>
-                    After saving your changes,
-                    this microworld will be available for testing.
-
-                    You can change its parameters after saving.
+                <div id='microworld-panel-body-text' class='col-md-7'>
+                    Panel Body
                 </div>
-                <div class='col-md-3 btn-toolbar'>
-                    <button id='create' type='submit' class='btn btn-success'>Create</button>
+                <div class='col-md-5 btn-toolbar'>
+                    <button id='create' type='submit' class='btn btn-success collapse'>Create</button>
+                    <button id='save' type='submit' class='btn btn-success collapse'>Save</button>
+                    <button id='clone' type='submit' class='btn btn-info collapse'>Clone</button>
+                    <button id='activate' type='button' class='btn btn-primary collapse'>Activate</button>
+                    <button id='archive' type='button' class='btn btn-warning collapse'>Archive</button>
+                    <button id='delete' type='button' class='btn btn-danger collapse'>Delete</button>
                     <button id='cancel' type='button' class='btn btn-default'>Cancel</button>
                 </div>
             </div>
@@ -696,18 +699,20 @@
 
         <div class='panel panel-info'>
             <div id='microworld-panel-2-title' class='panel-heading'>
-                You are creating a new microworld
+                Panel Title
             </div>
 
             <div id='microworld-panel-2-body' class='panel-body'>
-                <div class='col-md-9'>
-                    After saving your changes,
-                    this microworld will be available for testing.
-
-                    You can change its parameters after saving.
+                <div id='microworld-panel-2-body-text' class='col-md-7'>
+                    Panel Body
                 </div>
-                <div class='col-md-3 btn-toolbar'>
-                    <button id='create-2' type='submit' class='btn btn-success'>Create</button>
+                <div class='col-md-5 btn-toolbar'>
+                    <button id='create-2' type='submit' class='btn btn-success collapse'>Create</button>
+                    <button id='save-2' type='submit' class='btn btn-success collapse'>Save</button>
+                    <button id='clone-2' type='submit' class='btn btn-info collapse'>Clone</button>
+                    <button id='activate-2' type='button' class='btn btn-primary collapse'>Activate</button>
+                    <button id='archive-2' type='button' class='btn btn-warning collapse'>Archive</button>
+                    <button id='delete-2' type='button' class='btn btn-danger collapse'>Delete</button>
                     <button id='cancel-2' type='button' class='btn btn-default'>Cancel</button>
                 </div>
             </div>
