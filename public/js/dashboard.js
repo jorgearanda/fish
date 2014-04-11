@@ -29,6 +29,7 @@ var microworldsSuccess = function (mws) {
             anyActive = true;
             activeTable += '<tr onclick="location.href=\'./microworlds/' + 
                 mws[i]._id + '\'"><td>' + mws[i].name + '</td>' + 
+                '<td>' + mws[i].code + '</td>' +
                 '<td>' + mws[i].desc + '</td>' +
                 '<td>' + moment(mws[i].dateActive).format(df) + '</td>' + 
                 '<td>' + mws[i].numCompleted + '</td>' + 
@@ -39,6 +40,7 @@ var microworldsSuccess = function (mws) {
             anyArchived = true;
             archivedTable += '<tr onclick="location.href=\'./microworlds/' + 
                 mws[i]._id + '\'"><td>' + mws[i].name + '</td>' + 
+                '<td>' + mws[i].code + '</td>' +
                 '<td>' + mws[i].desc + '</td>' +
                 '<td>' + moment(mws[i].dateActive).format(df) + '</td>' + 
                 '<td>' + mws[i].numCompleted + '</td>' + 

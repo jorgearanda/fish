@@ -113,4 +113,51 @@ exports.create = function (req, res) {
         }
         return res.status(200).send(stRes);
     });
-}
+};
+
+// PUT /microworlds/:id
+exports.update = function (req, res) {
+    // For now at least, we assume validation client-side
+    var mw = {
+        name: req.body.name,
+        desc: req.body.desc,
+        params: req.body
+    };
+
+    if (req.body.changeTo && req.body.changeTo === 'active') {
+        mw.status = 'active';
+        mw.dateActive = new Date();
+        mw.dateArchived = null;
+    }
+
+    if (req.body.changeTo && req.body.changeTo === 'archived') {
+        mw.status = 'archived';
+        mw.dateArchived = new Date();
+    }
+
+    // Don't repeat name, description, or changeTo
+    delete mw.params.name;
+    delete mw.params.desc;
+    delete mw.params.changeTo;
+
+    Microworld.update({_id: req.params.id}, mw, function onUpdate(err) {
+        if (err) {
+            logger.error('Error on PUT /microworlds/' + req.params.id, err);
+            return res.send(500);
+        }
+
+        return res.send(204);
+    });
+};
+
+// DELETE /microworlds/:id
+exports.delete = function (req, res) {
+    Microworld.remove({_id: req.params.id}, function onDelete(err) {
+        if (err) {
+            logger.error('Error on DELETE /microworlds/' + req.params.id, err);
+            return res.send(500);
+        }
+
+        return res.send(204);
+    });
+};

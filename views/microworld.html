@@ -36,9 +36,9 @@
                     <button id='create' type='submit' class='btn btn-success collapse'>Create</button>
                     <button id='save' type='submit' class='btn btn-success collapse'>Save</button>
                     <button id='clone' type='submit' class='btn btn-info collapse'>Clone</button>
-                    <button id='activate' type='button' class='btn btn-primary collapse'>Activate</button>
-                    <button id='archive' type='button' class='btn btn-warning collapse'>Archive</button>
-                    <button id='delete' type='button' class='btn btn-danger collapse'>Delete</button>
+                    <button id='activate' type='button' class='btn btn-primary collapse' data-toggle='modal' data-target='#confirm-activate'>Activate</button>
+                    <button id='archive' type='button' class='btn btn-warning collapse' data-toggle='modal' data-target='#confirm-archive'>Archive</button>
+                    <button id='delete' type='button' class='btn btn-danger collapse' data-toggle='modal' data-target='#confirm-delete'>Delete</button>
                     <button id='cancel' type='button' class='btn btn-default'>Cancel</button>
                 </div>
             </div>
@@ -710,10 +710,67 @@
                     <button id='create-2' type='submit' class='btn btn-success collapse'>Create</button>
                     <button id='save-2' type='submit' class='btn btn-success collapse'>Save</button>
                     <button id='clone-2' type='submit' class='btn btn-info collapse'>Clone</button>
-                    <button id='activate-2' type='button' class='btn btn-primary collapse'>Activate</button>
-                    <button id='archive-2' type='button' class='btn btn-warning collapse'>Archive</button>
-                    <button id='delete-2' type='button' class='btn btn-danger collapse'>Delete</button>
+                    <button id='activate-2' type='button' class='btn btn-primary collapse' data-toggle='modal' data-target='#confirm-activate'>Activate</button>
+                    <button id='archive-2' type='button' class='btn btn-warning collapse' data-toggle='modal' data-target='#confirm-archive'>Archive</button>
+                    <button id='delete-2' type='button' class='btn btn-danger collapse' data-toggle='modal' data-target='#confirm-delete'>Delete</button>
                     <button id='cancel-2' type='button' class='btn btn-default'>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='confirm-activate' class='modal fade' aria-hidden='true'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>x</button>
+                    <h3>Confirm activation</h3>
+                </div>
+                <div class='modal-body'>
+                    <p>Are you sure you want to activate this microworld?
+                    <p>If you do so, you will not be able to change its parameters any more, and the results of all runs of this microworld will be saved.
+                </div>
+                <div class='modal-footer'>
+                    <button class='btn btn-default' data-dismiss='modal' aria-hidden='true'>Cancel</button>
+                    <button id='activate-confirmed', class='btn btn-primary' data-dismiss='modal' aria-hidden='true'>Activate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='confirm-archive' class='modal fade' aria-hidden='true'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>x</button>
+                    <h3>Confirm archive</h3>
+                </div>
+                <div class='modal-body'>
+                    <p>Are you sure you want to archive this microworld?
+                    <p>If you do so, it will not be available to participants. You will still be able to access its results.
+                </div>
+                <div class='modal-footer'>
+                    <button class='btn btn-default' data-dismiss='modal' aria-hidden='true'>Cancel</button>
+                    <button id='archive-confirmed', class='btn btn-warning' data-dismiss='modal' aria-hidden='true'>Archive</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='confirm-delete' class='modal fade' aria-hidden='true'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>x</button>
+                    <h3>Confirm deletion</h3>
+                </div>
+                <div class='modal-body'>
+                    <p>Are you sure you want to delete this microworld?
+                    <p>You will <b>not</b> be able to access its results!
+                </div>
+                <div class='modal-footer'>
+                    <button class='btn btn-default' data-dismiss='modal' aria-hidden='true'>Cancel</button>
+                    <button id='delete-confirmed', class='btn btn-danger' data-dismiss='modal' aria-hidden='true'>Delete</button>
                 </div>
             </div>
         </div>

@@ -322,6 +322,45 @@ function createMicroworld() {
     });
 }
 
+function updateMicroworld(changeTo) {
+    var err = validate();
+    if (err) {
+        reportErrors(err);
+        return;
+    }
+
+    var mw = prepareMicroworldObject();
+    if (changeTo) mw.changeTo = changeTo;
+    $.ajax({
+        type: 'PUT',
+        url: '/microworlds/' + mwId,
+        data: mw,
+        error: badMicroworld,
+        success: goodMicroworld
+    });
+}
+
+function saveMicroworld() {
+    updateMicroworld();
+}
+
+function activateMicroworld() {
+    updateMicroworld('active');
+}
+
+function archiveMicroworld() {
+    updateMicroworld('archived');
+}
+
+function deleteMicroworld() {
+    $.ajax({
+        type: 'DELETE',
+        url: '/microworlds/' + mwId,
+        error: badMicroworld,
+        success: goodMicroworld
+    });
+}
+
 function populatePage() {
     $('#name').val(mw.name);
     $('#desc').val(mw.desc);
@@ -394,6 +433,12 @@ function getMicroworld() {
 function setButtons() {
     $('#create').click(createMicroworld);
     $('#create-2').click(createMicroworld);
+    $('#save').click(saveMicroworld);
+    $('#save-2').click(saveMicroworld);
+
+    $('#activate-confirmed').click(activateMicroworld);
+    $('#archive-confirmed').click(archiveMicroworld);
+    $('#delete-confirmed').click(deleteMicroworld);
 }
 
 function setOnPageChanges() {

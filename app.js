@@ -94,7 +94,8 @@ app.get('/a/:accountId/new/microworld', function (req, res) {
 app.get('/microworlds', isUser, microworlds.list);
 app.get('/microworlds/:id', isUser, microworlds.show);
 app.post('/microworlds', isUser, microworlds.create);
-
+app.put('/microworlds/:id', isUser, microworlds.update);
+app.delete('/microworlds/:id', isUser, microworlds.delete);
 
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});
