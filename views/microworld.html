@@ -35,7 +35,7 @@
                 <div class='col-md-5 btn-toolbar'>
                     <button id='create' type='submit' class='btn btn-success collapse'>Create</button>
                     <button id='save' type='submit' class='btn btn-success collapse'>Save</button>
-                    <button id='clone' type='submit' class='btn btn-info collapse'>Clone</button>
+                    <button id='clone' type='submit' class='btn btn-info collapse' data-toggle='modal' data-target='#confirm-clone'>Clone</button>
                     <button id='activate' type='button' class='btn btn-primary collapse' data-toggle='modal' data-target='#confirm-activate'>Activate</button>
                     <button id='archive' type='button' class='btn btn-warning collapse' data-toggle='modal' data-target='#confirm-archive'>Archive</button>
                     <button id='delete' type='button' class='btn btn-danger collapse' data-toggle='modal' data-target='#confirm-delete'>Delete</button>
@@ -709,11 +709,29 @@
                 <div class='col-md-5 btn-toolbar'>
                     <button id='create-2' type='submit' class='btn btn-success collapse'>Create</button>
                     <button id='save-2' type='submit' class='btn btn-success collapse'>Save</button>
-                    <button id='clone-2' type='submit' class='btn btn-info collapse'>Clone</button>
+                    <button id='clone-2' type='submit' class='btn btn-info collapse' data-toggle='modal' data-target='#confirm-clone'>Clone</button>
                     <button id='activate-2' type='button' class='btn btn-primary collapse' data-toggle='modal' data-target='#confirm-activate'>Activate</button>
                     <button id='archive-2' type='button' class='btn btn-warning collapse' data-toggle='modal' data-target='#confirm-archive'>Archive</button>
                     <button id='delete-2' type='button' class='btn btn-danger collapse' data-toggle='modal' data-target='#confirm-delete'>Delete</button>
                     <button id='cancel-2' type='button' class='btn btn-default'>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='confirm-clone' class='modal fade' aria-hidden='true'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>x</button>
+                    <h3>Confirm clone</h3>
+                </div>
+                <div class='modal-body'>
+                    <p>If you click the Clone button, a new microworld with these parameters will be created, in testing mode. You will be able to modify the clone's parameters after creation.
+                </div>
+                <div class='modal-footer'>
+                    <button class='btn btn-default' data-dismiss='modal' aria-hidden='true'>Cancel</button>
+                    <button id='clone-confirmed', class='btn btn-info' data-dismiss='modal' aria-hidden='true'>Clone</button>
                 </div>
             </div>
         </div>

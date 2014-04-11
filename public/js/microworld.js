@@ -322,6 +322,25 @@ function createMicroworld() {
     });
 }
 
+function cloneMicroworld() {
+    var err = validate();
+    if (err) {
+        reportErrors(err);
+        return;
+    }
+
+    var mw = prepareMicroworldObject();
+    mw.clone = true;
+    
+    $.ajax({
+        type: 'POST',
+        url: '/microworlds',
+        data: mw,
+        error: badMicroworld,
+        success: goodMicroworld
+    });
+}
+
 function updateMicroworld(changeTo) {
     var err = validate();
     if (err) {
@@ -436,6 +455,7 @@ function setButtons() {
     $('#save').click(saveMicroworld);
     $('#save-2').click(saveMicroworld);
 
+    $('#clone-confirmed').click(cloneMicroworld)
     $('#activate-confirmed').click(activateMicroworld);
     $('#archive-confirmed').click(archiveMicroworld);
     $('#delete-confirmed').click(deleteMicroworld);

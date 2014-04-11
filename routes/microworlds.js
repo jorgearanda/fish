@@ -98,6 +98,10 @@ exports.create = function (req, res) {
                 }
             );
         }, function createMicroworld(next) {
+            if (st.params.clone) {
+                st.name = st.name + ' clone ' + st.code;
+            }
+            
             Microworld.create(st, function onCreate(err, stRes) {
                 if (err) return next({status: 500, message: err.message});
 
