@@ -73,6 +73,7 @@ app.configure(function() {
 ///////////////////////////////////////////////////////////////////////////////
 
 app.get('/', function (req, res) { res.render('welcome.html'); });
+app.get('/new-welcome', function (req, res) { res.render('participant-access.html'); })
 app.get('/admin', function (req, res) { res.render('admin.html'); });
 app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 
