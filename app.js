@@ -10,7 +10,9 @@ var path = require('path');
 var socketio = require('socket.io');
 
 var access = require('./middlewares/access');
+var engine = require('./engine/engine');
 var microworlds = require('./routes/microworlds');
+var runs = require('./routes/runs');
 var sessions = require('./routes/sessions');
 
 var isUser = access.isUser;
@@ -98,6 +100,10 @@ app.post('/microworlds', isUser, microworlds.create);
 app.put('/microworlds/:id', isUser, microworlds.update);
 app.delete('/microworlds/:id', isUser, microworlds.delete);
 
+app.get('/runs/:id', function (req, res) { res.send('yay!'); }); // TODO - FIX ME
+app.post('/runs', runs.create);
+app.get('/testing.html', function (req, res) { res.render('testing.html'); });
+
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});
 
@@ -110,6 +116,8 @@ io.set('logger', {
     warn: logger.warn,
     error: logger.error
 });
+
+var eng = engine.engine(io);
 
 server.listen(app.get('port'), function () {
     logger.info('Fish server listening on port ' + app.get('port'));
