@@ -5,7 +5,7 @@ var log = require('winston');
 
 var Microworld = require('../models/microworld-model.js').Microworld;
 
-// POST /runs
+// POST /runs ----- change route
 exports.create = function (req, res) {
     var code = req.body.code;
     var pid = req.body.pid;
