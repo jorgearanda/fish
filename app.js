@@ -12,7 +12,6 @@ var socketio = require('socket.io');
 var access = require('./middlewares/access');
 var engine = require('./engine/engine');
 var microworlds = require('./routes/microworlds');
-var runs = require('./routes/runs');
 var sessions = require('./routes/sessions');
 
 var isUser = access.isUser;
@@ -94,17 +93,15 @@ app.get('/a/:accountId/microworlds/:microworldId', function (req, res) {
 app.get('/a/:accountId/new/microworld', function (req, res) {
     res.render('microworld.html');
 });
+app.get('/fish', function (req, res) {
+    res.render('fish.html');
+});
 
 app.get('/microworlds', isUser, microworlds.list);
 app.get('/microworlds/:id', isUser, microworlds.show);
 app.post('/microworlds', isUser, microworlds.create);
 app.put('/microworlds/:id', isUser, microworlds.update);
 app.delete('/microworlds/:id', isUser, microworlds.delete);
-
-app.get('/microworlds/:id/fish', microworlds.fish);
-
-app.get('/runs/:id', function (req, res) { res.send('yay!'); }); // TODO - FIX ME
-app.get('/testing.html', function (req, res) { res.render('testing.html'); });
 
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});

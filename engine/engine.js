@@ -1,3 +1,5 @@
+'use strict';
+
 var log = require('winston');
 
 var Microworld = require('../models/microworld-model').Microworld;
@@ -5,7 +7,22 @@ var Microworld = require('../models/microworld-model').Microworld;
 var oceans = {};
 
 function Ocean (mw) {
-    // TODO
+    this.id = new Date().getTime();
+    this.fishers = [];
+    this.microworld = mw;
+
+    this.addFisher = function (pid) {
+        this.fishers.push(pid);
+        return;
+    };
+
+    this.removeFisher = function (pid) {
+        var idx = this.fishers.indexOf(pid);
+        if (idx > -1) {
+            this.fishers.splice(idx, 1);
+        }
+    };
+    // TODO - complete
 }
 
 function getOceanFor(mwid) {
@@ -35,18 +52,20 @@ exports.engine = function engine(io) {
 
     io.sockets.on('connection', function (socket) {
         var ocean;
-        var name;
+        var myId;
 
-        socket.on('enterMicroworld', function (mwid, name) {
+        socket.on('enterOcean', function (mwid, pid) {
             ocean = getOceanFor(mwid); // TODO -- fixme. I'm actually returning an id
-            oceans[ocean.id] = ocean;
-            // TODO -- rework approach 
-
-
+            myId = ocean.id;
+            ocean.addFisher(pid);
+            console.log(ocean.fishers);
+            socket.join(myId);
+            io.sockets.in(myId).emit('count', ocean.fishers.length);
+            // TODO -- revise
         });
 
-        socket.on('join', function (oceanId, fisherName) {
-
+        socket.on('join', function (id) {
+            // TODO - take out
             counters[id] = counters[id] ? counters[id] + 1 : 1;
             console.log(counters);
             myId = id;
@@ -54,10 +73,11 @@ exports.engine = function engine(io) {
             io.sockets.in(id).emit('count', counters[id]);
         });
 
-        socket.on('disconnect', function () {
-            counters[myId] -= 1;
-            console.log(counters);
-            io.sockets.in(myId).emit('count', counters[myId]);
+        socket.on('disconnect', function (pid) {
+            // TODO - revise
+            ocean.removeFisher();
+            console.log(ocean.fishers);
+            io.sockets.in(myId).emit('count', ocean.fishers.length);
         });
     });
-}
+};

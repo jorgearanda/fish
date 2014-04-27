@@ -21,7 +21,8 @@ function loadLabels() {
 }
 
 function successfulLogin(mw) {
-    location.href = '/microworlds/' + mw._id + '?lang=' + lang +
+    location.href = '/fish?lang=' + lang +
+        '&mwid=' + mw._id + 
         '&pid=' + $('#pid').val();
 }
 

@@ -37,12 +37,6 @@ exports.show = function (req, res) {
 };
 
 
-// GET /microworlds/:id/fish
-exports.fish = function (req, res) {
-    res.render('fish.html');
-};
-
-
 // POST /microworlds
 exports.create = function (req, res) {
     // For now at least, we assume validation client-side
