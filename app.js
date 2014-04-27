@@ -80,6 +80,7 @@ app.get('/admin', function (req, res) { res.render('admin.html'); });
 app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 
 app.post('/sessions', sessions.createSession);
+app.post('/participant-sessions', sessions.participantSession);
 
 app.get('/a/:accountId', function (req, res) {
     res.render('dashboard.html');
@@ -100,8 +101,9 @@ app.post('/microworlds', isUser, microworlds.create);
 app.put('/microworlds/:id', isUser, microworlds.update);
 app.delete('/microworlds/:id', isUser, microworlds.delete);
 
+app.get('/microworlds/:id/fish', microworlds.fish);
+
 app.get('/runs/:id', function (req, res) { res.send('yay!'); }); // TODO - FIX ME
-app.post('/runs', runs.create);
 app.get('/testing.html', function (req, res) { res.render('testing.html'); });
 
 // Take out

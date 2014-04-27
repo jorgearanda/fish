@@ -20,10 +20,9 @@ function loadLabels() {
     $('#login').text(msgs.login_getStarted);
 }
 
-function successfulLogin(run) {
-    // TODO - determine if we add the pid here or if it's embedded in the
-    // run document
-    location.href = '/runs/' + run._id + '?lang=' + lang;
+function successfulLogin(mw) {
+    location.href = '/microworlds/' + mw._id + '?lang=' + lang +
+        '&pid=' + $('#pid').val();
 }
 
 function badLogin (jqXHR) {
@@ -39,7 +38,7 @@ function attemptLogin() {
 
     $.ajax({
         type: 'POST',
-        url: '/runs',
+        url: '/participant-sessions',
         data: credentials,
         error: badLogin,
         success: successfulLogin

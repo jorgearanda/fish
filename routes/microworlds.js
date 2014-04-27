@@ -3,7 +3,6 @@
 var async = require('async');
 var Chance = require('chance');
 var logger = require('winston');
-var mongoose = require('mongoose');
 
 var Microworld = require('../models/microworld-model').Microworld;
 
@@ -35,6 +34,12 @@ exports.show = function (req, res) {
 
         return res.status(200).send(mw);
     });
+};
+
+
+// GET /microworlds/:id/fish
+exports.fish = function (req, res) {
+    res.render('fish.html');
 };
 
 
