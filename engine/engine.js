@@ -1,83 +1,115 @@
 'use strict';
 
 var log = require('winston');
-
 var Microworld = require('../models/microworld-model').Microworld;
+var om;
 
-var oceans = {};
-
-function Ocean (mw) {
+function Ocean(mw) {
     this.id = new Date().getTime();
-    this.fishers = [];
+    this.status = 'setup';
+    this.humanFishers = [];
     this.microworld = mw;
 
-    this.addFisher = function (pid) {
-        this.fishers.push(pid);
+    this.hasRoom = function () {
+        return (this.humanFishers.length < this.microworld.numHumans);
+    };
+
+    this.addFisher = function (pId) {
+        this.humanFishers.push(pId);
         return;
     };
 
-    this.removeFisher = function (pid) {
-        var idx = this.fishers.indexOf(pid);
+    this.removeFisher = function (pId) {
+        var idx = this.humanFishers.indexOf(pId);
         if (idx > -1) {
-            this.fishers.splice(idx, 1);
+            this.humanFishers.splice(idx, 1);
         }
     };
-    // TODO - complete
+
+    this.isRemovable = function () {
+        return (this.status === 'done');
+    };
 }
 
-function getOceanFor(mwid) {
-    // Do we have an ocean with available slots?
-    var keys = Object.keys(oceans);
-    var oid;
-    for (var i in keys) {
-        oid = keys[i];
-        if (oceans[oid] && oceans[oid].hasRoom()) {
-            // Found one; return that
-            return oid;
+function OceanManager() {
+    this.oceans = {};
+
+    this.createOcean = function (mwId, cb) {
+        Microworld.findOne({_id: mwId}, function onFound(err, mw) {
+            // TODO - handle errors
+            var ocean = new Ocean(mw);
+            this.oceans[ocean.id] = ocean;
+            log.info('Created ocean ' + ocean.id);
+
+            return cb(null, ocean.id);
+        }.bind(this));
+    };
+
+    this.deleteOcean = function (oId) {
+        delete this.oceans[oId];
+        return;
+    };
+
+    this.assignFisherToOcean = function (mwId, pId, cb) {
+        var oKeys = Object.keys(this.oceans);
+        var oId = null;
+
+        for (var i in oKeys) {
+            oId = oKeys[i];
+            if (this.oceans[oId].microworld._id === mwId &&
+                    this.oceans[oId].hasRoom()) {
+                this.oceans[oId].addFisher(pId);
+                return cb(oId);
+            }
         }
-    }
 
-    // If we're still here, create that ocean
-    Microworld.find({_id: mwid}, function onFound(err, mw) {
-        if (err || !mw) console.log('Panic!'); // TODO fixme
+        this.createOcean(mwId, function onCreated(err, oId) {
+            // TODO - handle errors
+            this.oceans[oId].addFisher(pId);
+            return cb(oId);
+        }.bind(this));
+    };
 
-        var newOcean = new Ocean(mw);
-        oceans[newOcean.id] = newOcean;
-        return newOcean.id;
-    });
+    this.removeFisherFromOcean = function (oId, pId) {
+        this.oceans[oId].removeFisher(pId);
+        return;
+    };
+
+    this.purgeOceans = function () {
+        var oKeys = Object.keys(this.oceans);
+        var oId;
+
+        for (var i in oKeys) {
+            oId = oKeys[i];
+            if (this.oceans[oId].isRemovable()) {
+                this.deleteOcean(oId);
+            }
+        }
+        return;
+    };
 }
 
 exports.engine = function engine(io) {
-    var counters = {};
+    om = new OceanManager();
 
     io.sockets.on('connection', function (socket) {
-        var ocean;
-        var myId;
+        var clientOId;
+        var clientPId;
 
-        socket.on('enterOcean', function (mwid, pid) {
-            ocean = getOceanFor(mwid); // TODO -- fixme. I'm actually returning an id
-            myId = ocean.id;
-            ocean.addFisher(pid);
-            console.log(ocean.fishers);
-            socket.join(myId);
-            io.sockets.in(myId).emit('count', ocean.fishers.length);
-            // TODO -- revise
+        socket.on('enterOcean', function (mwId, pId) {
+            clientPId = pId;
+            clientOId = om.assignFisherToOcean(mwId, pId, enteredOcean);
         });
 
-        socket.on('join', function (id) {
-            // TODO - take out
-            counters[id] = counters[id] ? counters[id] + 1 : 1;
-            console.log(counters);
-            myId = id;
-            socket.join(id);
-            io.sockets.in(id).emit('count', counters[id]);
-        });
+        var enteredOcean = function (newOId) {
+            clientOId = newOId;
+            socket.join(clientOId);
+            io.sockets.in(clientOId).emit('yours', om.oceans[clientOId]);
+        };
 
-        socket.on('disconnect', function (pid) {
-            // TODO - revise
-            ocean.removeFisher();
-            console.log(ocean.fishers);
-            io.sockets.in(myId).emit('count', ocean.fishers.length);
+        socket.on('disconnect', function () {
+            om.removeFisherFromOcean(clientOId, clientPId);
+            io.sockets.in(clientOId).emit('yours', om.oceans[clientOId]);
         });
     });
 };

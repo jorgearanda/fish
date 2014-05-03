@@ -7,9 +7,9 @@ var pId = $.url().param('pid');
 
 socket.on('connect', function () {
     console.log('connected');
-    socket.emit('join', mwId);
+    socket.emit('enterOcean', mwId, pId);
 });
 
-socket.on('count', function (i) {
-    console.log('count: ' + i);
+socket.on('yours', function (ocean) {
+    console.log(ocean);
 });
