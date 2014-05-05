@@ -104,7 +104,7 @@ exports.engine = function engine(io) {
         var enteredOcean = function (newOId) {
             clientOId = newOId;
             socket.join(clientOId);
-            io.sockets.in(clientOId).emit('yours', om.oceans[clientOId]);
+            io.sockets.in(clientOId).emit('ocean', om.oceans[clientOId]);
         };
 
         socket.on('disconnect', function () {

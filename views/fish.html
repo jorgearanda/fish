@@ -9,12 +9,12 @@
 
     <script src='/bower/jquery/jquery.min.js'></script>
     <script src='/bower/purl/purl.js'></script>
-    <script scr='/bower/bootstrap/dist/js/bootstrap.min.js'></script>
+    <script src="/bower/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src='/bower/moment/min/moment.min.js'></script>
     <script src='/socket.io/socket.io.js'></script>
     <script src='/bower/underscore/underscore-min.js'></script>
-    <script type='text/javascript' src='/public/js/localization.js'></script>
-    <script type='text/javascript' src='/public/js/fish.js'></script>
+    <script src='/public/js/localization.js'></script>
+    <script src='/public/js/fish.js'></script>
 </head>
 
 <body>
@@ -22,7 +22,18 @@
         <div class='page-header'>
             <h1>Let's Fish!</h1>
         </div>
+
+        <div id='rules-modal' class='modal fade' role='dialog' aria-hidden='true'>
+            <div class='modal-dialog'>
+                <div class='modal-content'>
+                    <div id='rules-text' class='modal-body'>Preparation text
+                    </div>
+                    <div class='modal-footer'>
+                        <button id='read-rules' class='btn btn-primary' data-dismiss='modal' aria-hidden='true'></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</form>
 </body>
 </html>
