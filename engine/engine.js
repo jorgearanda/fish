@@ -8,6 +8,7 @@ function Ocean(mw) {
     this.id = new Date().getTime();
     this.status = 'setup';
     this.humanFishers = [];
+    this.humansReady = [];
     this.microworld = mw;
 
     this.hasRoom = function () {
@@ -16,6 +17,13 @@ function Ocean(mw) {
 
     this.addFisher = function (pId) {
         this.humanFishers.push(pId);
+        log.info('Fisher ' + pId + ' has joined ocean ' + this.id);
+        return;
+    };
+
+    this.readRules = function (pId) {
+        this.humansReady.push(pId);
+        log.info('Fisher ' + pId + ' is ready to start at ocean ' + this.id);
         return;
     };
 
@@ -24,6 +32,14 @@ function Ocean(mw) {
         if (idx > -1) {
             this.humanFishers.splice(idx, 1);
         }
+
+        // Remove from humans ready list as well
+        idx = this.humansReady.indexOf(pId);
+        if (idx > -1) {
+            this.humansReady.splice(idx, 1);
+        }
+
+        log.info('Fisher ' + pId + ' has been removed from ocean ' + this.id);
     };
 
     this.isRemovable = function () {
@@ -106,6 +122,10 @@ exports.engine = function engine(io) {
             socket.join(clientOId);
             io.sockets.in(clientOId).emit('ocean', om.oceans[clientOId]);
         };
+
+        socket.on('readRules', function () {
+            om.oceans[clientOId].readRules(clientPId);
+        });
 
         socket.on('disconnect', function () {
             om.removeFisherFromOcean(clientOId, clientPId);

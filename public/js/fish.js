@@ -36,6 +36,10 @@ function setupOcean() {
     displayRules();
 }
 
+function readRules() {
+    socket.emit('readRules');
+}
+
 socket.on('connect', function () {
     console.log('Socket connected. Requesting to enter an ocean.');
     socket.emit('enterOcean', mwId, pId);
@@ -52,6 +56,7 @@ socket.on('yours', function (ocean) {
 });
 
 function main() {
+    $('#read-rules').on('click', readRules);
     loadLabels();
 }
 
