@@ -4,26 +4,41 @@ var log = require('winston');
 var Microworld = require('../models/microworld-model').Microworld;
 var om;
 
+function Fisher(name, type, params) {
+    this.name = name;
+    this.type = type;
+    this.params = params;
+    this.ready = (this.type === 'bot');
+    this.hasReturned = false;
+
+    this.isBot = function () {
+        return (this.type === 'bot');
+    };
+}
+
 function Ocean(mw) {
     this.id = new Date().getTime();
     this.status = 'setup';
+    this.fishers = [];
     this.humanFishers = [];
     this.humansReady = [];
     this.microworld = mw;
+
+    /////////////////////
+    // Membership methods
+    /////////////////////
 
     this.hasRoom = function () {
         return (this.humanFishers.length < this.microworld.numHumans);
     };
 
+    this.allHumansIn = function () {
+        return (this.humanFishers.length === this.microworld.numHumans);
+    };
+
     this.addFisher = function (pId) {
         this.humanFishers.push(pId);
         log.info('Fisher ' + pId + ' has joined ocean ' + this.id);
-        return;
-    };
-
-    this.readRules = function (pId) {
-        this.humansReady.push(pId);
-        log.info('Fisher ' + pId + ' is ready to start at ocean ' + this.id);
         return;
     };
 
@@ -42,9 +57,59 @@ function Ocean(mw) {
         log.info('Fisher ' + pId + ' has been removed from ocean ' + this.id);
     };
 
-    this.isRemovable = function () {
-        return (this.status === 'done');
+    /////////////////
+    // Status methods
+    /////////////////
+
+    this.isInInstructions = function () {
+        return (this.status === 'instructions'); // Humans still reading
     };
+
+    this.isEveryoneReady = function () {
+        return (this.allHumansIn() && 
+            this.humanFishers.length === this.humansReady.length);
+    };
+    
+    this.isReadying = function () {
+        return (this.status === 'readying'); // before first season
+    };
+    
+    this.isRunning = function () {
+        return (this.status === 'running');
+    };
+
+    this.hasEveryoneReturned = function () {
+        for (fisher in this.fishers) {
+            if (!this.fishers[fisher].hasReturned) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    this.isResting = function () {
+        return (this.status === 'resting'); // between seasons
+    };
+    
+    this.isPaused = function () {
+        return (this.status === 'paused');
+    };
+    
+    this.isNotOver = function () {
+        return (this.status !== 'over');
+    };
+
+    this.isRemovable = function () {
+        return (this.status === 'over');
+    };
+
+    this.readRules = function (pId) {
+        this.humansReady.push(pId);
+        log.info('Fisher ' + pId + ' is ready to start at ocean ' + this.id);
+        return;
+    };
+
+
 }
 
 function OceanManager() {

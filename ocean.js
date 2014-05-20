@@ -282,6 +282,7 @@ function engine(io) {
             io.sockets.in(this.name).emit('gamesettings', this);
         };
 
+        // Reimplemented from here...
         this.allPlayersLoaded = function () {
             return (this.actualPlayers == this.expectedPlayers);
         };
@@ -309,6 +310,7 @@ function engine(io) {
         this.isPaused = function () {
             return (this.status == "paused");
         };
+        // ...to here
 
         this.tick = function () {
             this.currentSeconds += 1;
@@ -331,6 +333,7 @@ function engine(io) {
                 (this.earlyEndEnabled && this.timeSinceEveryoneReturned >= 3);
         };
 
+        // Reimmplemented from here...
         this.hasRoom = function () {
             return (this.actualHumans < this.expectedHumans);
         };
@@ -357,6 +360,7 @@ function engine(io) {
             }
             return everyoneReturned;
         }
+        // ...to here
 
         this.getOceanReady = function () {
             // We assume this.isEveryoneReady returned true
