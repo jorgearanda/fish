@@ -16,13 +16,17 @@ function Fisher(name, type, params) {
     };
 }
 
-function Ocean(mw) {
+function Ocean(mw, io) {
+    // TODO - need to pair this with the run-model schema
     this.id = new Date().getTime();
+    this.io = io;
     this.status = 'setup';
     this.fishers = [];
     this.humanFishers = [];
     this.humansReady = [];
     this.microworld = mw;
+    this.seconds = 0;
+    this.secondsSinceAllReturned = 0;
 
     /////////////////////
     // Membership methods
@@ -79,13 +83,13 @@ function Ocean(mw) {
     };
 
     this.hasEveryoneReturned = function () {
-        for (fisher in this.fishers) {
+        for (var fisher in this.fishers) {
             if (!this.fishers[fisher].hasReturned) {
                 return false;
             }
         }
         return true;
-    }
+    };
 
     this.isResting = function () {
         return (this.status === 'resting'); // between seasons
@@ -103,22 +107,70 @@ function Ocean(mw) {
         return (this.status === 'over');
     };
 
+    this.canEndEarly = function () {
+        return (this.microworld.params.enableEarlyEnd);
+    };
+
+    this.shouldEndSeason = function () {
+        return (this.hasReachedSeasonDuration() ||
+            (this.canEndEarly() && this.secondsSinceAllReturned >= 3));
+    };
+
+    //////////////////////////
+    // Time management methods
+    //////////////////////////
+
+    this.resetTimer = function () {
+        this.seconds = 0;
+    };
+
+    this.tick = function () {
+        this.seconds += 1;
+    };
+
+    this.hasReachedInitialDelay = function () {
+        return (this.seconds >= this.microworld.params.initialDelay);
+    };
+
+    this.hasReachedSeasonDelay = function () {
+        return (this.seconds >= this.microworld.params.seasonDelay);
+    };
+
+    this.hasReachedSeasonDuration = function () {
+        return (this.seconds >= this.microworld.params.seasonDuration);
+    };
+
+    //////////////////////
+    // Preparation methods
+    //////////////////////
+
     this.readRules = function (pId) {
         this.humansReady.push(pId);
         log.info('Fisher ' + pId + ' is ready to start at ocean ' + this.id);
+        io.sockets.in(this.id).emit('aFisherIsReady', pId);
         return;
     };
+
+    this.getOceanReady = function () {
+        if (this.isEveryoneReady()) {
+            this.status = 'readying';
+            log.info('All fishers at ocean ' + this.id + ' are ready to start');
+            io.sockets.in(this.id).emit('readying');
+        }
+    };
+
 
 
 }
 
-function OceanManager() {
+function OceanManager(io) {
     this.oceans = {};
+    this.io = io;
 
     this.createOcean = function (mwId, cb) {
         Microworld.findOne({_id: mwId}, function onFound(err, mw) {
             // TODO - handle errors
-            var ocean = new Ocean(mw);
+            var ocean = new Ocean(mw, io);
             this.oceans[ocean.id] = ocean;
             log.info('Created ocean ' + ocean.id);
 
@@ -171,7 +223,7 @@ function OceanManager() {
 }
 
 exports.engine = function engine(io) {
-    om = new OceanManager();
+    om = new OceanManager(io);
 
     io.sockets.on('connection', function (socket) {
         var clientOId;

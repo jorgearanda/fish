@@ -310,7 +310,6 @@ function engine(io) {
         this.isPaused = function () {
             return (this.status == "paused");
         };
-        // ...to here
 
         this.tick = function () {
             this.currentSeconds += 1;
@@ -333,7 +332,6 @@ function engine(io) {
                 (this.earlyEndEnabled && this.timeSinceEveryoneReturned >= 3);
         };
 
-        // Reimmplemented from here...
         this.hasRoom = function () {
             return (this.actualHumans < this.expectedHumans);
         };
@@ -360,7 +358,6 @@ function engine(io) {
             }
             return everyoneReturned;
         }
-        // ...to here
 
         this.getOceanReady = function () {
             // We assume this.isEveryoneReady returned true
@@ -368,6 +365,7 @@ function engine(io) {
             io.sockets.in(this.name).emit("readying", this);
             logs[this.name].addEvent("All fishers now ready to start.");
         };
+        // ...to here
 
         this.startNextSeason = function () {
             this.currentSeason += 1;
