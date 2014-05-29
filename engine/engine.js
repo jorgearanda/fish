@@ -17,48 +17,61 @@ function Fisher(name, type, params) {
 }
 
 function Ocean(mw, io) {
-    // TODO - need to pair this with the run-model schema
-    this.id = new Date().getTime();
+    this.time = new Date();
+    this.id = this.time.getTime();
     this.io = io;
     this.status = 'setup';
     this.fishers = [];
-    this.humanFishers = [];
-    this.humansReady = [];
-    this.microworld = mw;
     this.seconds = 0;
     this.secondsSinceAllReturned = 0;
+    this.microworld = mw;
+    this.results = [];
+    this.log = [];
+
+    // TODO - BROKEN HERE
+    // This is iterating over bots and other properties of the microworld
+    for (var botIdx in this.microworld.params.bots) {
+        console.log(this.microworld.params.bots[botIdx]);
+        var bot = this.microworld.params.bots[botIdx];
+        this.fishers.push(new Fisher(bot.name, 'bot', bot));
+    }
 
     /////////////////////
     // Membership methods
     /////////////////////
 
     this.hasRoom = function () {
-        return (this.humanFishers.length < this.microworld.numHumans);
+        return (this.fishers.length < this.microworld.numFishers);
     };
 
     this.allHumansIn = function () {
-        return (this.humanFishers.length === this.microworld.numHumans);
+        return (this.fishers.length === this.microworld.numFishers);
     };
 
     this.addFisher = function (pId) {
-        this.humanFishers.push(pId);
+        this.fishers.push(new Fisher(pId, 'human'));
         log.info('Fisher ' + pId + ' has joined ocean ' + this.id);
         return;
     };
 
     this.removeFisher = function (pId) {
-        var idx = this.humanFishers.indexOf(pId);
-        if (idx > -1) {
-            this.humanFishers.splice(idx, 1);
+        for (var i in this.fishers) {
+            var fisher = this.fishers[i];
+            if (!fisher.isBot() && fisher.name === pId) {
+                this.fishers.splice(i, 1);
+            }
         }
-
-        // Remove from humans ready list as well
-        idx = this.humansReady.indexOf(pId);
-        if (idx > -1) {
-            this.humansReady.splice(idx, 1);
-        }
-
         log.info('Fisher ' + pId + ' has been removed from ocean ' + this.id);
+    };
+
+    this.findFisherIndex = function (pId) {
+        for (var i in this.fishers) {
+            if (this.fishers[i].name === pId) {
+                return i;
+            }
+        }
+
+        return null;
     };
 
     /////////////////
@@ -70,8 +83,11 @@ function Ocean(mw, io) {
     };
 
     this.isEveryoneReady = function () {
-        return (this.allHumansIn() && 
-            this.humanFishers.length === this.humansReady.length);
+        if (this.hasRoom()) return false;
+        for (var i in this.fishers) {
+            if (!this.fishers[i].ready) return false;
+        }
+        return true;
     };
     
     this.isReadying = function () {
@@ -83,8 +99,8 @@ function Ocean(mw, io) {
     };
 
     this.hasEveryoneReturned = function () {
-        for (var fisher in this.fishers) {
-            if (!this.fishers[fisher].hasReturned) {
+        for (var i in this.fishers) {
+            if (!this.fishers[i].hasReturned) {
                 return false;
             }
         }
@@ -145,7 +161,8 @@ function Ocean(mw, io) {
     //////////////////////
 
     this.readRules = function (pId) {
-        this.humansReady.push(pId);
+        var idx = this.findFisherIndex(pId);
+        if (idx) this.fishers[idx].ready = true;
         log.info('Fisher ' + pId + ' is ready to start at ocean ' + this.id);
         io.sockets.in(this.id).emit('aFisherIsReady', pId);
         return;
@@ -158,8 +175,6 @@ function Ocean(mw, io) {
             io.sockets.in(this.id).emit('readying');
         }
     };
-
-
 
 }
 
@@ -237,6 +252,7 @@ exports.engine = function engine(io) {
         var enteredOcean = function (newOId) {
             clientOId = newOId;
             socket.join(clientOId);
+            console.log(om.oceans);
             io.sockets.in(clientOId).emit('ocean', om.oceans[clientOId]);
         };
 
