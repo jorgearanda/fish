@@ -4,22 +4,91 @@ var log = require('winston');
 var Microworld = require('../models/microworld-model').Microworld;
 var om;
 
-function Fisher(name, type, params) {
+function Fisher(name, type, params, o) {
     this.name = name;
     this.type = type;
     this.params = params;
+    this.ocean = o;
     this.ready = (this.type === 'bot');
     this.hasReturned = false;
+    this.seasonData = [];
+
+    this.startMoney = 0;
+    this.money = 0;
+    this.totalFishCaught = 0;
+    this.status = 'At port';
+    this.season = 0;
 
     this.isBot = function () {
         return (this.type === 'bot');
+    };
+
+    this.calculateSeasonGreed = function (season) {
+        return 0.5; // TODO --- do this
+    };
+
+    this.calculateSeasonCasts = function (season) {
+        return 10; // TODO --- do this
+    };
+
+    this.prepareFisherForSeason = function (season) {
+        this.seasonData[season] = {
+            actualCasts: 0,
+            intendedCasts: this.isBot() ? this.calculateSeasonCasts(season) : undefined,
+            fishCaught: 0,
+            startMoney: 0,
+            endMoney: 0,
+            greed: this.isBot() ? this.calculateSeasonGreed(season) : undefined
+        }
+        this.hasReturned = false;
+        this.season = season;
+    };
+
+    this.changeMoney = function (amount) {
+        this.money += amount;
+        this.seasonData[this.season] += amount;
+    };
+
+    this.incrementCast = function () {
+        this.actualCasts++;
+        this.seasonData[this.season].actualCasts++;
+    };
+
+    this.incrementFishCaught = function () {
+        this.totalFishCaught++;
+        this.seasonData[this.season].fishCaught++;
+    };
+
+    this.goToPort = function() {
+        this.status = 'At port';
+        this.hasReturned = true;
+    };
+
+    this.goToSea = function () {
+        this.status = 'At sea';
+        this.changeMoney(-this.ocean.microworld.costDeparture);
+    };
+
+    this.tryToFish = function () {
+        this.changeMoney(-this.ocean.microworld.costCast);
+        this.incrementCast();
+        if (this.ocean.isSuccessfulCastAttempt()) {
+            this.changeMoney(this.ocean.microworld.fishValue);
+            this.incrementFishCaught();
+            this.ocean.takeOneFish();
+        } else {
+            // TODO - failed to fish
+        }
+    };
+
+    this.runBot = function () {
+
     };
 }
 
 function Ocean(mw, io) {
     this.time = new Date();
     this.id = this.time.getTime();
-    this.io = io;
     this.status = 'setup';
     this.fishers = [];
     this.seconds = 0;
@@ -27,13 +96,11 @@ function Ocean(mw, io) {
     this.microworld = mw;
     this.results = [];
     this.log = [];
+    this.io = io;
 
-    // TODO - BROKEN HERE
-    // This is iterating over bots and other properties of the microworld
-    for (var botIdx in this.microworld.params.bots) {
-        console.log(this.microworld.params.bots[botIdx]);
-        var bot = this.microworld.params.bots[botIdx];
-        this.fishers.push(new Fisher(bot.name, 'bot', bot));
+    for (var botIdx in mw.params.bots) {
+        var bot = mw.params.bots[botIdx];
+        this.fishers.push(new Fisher(bot.name, 'bot', bot, this));
     }
 
     /////////////////////
@@ -132,6 +199,14 @@ function Ocean(mw, io) {
             (this.canEndEarly() && this.secondsSinceAllReturned >= 3));
     };
 
+    this.pause = function () {
+
+    };
+
+    this.resume = function () {
+
+    };
+
     //////////////////////////
     // Time management methods
     //////////////////////////
@@ -142,6 +217,10 @@ function Ocean(mw, io) {
 
     this.tick = function () {
         this.seconds += 1;
+    };
+
+    this.timeStep = function () {
+
     };
 
     this.hasReachedInitialDelay = function () {
@@ -164,7 +243,6 @@ function Ocean(mw, io) {
         var idx = this.findFisherIndex(pId);
         if (idx) this.fishers[idx].ready = true;
         log.info('Fisher ' + pId + ' is ready to start at ocean ' + this.id);
-        io.sockets.in(this.id).emit('aFisherIsReady', pId);
         return;
     };
 
@@ -172,10 +250,37 @@ function Ocean(mw, io) {
         if (this.isEveryoneReady()) {
             this.status = 'readying';
             log.info('All fishers at ocean ' + this.id + ' are ready to start');
-            io.sockets.in(this.id).emit('readying');
+            this.io.sockets.in(this.id).emit('readying');
         }
     };
 
+    this.startNextSeason = function () {
+
+    };
+
+    this.endCurrentSeason = function () {
+
+    };
+
+    this.runSeason = function () {
+
+    };
+
+    this.checkForDepletion = function () {
+
+    };
+
+    this.endOcean = function () {
+
+    };
+
+    this.isSuccessfulCastAttempt = function () {
+
+    };
+
+    this.removeOneFish = function () {
+
+    };
 }
 
 function OceanManager(io) {
@@ -185,7 +290,7 @@ function OceanManager(io) {
     this.createOcean = function (mwId, cb) {
         Microworld.findOne({_id: mwId}, function onFound(err, mw) {
             // TODO - handle errors
-            var ocean = new Ocean(mw, io);
+            var ocean = new Ocean(mw, this.io);
             this.oceans[ocean.id] = ocean;
             log.info('Created ocean ' + ocean.id);
 
@@ -252,12 +357,12 @@ exports.engine = function engine(io) {
         var enteredOcean = function (newOId) {
             clientOId = newOId;
             socket.join(clientOId);
-            console.log(om.oceans);
             io.sockets.in(clientOId).emit('ocean', om.oceans[clientOId]);
         };
 
         socket.on('readRules', function () {
             om.oceans[clientOId].readRules(clientPId);
+            io.sockets.in(clientOId).emit('aFisherIsReady', clientPId);
         });
 
         socket.on('disconnect', function () {

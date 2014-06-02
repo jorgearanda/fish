@@ -21,7 +21,6 @@ function loadLabels() {
 }
 
 function updateRulesText() {
-    console.log('trying to update text');
     var prepText = ocean.microworld.params.preparationText.replace(/\n/g, '<br />');
 
     $('#rules-text').html(prepText);
