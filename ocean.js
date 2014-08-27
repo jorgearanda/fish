@@ -365,7 +365,6 @@ function engine(io) {
             io.sockets.in(this.name).emit("readying", this);
             logs[this.name].addEvent("All fishers now ready to start.");
         };
-        // ...to here
 
         this.startNextSeason = function () {
             this.currentSeason += 1;
@@ -408,6 +407,7 @@ function engine(io) {
             }
         };
 
+        // ...to here
         this.resolveSeasonActions = function () {
             // For all bots, prompt them to action
             for (player in this.players) {
