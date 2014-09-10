@@ -20,8 +20,7 @@ exports.engine = function engine(io) {
         var enteredOcean = function (newOId) {
             clientOId = newOId;
             socket.join(clientOId);
-            log.info(om.oceans[clientOId]);
-            io.sockets.in(clientOId).emit('ocean', om.oceans[clientOId]);
+            io.sockets.in(clientOId).emit('ocean', om.oceans[clientOId].getParams());
         };
 
         socket.on('readRules', function () {
@@ -31,7 +30,7 @@ exports.engine = function engine(io) {
 
         socket.on('disconnect', function () {
             om.removeFisherFromOcean(clientOId, clientPId);
-            io.sockets.in(clientOId).emit('yours', om.oceans[clientOId]);
+            io.sockets.in(clientOId).emit('yours', om.oceans[clientOId].getParams());
         });
     });
 };

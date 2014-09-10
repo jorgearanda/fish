@@ -20,7 +20,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.microworld = mw;
     this.results = [];
     this.log = new OceanLog(this.id);
-    
+
     for (var botIdx = 0; botIdx < mw.params.bots.length; botIdx++) {
         var bot = mw.params.bots[botIdx];
         this.fishers.push(new Fisher(bot.name, 'bot', bot, this));
@@ -32,15 +32,15 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     /////////////////////
 
     this.hasRoom = function () {
-        return (this.fishers.length < this.microworld.numFishers);
+        return (this.fishers.length < this.microworld.params.numFishers);
     };
 
     this.allHumansIn = function () {
-        return (this.fishers.length === this.microworld.numFishers);
+        return (this.fishers.length === this.microworld.params.numFishers);
     };
 
     this.addFisher = function (pId) {
-        this.fishers.push(new Fisher(pId, 'human'));
+        this.fishers.push(new Fisher(pId, 'human', null, this));
         this.log.info('Human fisher ' + pId + ' joined.');
         return;
     };
@@ -68,6 +68,15 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     /////////////////
     // Status methods
     /////////////////
+
+    this.getParams = function () {
+        // TODO - need to send more than the initial params perhaps?
+        return this.microworld.params;
+    };
+
+    this.isInSetup = function () {
+        return (this.status === 'setup'); // Same as instructions?
+    };
 
     this.isInInstructions = function () {
         return (this.status === 'instructions'); // Humans still reading
@@ -200,7 +209,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         for (var i in this.fishers) {
             this.fishers[i].prepareFisherForSeason(this.season);
 
-            this.results.fishers.push({
+            this.results[this.season - 1].fishers.push({
                 name: this.fishers[i].name,
                 type: this.fishers[i].type,
             });
@@ -210,8 +219,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         io.sockets.in(this.id).emit('beginSeason', {
             season: this.season,
             certainFish: this.certainFish,
-            mysteryFish: this.mysteryFish,
-            fishers: this.fishers
+            mysteryFish: this.mysteryFish
+            //fishers: this.fishers --- this causes socket to trip
         });
     };
 
@@ -256,8 +265,13 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         // States: instructions, readying, running, resting, paused, over
         var loop = true;
         var delay;
-        if (!this.allHumansIn()) {
-            this.log.debug('Ocean loop - waiting for humans.');
+        if (this.isInSetup()) {
+            if (!this.allHumansIn()) {
+                this.log.debug('Ocean loop - waiting for humans.');
+            } else {
+                // Everyone arrived
+                this.status = 'instructions';
+            }
         } else if (this.isInInstructions()) {
             this.log.debug('Ocean loop - reading instructions.');
         } else if (this.isReadying()) {
@@ -301,7 +315,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         }
 
         if (loop) {
-            setTimeout(this.runOcean, 1000);
+            setTimeout(this.runOcean.bind(this), 1000);
         } else {
             this.endOcean();
         }
@@ -327,7 +341,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.endOcean = function () {
-
+        // TODO - fill this up
+        this.status = 'over';
     };
 
     this.isSuccessfulCastAttempt = function () {

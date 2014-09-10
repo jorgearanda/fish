@@ -5,9 +5,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
     this.name = name;
     this.type = type;
     this.params = params;
-    // this.ocean = o; // this causes a circular object structure, which can't be transmitted over IO
-                       // Need to find other ways to refer to parent structure
-                       // A 'getParams()' and a 'getStatus()' function should be sufficient for the client
+    this.ocean = o;
     this.ready = (this.type === 'bot');
     this.hasReturned = false;
     this.seasonData = [];

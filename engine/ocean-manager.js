@@ -13,6 +13,7 @@ exports.OceanManager = function OceanManager(io) {
             var ocean = new Ocean(mw, this.io);
             this.oceans[ocean.id] = ocean;
             ocean.log.info('Ocean created.');
+            ocean.runOcean();
 
             return cb(null, ocean.id);
         }.bind(this));
