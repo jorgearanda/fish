@@ -311,8 +311,6 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
         if (loop) {
             setTimeout(this.runOcean.bind(this), 1000);
-        } else {
-            this.endOcean();
         }
     };
 
