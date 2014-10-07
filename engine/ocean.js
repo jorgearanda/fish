@@ -75,11 +75,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.isInSetup = function () {
-        return (this.status === 'setup'); // Same as instructions?
-    };
-
-    this.isInInstructions = function () {
-        return (this.status === 'instructions'); // Humans still reading
+        // At least one participant still needs to read instructions
+        return (this.status === 'setup');
     };
 
     this.isEveryoneReady = function () {
@@ -90,8 +87,9 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         return true;
     };
     
-    this.isReadying = function () {
-        return (this.status === 'readying'); // before first season
+    this.isInInitialDelay = function () {
+        // Before first season
+        return (this.status === 'initial delay');
     };
     
     this.isRunning = function () {
@@ -150,7 +148,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     this.tick = function () {
         this.seconds += 1;
-        this.log.debug('Tick. Seconds: ' + this.seconds);
+        this.log.info('Tick. Seconds: ' + this.seconds);
     };
 
     this.timeStep = function () {
@@ -177,27 +175,23 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         var idx = this.findFisherIndex(pId);
         if (idx) this.fishers[idx].ready = true;
         this.log.info('Fisher ' + pId + ' is ready to start.');
-        this.getOceanReady();
         return;
     };
 
     this.getOceanReady = function () {
-        if (this.isEveryoneReady()) {
-            this.status = 'readying';
-            this.log.info('All fishers ready to start.');
-            io.sockets.in(this.id).emit('readying');
-        }
+        this.status = 'initial delay';
+        this.log.info('All fishers ready to start.');
+        io.sockets.in(this.id).emit('initial delay');
     };
 
     this.startNextSeason = function () {
         this.season += 1;
-        this.log.debug('Preparing to begin season ' + this.season + '.');
+        this.log.info('Preparing to begin season ' + this.season + '.');
 
         this.resetTimer();
         this.status = 'running';
         this.secondsSinceAllReturned = 0;
         this.setAvailableFish();
-
 
         // Record starting data
         this.results.push({
@@ -215,8 +209,9 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             });
         }
 
+        // NOTE: Need to get proper numbers for certain and mystery fish on seasons after first!
         this.log.info('Beginning season ' + this.season + '.');
-        io.sockets.in(this.id).emit('beginSeason', {
+        io.sockets.in(this.id).emit('begin season', {
             season: this.season,
             certainFish: this.certainFish,
             mysteryFish: this.mysteryFish
@@ -253,7 +248,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             this.status = 'resting';
             this.resetTimer();
             this.log.info('Ending season ' + this.season + '.');
-            io.sockets.in(this.id).emit('endSeason', {
+            io.sockets.in(this.id).emit('end season', {
                 season: this.season
             });
         } else {
@@ -262,55 +257,55 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.runOcean = function () {
-        // States: instructions, readying, running, resting, paused, over
+        // States: setup, initial delay, running, resting, paused, over
         var loop = true;
         var delay;
         if (this.isInSetup()) {
             if (!this.allHumansIn()) {
-                this.log.debug('Ocean loop - waiting for humans.');
+                this.log.info('Ocean loop - setup: waiting for humans.');
+            } else if (!this.isEveryoneReady()) {
+                this.log.info('Ocean loop - setup: reading instructions.')
             } else {
-                // Everyone arrived
-                this.status = 'instructions';
+                // Everyone ready!
+                this.getOceanReady();
             }
-        } else if (this.isInInstructions()) {
-            this.log.debug('Ocean loop - reading instructions.');
-        } else if (this.isReadying()) {
+        } else if (this.isInInitialDelay()) {
             delay = this.microworld.params.initialDelay;
-            this.log.debug('Ocean loop - readying: ' + this.seconds +
+            this.log.info('Ocean loop - initial delay: ' + this.seconds +
                 ' of ' + delay + ' seconds.');
 
             if (delay <= this.seconds) {
-                this.log.debug('Ocean loop - triggering season start.');
+                this.log.info('Ocean loop - initial delay: triggering season start.');
                 this.startNextSeason();
             } else {
                 this.tick();
             }
         } else if (this.isRunning()) {
             var duration = this.microworld.params.seasonDuration;
-            this.log.debug('Ocean loop - running: ' + this.seconds +
+            this.log.info('Ocean loop: running: ' + this.seconds +
                 ' of ' + duration + ' seconds.');
 
             if (duration <= this.seconds) {
-                this.log.debug('Ocean loop - triggering season end.');
+                this.log.info('Ocean loop - running: triggering season end.');
                 this.endCurrentSeason();
             } else {
                 this.tick();
             }
         } else if (this.isResting()) {
             delay = this.microworld.params.seasonDelay;
-            this.log.debug('Ocean loop - resting: ' + this.seconds +
+            this.log.info('Ocean loop - resting: ' + this.seconds +
                 ' of ' + delay + ' seconds.');
 
             if (delay <= this.seconds) {
-                this.log.debug('Ocean loop - triggering season start.');
+                this.log.info('Ocean loop - resting: triggering season start.');
                 this.startNextSeason();
             } else {
                 this.tick();
             }
         } else if (this.isPaused()) {
-            this.log.debug('Ocean loop - paused.');
+            this.log.info('Ocean loop - paused.');
         } else { // over
-            this.log.debug('Stopping ocean loop - ocean has reached Over state.');
+            this.log.info('Ocean loop - over: Stopping.');
             loop = false;
         }
 
@@ -326,11 +321,12 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             this.certainFish = this.microworld.params.certainFish;
             this.mysteryFish = this.microworld.params.availableMysteryFish;
         } else {
-            var spawnedFish = this.certainFish * this.spawnFactor;
+            var spawnFactor = this.microworld.params.spawnFactor;
+            var spawnedFish = this.certainFish * spawnFactor;
             var maxFish = this.microworld.params.maxFish;
             this.certainFish = Math.round(Math.min(spawnedFish, maxFish));
 
-            var spawnedMystery = this.mysteryFish * this.spawnFactor;
+            var spawnedMystery = this.mysteryFish * spawnFactor;
             var maxMystery = this.microworld.params.availableMysteryFish;
             this.mysteryFish = Math.round(Math.min(spawnedMystery, maxMystery));
         }
@@ -343,6 +339,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.endOcean = function () {
         // TODO - fill this up
         this.status = 'over';
+        this.log.info('Ocean run ended.');
     };
 
     this.isSuccessfulCastAttempt = function () {

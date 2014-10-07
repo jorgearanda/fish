@@ -77,13 +77,24 @@ function readRules() {
     socket.emit('readRules');
 }
 
-function beginSeason() {
+function warnInitialDelay() {
+    console.log('Get ready to start');
+}
+
+function warnSeasonBeginning() {
+}
+
+function beginSeason(data) {
+    console.log('Beginning season ' + data.season);
+    console.log('Certain fish ' + data.certainFish);
+    console.log('Mystery fish ' + data.mysteryFish);
 }
 
 function warnSeasonEnd() {
 }
 
-function endSeason() {
+function endSeason(data) {
+    console.log('Ending season ' + data.season);
 }
 
 function endRun() {
@@ -101,16 +112,13 @@ socket.on('connect', function () {
 });
 
 socket.on('ocean', setupOcean);
+socket.on('initial delay', warnInitialDelay);
 socket.on('begin season', beginSeason);
 socket.on('warn season end', warnSeasonEnd);
 socket.on('end season', endSeason);
 socket.on('end run', endRun);
 socket.on('pause', pause);
 socket.on('resume', resume);
-
-socket.on('yours', function (ocean) {
-    console.log(ocean);
-});
 
 function main() {
     $('#read-rules').on('click', readRules);

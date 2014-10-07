@@ -57,9 +57,11 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.goToPort = function() {
-        this.status = 'At port';
-        this.hasReturned = true;
-        this.ocean.log.info('Fisher ' + this.name + ' returned to port.');
+        if (this.status !== 'At port') {
+            this.status = 'At port';
+            this.hasReturned = true;
+            this.ocean.log.info('Fisher ' + this.name + ' returned to port.');
+        }
     };
 
     this.goToSea = function () {
