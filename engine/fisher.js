@@ -20,6 +20,18 @@ exports.Fisher = function Fisher(name, type, params, o) {
         return (this.type === 'bot');
     };
 
+    this.isErratic = function () {
+        return (this.params.predictability === 'erratic');
+    };
+
+    this.getIntendedCasts = function () {
+        return this.seasonData[this.season].intendedCasts;
+    };
+
+    this.getActualCasts = function () {
+        return this.seasonData[this.season].actualCasts;
+    };
+
     this.calculateSeasonGreed = function (season) {
         return 0.5; // TODO --- do this
     };
@@ -43,11 +55,10 @@ exports.Fisher = function Fisher(name, type, params, o) {
 
     this.changeMoney = function (amount) {
         this.money += amount;
-        this.seasonData[this.season] += amount;
+        this.seasonData[this.season].endMoney += amount;
     };
 
     this.incrementCast = function () {
-        this.actualCasts++;
         this.seasonData[this.season].actualCasts++;
     };
 
@@ -85,6 +96,24 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.runBot = function () {
+        if (!this.isBot()) return;
 
+        // Don't do anything if I'm erratic and I don't feel like it
+        if (this.isErratic() && Math.random() > this.params.probAction) return;
+
+        // TODO - should it be a check against fishCaught or actualCasts?
+        // Am I done and still at sea?
+        if (this.getIntendedCasts() <= this.getActualCasts()) {
+            this.goToPort();
+        }
+
+        // Do I have more fish to catch?
+        if (this.getIntendedCasts() > this.getActualCasts()) {
+            if (this.status === 'At port') {
+                this.goToSea();
+            } else if (this.status === 'At sea' && this.ocean.areThereFish()) {
+                this.tryToFish();
+            }
+        }
     };
 };

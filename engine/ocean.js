@@ -285,6 +285,10 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             this.log.info('Ocean loop: running: ' + this.seconds +
                 ' of ' + duration + ' seconds.');
 
+            for (var i in this.fishers) {
+                this.fishers[i].runBot();
+            }
+
             if (duration <= this.seconds) {
                 this.log.info('Ocean loop - running: triggering season end.');
                 this.endCurrentSeason();
@@ -330,8 +334,9 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         }
     };
 
-    this.checkForDepletion = function () {
-
+    this.areThereFish = function () {
+        // TODO - not sure this is right
+        return (this.certainFish + this.mysteryFish) > 0;
     };
 
     this.endOcean = function () {
