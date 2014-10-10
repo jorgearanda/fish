@@ -346,11 +346,17 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.isSuccessfulCastAttempt = function () {
-
+        return ((this.certainFish + this.mysteryFish > 0) &&
+            Math.random() <= this.microworld.params.chanceCatch);
     };
 
-    this.removeOneFish = function () {
-
+    this.takeOneFish = function () {
+        if (Math.floor(Math.random() *
+                (this.certainFish + this.mysteryFish)) < this.certainFish) {
+            this.certainFish -= 1;
+        } else {
+            this.mysteryFish -= 1;
+        }
     };
 
     // Metric calculations

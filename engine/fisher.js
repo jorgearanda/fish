@@ -24,6 +24,10 @@ exports.Fisher = function Fisher(name, type, params, o) {
         return (this.params.predictability === 'erratic');
     };
 
+    this.getFishCaught = function () {
+        return this.seasonData[this.season].fishCaught;
+    };
+
     this.getIntendedCasts = function () {
         return this.seasonData[this.season].intendedCasts;
     };
@@ -32,25 +36,31 @@ exports.Fisher = function Fisher(name, type, params, o) {
         return this.seasonData[this.season].actualCasts;
     };
 
-    this.calculateSeasonGreed = function (season) {
+    this.calculateSeasonGreed = function () {
         return 0.5; // TODO --- do this
     };
 
-    this.calculateSeasonCasts = function (season) {
-        return 10; // TODO --- do this
+    this.calculateSeasonCasts = function () {
+        var totalFish = this.ocean.certainFish + this.ocean.mysteryFish;
+        var spawn = this.ocean.microworld.params.spawnFactor;
+        var numFishers = this.ocean.fishers.length;
+        var greed = this.calculateSeasonGreed();
+        var chanceCatch = this.ocean.microworld.params.chanceCatch;
+        return Math.round(((totalFish - (totalFish / spawn)) / numFishers) 
+            * 2 * greed / chanceCatch);
     };
 
     this.prepareFisherForSeason = function (season) {
+        this.season = season;
         this.seasonData[season] = {
             actualCasts: 0,
-            intendedCasts: this.isBot() ? this.calculateSeasonCasts(season) : undefined,
+            greed: this.isBot() ? this.calculateSeasonGreed() : undefined,
+            intendedCasts: this.isBot() ? this.calculateSeasonCasts() : undefined,
             fishCaught: 0,
             startMoney: 0,
-            endMoney: 0,
-            greed: this.isBot() ? this.calculateSeasonGreed(season) : undefined
+            endMoney: 0
         };
         this.hasReturned = false;
-        this.season = season;
     };
 
     this.changeMoney = function (amount) {
@@ -101,14 +111,11 @@ exports.Fisher = function Fisher(name, type, params, o) {
         // Don't do anything if I'm erratic and I don't feel like it
         if (this.isErratic() && Math.random() > this.params.probAction) return;
 
-        // TODO - should it be a check against fishCaught or actualCasts?
-        // Am I done and still at sea?
+        // Am I done?
         if (this.getIntendedCasts() <= this.getActualCasts()) {
             this.goToPort();
-        }
-
-        // Do I have more fish to catch?
-        if (this.getIntendedCasts() > this.getActualCasts()) {
+        } else {
+            // Should I go out or try to fish?
             if (this.status === 'At port') {
                 this.goToSea();
             } else if (this.status === 'At sea' && this.ocean.areThereFish()) {
