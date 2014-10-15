@@ -37,14 +37,44 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.calculateSeasonGreed = function () {
-        return 0.5; // TODO --- do this
+        // greedSpread determines how far the low and high greed bounds will
+        // deviate from the mean
+        var greedSpread = 2.0;
+        var baseGreed = this.params.greed;
+        var lowBound, highBound;
+        if (baseGreed < 0.5) {
+            lowBound = baseGreed / greedSpread;
+            highBound = baseGreed + lowBound;
+        } else {
+            highBound = ((1.0 - baseGreed) / greedSpread) + baseGreed;
+            lowBound = greedSpread * baseGreed - highBound;
+        }
+
+        var currentGreed = baseGreed;
+        var seasons = this.ocean.microworld.params.numSeasons;
+        var increment = (highBound - lowBound) / (1.0 * (seasons - 1));
+        if (seasons > 1) {
+            if (this.params.trend === 'decrease') {
+                currentGreed = highBound - (increment * (this.ocean.season - 1));
+            } else if (this.params.trend === 'increase') {
+                currentGreed = lowBound + (increment * (this.ocean.season - 1));
+            }
+        }
+
+        if (this.params.predictability === 'erratic') {
+            // variation between 0.75 and 1.25
+            var variation = 1.0 + ((Math.random() - 0.5) / 2.0);
+            currentGreed = currentGreed * variation;
+        }
+        this.ocean.log.info('Fisher ' + this.name + ' has greed of ' + currentGreed);
+        return currentGreed;
     };
 
     this.calculateSeasonCasts = function () {
         var totalFish = this.ocean.certainFish + this.ocean.mysteryFish;
         var spawn = this.ocean.microworld.params.spawnFactor;
         var numFishers = this.ocean.fishers.length;
-        var greed = this.calculateSeasonGreed();
+        var greed = this.seasonData[this.season].greed;
         var chanceCatch = this.ocean.microworld.params.chanceCatch;
         return Math.round(((totalFish - (totalFish / spawn)) / numFishers) 
             * 2 * greed / chanceCatch);
@@ -55,11 +85,12 @@ exports.Fisher = function Fisher(name, type, params, o) {
         this.seasonData[season] = {
             actualCasts: 0,
             greed: this.isBot() ? this.calculateSeasonGreed() : undefined,
-            intendedCasts: this.isBot() ? this.calculateSeasonCasts() : undefined,
             fishCaught: 0,
             startMoney: 0,
             endMoney: 0
         };
+        this.seasonData[season].intendedCasts = this.isBot() ? this.calculateSeasonCasts() : undefined;
+        this.ocean.log.info('Fisher ' + this.name + ' intends to cast ' + this.seasonData[season].intendedCasts);
         this.hasReturned = false;
     };
 
