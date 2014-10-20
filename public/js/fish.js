@@ -93,6 +93,10 @@ function beginSeason(data) {
 function warnSeasonEnd() {
 }
 
+function receiveStatus(status) {
+    console.log('Status: ' + JSON.stringify(status));
+}
+
 function endSeason(data) {
     console.log('Ending season ' + data.season);
 }
@@ -114,6 +118,7 @@ socket.on('connect', function () {
 socket.on('ocean', setupOcean);
 socket.on('initial delay', warnInitialDelay);
 socket.on('begin season', beginSeason);
+socket.on('status', receiveStatus);
 socket.on('warn season end', warnSeasonEnd);
 socket.on('end season', endSeason);
 socket.on('end run', endRun);

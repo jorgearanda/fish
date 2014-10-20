@@ -138,6 +138,26 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     };
 
+    this.getSimStatus = function () {
+        var status = {
+            season: this.season,
+            certainFish: this.certainFish,
+            mysteryFish: this.mysteryFish,
+            fishers: []
+        }
+
+        for (var i in this.fishers) {
+            status.fishers.push({
+                name: this.fishers[i].name,
+                seasonData: this.fishers[i].seasonData,
+                money: this.fishers[i].money,
+                status: this.fishers[i].status
+            });
+        }
+
+        return status;
+    };
+
     //////////////////////////
     // Time management methods
     //////////////////////////
@@ -209,14 +229,9 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             });
         }
 
-        // NOTE: Need to get proper numbers for certain and mystery fish on seasons after first!
+        // TODO: Need to get proper numbers for certain and mystery fish on seasons after first!
         this.log.info('Beginning season ' + this.season + '.');
-        io.sockets.in(this.id).emit('begin season', {
-            season: this.season,
-            certainFish: this.certainFish,
-            mysteryFish: this.mysteryFish
-            //fishers: this.fishers --- this causes socket to trip
-        });
+        io.sockets.in(this.id).emit('begin season', this.getSimStatus());
     };
 
     this.endCurrentSeason = function () {
@@ -288,6 +303,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             for (var i in this.fishers) {
                 this.fishers[i].runBot();
             }
+
+            io.sockets.in(this.id).emit('status', this.getSimStatus());
 
             if (duration <= this.seconds) {
                 this.log.info('Ocean loop - running: triggering season end.');
