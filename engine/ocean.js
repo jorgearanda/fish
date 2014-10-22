@@ -141,6 +141,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.getSimStatus = function () {
         var status = {
             season: this.season,
+            status: this.status,
             certainFish: this.certainFish,
             mysteryFish: this.mysteryFish,
             fishers: []
@@ -195,6 +196,24 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         var idx = this.findFisherIndex(pId);
         if (idx) this.fishers[idx].ready = true;
         this.log.info('Fisher ' + pId + ' is ready to start.');
+        return;
+    };
+
+    this.attemptToFish = function (pId) {
+        var idx = this.findFisherIndex(pId);
+        if (idx) this.fishers[idx].tryToFish();
+        return;
+    };
+
+    this.goToSea = function (pId) {
+        var idx = this.findFisherIndex(pId);
+        if (idx) this.fishers[idx].goToSea();
+        return;
+    };
+
+    this.returnToPort = function (pId) {
+        var idx = this.findFisherIndex(pId);
+        if (idx) this.fishers[idx].goToPort();
         return;
     };
 
@@ -316,6 +335,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             delay = this.microworld.params.seasonDelay;
             this.log.info('Ocean loop - resting: ' + this.seconds +
                 ' of ' + delay + ' seconds.');
+            io.sockets.in(this.id).emit('status', this.getSimStatus());
 
             if (delay <= this.seconds) {
                 this.log.info('Ocean loop - resting: triggering season start.');

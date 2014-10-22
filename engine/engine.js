@@ -28,6 +28,18 @@ exports.engine = function engine(io) {
             io.sockets.in(clientOId).emit('aFisherIsReady', clientPId);
         });
 
+        socket.on('attemptToFish', function () {
+            om.oceans[clientOId].attemptToFish(clientPId);
+        });
+
+        socket.on('goToSea', function () {
+            om.oceans[clientOId].goToSea(clientPId);
+        });
+
+        socket.on('return', function () {
+            om.oceans[clientOId].returnToPort(clientPId);
+        });
+
         socket.on('disconnect', function () {
             om.removeFisherFromOcean(clientOId, clientPId);
             io.sockets.in(clientOId).emit('yours', om.oceans[clientOId].getParams());

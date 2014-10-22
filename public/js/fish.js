@@ -7,6 +7,7 @@ var socket = io.connect();
 var mwId = $.url().param('mwid');
 var pId = $.url().param('pid');
 var ocean;
+var st = {status: 'loading'};
 
 if (lang && lang !== '' && lang.toLowerCase() in langs) {
     lang = lang.toLowerCase();
@@ -18,6 +19,10 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
 
 function loadLabels() {
     $('#read-rules').text(msgs.buttons_goFishing);
+    $('#to-sea').text(msgs.buttons_goToSea);
+    $('#return').text(msgs.buttons_return);
+    $('#attempt-fish').text(msgs.buttons_castFish);
+    updateStatus();
 }
 
 function updateRulesText() {
@@ -28,6 +33,32 @@ function updateRulesText() {
 function displayRules() {
     updateRulesText();
     $('#rules-modal').modal('show');
+}
+
+function updateStatus() {
+    var statusText = '';
+    if (st.status === 'loading') {
+        statusText = msgs.status_wait;
+    } else if (st.status === 'running') {
+        statusText = msgs.status_season + st.season + '. ';
+
+        if (st.mysteryFish > 0) {
+            statusText += msgs.status_fishBetween + st.certainFish +
+                msgs.status_fishAnd + (st.certainFish + st.mysteryFish) +
+                msgs.status_fishRemaining;
+        } else {
+            statusText += msgs.status_fishMax + st.certainFish +
+                msgs.status_fishRemaining;
+        }
+    } else if (st.status === 'resting') {
+        statusText = msgs.status_spawning;
+    } else if (st.status === 'paused') {
+        statusText = msgs.status_paused;
+    } else {
+        console.log('Unknown status: ' + st.status);
+    }
+
+    $('#status-label').text(statusText);
 }
 
 function updateCosts() {
@@ -77,6 +108,18 @@ function readRules() {
     socket.emit('readRules');
 }
 
+function goToSea() {
+    socket.emit('goToSea');
+}
+
+function goToPort() {
+    socket.emit('return');
+}
+
+function attemptToFish() {
+    socket.emit('attemptToFish');
+}
+
 function warnInitialDelay() {
     console.log('Get ready to start');
 }
@@ -93,8 +136,10 @@ function beginSeason(data) {
 function warnSeasonEnd() {
 }
 
-function receiveStatus(status) {
-    console.log('Status: ' + JSON.stringify(status));
+function receiveStatus(data) {
+    console.log('Status: ' + JSON.stringify(data));
+    st = data;
+    updateStatus();
 }
 
 function endSeason(data) {
@@ -127,6 +172,9 @@ socket.on('resume', resume);
 
 function main() {
     $('#read-rules').on('click', readRules);
+    $('#to-sea').on('click', goToSea);
+    $('#return').on('click', goToPort);
+    $('#attempt-fish').on('click', attemptToFish);
     loadLabels();
 }
 

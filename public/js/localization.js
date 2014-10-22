@@ -34,25 +34,25 @@ en['status_getReady'] = 'Get ready! The simulation is about to start.';
 pt['status_getReady'] = 'Prepare-se! A simulação esta para começar.';
 es['status_getReady'] = '¡Prepárate! La simulación está por comenzar.';
 
-en['status_season'] = 'This is season';
-pt['status_season'] = 'Essa é a temporada';
-es['status_season'] = 'Esta es la temporada';
+en['status_season'] = 'This is season ';
+pt['status_season'] = 'Essa é a temporada ';
+es['status_season'] = 'Esta es la temporada ';
 
-en['status_fishBetween'] = 'There are between';
-pt['status_fishBetween'] = 'Existem entre';
-es['status_fishBetween'] = 'Hay entre';
+en['status_fishBetween'] = 'There are between ';
+pt['status_fishBetween'] = 'Existem entre ';
+es['status_fishBetween'] = 'Hay entre ';
 
-en['status_fishMax'] = 'There are';
-pt['status_fishMax'] = 'Existem';
-es['status_fishMax'] = 'Hay';
+en['status_fishMax'] = 'There are ';
+pt['status_fishMax'] = 'Existem ';
+es['status_fishMax'] = 'Hay ';
 
-en['status_fishAnd'] = 'and';
-pt['status_fishAnd'] = 'e';
-es['status_fishAnd'] = 'y';
+en['status_fishAnd'] = ' and ';
+pt['status_fishAnd'] = ' e ';
+es['status_fishAnd'] = ' y ';
 
-en['status_fishRemaining'] = 'fish remaining.';
-pt['status_fishRemaining'] = 'peixes restantes.';
-es['status_fishRemaining'] = 'peces en el mar.';
+en['status_fishRemaining'] = ' fish remaining.';
+pt['status_fishRemaining'] = ' peixes restantes.';
+es['status_fishRemaining'] = ' peces en el mar.';
 
 en['status_spawning'] = 'We are between seasons, fish are now spawning.';
 pt['status_spawning'] = 'Estamos entre as temporadas, os peixes estão em desova.';
@@ -122,7 +122,7 @@ en['buttons_goToSea'] = 'Go to sea';
 pt['buttons_goToSea'] = 'Ir para o mar';
 es['buttons_goToSea'] = 'Ir al mar';
 
-en['buttons_castFish'] = 'Cast for one fish';
+en['buttons_castFish'] = 'Attempt to fish';
 pt['buttons_castFish'] = 'Pescar um peixe';
 es['buttons_castFish'] = 'Pescar un pez';
 
