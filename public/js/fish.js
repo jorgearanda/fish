@@ -33,11 +33,10 @@ function loadLabels() {
     $('#attempt-fish').text(msgs.buttons_castFish);
 
     $("#fisher-header").text(msgs.info_fisher);
-    $("#location-header").text(msgs.info_location);
-    $("#fish-season-header").text(msgs.info_fishCaught + ' ' + msgs.info_season);
-    $("#fish-total-header").text(msgs.info_fishCaught + ' ' + msgs.info_overall);
-    $("#profits-season-header").text(msgs.info_profits + ' ' + msgs.info_season);
-    $("#profits-total-header").text(msgs.info_profits + ' ' + msgs.info_overall);
+    $("#fish-season-header").text(' ' + msgs.info_season);
+    $("#fish-total-header").text(' ' + msgs.info_overall);
+    $("#profit-season-header").text('$ ' + msgs.info_season);
+    $("#profit-total-header").text('$ ' + msgs.info_overall);
 
     updateCosts();
     updateStatus();
@@ -126,7 +125,62 @@ function updateCosts() {
     }
 }
 
-function updateFisherNames() {
+function updateFishers() {
+    var j = 1;
+    for (var i in st.fishers) {
+        var fisher = st.fishers[i];
+        if (fisher.name === pId) {
+            // This is you
+            $('#f0-name').text('You');
+            if (fisher.status === 'At port') {
+                $('#f0-status').attr('src', '/public/img/anchor.png');
+            } else {
+                $('#f0-status').attr('src', '/public/img/world.png');
+            }
+            $('#f0-fish-season').text(fisher.seasonData[st.season].fishCaught);
+            $('#f0-fish-total').text(fisher.totalFishCaught);
+            $('#f0-profit-season').text(fisher.seasonData[st.season].endMoney);
+            $('#f0-profit-total').text(fisher.money);
+
+        } else {
+            // Everyone else
+            if (!ocean.showFishers) continue;
+
+            if (ocean.showFisherNames) {
+                $('#f' + j + '-name').text(fisher.name);
+            } else {
+                $('#f' + j + '-name').text(j);
+            }
+
+            var src = '';
+            if (!ocean.showFisherStatus) {
+                src = '/public/img/bullet_white.png';
+            } else if (fisher.status === 'At port') {
+                src = '/public/img/anchor.png';
+            } else {
+                src = '/public/img/world.png';
+            }
+            $('#f' + j + '-status').attr('src', src);
+
+            if (ocean.showNumCaught) {
+                $('#f' + j + '-fish-season').text(fisher.seasonData[st.season].fishCaught);
+                $('#f' + j + '-fish-total').text(fisher.totalFishCaught);
+            } else {
+                $('#f' + j + '-fish-season').text('?');
+                $('#f' + j + '-fish-total').text('?');
+            }
+
+            if (ocean.showFisherBalance) {
+                $('#f' + j + '-profit-season').text(fisher.seasonData[st.season].endMoney);
+                $('#f' + j + '-profit-total').text(fisher.money);
+            } else {
+                $('#f' + j + '-profit-season').text('?');
+                $('#f' + j + '-profit-total').text('?');
+            }
+
+            j++;
+        }
+    }
 }
 
 function setVisibleFisherFields() {
@@ -169,13 +223,10 @@ function warnSeasonBeginning() {
 }
 
 function beginSeason(data) {
-    console.log('Beginning season ' + data.season);
-    console.log('Certain fish ' + data.certainFish);
-    console.log('Mystery fish ' + data.mysteryFish);
     st = data;
-
     updateWarning('');
     drawOcean();
+    updateFishers();
     $('#to-sea').removeAttr('disabled');
 }
 
@@ -191,6 +242,7 @@ function receiveStatus(data) {
     console.log('Status: ' + JSON.stringify(data));
     st = data;
     updateStatus();
+    updateFishers();
     drawOcean();
 }
 
@@ -235,7 +287,6 @@ function drawOcean() {
 }
 
 socket.on('connect', function () {
-    console.log('Socket connected. Requesting to enter an ocean.');
     socket.emit('enterOcean', mwId, pId);
 });
 

@@ -95,6 +95,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.changeMoney = function (amount) {
+        this.ocean.log.info('changing money by ' + amount);
         this.money += amount;
         this.seasonData[this.season].endMoney += amount;
     };
@@ -118,15 +119,15 @@ exports.Fisher = function Fisher(name, type, params, o) {
 
     this.goToSea = function () {
         this.status = 'At sea';
-        this.changeMoney(-this.ocean.microworld.costDeparture);
+        this.changeMoney(-this.ocean.microworld.params.costDeparture);
         this.ocean.log.info('Fisher ' + this.name + ' sailed to sea.');
     };
 
     this.tryToFish = function () {
-        this.changeMoney(-this.ocean.microworld.costCast);
+        this.changeMoney(-this.ocean.microworld.params.costCast);
         this.incrementCast();
         if (this.ocean.isSuccessfulCastAttempt()) {
-            this.changeMoney(this.ocean.microworld.fishValue);
+            this.changeMoney(this.ocean.microworld.params.fishValue);
             this.incrementFishCaught();
             this.ocean.takeOneFish();
             this.ocean.log.info('Fisher ' + this.name + ' caught one fish.');

@@ -1,6 +1,10 @@
-.info_label {
+.info-label {
     text-align: left;
     display: inline-block;
     font-weight: normal;
     font-size: 8pt;
+}
+
+.fisher-label {
+    font-weight: normal;
 }
