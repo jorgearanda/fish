@@ -28,10 +28,10 @@
     </div>
 
     <div class='row'>
-        <div id='ocean-box' class='col-md-6'>
+        <div id='ocean-box' class='col-md-7'>
             <canvas id='ocean-canvas' width='700' height='460'></canvas>
         </div>
-        <div id='fishers-box' class='col-md-6'>
+        <div id='fishers-box' class='col-md-4'>
             <table class='table table-bordered table-hover'>
                 <thead>
                     <th id='fisher-header'></th>
@@ -46,21 +46,73 @@
                     <td class='fisher-label' id='f0-fish-total'></td>
                     <td class='fisher-label' id='f0-profit-season'></td>
                     <td class='fisher-label' id='f0-profit-total'></td></tr>
-                    <tr><td><img src='/public/img/bullet_white.png' id='f1-status'><label class='fisher-label' id='f1-name'></label></td>
+
+                    <tr id='f1' style='display: none' style='display: none'><td><img src='/public/img/bullet_white.png' id='f1-status'><label class='fisher-label' id='f1-name'></label></td>
                     <td class='fisher-label' id='f1-fish-season'></td>
                     <td class='fisher-label' id='f1-fish-total'></td>
                     <td class='fisher-label' id='f1-profit-season'></td>
                     <td class='fisher-label' id='f1-profit-total'></td></tr>
-                    <tr><td><img src='/public/img/bullet_white.png' id='f2-status'><label class='fisher-label' id='f2-name'></label></td>
+
+                    <tr id='f2' style='display: none'><td><img src='/public/img/bullet_white.png' id='f2-status'><label class='fisher-label' id='f2-name'></label></td>
                     <td class='fisher-label' id='f2-fish-season'></td>
                     <td class='fisher-label' id='f2-fish-total'></td>
                     <td class='fisher-label' id='f2-profit-season'></td>
                     <td class='fisher-label' id='f2-profit-total'></td></tr>
-                    <tr><td><img src='/public/img/bullet_white.png' id='f3-status'><label class='fisher-label' id='f3-name'></label></td>
+
+                    <tr id='f3' style='display: none'><td><img src='/public/img/bullet_white.png' id='f3-status'><label class='fisher-label' id='f3-name'></label></td>
                     <td class='fisher-label' id='f3-fish-season'></td>
                     <td class='fisher-label' id='f3-fish-total'></td>
                     <td class='fisher-label' id='f3-profit-season'></td>
                     <td class='fisher-label' id='f3-profit-total'></td></tr>
+
+                    <tr id='f4' style='display: none'><td><img src='/public/img/bullet_white.png' id='f4-status'><label class='fisher-label' id='f4-name'></label></td>
+                    <td class='fisher-label' id='f4-fish-season'></td>
+                    <td class='fisher-label' id='f4-fish-total'></td>
+                    <td class='fisher-label' id='f4-profit-season'></td>
+                    <td class='fisher-label' id='f4-profit-total'></td></tr>
+
+                    <tr id='f5' style='display: none'><td><img src='/public/img/bullet_white.png' id='f5-status'><label class='fisher-label' id='f5-name'></label></td>
+                    <td class='fisher-label' id='f5-fish-season'></td>
+                    <td class='fisher-label' id='f5-fish-total'></td>
+                    <td class='fisher-label' id='f5-profit-season'></td>
+                    <td class='fisher-label' id='f5-profit-total'></td></tr>
+
+                    <tr id='f6' style='display: none'><td><img src='/public/img/bullet_white.png' id='f6-status'><label class='fisher-label' id='f6-name'></label></td>
+                    <td class='fisher-label' id='f6-fish-season'></td>
+                    <td class='fisher-label' id='f6-fish-total'></td>
+                    <td class='fisher-label' id='f6-profit-season'></td>
+                    <td class='fisher-label' id='f6-profit-total'></td></tr>
+
+                    <tr id='f7' style='display: none'><td><img src='/public/img/bullet_white.png' id='f7-status'><label class='fisher-label' id='f7-name'></label></td>
+                    <td class='fisher-label' id='f7-fish-season'></td>
+                    <td class='fisher-label' id='f7-fish-total'></td>
+                    <td class='fisher-label' id='f7-profit-season'></td>
+                    <td class='fisher-label' id='f7-profit-total'></td></tr>
+
+                    <tr id='f8' style='display: none'><td><img src='/public/img/bullet_white.png' id='f8-status'><label class='fisher-label' id='f8-name'></label></td>
+                    <td class='fisher-label' id='f8-fish-season'></td>
+                    <td class='fisher-label' id='f8-fish-total'></td>
+                    <td class='fisher-label' id='f8-profit-season'></td>
+                    <td class='fisher-label' id='f8-profit-total'></td></tr>
+
+                    <tr id='f9' style='display: none'><td><img src='/public/img/bullet_white.png' id='f9-status'><label class='fisher-label' id='f9-name'></label></td>
+                    <td class='fisher-label' id='f9-fish-season'></td>
+                    <td class='fisher-label' id='f9-fish-total'></td>
+                    <td class='fisher-label' id='f9-profit-season'></td>
+                    <td class='fisher-label' id='f9-profit-total'></td></tr>
+
+                    <tr id='f10' style='display: none'><td><img src='/public/img/bullet_white.png' id='f10-status'><label class='fisher-label' id='f10-name'></label></td>
+                    <td class='fisher-label' id='f10-fish-season'></td>
+                    <td class='fisher-label' id='f10-fish-total'></td>
+                    <td class='fisher-label' id='f10-profit-season'></td>
+                    <td class='fisher-label' id='f10-profit-total'></td></tr>
+
+                    <tr id='f11' style='display: none'><td><img src='/public/img/bullet_white.png' id='f11-status'><label class='fisher-label' id='f11-name'></label></td>
+                    <td class='fisher-label' id='f11-fish-season'></td>
+                    <td class='fisher-label' id='f11-fish-total'></td>
+                    <td class='fisher-label' id='f11-profit-season'></td>
+                    <td class='fisher-label' id='f11-profit-total'></td></tr>
+
                 </tbody>
             </table>
         </div>

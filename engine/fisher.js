@@ -95,7 +95,6 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.changeMoney = function (amount) {
-        this.ocean.log.info('changing money by ' + amount);
         this.money += amount;
         this.seasonData[this.season].endMoney += amount;
     };
@@ -138,6 +137,8 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.runBot = function () {
+        if (this.status === 'At sea') this.changeMoney(-this.ocean.microworld.params.costSecond);
+
         if (!this.isBot()) return;
 
         // Don't do anything if I'm erratic and I don't feel like it

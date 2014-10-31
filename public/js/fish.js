@@ -146,6 +146,7 @@ function updateFishers() {
             // Everyone else
             if (!ocean.showFishers) continue;
 
+            $('#f' + j).show();
             if (ocean.showFisherNames) {
                 $('#f' + j + '-name').text(fisher.name);
             } else {
