@@ -5,7 +5,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     
     <link rel='stylesheet' href='/bower/bootstrap/dist/css/bootstrap.min.css'>
-    <link rel='stylesheet' href='/public/css/grid.css'>
+    <link rel='stylesheet' href='/public/css/fish.css'>
 
     <script src='/bower/jquery/jquery.min.js'></script>
     <script src='/bower/purl/purl.js'></script>
@@ -28,11 +28,22 @@
     </div>
 
     <div class='row'>
-        <div id='ocean-box' class='col-md-8'>
+        <div id='ocean-box' class='col-md-6'>
             <canvas id='ocean-canvas' width='700' height='460'></canvas>
         </div>
-        <div id='info-box' class='col-md-4'>
-            <label class='info-label'>Some stuff</label>
+        <div id='fishers-box' class='col-md-6'>
+            <table class='table table-bordered table-hover'>
+                <thead>
+                    <th id='fisher-header'></th>
+                    <th id='location-header'></th>
+                    <th id='fish-season-header'></th>
+                    <th id='fish-total-header'></th>
+                    <th id='profits-season-header'></th>
+                    <th id='profits-total-header'></th>
+                </thead>
+                <tbody id='fisher-table-rows'>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -48,16 +59,10 @@
 
     <div class='row'>
         <div id='costs-box'>
-            <label class='costs-label' id='revenue-fish'></label>
-            <label class='costs-label' id='cost-departure'></label>
-            <label class='costs-label' id='cost-second'></label>
+            <label class='costs-label' id='revenue-fish'></label><br>
+            <label class='costs-label' id='cost-departure'></label><br>
+            <label class='costs-label' id='cost-second'></label><br>
             <label class='costs-label' id='cost-cast'></label>
-        </div>
-    </div>
-
-    <div class='row'>
-        <div id='fishers-box'>
-            
         </div>
     </div>
 

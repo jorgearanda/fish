@@ -14,6 +14,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.fishers = [];
     this.season = 0;
     this.seconds = 0;
+    this.warnSeconds = 3;
     this.secondsSinceAllReturned = 0;
     this.certainFish = 0;
     this.mysteryFish = 0;
@@ -202,18 +203,21 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.attemptToFish = function (pId) {
         var idx = this.findFisherIndex(pId);
         if (idx) this.fishers[idx].tryToFish();
+        io.sockets.in(this.id).emit('status', this.getSimStatus());
         return;
     };
 
     this.goToSea = function (pId) {
         var idx = this.findFisherIndex(pId);
         if (idx) this.fishers[idx].goToSea();
+        io.sockets.in(this.id).emit('status', this.getSimStatus());
         return;
     };
 
     this.returnToPort = function (pId) {
         var idx = this.findFisherIndex(pId);
         if (idx) this.fishers[idx].goToPort();
+        io.sockets.in(this.id).emit('status', this.getSimStatus());
         return;
     };
 
@@ -308,6 +312,10 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             this.log.info('Ocean loop - initial delay: ' + this.seconds +
                 ' of ' + delay + ' seconds.');
 
+            if (this.seconds + this.warnSeconds >= delay) {
+                io.sockets.in(this.id).emit('warn season start');
+            }
+
             if (delay <= this.seconds) {
                 this.log.info('Ocean loop - initial delay: triggering season start.');
                 this.startNextSeason();
@@ -325,6 +333,10 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
             io.sockets.in(this.id).emit('status', this.getSimStatus());
 
+            if (this.seconds + this.warnSeconds >= duration) {
+                io.sockets.in(this.id).emit('warn season end');
+            }
+
             if (duration <= this.seconds) {
                 this.log.info('Ocean loop - running: triggering season end.');
                 this.endCurrentSeason();
@@ -336,6 +348,10 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             this.log.info('Ocean loop - resting: ' + this.seconds +
                 ' of ' + delay + ' seconds.');
             io.sockets.in(this.id).emit('status', this.getSimStatus());
+
+            if (this.seconds + this.warnSeconds >= delay) {
+                io.sockets.in(this.id).emit('warn season start');
+            }
 
             if (delay <= this.seconds) {
                 this.log.info('Ocean loop - resting: triggering season start.');
