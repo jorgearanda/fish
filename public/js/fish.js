@@ -1,5 +1,5 @@
 'use strict';
-/* global io:true */
+/* global io:true, langs:true */
 
 var lang = $.url().param('lang');
 var msgs;
@@ -32,11 +32,11 @@ function loadLabels() {
     $('#return').text(msgs.buttons_return);
     $('#attempt-fish').text(msgs.buttons_castFish);
 
-    $("#fisher-header").text(msgs.info_fisher);
-    $("#fish-season-header").text(' ' + msgs.info_season);
-    $("#fish-total-header").text(' ' + msgs.info_overall);
-    $("#profit-season-header").text('$ ' + msgs.info_season);
-    $("#profit-total-header").text('$ ' + msgs.info_overall);
+    $('#fisher-header').text(msgs.info_fisher);
+    $('#fish-season-header').text(' ' + msgs.info_season);
+    $('#fish-total-header').text(' ' + msgs.info_overall);
+    $('#profit-season-header').text('$ ' + msgs.info_season);
+    $('#profit-total-header').text('$ ' + msgs.info_overall);
 
     updateCosts();
     updateStatus();
@@ -184,11 +184,7 @@ function updateFishers() {
     }
 }
 
-function setVisibleFisherFields() {
-}
-
 function setupOcean(o) {
-    console.log('Entered an ocean. Setting up.');
     ocean = o;
     displayRules();
     updateCosts();
@@ -216,19 +212,15 @@ function attemptToFish() {
     socket.emit('attemptToFish');
 }
 
-function warnInitialDelay() {
-    console.log('Get ready to start');
-}
-
-function warnSeasonBeginning() {
-}
-
 function beginSeason(data) {
     st = data;
     updateWarning('');
     drawOcean();
     updateFishers();
     $('#to-sea').removeAttr('disabled');
+}
+
+function warnInitialDelay() {
 }
 
 function warnSeasonStart() {
@@ -247,8 +239,7 @@ function receiveStatus(data) {
     drawOcean();
 }
 
-function endSeason(data) {
-    console.log('Ending season ' + data.season);
+function endSeason() {
     updateWarning();
     disableButtons();
 }
