@@ -78,6 +78,8 @@ function updateStatus() {
         statusText = msgs.status_spawning;
     } else if (st.status === 'paused') {
         statusText = msgs.status_paused;
+    } else if (st.status === 'over') {
+        statusText = msgs.end_over;
     } else {
         console.log('Unknown status: ' + st.status);
     }
@@ -93,6 +95,10 @@ function updateWarning(warn) {
     } else {
         $('#warning-label').text('');
     }
+}
+
+function clearWarnings() {
+    $('#warning-label').text('');
 }
 
 function updateCosts() {
@@ -244,8 +250,20 @@ function endSeason() {
     disableButtons();
 }
 
-function endRun() {
+function endRun(trigger) {
     disableButtons();
+    clearWarnings();
+    updateStatus();
+
+    var overText;
+    if (trigger === 'time') {
+        overText = ocean.endTimeText.replace(/\n/g, '<br />');
+    } else {
+        overText = ocean.endDepletionText.replace(/\n/g, '<br />');
+    }
+
+    $('#over-text').html(overText);
+    $('#over-modal').modal('show');
 }
 
 function pause() {
@@ -262,7 +280,7 @@ function drawOcean() {
     oCanvas = document.getElementById('ocean-canvas');
     oContext = oCanvas.getContext('2d');
 
-    if (st.status === 'running' || st.status === 'resting' || st.status === 'paused') {
+    if (st.status === 'running' || st.status === 'resting' || st.status === 'paused' || st.status === 'over') {
         // background
         oContext.drawImage(underwater, 0, 0, 700, 460);
         for (var spot = 0; spot < st.certainFish + st.mysteryFish; spot++) {
@@ -273,7 +291,7 @@ function drawOcean() {
             }
         }
     } else {
-        oContext.fillStule = 'white';
+        oContext.fillStyle = 'white';
         oContext.fillRect(0, 0, 700, 460);
     }
 }

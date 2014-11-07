@@ -291,7 +291,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
                 season: this.season
             });
         } else {
-            this.endOcean();
+            this.endOcean('time');
         }
     };
 
@@ -389,14 +389,13 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.areThereFish = function () {
-        // TODO - not sure this is right
         return (this.certainFish + this.mysteryFish) > 0;
     };
 
-    this.endOcean = function () {
-        // TODO - fill this up
+    this.endOcean = function (reason) {
+        // TODO - persist the simulation
         this.status = 'over';
-        this.log.info('Ocean run ended.');
+        io.sockets.in(this.id).emit('end run', reason);
     };
 
     this.isSuccessfulCastAttempt = function () {
@@ -411,6 +410,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         } else {
             this.mysteryFish -= 1;
         }
+
+        if (!this.areThereFish()) this.endOcean('depletion');
     };
 
     // Metric calculations
