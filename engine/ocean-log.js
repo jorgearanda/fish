@@ -11,20 +11,24 @@ exports.OceanLog = function OceanLog(oceanName) {
     };
 
     this.info = function (msg) {
-        var tsText = new Date().toString();
-        this.entries.push(tsText + ': ' + msg);
+        this.saveEntry(msg);
         log.info('Ocean ' + this.oceanName + ': ' + msg);
     };
 
     this.warn = function (msg) {
-        var tsText = new Date().toString();
-        this.entries.push(tsText + ': ' + msg);
+        this.saveEntry(msg);
         log.warn('Ocean ' + this.oceanName + ': ' + msg);
     };
 
     this.error = function (msg) {
-        var tsText = new Date().toString();
-        this.entries.push(tsText + ': ' + msg);
+        this.saveEntry(msg);
         log.error('Ocean ' + this.oceanName + ': ' + msg);
+    };
+
+    this.saveEntry = function (msg) {
+        this.entries.push({
+            time: new Date(),
+            entry: msg
+        });
     };
 };

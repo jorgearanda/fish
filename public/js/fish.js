@@ -251,6 +251,8 @@ function endSeason() {
 }
 
 function endRun(trigger) {
+    st.status = 'over';
+
     disableButtons();
     clearWarnings();
     updateStatus();

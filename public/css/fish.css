@@ -5,6 +5,13 @@
     font-size: 8pt;
 }
 
+.costs-label {
+    text-align: right;
+    display: inline-block;
+    font-weight: normal;
+    font-size: 9pt;
+}
+
 .fisher-label {
     font-weight: normal;
 }

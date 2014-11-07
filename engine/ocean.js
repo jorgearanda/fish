@@ -2,6 +2,7 @@
 
 var Fisher = require('./fisher').Fisher;
 var OceanLog = require('./ocean-log').OceanLog;
+var Run = require('../models/run-model').Run;
 
 var io;
 
@@ -393,9 +394,21 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.endOcean = function (reason) {
-        // TODO - persist the simulation
         this.status = 'over';
         io.sockets.in(this.id).emit('end run', reason);
+
+        var run = {
+            time: this.time,
+            results: this.results,
+            log: this.log.entries,
+            microworld: this.microworld
+        };
+
+        Run.create(run, function onCreate(err) {
+            if (err) {
+                // TODO
+            }
+        });
     };
 
     this.isSuccessfulCastAttempt = function () {

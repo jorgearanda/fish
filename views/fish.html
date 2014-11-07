@@ -18,20 +18,42 @@
 </head>
 
 <body>
+<div class='col-md-7'>
     <div class='row'>
-        <div id='status-box' class='col-md-4'>
+        <div id='status-box' class='col-md-6'>
             <label class='status-label' id='status-label'></label>
         </div>
-        <div id='warning-box' class='col-md-4'>
+        <div id='warning-box' class='col-md-6'>
             <label class='warning-label' id='warning-label'></label>
         </div>
     </div>
 
     <div class='row'>
-        <div id='ocean-box' class='col-md-7'>
+        <div id='ocean-box'>
             <canvas id='ocean-canvas' width='700' height='460'></canvas>
         </div>
-        <div id='fishers-box' class='col-md-4'>
+    </div>
+
+    <div class='row'>
+        <div id='control-box' class='col-md-8 btn-toolbar'>
+            <button id='to-sea' type='button' class='btn btn-success'>Go to sea</button>
+            <button id='attempt-fish' type='button' class='btn btn-info'>Attempt to fish</button>
+            <button id='return' type='button' class='btn btn-primary'>Return to port</button>
+            <button id='pause' type='button' class='btn'>Pause</button>
+        </div>
+
+        <div id='costs-box' class='col-md-4'>
+            <label class='costs-label' id='revenue-fish'></label><br>
+            <label class='costs-label' id='cost-departure'></label><br>
+            <label class='costs-label' id='cost-second'></label><br>
+            <label class='costs-label' id='cost-cast'></label>
+        </div>
+    </div>
+</div>
+
+<div class='col-md-5'>
+    <div class='row'>
+        <div id='fishers-box'>
             <table class='table table-bordered table-hover'>
                 <thead>
                     <th id='fisher-header'></th>
@@ -117,25 +139,7 @@
             </table>
         </div>
     </div>
-
-    <div class='row'>
-        <div id='control-box' class='col-md-12 btn-toolbar'>
-            <button id='to-sea' type='button' class='btn btn-success'>Go to sea</button>
-            <button id='attempt-fish' type='button' class='btn btn-info'>Attempt to fish</button>
-            <button id='return' type='button' class='btn btn-primary'>Return to port</button>
-            <button id='pause' type='button' class='btn'>Pause</button>
-
-        </div>
-    </div>
-
-    <div class='row'>
-        <div id='costs-box'>
-            <label class='costs-label' id='revenue-fish'></label><br>
-            <label class='costs-label' id='cost-departure'></label><br>
-            <label class='costs-label' id='cost-second'></label><br>
-            <label class='costs-label' id='cost-cast'></label>
-        </div>
-    </div>
+</div>
 
     <div class='row'>
         <div id='rules-modal' class='modal fade' role='dialog' aria-hidden='true'>
