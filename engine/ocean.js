@@ -22,7 +22,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.mysteryFish = 0;
     this.microworld = mw;
     this.results = [];
-    this.log = new OceanLog(this.microworld.name +
+    this.log = new OceanLog(this.microworld.name + ' ' + this.id + ' ' +
         '(' + this.microworld.experimenter.username + ')');
 
     for (var botIdx = 0; botIdx < mw.params.bots.length; botIdx++) {
@@ -135,11 +135,17 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.pause = function () {
-
+        // TODO -- link pause and resume to client
+        this.log.info('Simulation paused');
+        this.prevStatus = this.status;
+        this.status = 'paused';
+        io.sockets.in(this.id).emit('status', this.getSimStatus());
     };
 
     this.resume = function () {
-
+        this.log.info('Simulation resumed');
+        this.status = this.prevStatus;
+        io.sockets.in(this.id).emit('status', this.getSimStatus());
     };
 
     this.getSimStatus = function () {
