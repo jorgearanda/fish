@@ -22,7 +22,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.mysteryFish = 0;
     this.microworld = mw;
     this.results = [];
-    this.log = new OceanLog(this.id);
+    this.log = new OceanLog(this.microworld.name +
+        '(' + this.microworld.experimenter.username + ')');
 
     for (var botIdx = 0; botIdx < mw.params.bots.length; botIdx++) {
         var bot = mw.params.bots[botIdx];
@@ -422,8 +423,9 @@ exports.Ocean = function Ocean(mw, incomingIo) {
                 console.log(_this.microworld._id);
                 Microworld.update({_id: _this.microworld._id},
                     {$inc: {numCompleted: 1}}, function (err, num) {
-                        if (err) console.log(err);
-                        if (num !== 1) console.log(num);
+                        if (err) {
+                            _this.log.error('Simulation count could not be incremented: ', err);
+                        }
                     });
             }
         });
