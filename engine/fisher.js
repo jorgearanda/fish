@@ -66,7 +66,6 @@ exports.Fisher = function Fisher(name, type, params, o) {
             var variation = 1.0 + ((Math.random() - 0.5) / 2.0);
             currentGreed = currentGreed * variation;
         }
-        this.ocean.log.info('Fisher ' + this.name + ' has greed of ' + currentGreed);
         return currentGreed;
     };
 
@@ -90,7 +89,6 @@ exports.Fisher = function Fisher(name, type, params, o) {
             endMoney: 0
         };
         this.seasonData[season].intendedCasts = this.isBot() ? this.calculateSeasonCasts() : undefined;
-        this.ocean.log.info('Fisher ' + this.name + ' intends to cast ' + this.seasonData[season].intendedCasts);
         this.hasReturned = false;
     };
 

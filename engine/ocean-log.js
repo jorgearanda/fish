@@ -26,9 +26,6 @@ exports.OceanLog = function OceanLog(oceanName) {
     };
 
     this.saveEntry = function (msg) {
-        this.entries.push({
-            time: new Date(),
-            entry: msg
-        });
+        this.entries.push('' +  new Date() + ': ' + msg);
     };
 };

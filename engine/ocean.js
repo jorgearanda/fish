@@ -1,6 +1,7 @@
 'use strict';
 
 var Fisher = require('./fisher').Fisher;
+var Microworld = require('../models/microworld-model').Microworld;
 var OceanLog = require('./ocean-log').OceanLog;
 var Run = require('../models/run-model').Run;
 
@@ -26,7 +27,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     for (var botIdx = 0; botIdx < mw.params.bots.length; botIdx++) {
         var bot = mw.params.bots[botIdx];
         this.fishers.push(new Fisher(bot.name, 'bot', bot, this));
-        this.log.info('Bot fisher ' + bot.name + ' joined.');
+        this.log.debug('Bot fisher ' + bot.name + ' joined.');
     }
 
     /////////////////////
@@ -172,7 +173,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     this.tick = function () {
         this.seconds += 1;
-        this.log.info('Tick. Seconds: ' + this.seconds);
+        this.log.debug('Tick. Seconds: ' + this.seconds);
     };
 
     this.timeStep = function () {
@@ -231,7 +232,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     this.startNextSeason = function () {
         this.season += 1;
-        this.log.info('Preparing to begin season ' + this.season + '.');
+        this.log.debug('Preparing to begin season ' + this.season + '.');
 
         this.resetTimer();
         this.status = 'running';
@@ -302,16 +303,16 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         var delay;
         if (this.isInSetup()) {
             if (!this.allHumansIn()) {
-                this.log.info('Ocean loop - setup: waiting for humans.');
+                this.log.debug('Ocean loop - setup: waiting for humans.');
             } else if (!this.isEveryoneReady()) {
-                this.log.info('Ocean loop - setup: reading instructions.')
+                this.log.debug('Ocean loop - setup: reading instructions.')
             } else {
                 // Everyone ready!
                 this.getOceanReady();
             }
         } else if (this.isInInitialDelay()) {
             delay = this.microworld.params.initialDelay;
-            this.log.info('Ocean loop - initial delay: ' + this.seconds +
+            this.log.debug('Ocean loop - initial delay: ' + this.seconds +
                 ' of ' + delay + ' seconds.');
 
             if (this.seconds + this.warnSeconds >= delay) {
@@ -319,14 +320,14 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             }
 
             if (delay <= this.seconds) {
-                this.log.info('Ocean loop - initial delay: triggering season start.');
+                this.log.debug('Ocean loop - initial delay: triggering season start.');
                 this.startNextSeason();
             } else {
                 this.tick();
             }
         } else if (this.isRunning()) {
             var duration = this.microworld.params.seasonDuration;
-            this.log.info('Ocean loop: running: ' + this.seconds +
+            this.log.debug('Ocean loop: running: ' + this.seconds +
                 ' of ' + duration + ' seconds.');
 
             for (var i in this.fishers) {
@@ -340,14 +341,14 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             }
 
             if (duration <= this.seconds) {
-                this.log.info('Ocean loop - running: triggering season end.');
+                this.log.debug('Ocean loop - running: triggering season end.');
                 this.endCurrentSeason();
             } else {
                 this.tick();
             }
         } else if (this.isResting()) {
             delay = this.microworld.params.seasonDelay;
-            this.log.info('Ocean loop - resting: ' + this.seconds +
+            this.log.debug('Ocean loop - resting: ' + this.seconds +
                 ' of ' + delay + ' seconds.');
             io.sockets.in(this.id).emit('status', this.getSimStatus());
 
@@ -356,15 +357,15 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             }
 
             if (delay <= this.seconds) {
-                this.log.info('Ocean loop - resting: triggering season start.');
+                this.log.debug('Ocean loop - resting: triggering season start.');
                 this.startNextSeason();
             } else {
                 this.tick();
             }
         } else if (this.isPaused()) {
-            this.log.info('Ocean loop - paused.');
+            this.log.debug('Ocean loop - paused.');
         } else { // over
-            this.log.info('Ocean loop - over: Stopping.');
+            this.log.debug('Ocean loop - over: Stopping.');
             loop = false;
         }
 
@@ -397,16 +398,33 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         this.status = 'over';
         io.sockets.in(this.id).emit('end run', reason);
 
+        if (this.microworld.status !== 'active') {
+            this.log.info('Simulation run not saved: in ' +
+                this.microworld.status + ' status');
+            return;
+        }
+
         var run = {
             time: this.time,
             results: this.results,
             log: this.log.entries,
             microworld: this.microworld
         };
+        var _this = this;
 
-        Run.create(run, function onCreate(err) {
+        Run.create(run, function onCreate(err, doc) {
             if (err) {
-                // TODO
+                _this.log.error('Simulation run could not be saved: ' + err);
+            }
+
+            if (doc) {
+                _this.log.info('Simulation run saved with _id ' + doc._id);
+                console.log(_this.microworld._id);
+                Microworld.update({_id: _this.microworld._id},
+                    {$inc: {numCompleted: 1}}, function (err, num) {
+                        if (err) console.log(err);
+                        if (num !== 1) console.log(num);
+                    });
             }
         });
     };
