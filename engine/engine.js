@@ -40,6 +40,14 @@ exports.engine = function engine(io) {
             om.oceans[clientOId].returnToPort(clientPId);
         });
 
+        socket.on('requestPause', function () {
+            om.oceans[clientOId].pause(clientPId);
+        });
+
+        socket.on('requestResume', function () {
+            om.oceans[clientOId].resume(clientPId);
+        });
+
         socket.on('disconnect', function () {
             om.removeFisherFromOcean(clientOId, clientPId);
             io.sockets.in(clientOId).emit('yours', om.oceans[clientOId].getParams());

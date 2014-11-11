@@ -134,18 +134,24 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             (this.canEndEarly() && this.secondsSinceAllReturned >= 3));
     };
 
-    this.pause = function () {
-        // TODO -- link pause and resume to client
-        this.log.info('Simulation paused');
-        this.prevStatus = this.status;
-        this.status = 'paused';
-        io.sockets.in(this.id).emit('status', this.getSimStatus());
+    this.pause = function (pauseRequester) {
+        if (this.isRunning() || this.isResting()) {
+            this.log.info('Simulation paused by fisher ' + pauseRequester);
+            this.unpauseState = this.status;
+            this.pausedBy = pauseRequester;
+            this.status = 'paused';
+            io.sockets.in(this.id).emit('pause');
+            io.sockets.in(this.id).emit('status', this.getSimStatus());
+        }
     };
 
-    this.resume = function () {
-        this.log.info('Simulation resumed');
-        this.status = this.prevStatus;
-        io.sockets.in(this.id).emit('status', this.getSimStatus());
+    this.resume = function (resumeRequester) {
+        if (this.isPaused() && this.pausedBy === resumeRequester) {
+            this.log.info('Simulation resumed by fisher ' + resumeRequester);
+            this.status = this.unpauseState;
+            io.sockets.in(this.id).emit('resume');
+            io.sockets.in(this.id).emit('status', this.getSimStatus());
+        }
     };
 
     this.getSimStatus = function () {
@@ -426,7 +432,6 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
             if (doc) {
                 _this.log.info('Simulation run saved with _id ' + doc._id);
-                console.log(_this.microworld._id);
                 Microworld.update({_id: _this.microworld._id},
                     {$inc: {numCompleted: 1}}, function (err, num) {
                         if (err) {

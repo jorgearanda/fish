@@ -7,6 +7,7 @@ var socket = io.connect();
 var mwId = $.url().param('mwid');
 var pId = $.url().param('pid');
 var ocean;
+var prePauseButtonsState = {};
 
 var oCanvas, oContext;
 var underwater = new Image();
@@ -31,6 +32,8 @@ function loadLabels() {
     $('#to-sea').text(msgs.buttons_goToSea);
     $('#return').text(msgs.buttons_return);
     $('#attempt-fish').text(msgs.buttons_castFish);
+    $('#pause').text(msgs.buttons_pause);
+    $('#resume').text(msgs.buttons_resume);
 
     $('#fisher-header').text(msgs.info_fisher);
     $('#fish-season-header').text(' ' + msgs.info_season);
@@ -81,12 +84,10 @@ function updateStatus() {
     } else if (st.status === 'over') {
         statusText = msgs.end_over;
     } else {
-        console.log('Unknown status: ' + st.status);
     }
 
     $('#status-label').text(statusText);
 }
-
 function updateWarning(warn) {
     if (warn === 'start') {
         $('#warning-label').text(msgs.warning_seasonStart);
@@ -190,10 +191,15 @@ function updateFishers() {
     }
 }
 
+function makeUnpausable() {
+    if (!ocean.enablePause) $('#pause').hide();
+}
+
 function setupOcean(o) {
     ocean = o;
     displayRules();
     updateCosts();
+    makeUnpausable();
 }
 
 function readRules() {
@@ -224,6 +230,7 @@ function beginSeason(data) {
     drawOcean();
     updateFishers();
     $('#to-sea').removeAttr('disabled');
+    $('#pause').removeAttr('disabled');
 }
 
 function warnInitialDelay() {
@@ -238,7 +245,6 @@ function warnSeasonEnd() {
 }
 
 function receiveStatus(data) {
-    console.log('Status: ' + JSON.stringify(data));
     st = data;
     updateStatus();
     updateFishers();
@@ -268,10 +274,31 @@ function endRun(trigger) {
     $('#over-modal').modal('show');
 }
 
+function requestPause() {
+    socket.emit('requestPause', pId);
+}
+
+function requestResume() {
+    socket.emit('requestResume', pId);
+}
+
 function pause() {
+    prePauseButtonsState.toSea = $('#to-sea').attr('disabled');
+    prePauseButtonsState.returnPort = $('#return').attr('disabled');
+    prePauseButtonsState.attemptFish = $('#attempt-fish').attr('disabled');
+    $('#to-sea').attr('disabled', 'disabled');
+    $('#return').attr('disabled', 'disabled');
+    $('#attempt-fish').attr('disabled', 'disabled');
+    $('#pause').hide();
+    $('#resume').show();
 }
 
 function resume() {
+    if (prePauseButtonsState.toSea === undefined) $('#to-sea').removeAttr('disabled');
+    if (prePauseButtonsState.returnPort === undefined) $('#return').removeAttr('disabled');
+    if (prePauseButtonsState.attemptFish === undefined) $('#attempt-fish').removeAttr('disabled');
+    $('#pause').show();
+    $('#resume').hide();
 }
 
 function drawFish(oContext, image, coords) {
@@ -319,6 +346,8 @@ function main() {
     $('#to-sea').on('click', goToSea);
     $('#return').on('click', goToPort);
     $('#attempt-fish').on('click', attemptToFish);
+    $('#pause').on('click', requestPause);
+    $('#resume').on('click', requestResume);
     loadLabels();
 }
 
