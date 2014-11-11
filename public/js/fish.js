@@ -59,7 +59,7 @@ function updateRulesText() {
 
 function displayRules() {
     updateRulesText();
-    $('#rules-modal').modal('show');
+    $('#rules-modal').modal({keyboard: false, backdrop: 'static'});
 }
 
 function updateStatus() {
@@ -271,7 +271,7 @@ function endRun(trigger) {
     }
 
     $('#over-text').html(overText);
-    $('#over-modal').modal('show');
+    $('#over-modal').modal({keyboard: false, backdrop: 'static'});
 }
 
 function requestPause() {
