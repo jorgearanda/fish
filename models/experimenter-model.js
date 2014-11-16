@@ -13,7 +13,6 @@ var experimenterSchema = new Schema({
         unique: true
     },
     passwordHash: String,
-    code: String,
     name : String,
     email : String
 });

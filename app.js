@@ -11,6 +11,7 @@ var socketio = require('socket.io');
 
 var access = require('./middlewares/access');
 var engine = require('./engine/engine');
+var experimenters = require('./routes/experimenters');
 var microworlds = require('./routes/microworlds');
 var runs = require('./routes/runs');
 var sessions = require('./routes/sessions');
@@ -106,6 +107,8 @@ app.delete('/microworlds/:id', isUser, microworlds.delete);
 
 app.get('/runs', isUser, runs.list);
 app.get('/runs/:id', isUser, runs.show);
+
+app.post('/experimenters', experimenters.create);
 
 // Take out
 app.get('/settings', function (req, res) { res.render('settings.html')});
