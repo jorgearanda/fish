@@ -1,6 +1,5 @@
 'use strict';
 
-var async = require('async');
 var log = require('winston');
 
 var Experimenter = require('../models/experimenter-model').Experimenter;
@@ -12,7 +11,7 @@ exports.create = function (req, res) {
       username: req.body.username,
       name: req.body.name,
       email: req.body.email
-   }
+   };
 
    Experimenter.hashPassword(req.body.rawPassword, function done(err, pwd) {
       if (err) {
