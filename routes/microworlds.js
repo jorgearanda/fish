@@ -11,7 +11,7 @@ exports.list = function (req, res) {
     var query = { 'experimenter._id': req.session.userId };
     if (req.query.status) query.status = req.query.status;
 
-    Microworld.find().exec(function findCb(err, microworlds) {
+    Microworld.find(query).exec(function findCb(err, microworlds) {
         if (err) {
             logger.error('Error on GET /microworlds', err);
             return res.send(500);
