@@ -111,7 +111,7 @@ app.get('/runs/:id', isUser, runs.show);
 app.post('/experimenters', experimenters.create);
 
 // Take out
-app.get('/settings', function (req, res) { res.render('settings.html')});
+app.get('/settings', function (req, res) { res.render('settings.html');});
 
 // Server
 var server = http.createServer(app);
@@ -123,7 +123,7 @@ io.set('logger', {
     error: logger.error
 });
 
-var eng = engine.engine(io);
+engine.engine(io);
 
 server.listen(app.get('port'), function () {
     logger.info('Fish server listening on port ' + app.get('port'));
