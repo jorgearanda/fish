@@ -7,6 +7,7 @@ var ObjectId = Schema.ObjectId;
 
 var runSchema = new Schema({
     time: Date,
+    participants: [ String ],
     results: [{
         season: Number,
         fishStart: Number,

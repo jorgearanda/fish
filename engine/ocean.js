@@ -407,6 +407,17 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         return (this.certainFish + this.mysteryFish) > 0;
     };
 
+    this.getParticipants = function () {
+        var participants = [];
+        for (var i in this.fishers) {
+            if (!this.fishers[i].isBot()) {
+                participants.push(this.fishers[i].name);
+            }
+        }
+
+        return participants;
+    };
+
     this.endOcean = function (reason) {
         this.status = 'over';
         io.sockets.in(this.id).emit('end run', reason);
@@ -419,6 +430,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
         var run = {
             time: this.time,
+            participants: this.getParticipants(),
             results: this.results,
             log: this.log.entries,
             microworld: this.microworld

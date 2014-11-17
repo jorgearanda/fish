@@ -6,7 +6,18 @@ var Run = require('../models/run-model').Run;
 
 // GET /runs
 exports.list = function (req, res) {
-    return res.status(200).send('To Do');
+    var query = { 'experimenter._id': req.session.userId };
+    if (req.query.mw) query['microworld._id'] = req.query.mw;
+    var fields = {_id: 1, time: 1, participants: 1};
+
+    Run.find(query, fields, function found(err, runs) {
+        if (err) {
+            logger.error('Error on GET /runs', err);
+            return res.send(500);
+        }
+
+        return res.status(200).send(runs)
+    });
 };
 
 
