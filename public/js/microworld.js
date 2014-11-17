@@ -494,6 +494,7 @@ function prepareControls() {
         $('#create').removeClass('collapse');
         $('#create-2').removeClass('collapse');
     } else if (mode === 'test') {
+        $('title').text('Fish - Microworld in Test');
         $('#microworld-header').text(pageHeader[mode] + mw.code);
         $('#microworld-panel-title').text(panelTitle[mode] + mw.code);
         $('#microworld-panel-2-title').text(panelTitle[mode] + mw.code);
@@ -506,6 +507,7 @@ function prepareControls() {
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
     } else if (mode === 'active') {
+        $('title').text('Fish - Active Microworld');
         $('#microworld-header').text(pageHeader[mode] + mw.code);
         $('#microworld-panel-title').text(panelTitle[mode] + mw.code);
         $('#microworld-panel-2-title').text(panelTitle[mode] + mw.code);
@@ -516,6 +518,7 @@ function prepareControls() {
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
     } else if (mode === 'archived') {
+        $('title').text('Fish - Archived Microworld');
         $('#microworld-header').text(pageHeader[mode]);
         $('#microworld-panel-title').text(panelTitle[mode]);
         $('#microworld-panel-2-title').text(panelTitle[mode]);
