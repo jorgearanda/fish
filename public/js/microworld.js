@@ -449,6 +449,29 @@ function getMicroworld() {
     });
 }
 
+function noRuns(jqXHR) {
+    alert(jqXHR.responseText);
+}
+
+function gotRuns(r) {
+    var table = '';
+    for (var i in r) {
+        table += '<tr><td>' + moment(r[i].time).format('llll') + '</td>' +
+            '<td>' + r[i].participants + '</td></tr>'
+    }
+
+    $('#microworld-runs-table-rows').html(table);
+}
+
+function getRuns() {
+    $.ajax({
+        type: 'GET',
+        url: '/runs/?mw=' + mwId,
+        error: noRuns,
+        success: gotRuns
+    });
+}
+
 function setButtons() {
     $('#create').click(createMicroworld);
     $('#create-2').click(createMicroworld);
@@ -518,6 +541,7 @@ function prepareControls() {
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
         $('.form-control').prop('disabled', 'disabled');
+        $('#results').removeClass('collapse');
     } else if (mode === 'archived') {
         $('title').text('Fish - Archived Microworld');
         $('#microworld-header').text(pageHeader[mode]);
@@ -530,6 +554,7 @@ function prepareControls() {
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
         $('.form-control').prop('disabled', 'disabled');
+        $('#results').removeClass('collapse');
     }
 
     uniformityChanges();
@@ -541,6 +566,7 @@ function loadData() {
         prepareControls();
     } else {
         getMicroworld(); // will eventually call prepareControls()
+        getRuns();
     }
 }
 

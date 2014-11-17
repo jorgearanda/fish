@@ -1,13 +1,14 @@
 'use strict';
 
 var logger = require('winston');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 var Run = require('../models/run-model').Run;
 
 // GET /runs
 exports.list = function (req, res) {
-    var query = { 'experimenter._id': req.session.userId };
-    if (req.query.mw) query['microworld._id'] = req.query.mw;
+    var query = { 'microworld.experimenter._id': ObjectId(req.session.userId) };
+    if (req.query.mw) query['microworld._id'] = ObjectId(req.query.mw);
     var fields = {_id: 1, time: 1, participants: 1};
 
     Run.find(query, fields, function found(err, runs) {
@@ -16,7 +17,7 @@ exports.list = function (req, res) {
             return res.send(500);
         }
 
-        return res.status(200).send(runs)
+        return res.status(200).send(runs);
     });
 };
 
