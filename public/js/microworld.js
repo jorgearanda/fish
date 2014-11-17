@@ -517,6 +517,7 @@ function prepareControls() {
         $('#archive-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
+        $('.form-control').prop('disabled', 'disabled');
     } else if (mode === 'archived') {
         $('title').text('Fish - Archived Microworld');
         $('#microworld-header').text(pageHeader[mode]);
@@ -528,6 +529,7 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
+        $('.form-control').prop('disabled', 'disabled');
     }
 
     uniformityChanges();
