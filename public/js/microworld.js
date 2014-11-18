@@ -456,7 +456,7 @@ function noRuns(jqXHR) {
 function gotRuns(r) {
     var table = '';
     for (var i in r) {
-        table += '<tr><td>' + moment(r[i].time).format('llll') + '</td>' +
+        table += '<tr onclick="location.href=\'../runs/' + r[i]._id + '\'"><td>' + moment(r[i].time).format('llll') + '</td>' +
             '<td>' + r[i].participants + '</td></tr>'
     }
 
