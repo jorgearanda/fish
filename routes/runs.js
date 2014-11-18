@@ -11,7 +11,7 @@ exports.list = function (req, res) {
     if (req.query.mw) query['microworld._id'] = ObjectId(req.query.mw);
     var fields = {_id: 1, time: 1, participants: 1};
 
-    Run.find(query, fields, function found(err, runs) {
+    Run.find(query, fields, { sort: {time: 1}}, function found(err, runs) {
         if (err) {
             logger.error('Error on GET /runs', err);
             return res.send(500);

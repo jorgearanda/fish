@@ -283,19 +283,20 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         var seasonResults = this.results[this.season - 1];
         var preRunFish = this.microworld.params.certainFish + this.microworld.params.availableMysteryFish;
         var spawnFactor = this.microworld.params.spawnFactor;
-        seasonResults.fishEnd = this.certainFish + this.mysteryFish;
-        seasonResults.groupRestraint = this.groupRestraint(seasonResults);
-        seasonResults.groupEfficiency = this.groupEfficiency(seasonResults, preRunFish, spawnFactor);
+        this.results[this.season-1].fishEnd = this.certainFish + this.mysteryFish;
+        this.results[this.season-1].groupRestraint = this.groupRestraint(this.results[this.season-1]);
+        this.results[this.season-1].groupEfficiency = this.groupEfficiency(this.results[this.season-1], preRunFish, spawnFactor);
 
         for (i in this.fishers) {
             var fisherData = this.fishers[i].seasonData[this.season];
-            var fisherResults = seasonResults.fishers[i];
+            var fisherResults = this.results[this.season-1].fishers[i];
             fisherResults.fishTaken = fisherData.fishCaught;
+            fisherResults.greed = fisherData.greed;
             fisherResults.profit = fisherData.endMoney - fisherData.startMoney;
             fisherResults.individualRestraint =
-                this.individualRestraint(seasonResults, i);
+                this.individualRestraint(this.results[this.season-1], i);
             fisherResults.individualEfficiency =
-                this.individualEfficiency(seasonResults, i, preRunFish, spawnFactor);
+                this.individualEfficiency(this.results[this.season-1], i, preRunFish, spawnFactor);
         }
 
         if (this.season < this.microworld.params.numSeasons) {

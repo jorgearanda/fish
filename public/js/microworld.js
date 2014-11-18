@@ -461,6 +461,8 @@ function gotRuns(r) {
     }
 
     $('#microworld-runs-table-rows').html(table);
+
+    if (r.length > 0) setTimeout(getRuns, 60000);
 }
 
 function getRuns() {
