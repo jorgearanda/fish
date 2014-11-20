@@ -188,6 +188,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     this.tick = function () {
         this.seconds += 1;
+        if (this.hasEveryoneReturned()) this.secondsSinceAllReturned += 1;
         this.log.debug('Tick. Seconds: ' + this.seconds);
     };
 
@@ -356,7 +357,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
                 io.sockets.in(this.id).emit('warn season end');
             }
 
-            if (duration <= this.seconds) {
+            if (this.shouldEndSeason()) {
                 this.log.debug('Ocean loop - running: triggering season end.');
                 this.endCurrentSeason('time');
             } else {
