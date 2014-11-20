@@ -15,9 +15,9 @@ function transposeResults(res) {
     var season, gr, ge, fishStart, fishEnd;
     for (var i in res) {
         season = res[i].season;
-        gr = res[i].groupRestraint ?
+        gr = res[i].groupRestraint !== undefined ?
             res[i].groupRestraint.toFixed(3) : 'n/a';
-        ge = res[i].groupEfficiency ?
+        ge = res[i].groupEfficiency !== undefined ?
             res[i].groupEfficiency.toFixed(3) : 'n/a';
         fishStart = res[i].fishStart;
         fishEnd = res[i].fishEnd;
@@ -25,18 +25,18 @@ function transposeResults(res) {
             t.push({
                 name: res[i].fishers[j].name,
                 type: res[i].fishers[j].type,
-                greed: res[i].fishers[j].type === 'bot' && res[i].fishers[j].greed ?
+                greed: res[i].fishers[j].type === 'bot' && res[i].fishers[j].greed !== undefined ?
                     res[i].fishers[j].greed.toFixed(3) : 'n/a',
                 season: season,
                 fishStart: fishStart,
                 fishEnd: fishEnd,
                 fishTaken: res[i].fishers[j].fishTaken,
-                profit: res[i].fishers[j].profit ?
+                profit: res[i].fishers[j].profit !== undefined ?
                     res[i].fishers[j].profit.toFixed(2) : 'n/a',
-                ir: res[i].fishers[j].individualRestraint ?
+                ir: res[i].fishers[j].individualRestraint !== undefined ?
                     res[i].fishers[j].individualRestraint.toFixed(3) : 'n/a',
                 gr: gr,
-                ie: res[i].fishers[j].individualEfficiency ?
+                ie: res[i].fishers[j].individualEfficiency !== undefined ?
                     res[i].fishers[j].individualEfficiency.toFixed(3) : 'n/a',
                 ge: ge
             });
