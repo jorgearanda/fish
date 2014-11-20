@@ -417,7 +417,7 @@ function populatePage() {
     $('#uniform-prob-action').prop('checked', false);
     $('#uniform-attempts-second').prop('checked', false);
 
-    for (var i = 1; i <= mw.numFishers - mw.numHumans; i++) {
+    for (var i = 1; i <= mw.params.numFishers - mw.params.numHumans; i++) {
         var botPrefix = '#bot-' + i + '-';
         $(botPrefix + 'name').val(mw.params.bots[i - 1].name);
         $(botPrefix + 'greed').val(mw.params.bots[i - 1].greed);
@@ -427,6 +427,7 @@ function populatePage() {
         $(botPrefix + 'attempts-second').val(mw.params.bots[i - 1].attemptsSecond);
     }
 
+    changeBotRowVisibility();
 }
 
 function noMicroworld(jqXHR) {
