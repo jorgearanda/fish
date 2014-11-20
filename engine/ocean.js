@@ -20,6 +20,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.secondsSinceAllReturned = 0;
     this.certainFish = 0;
     this.mysteryFish = 0;
+    this.reportedMysteryFish = 0;
     this.microworld = mw;
     this.results = [];
     this.log = new OceanLog(this.microworld.name + ' ' + this.id + ' ' +
@@ -160,6 +161,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             status: this.status,
             certainFish: this.certainFish,
             mysteryFish: this.mysteryFish,
+            reportedMysteryFish: this.reportedMysteryFish,
             fishers: []
         }
 
@@ -273,7 +275,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         io.sockets.in(this.id).emit('begin season', this.getSimStatus());
     };
 
-    this.endCurrentSeason = function () {
+    this.endCurrentSeason = function (reason) {
         // Bring all fishers back to port
         for (var i in this.fishers) {
             this.fishers[i].goToPort();
@@ -299,7 +301,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
                 this.individualEfficiency(this.results[this.season-1], i, preRunFish, spawnFactor);
         }
 
-        if (this.season < this.microworld.params.numSeasons) {
+        if (this.season < this.microworld.params.numSeasons && reason !== 'depletion') {
             this.status = 'resting';
             this.resetTimer();
             this.log.info('Ending season ' + this.season + '.');
@@ -307,7 +309,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
                 season: this.season
             });
         } else {
-            this.endOcean('time');
+            this.endOcean(reason);
         }
     };
 
@@ -356,7 +358,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
             if (duration <= this.seconds) {
                 this.log.debug('Ocean loop - running: triggering season end.');
-                this.endCurrentSeason();
+                this.endCurrentSeason('time');
             } else {
                 this.tick();
             }
@@ -392,6 +394,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         if (this.season === 1) {
             this.certainFish = this.microworld.params.certainFish;
             this.mysteryFish = this.microworld.params.availableMysteryFish;
+            this.reportedMysteryFish = this.microworld.params.reportedMysteryFish;
         } else {
             var spawnFactor = this.microworld.params.spawnFactor;
             var spawnedFish = this.certainFish * spawnFactor;
@@ -466,9 +469,10 @@ exports.Ocean = function Ocean(mw, incomingIo) {
             this.certainFish -= 1;
         } else {
             this.mysteryFish -= 1;
+            this.reportedMysteryFish -= 1;
         }
 
-        if (!this.areThereFish()) this.endOcean('depletion');
+        if (!this.areThereFish()) this.endCurrentSeason('depletion');
     };
 
     // Metric calculations

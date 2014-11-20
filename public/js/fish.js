@@ -69,9 +69,9 @@ function updateStatus() {
     } else if (st.status === 'running') {
         statusText = msgs.status_season + st.season + '. ';
 
-        if (st.mysteryFish > 0) {
+        if (st.reportedMysteryFish > 0) {
             statusText += msgs.status_fishBetween + st.certainFish +
-                msgs.status_fishAnd + (st.certainFish + st.mysteryFish) +
+                msgs.status_fishAnd + (st.certainFish + st.reportedMysteryFish) +
                 msgs.status_fishRemaining;
         } else {
             statusText += msgs.status_fishMax + st.certainFish +
@@ -146,8 +146,8 @@ function updateFishers() {
             }
             $('#f0-fish-season').text(fisher.seasonData[st.season].fishCaught);
             $('#f0-fish-total').text(fisher.totalFishCaught);
-            $('#f0-profit-season').text(fisher.seasonData[st.season].endMoney);
-            $('#f0-profit-total').text(fisher.money);
+            $('#f0-profit-season').text(fisher.seasonData[st.season].endMoney.toFixed(2));
+            $('#f0-profit-total').text(fisher.money.toFixed(2));
 
         } else {
             // Everyone else
@@ -179,8 +179,8 @@ function updateFishers() {
             }
 
             if (ocean.showFisherBalance) {
-                $('#f' + j + '-profit-season').text(fisher.seasonData[st.season].endMoney);
-                $('#f' + j + '-profit-total').text(fisher.money);
+                $('#f' + j + '-profit-season').text(fisher.seasonData[st.season].endMoney.toFixed(2));
+                $('#f' + j + '-profit-total').text(fisher.money.toFixed(2));
             } else {
                 $('#f' + j + '-profit-season').text('?');
                 $('#f' + j + '-profit-total').text('?');
@@ -312,8 +312,8 @@ function drawOcean() {
     if (st.status === 'running' || st.status === 'resting' || st.status === 'paused' || st.status === 'over') {
         // background
         oContext.drawImage(underwater, 0, 0, 700, 460);
-        for (var spot = 0; spot < st.certainFish + st.mysteryFish; spot++) {
-            if (spot < st.mysteryFish) {
+        for (var spot = 0; spot < st.certainFish + st.reportedMysteryFish; spot++) {
+            if (spot < st.reportedMysteryFish) {
                 drawFish(oContext, mysteryFishImage, spots[spot]);
             } else {
                 drawFish(oContext, fishImage, spots[spot]);
