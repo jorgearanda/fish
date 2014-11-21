@@ -18,39 +18,39 @@ exports.engine = function engine(io) {
         });
 
         var enteredOcean = function (newOId) {
-            clientOId = newOId;
-            socket.join(clientOId);
-            io.sockets.in(clientOId).emit('ocean', om.oceans[clientOId].getParams());
+            var myOId = newOId;
+            var myPId = clientPId;
+            socket.join(myOId);
+            socket.emit('ocean', om.oceans[myOId].getParams());
+
+            socket.on('readRules', function () {
+                om.oceans[myOId].readRules(myPId);
+                io.sockets.in(myOId).emit('aFisherIsReady', myPId);
+            });
+
+            socket.on('attemptToFish', function () {
+                om.oceans[myOId].attemptToFish(myPId);
+            });
+
+            socket.on('goToSea', function () {
+                om.oceans[myOId].goToSea(myPId);
+            });
+
+            socket.on('return', function () {
+                om.oceans[myOId].returnToPort(myPId);
+            });
+
+            socket.on('requestPause', function () {
+                om.oceans[myOId].pause(myPId);
+            });
+
+            socket.on('requestResume', function () {
+                om.oceans[myOId].resume(myPId);
+            });
+
+            socket.on('disconnect', function () {
+                om.removeFisherFromOcean(myOId, myPId);
+            });
         };
-
-        socket.on('readRules', function () {
-            om.oceans[clientOId].readRules(clientPId);
-            io.sockets.in(clientOId).emit('aFisherIsReady', clientPId);
-        });
-
-        socket.on('attemptToFish', function () {
-            om.oceans[clientOId].attemptToFish(clientPId);
-        });
-
-        socket.on('goToSea', function () {
-            om.oceans[clientOId].goToSea(clientPId);
-        });
-
-        socket.on('return', function () {
-            om.oceans[clientOId].returnToPort(clientPId);
-        });
-
-        socket.on('requestPause', function () {
-            om.oceans[clientOId].pause(clientPId);
-        });
-
-        socket.on('requestResume', function () {
-            om.oceans[clientOId].resume(clientPId);
-        });
-
-        socket.on('disconnect', function () {
-            om.removeFisherFromOcean(clientOId, clientPId);
-            io.sockets.in(clientOId).emit('yours', om.oceans[clientOId].getParams());
-        });
     });
 };

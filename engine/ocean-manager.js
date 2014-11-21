@@ -30,7 +30,7 @@ exports.OceanManager = function OceanManager(io) {
 
         for (var i in oKeys) {
             oId = oKeys[i];
-            if (this.oceans[oId].microworld._id === mwId &&
+            if (this.oceans[oId].microworld._id.toString() === mwId &&
                     this.oceans[oId].hasRoom()) {
                 this.oceans[oId].addFisher(pId);
                 return cb(oId);
