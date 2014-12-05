@@ -163,9 +163,9 @@ en['login_instructions'] = 'Enter the name of your group and your participant ID
 pt['login_instructions'] = 'Quando você estiver pronto, entre o nome do seu grupo, e sua identificação de participante.';
 es['login_instructions'] = 'Cuando estés preparado(a), escribe el nombre de tu grupo, y tu identificación de participante.';
 
-en['login_simulationName'] = 'Simulation name';
-pt['login_simulationName'] = 'Nome da simulação';
-es['login_simulationName'] = 'Nombre de la simulación';
+en['login_simulationName'] = 'Experiment code';
+pt['login_simulationName'] = 'Código da experiência';
+es['login_simulationName'] = 'Código del experimento';
 
 en['login_participantId'] = 'Participant ID';
 pt['login_participantId'] = 'Identificação do participante';
