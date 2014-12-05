@@ -475,11 +475,17 @@ function getRuns() {
     });
 }
 
+function backToList() {
+    location.href = '../dashboard'; 
+}
+
 function setButtons() {
     $('#create').click(createMicroworld);
     $('#create-2').click(createMicroworld);
     $('#save').click(saveMicroworld);
     $('#save-2').click(saveMicroworld);
+    $('#cancel').click(backToList);
+    $('#cancel-2').click(backToList);
 
     $('#clone-confirmed').click(cloneMicroworld)
     $('#activate-confirmed').click(activateMicroworld);
