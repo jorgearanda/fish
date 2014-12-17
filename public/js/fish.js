@@ -90,7 +90,11 @@ function updateStatus() {
 }
 function updateWarning(warn) {
     if (warn === 'start') {
-        $('#warning-label').text(msgs.warning_seasonStart);
+        if (!st.season || st.season === 0) {
+            $('#warning-label').text(msgs.status_getReady);
+        } else {
+            $('#warning-label').text(msgs.warning_seasonStart);
+        }
     } else if (warn === 'end') {
         $('#warning-label').text(msgs.warning_seasonEnd);
     } else {
@@ -103,6 +107,8 @@ function clearWarnings() {
 }
 
 function updateCosts() {
+    if (!ocean) return;
+
     if (ocean.fishValue !== 0) {
         $('#revenue-fish').text(msgs.costs_fishValue + ' ' +
             ocean.currencySymbol + ocean.fishValue).show();
