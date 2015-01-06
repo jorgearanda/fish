@@ -2,9 +2,12 @@
     "name": "fishsim",
     "version": "4.1.0",
     "private": true,
-    "repository": "git://github.com/yorchopolis/fish.git",
+    "repository": {
+    	"type": "git",
+    	"url": "https://github.com/jorgearanda/fish"
+    	},
     "scripts": {
-        "start": "node server.js",
+        "start": "node app.js",
         "test": "node_modules/.bin/mocha"
     },
     "dependencies": {
