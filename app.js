@@ -10,6 +10,7 @@ var path = require('path');
 var socketio = require('socket.io');
 
 var access = require('./middlewares/access');
+var config = require('./config');
 var engine = require('./engine/engine');
 var experimenters = require('./routes/experimenters');
 var microworlds = require('./routes/microworlds');
@@ -46,7 +47,7 @@ app.configure(function() {
 
     app.set('port', process.env.PORT || 8080);
 
-    mongoose.connect('mongodb://localhost/fish');
+    mongoose.connect(config.db[app.settings.env]);
 
     app.set('views', __dirname + '/views');
     app.engine('html', require('ejs').renderFile);
@@ -113,14 +114,14 @@ app.get('/runs/:id', isUser, runs.show);
 
 app.post('/experimenters', experimenters.create);
 
-// Server
 var server = http.createServer(app);
-var io = socketio.listen(server);
-io.set('logger', {
-    debug: logger.debug,
-    info: logger.info,
-    warn: logger.warn,
-    error: logger.error
+var io = socketio.listen(server, {
+    logger: {
+        debug: logger.debug,
+        info: logger.info,
+        warn: logger.warn,
+        error: logger.error
+    }
 });
 
 engine.engine(io);
