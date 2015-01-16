@@ -1,5 +1,6 @@
 'use strict';
 
+var bcrypt = require('bcrypt');
 var mongoose = require('mongoose');
 
 var BCRYPT_COST = 12;
@@ -17,15 +18,11 @@ var experimenterSchema = new Schema({
 });
 
 experimenterSchema.statics.hashPassword = function hash(rawPassword, next) {
-    // Temporary, to account for bcrypt errors
-    return next(null, rawPassword);
-    //return bcrypt.hash(rawPassword, BCRYPT_COST, next);
+    return bcrypt.hash(rawPassword, BCRYPT_COST, next);
 };
 
 experimenterSchema.statics.comparePasswords = function (raw, hash, next) {
-    // Temporary, to account for bcrypt errors
-    return next(null, true);
-    //return bcrypt.compare(raw, hash, next);
+    return bcrypt.compare(raw, hash, next);
 };
 
 exports.Experimenter = mongoose.model('Experimenter', experimenterSchema);
