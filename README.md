@@ -37,7 +37,7 @@ These are located in the developer_scripts folder
 4. Create and activate a microworld if you wish to run an experiment with users
    Note: Look at the Code for the experiment on an active microworld. eg `Active Microworld: QQ5HQP`
  
-## Users (seem to only be identified by an ID# and do not need to be pre-assigned, any number will work.)
+## Users (identified by an arbitrary ID#, which is not pre-assigned. Any number will work.)
 1. Navigate to http://localhost:8080/
 2. Enter the Experiment number of an active microworld
 3. Enter an ID number
