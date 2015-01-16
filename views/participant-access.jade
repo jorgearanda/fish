@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/public/css/signin.css')
+    script(src='/bower/jquery/jquery.min.js')
+    script(src='/bower/purl/purl.js')
+    script(scr='/bower/bootstrap/dist/js/bootstrap.min.js').
+    script(type='text/javascript', src='/public/js/localization.js')
+    script(type='text/javascript', src='/public/js/participant-access.js')
+  body
+    .container
+      form.form-signin(role='form')
+        h3.form-signin-heading
+          input#code.form-control(type='text', autofocus='', required='', placeholder='')
+          input#pid.form-control(type='text', required='', placeholder='')
+          button#login.btn.btn-lg.btn-primary.btn-block(type='submit')

@@ -1,38 +1,39 @@
 {
-    "name": "fishsim",
-    "version": "4.1.0",
-    "private": true,
-    "repository": {
-    	"type": "git",
-    	"url": "https://github.com/jorgearanda/fish"
-    	},
-    "scripts": {
-        "postinstall": "echo 'Populating Database with:\n==============\nuser: Admin \npass:123456789\n==============\nPlease change this password immediately.'; mongo developer_scripts/populate_db.js",
-        "cleandb": "mongo developer_scripts/clean_db.js",
-        "populate": "mongo developer_scripts/populate_db.js",
-        "start": "node app.js",
-        "test": "node_modules/.bin/mocha"
-    },
-    "dependencies": {
-        "async": "0.2.9",
-        "bcrypt": "^0.8.0",
-        "chance": "0.5.3",
-        "connect-mongo": "0.4.0",
-        "ejs": "0.8.5",
-        "express": "3.4.4",
-        "moment": "2.4.0",
-        "mongoose": "3.8.1",
-        "request": "2.27.0",
-        "socket.io": "0.9.16",
-        "winston": "0.7.2"
-    },
-    "devDependencies": {
-        "mocha": "1.15.1",
-        "should": "2.1.1",
-        "superagent": "0.15.7",
-        "supertest": "0.8.2"
-    },
-    "engines": {
-        "node": "0.10.x"
-    }
+  "name": "fishsim",
+  "version": "4.1.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jorgearanda/fish"
+  },
+  "scripts": {
+    "postinstall": "echo 'Populating Database with:\n==============\nuser: Admin \npass:123456789\n==============\nPlease change this password immediately.'; mongo developer_scripts/populate_db.js",
+    "cleandb": "mongo developer_scripts/clean_db.js",
+    "populate": "mongo developer_scripts/populate_db.js",
+    "start": "node app.js",
+    "test": "node_modules/.bin/mocha"
+  },
+  "dependencies": {
+    "async": "0.2.9",
+    "bcrypt": "^0.8.0",
+    "chance": "0.5.3",
+    "connect-mongo": "0.4.0",
+    "ejs": "0.8.5",
+    "express": "3.4.4",
+    "moment": "2.4.0",
+    "mongoose": "3.8.1",
+    "request": "2.27.0",
+    "socket.io": "0.9.16",
+    "winston": "0.7.2",
+    "jade": "^1.9.0"
+  },
+  "devDependencies": {
+    "mocha": "1.15.1",
+    "should": "2.1.1",
+    "superagent": "0.15.7",
+    "supertest": "0.8.2"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
 }

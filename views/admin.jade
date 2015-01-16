@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title Fish - Administration
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/public/css/signin.css')
+    script(src='/bower/jquery/jquery.min.js')
+    script(src='/bower/bootstrap/dist/js/bootstrap.min.js')
+    script(type='text/javascript', src='/public/js/admin.js')
+  body
+    .container
+      form.form-signin(role='form', action='mainadmin.html')
+        h2.form-signin-heading
+          | Administration Panel
+        input#username.form-control(type='text', autofocus='', required='', placeholder='Username')
+        input#password.form-control(type='password', required='', placeholder='Password')
+        button#login.btn.btn-lg.btn-primary.btn-block(type='submit')
+          | Sign in
