@@ -29,7 +29,7 @@
         "mocha": "1.15.1",
         "should": "2.1.1",
         "superagent": "0.15.7",
-        "supertest": "0.8.2",
+        "supertest": "0.8.2"
     },
     "engines": {
         "node": "0.10.x"
