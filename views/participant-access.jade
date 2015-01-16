@@ -12,8 +12,8 @@ html
     script(type='text/javascript', src='/public/js/participant-access.js')
   body
     .container
+      h3.form-signin-heading
       form.form-signin(role='form')
-        h3.form-signin-heading
-          input#code.form-control(type='text', autofocus='', required='', placeholder='')
-          input#pid.form-control(type='text', required='', placeholder='')
-          button#login.btn.btn-lg.btn-primary.btn-block(type='submit')
+        input#code.form-control(type='text', autofocus='', required='', placeholder='')
+        input#pid.form-control(type='text', required='', placeholder='')
+        button#login.btn.btn-lg.btn-primary.btn-block(type='submit')
