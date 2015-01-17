@@ -69,14 +69,12 @@ exports.Fisher = function Fisher(name, type, params, o) {
         return currentGreed;
     };
 
-    this.calculateSeasonCasts = function () {
+    this.calculateSeasonCasts = function (greed) {
         var totalFish = this.ocean.certainFish + this.ocean.mysteryFish;
         var spawn = this.ocean.microworld.params.spawnFactor;
         var numFishers = this.ocean.fishers.length;
-        var greed = this.seasonData[this.season].greed;
         var chanceCatch = this.ocean.microworld.params.chanceCatch;
-        return Math.round(((totalFish - (totalFish / spawn)) / numFishers) 
-            * 2 * greed / chanceCatch);
+        return Math.round(((totalFish - (totalFish / spawn)) / numFishers) * 2 * greed / chanceCatch);
     };
 
     this.prepareFisherForSeason = function (season) {
@@ -88,7 +86,8 @@ exports.Fisher = function Fisher(name, type, params, o) {
             startMoney: 0,
             endMoney: 0
         };
-        this.seasonData[season].intendedCasts = this.isBot() ? this.calculateSeasonCasts() : undefined;
+        this.seasonData[season].intendedCasts = this.isBot() ?
+            this.calculateSeasonCasts(this.seasonData[season].greed) : undefined;
         this.hasReturned = false;
     };
 
