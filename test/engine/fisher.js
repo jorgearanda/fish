@@ -2,7 +2,6 @@
 /*global describe:true, it:true*/
 
 var should = require('should');
-var mongoose = require('mongoose');
 
 var testUtils = require('../test-utils');
 var Fisher = require('../../engine/fisher').Fisher;
