@@ -5,6 +5,12 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0, user-scalable=no')
     link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/public/css/fish.css')
+    link(rel='stylesheet', href='/public/fonts/css/animation.css')
+    link(rel='stylesheet', href='/public/fonts/css/fontello-codes.css')
+    link(rel='stylesheet', href='/public/fonts/css/fontello-embedded.css')
+    link(rel='stylesheet', href='/public/fonts/css/fontello-ie7-codes.css')
+    link(rel='stylesheet', href='/public/fonts/css/fontello-ie7.css')
+    link(rel='stylesheet', href='/public/fonts/css/fontello.css')
     script(src='/bower/jquery/jquery.min.js')
     script(src='/bower/purl/purl.js')
     script(src='/bower/bootstrap/dist/js/bootstrap.min.js')
@@ -18,7 +24,8 @@ html
       .col-md-8.left-col
         .row
           #status-box.bg-info.col-md-6.box
-            label#status-label.lead.status-label
+            span#status-label.lead.status-label
+            span#status-sub-label.status-label
         #ocean-background.row.box
           #ocean-box
             div#warning-alert.alert

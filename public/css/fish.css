@@ -17,9 +17,23 @@
     font-weight: normal;
 }
 
+#status-label {
+    display: block;
+    margin-bottom: 0;
+}
+
+#fish-remaining-icon {
+    padding-bottom: 0.3em;
+}
+#status-sub-label {
+
+}
+
 #status-box {
     display: inline-block;
     height: 70px;
+    width: 100%;
+    text-align: center;
 }
 
 #warning-box {
