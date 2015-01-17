@@ -64,28 +64,26 @@ function displayRules() {
 
 function updateStatus() {
     var statusText = '';
-    $('#fish-remaining-icon').hide();
-    $("#status-sub-label").text('');
+    $("#status-sub-label").html('');
     if (st.status === 'loading') {
         statusText = msgs.status_wait;
-        $("#status-sub-label").text(msgs.status_subWait);
+        $("#status-sub-label").html(msgs.status_subWait + ' <i class="icon-spin animate-spin"></i>');
     } else if (st.status === 'running') {
         statusText = msgs.status_season + st.season;
         var subLabel = ''
         if (st.reportedMysteryFish > 0) {
             subLabel += st.certainFish +
-                msgs.status_fishTo + (st.certainFish + st.reportedMysteryFish) +
+                msgs.status_fishTo + (st.certainFish + st.reportedMysteryFish) + '<i class="icon-fish"></i>' +
                 msgs.status_fishRemaining;
         } else {
-            subLabel += st.certainFish + msgs.status_fishRemaining;
-            $('#fish-remaining-icon').show();
+            subLabel += st.certainFish + '<i class="icon-fish"></i>' + msgs.status_fishRemaining;
         }
 
-        $("#status-sub-label").text(subLabel);
+        $("#status-sub-label").html(subLabel);
         $("#status-sub-label").show();
     } else if (st.status === 'resting') {
         statusText = msgs.status_spawning;
-        $("#status-sub-label").text(msgs.status_subSpawning);
+        $("#status-sub-label").html(msgs.status_subSpawning);
     } else if (st.status === 'paused') {
         statusText = msgs.status_paused;
     } else if (st.status === 'over') {
@@ -93,7 +91,7 @@ function updateStatus() {
     } else {
     }
 
-    $('#status-label').text(statusText);
+    $('#status-label').html(statusText);
 }
 function updateWarning(warn) {
     if (warn === 'start') {
