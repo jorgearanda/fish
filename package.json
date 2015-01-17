@@ -18,11 +18,13 @@
   "dependencies": {
     "async": "0.2.9",
     "bcrypt": "^0.8.0",
+    "bcrypt": "0.7.7",
     "chance": "0.5.3",
     "connect-mongo": "0.4.0",
     "ejs": "0.8.5",
     "express": "3.4.4",
     "jade": "^1.9.0",
+    "json-2-csv": "^1.0.6",
     "moment": "2.4.0",
     "mongoose": "3.8.1",
     "request": "2.27.0",
@@ -34,6 +36,8 @@
     "should": "2.1.1",
     "superagent": "0.15.7",
     "supertest": "0.8.2"
+    "supertest": "0.8.2",
+    "zombie": "2.0.x"
   },
   "engines": {
     "node": "0.10.x"
