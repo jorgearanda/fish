@@ -42,3 +42,7 @@ These are located in the developer_scripts folder
 2. Enter the Experiment number of an active microworld
 3. Enter an ID number
 4. Fish!
+
+
+# Attributions
+* Black Fish Icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>
