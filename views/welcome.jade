@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    link(rel='stylesheet', href='/public/css/base.css')
+    script(type='text/javascript', src='/public/js/localization.js')
+    script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+    script(type='text/javascript', src='/public/js/purl.js')
+    script(src='/socket.io/socket.io.js')
+    script(type='text/javascript', src='/public/js/welcome.js')
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    title
+  body
+    form(action='fish')
+      fieldset
+        legend#welcome
+        br
+        #instructions
+        br
+        br
+        label#gid_label.left-side-label(for='gid')
+        input#gid(type='text', name='gid', autofocus='')
+        br
+        label#pid_label.left-side-label(for='pid')
+        input#pid(type='text', name='pid')
+        br
+        br
+        button#login(type='button')
+        br
+        label#status_message.status-message

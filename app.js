@@ -50,7 +50,7 @@ app.configure(function() {
     mongoose.connect(config.db[app.settings.env]);
 
     app.set('views', __dirname + '/views');
-    app.engine('html', require('ejs').renderFile);
+    app.set('view engine', 'jade');
 
     app.use(express.favicon());
     app.use(express.json());
@@ -76,31 +76,31 @@ app.configure(function() {
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-app.get('/', function (req, res) { res.render('participant-access.html'); });
-app.get('/new-welcome', function (req, res) { res.render('participant-access.html'); });
-app.get('/admin', function (req, res) { res.render('admin.html'); });
+app.get('/', function (req, res) { res.render('participant-access.jade'); });
+app.get('/new-welcome', function (req, res) { res.render('participant-access.jade'); });
+app.get('/admin', function (req, res) { res.render('admin.jade'); });
 app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 
 app.post('/sessions', sessions.createSession);
 app.post('/participant-sessions', sessions.participantSession);
 
 app.get('/a/:accountId', function (req, res) {
-    res.render('dashboard.html');
+    res.render('dashboard.jade');
 });
 app.get('/a/:accountId/dashboard', function (req, res) {
-    res.render('dashboard.html');
+    res.render('dashboard.jade');
 });
 app.get('/a/:accountId/microworlds/:microworldId', function (req, res) {
-    res.render('microworld.html');
+    res.render('microworld.jade');
 });
 app.get('/a/:accountId/new/microworld', function (req, res) {
-    res.render('microworld.html');
+    res.render('microworld.jade');
 });
 app.get('/a/:accountId/runs/:runId', function (req, res) {
-    res.render('run-results.html');
+    res.render('run-results.jade');
 });
 app.get('/fish', function (req, res) {
-    res.render('fish.html');
+    res.render('fish.jade');
 });
 
 app.get('/microworlds', isUser, microworlds.list);

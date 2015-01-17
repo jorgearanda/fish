@@ -1,0 +1,45 @@
+doctype html
+html
+  head
+    title Fish - Simulation Run Results
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/public/css/grid.css')
+    script(src='/bower/jquery/jquery.min.js')
+    script(src='/bower/purl/purl.js')
+    script(src='/bower/bootstrap/dist/js/bootstrap.min.js').
+    script(src='/bower/moment/min/moment.min.js')
+    script(src='/bower/underscore/underscore-min.js')
+    script(type='text/javascript', src='/public/js/run-results.js')
+  body
+    .container
+      .page-header
+        h1 Simulation Run Results
+      #general-data
+        p#time.lead.text-info Time:
+        p#participants.lead.text-info Participant IDs:
+      hr
+      h3 Results
+      #run-results-table.table-responsive
+        table.table.table-bordered.table-hover
+          thead
+            th Fisher
+            th Type
+            th Greed
+            th Season
+            th Fish at Start
+            th Fish at End
+            th Fish Taken
+            th Profit
+            th Individual Restraint
+            th Group Restraint
+            th Individual Efficiency
+            th Group Efficiency
+          tbody#run-results-table-rows
+      hr
+      h3 Log
+      #log-table.table-responsive
+        table.table.table-bordered.table-hover
+          thead
+            th Log Entries
+          tbody#log-table-rows

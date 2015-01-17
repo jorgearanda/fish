@@ -1,0 +1,74 @@
+doctype html
+html
+  head
+    title Fish - Administration Dashboard
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/public/css/grid.css')
+    script(src='/bower/jquery/jquery.min.js')
+    script(src='/bower/bootstrap/dist/js/bootstrap.min.js').
+    script(src='/bower/moment/min/moment.min.js')
+    script(src='/bower/underscore/underscore-min.js')
+    script(type='text/javascript', src='/public/js/dashboard.js')
+  body
+    .container
+      .page-header
+        h1 Dashboard
+      h3 Microworlds being tested
+      #microworlds-test
+        #microworlds-test-loading
+          p
+            em Loading...
+        #microworlds-test-none.collapse
+          p No microworlds are currently being tested.
+        #microworlds-test-table.collapse.table-responsive
+          p
+            | These are accesible, but their results are not stored and their parameters can still be changed. To activate them or modify their parameters, click on their corresponding row.
+          table.table.table-bordered.table-hover
+            thead
+              th Name
+              th Experiment Code
+              th Description
+            tbody#microworlds-test-table-rows
+      button#new-microworld.btn.btn-primary(type='submit', onclick='location.href="./new/microworld"')
+        | New Microworld
+      hr
+      h3 Active microworlds
+      #microworlds-active
+        #microworlds-active-loading
+          p
+            em Loading...
+        #microworlds-active-none.collapse
+          p No microworlds are currently active.
+        #microworlds-active-table.collapse.table-responsive
+          p These are accessible to your participants.
+          table.table.table-bordered.table-hover
+            thead
+              th Name
+              th Experiment Code
+              th Description
+              th Start Date
+              th Completed
+              th Interrupted
+            tbody#microworlds-active-table-rows
+      hr
+      h3 Archived microworlds
+      #microworlds-archived
+        #microworlds-archived-loading
+          p
+            em Loading...
+        #microworlds-archived-none.collapse
+          p No microworlds are currently archived.
+        #microworlds-archived-table.collapse.table-responsive
+          p
+            | To download results, re-activate, or clone these
+            | microworlds, click on their corresponding row.
+          table.table.table-bordered.table-hover
+            thead
+              th Name
+              th Experiment Code
+              th Description
+              th Start Date
+              th Completed
+              th Interrupted
+            tbody#microworlds-archived-table-rows

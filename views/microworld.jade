@@ -1,0 +1,530 @@
+doctype html
+html
+  head
+    title Fish - New Microworld
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/public/css/grid.css')
+    script(src='/bower/jquery/jquery.min.js')
+    script(src='/bower/purl/purl.js')
+    script(src='/bower/bootstrap/dist/js/bootstrap.min.js')
+    script(src='/bower/bootstrap/js/tooltip.js')
+    script(src='/bower/moment/min/moment.min.js')
+    script(src='/bower/underscore/underscore-min.js')
+    script(type='text/javascript', src='/public/js/default-text.js')
+    script(type='text/javascript', src='/public/js/microworld.js')
+  body
+    .container
+      .page-header
+        h1#microworld-header Page Header
+      .panel.panel-info
+        #microworld-panel-title.panel-heading
+          | Panel Title
+        #microworld-panel-body.panel-body
+          #microworld-panel-body-text.col-md-7
+            | Panel Body
+          .col-md-5.btn-toolbar
+            button#create.btn.btn-success.collapse(type='submit') Create
+            button#save.btn.btn-success.collapse(type='submit') Save
+            button#clone.btn.btn-info.collapse(type='submit', data-toggle='modal', data-target='#confirm-clone') Clone
+            button#activate.btn.btn-primary.collapse(type='button', data-toggle='modal', data-target='#confirm-activate') Activate
+            button#archive.btn.btn-warning.collapse(type='button', data-toggle='modal', data-target='#confirm-archive') Archive
+            button#delete.btn.btn-danger.collapse(type='button', data-toggle='modal', data-target='#confirm-delete') Delete
+            button#cancel.btn.btn-default(type='button') Cancel
+      #results.row.collapse
+        .col-md-6
+          h3 Completed runs
+          .row
+            #microworld-runs-table.table-responsive
+              table.table.table-bordered.table-hover
+                thead
+                  th Time
+                  th Participant IDs
+                tbody#microworld-runs-table-rows
+      .row
+        .col-md-4
+          h3 General settings
+          .row
+            .form-group
+              label.form-label.col-md-6(for='name') Name
+              .col-md-6
+                input#name.form-control(type='text', autofocus='')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='desc') Description
+              .col-md-6
+                input#desc.form-control(type='text')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='num-fishers') Fishers per simulation
+              .col-md-6
+                input#num-fishers.form-control(type='number', min='1', step='1', max='12', value='4')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='num-humans') Humans per simulation
+              .col-md-6
+                input#num-humans.form-control(type='number', min='0', step='1', max='13', value='1')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='num-seasons') Seasons
+              .col-md-6
+                input#num-seasons.form-control(type='number', min='1', step='1', value='4')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='season-duration') Season duration (seconds)
+              .col-md-6
+                input#season-duration.form-control(type='number', min='1', step='1', value='60')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='initial-delay') Initial delay (seconds)
+              .col-md-6
+                input#initial-delay.form-control(type='number', min='1', step='1', value='5')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='season-delay') Delay between seasons (seconds)
+              .col-md-6
+                input#season-delay.form-control(type='number', min='1', step='1', value='10')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Enable pausing
+                  input#enable-pause(type='checkbox', checked='')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Allow seasons to
+                  a#early-end-tooltip(title='Finish a season if all fishers have returned to port and there has been no activity for three seconds.', data-toggle='tooltip', data-placement='top') end early
+                  input#enable-early-end(type='checkbox', checked='')
+        .col-md-4
+          h3 Economics
+          .row
+            .form-group
+              label.form-label.col-md-6(for='fish-value') Fish value
+              .col-md-6
+                input#fish-value.form-control(type='number', min='0.00', step='0.01', value='3.00')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='cost-cast') Cost to attempt to fish
+              .col-md-6
+                input#cost-cast.form-control(type='number', min='0.00', step='0.01', value='0.00')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='cost-departure') Cost to set sail
+              .col-md-6
+                input#cost-departure.form-control(type='number', min='0.00', step='0.01', value='0.00')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='cost-second') Cost per second at sea
+              .col-md-6
+                input#cost-second.form-control(type='number', min='0.00', step='0.01', value='0.00')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='currency-symbol') Currency symbol
+              .col-md-6
+                input#currency-symbol.form-control(type='text', value='$')
+        .col-md-4
+          h3 Fish stocks and fishing
+          .row
+            .form-group
+              label.form-label.col-md-6(for='certain-fish') Certain fish at start
+              .col-md-6
+                input#certain-fish.form-control(type='number', min='0', step='1', value='40')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='available-mystery-fish')
+                a#available-mystery-tooltip(title='The real number of mystery fish that fishers can catch.', data-toggle='tooltip', data-placement='top') Available
+                |  mystery fish at start
+              .col-md-6
+                input#available-mystery-fish.form-control(type='number', min='0', step='1', value='0')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='reported-mystery-fish')
+                a#reported-mystery-tooltip(title='The number of mystery fish that fishers are told potentially exist in the ocean.', data-toggle='tooltip', data-placement='top') Reported
+                |  mystery fish
+              .col-md-6
+                input#reported-mystery-fish.form-control(type='number', min='0', step='1', value='0')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='max-fish')
+                a#max-fish-tooltip(title='The number of fish in the ocean can never exceed this amount. Must be equal to or higher than the sum of certain and available mystery fish at start.', data-toggle='tooltip', data-placement='top') Maximum
+                |  fish capacity of ocean
+              .col-md-6
+                input#max-fish.form-control(type='number', min='0', step='1', value='40')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='spawn-factor')
+                a#spawn-factor-tooltip(title='If there are 10 fishes at the end of a season, with a spawn factor of 1.5 there will be 15 at the start of the next.', data-toggle='tooltip', data-placement='top') Spawn factor
+              .col-md-6
+                input#spawn-factor.form-control(type='number', min='0', step='0.01', value='2.00')
+          .row
+            .form-group
+              label.form-label.col-md-6(for='chance-catch')
+                a#chance-catch-tooltip(title='If the chance of catch is 1.0, every fishing attempt is successful. If it is 0.5, half of them are.', data-toggle='tooltip', data-placement='top') Chance of catch
+              .col-md-6
+                input#chance-catch.form-control(type='number', min='0', step='0.01', value='1.00')
+      .row
+        .col-md-4
+          h3 Preparation text
+          .row
+            .form-group
+              label.form-label.col-md-12(for='preparation-text') This text is shown to all participants before starting the simulation
+              .col-md-12
+                textarea#preparation-text.form-control(rows='30')
+        .col-md-4
+          h3 End (by time) text
+          .row
+            .form-group
+              label.form-label.col-md-12(for='end-time-text') This text is shown if the simulation ends because all seasons have passed
+              .col-md-12
+                textarea#end-time-text.form-control(rows='30')
+        .col-md-4
+          h3 End (by depletion) text
+          .row
+            .form-group
+              label.form-label.col-md-12(for='end-depletion-text') This text is shown if the simulation ends because the fish have been depleted
+              .col-md-12
+                textarea#end-depletion-text.form-control(rows='30')
+      .row
+        .col-md-4
+          h3 Information display
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Show all fishers
+                  input#show-fishers(type='checkbox', checked='')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Show their names
+                  input#show-fisher-names(type='checkbox', checked='')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Show their
+                  a#show-fisher-status-tooltip(title='At port or at sea', data-toggle='tooltip', data-placement='top') status
+                  input#show-fisher-status(type='checkbox', checked='')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Show their number of fish caught
+                  input#show-num-caught(type='checkbox', checked='')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Show their balance
+                  input#show-fisher-balance(type='checkbox', checked='')
+        .col-md-8
+          h3 Bot behaviour
+          .row
+            label.form-label.col-md-2 Name
+            label.form-label.col-md-2
+              a#greed-tooltip(title='Between 0 and 1. The higher the value, the more greedily this bot will behave. A value of 0.5 takes as many fish as possible while still behaving sustainably.', data-toggle='tooltip', data-placement='top') Greed
+            label.form-label.col-md-2
+              a#trend-tooltip(title='A bot with a stable trend will behave the same way at the beginning and at the end of the simulation. A bot with an increasing trend will be more greedy as time goes by (while still being as greedy as specified in its Greed parameter, on average), and one with a decreasing trend will be less greedy in later seasons.', data-toggle='tooltip', data-placement='top') Trend
+            label.form-label.col-md-2
+              a#predictability-tooltip(title='Erratic bots appear more lifelike, but they may behave non-optimally.', data-toggle='tooltip', data-placement='top') Predictability
+            label.form-label.col-md-2
+              a#prob-action-tooltip(title='If bots behave erratically, this parameter (between 0 and 1) controls how frequently they act. The lower the value, the more they will appear to hesitate.', data-toggle='tooltip', data-placement='top') Probability of action
+            label.form-label.col-md-2
+              a#attempts-second-tooltip(title='If bots behave erratically, this controls the maximum number of fish they will try to catch in any second, provided they are doing something that second. If bots behave regularly, this controls how many fish they will try to catch every second (until they fulfill their quota).', data-toggle='tooltip', data-placement='top') Maximum casts per second
+          #bot-1-row.row.bot-row
+            .col-md-2
+              input#bot-1-name.form-control(type='text', value='Dolphin')
+            .col-md-2
+              input#bot-1-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-1-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-1-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-1-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-1-attempts-second.form-control(type='number', min='1', step='1', value='3')
+          #bot-2-row.row.bot-row
+            .col-md-2
+              input#bot-2-name.form-control(type='text', value='Shark')
+            .col-md-2
+              input#bot-2-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-2-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-2-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-2-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-2-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-3-row.row.bot-row
+            .col-md-2
+              input#bot-3-name.form-control(type='text', value='Octopus')
+            .col-md-2
+              input#bot-3-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-3-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-3-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-3-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-3-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-4-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-4-name.form-control(type='text', value='Whale')
+            .col-md-2
+              input#bot-4-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-4-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-4-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-4-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-4-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-5-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-5-name.form-control(type='text', value='Seagull')
+            .col-md-2
+              input#bot-5-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-5-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-5-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-5-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-5-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-6-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-6-name.form-control(type='text', value='Penguin')
+            .col-md-2
+              input#bot-6-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-6-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-6-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-6-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-6-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-7-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-7-name.form-control(type='text', value='Walrus')
+            .col-md-2
+              input#bot-7-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-7-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-7-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-7-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-7-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-8-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-8-name.form-control(type='text', value='Stingray')
+            .col-md-2
+              input#bot-8-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-8-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-8-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-8-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-8-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-9-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-9-name.form-control(type='text', value='Orca')
+            .col-md-2
+              input#bot-9-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-9-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-9-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-9-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-9-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-10-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-10-name.form-control(type='text', value='Seal')
+            .col-md-2
+              input#bot-10-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-10-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-10-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-10-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-10-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          #bot-11-row.row.bot-row.collapse
+            .col-md-2
+              input#bot-11-name.form-control(type='text', value='Polar Bear')
+            .col-md-2
+              input#bot-11-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+            .col-md-2
+              select#bot-11-trend.form-control
+                option(value='stable') Stable
+                option(value='decrease') Decrease
+                option(value='increase') Increase
+            .col-md-2
+              select#bot-11-predictability.form-control
+                option(value='erratic') Erratic
+                option(value='regular') Regular
+            .col-md-2
+              input#bot-11-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+            .col-md-2
+              input#bot-11-attempts-second.form-control(type='number', min='0', step='1', value='3')
+          .row
+            .col-md-2.col-md-offset-2
+              .form-group
+                label.form-label.checkbox
+                  | Uniform
+                  input#uniform-greed(type='checkbox', checked='')
+            .col-md-2
+              .form-group
+                label.form-label.checkbox
+                  | Uniform
+                  input#uniform-trend(type='checkbox', checked='')
+            .col-md-2
+              .form-group
+                label.form-label.checkbox
+                  | Uniform
+                  input#uniform-predictability(type='checkbox', checked='')
+            .col-md-2
+              .form-group
+                label.form-label.checkbox
+                  | Uniform
+                  input#uniform-prob-action(type='checkbox', checked='')
+            .col-md-2
+              .form-group
+                label.form-label.checkbox
+                  | Uniform
+                  input#uniform-attempts-second(type='checkbox', checked='')
+      .panel.panel-info
+        #microworld-panel-2-title.panel-heading
+          | Panel Title
+        #microworld-panel-2-body.panel-body
+          #microworld-panel-2-body-text.col-md-7
+            | Panel Body
+          .col-md-5.btn-toolbar
+            button#create-2.btn.btn-success.collapse(type='submit') Create
+            button#save-2.btn.btn-success.collapse(type='submit') Save
+            button#clone-2.btn.btn-info.collapse(type='submit', data-toggle='modal', data-target='#confirm-clone') Clone
+            button#activate-2.btn.btn-primary.collapse(type='button', data-toggle='modal', data-target='#confirm-activate') Activate
+            button#archive-2.btn.btn-warning.collapse(type='button', data-toggle='modal', data-target='#confirm-archive') Archive
+            button#delete-2.btn.btn-danger.collapse(type='button', data-toggle='modal', data-target='#confirm-delete') Delete
+            button#cancel-2.btn.btn-default(type='button') Cancel
+    #confirm-clone.modal.fade(aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') x
+            h3 Confirm clone
+          .modal-body
+            p
+              | If you click the Clone button, a new microworld with these parameters will be created, in testing mode. You will be able to modify the clone&apos;s parameters after creation.
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal', aria-hidden='true') Cancel
+            button#clone-confirmed.btn.btn-info(,='', data-dismiss='modal', aria-hidden='true') Clone
+    #confirm-activate.modal.fade(aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') x
+            h3 Confirm activation
+          .modal-body
+            p
+              | Are you sure you want to activate this microworld?
+            p
+              | If you do so, you will not be able to change its parameters any more, and the results of all runs of this microworld will be saved.
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal', aria-hidden='true') Cancel
+            button#activate-confirmed.btn.btn-primary(,='', data-dismiss='modal', aria-hidden='true') Activate
+    #confirm-archive.modal.fade(aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') x
+            h3 Confirm archive
+          .modal-body
+            p
+              | Are you sure you want to archive this microworld?
+            p
+              | If you do so, it will not be available to participants. You will still be able to access its results.
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal', aria-hidden='true') Cancel
+            button#archive-confirmed.btn.btn-warning(,='', data-dismiss='modal', aria-hidden='true') Archive
+    #confirm-delete.modal.fade(aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') x
+            h3 Confirm deletion
+          .modal-body
+            p
+              | Are you sure you want to delete this microworld?
+            p
+              | You will
+              b not
+              |  be able to access its results!
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal', aria-hidden='true') Cancel
+            button#delete-confirmed.btn.btn-danger(,='', data-dismiss='modal', aria-hidden='true') Delete

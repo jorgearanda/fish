@@ -22,9 +22,13 @@ pt['costs_costLeave'] = 'Deixar o porto custa';
 es['costs_costLeave'] = 'Salir del puerto cuesta';
 
 // Status
-en['status_wait'] = 'Please wait - loading the application';
-pt['status_wait'] = 'Por favor aguarde - Carregando o aplicativo';
-es['status_wait'] = 'Espera por favor - Cargando la aplicación';
+en['status_wait'] = 'Please wait';
+pt['status_wait'] = 'Por favor aguarde';
+es['status_wait'] = 'Espera por favor';
+
+en['status_subWait'] = 'Loading the application';
+pt['status_subWait'] = 'Carregando o aplicativo';
+es['status_subwait'] = 'Cargando la aplicación';
 
 en['status_full'] = 'The group you tried to join is full. Please notify the experimenter.';
 pt['status_full'] = 'O grupo que você tentou entrar esta lotado. Por favor, notifique o experimentador.';
@@ -34,9 +38,9 @@ en['status_getReady'] = 'Get ready! The simulation is about to start.';
 pt['status_getReady'] = 'Prepare-se! A simulação esta para começar.';
 es['status_getReady'] = '¡Prepárate! La simulación está por comenzar.';
 
-en['status_season'] = 'This is season ';
-pt['status_season'] = 'Essa é a temporada ';
-es['status_season'] = 'Esta es la temporada ';
+en['status_season'] = 'Season ';
+pt['status_season'] = 'Temporada ';
+es['status_season'] = 'Temporada ';
 
 en['status_fishBetween'] = 'There are between ';
 pt['status_fishBetween'] = 'Existem entre ';
@@ -50,13 +54,21 @@ en['status_fishAnd'] = ' and ';
 pt['status_fishAnd'] = ' e ';
 es['status_fishAnd'] = ' y ';
 
-en['status_fishRemaining'] = ' fish remaining.';
-pt['status_fishRemaining'] = ' peixes restantes.';
-es['status_fishRemaining'] = ' peces en el mar.';
+en['status_fishTo'] = ' to ';
+pt['status_fishTo'] = ' a ';
+es['status_fishTo'] = ' a ';
 
-en['status_spawning'] = 'We are between seasons, fish are now spawning.';
-pt['status_spawning'] = 'Estamos entre as temporadas, os peixes estão em desova.';
-es['status_spawning'] = 'Estamos entre temporadas, los peces se están reproduciendo.';
+en['status_fishRemaining'] = ' fish remaining';
+pt['status_fishRemaining'] = ' peixes restantes';
+es['status_fishRemaining'] = ' peces en el mar';
+
+en['status_spawning'] = 'We are between seasons';
+pt['status_spawning'] = 'Estamos entre as temporadas';
+es['status_spawning'] = 'Estamos entre temporadas';
+
+en['status_subSpawning'] = 'Fish are now spawning';
+pt['status_subSpawning'] = 'Os peixes estão em desova';
+es['status_subSpawning'] = 'Elos peces se están reproduciendo';
 
 en['status_paused'] = 'Simulation paused.';
 pt['status_paused'] = 'Simulação pausada.';
