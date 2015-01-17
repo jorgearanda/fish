@@ -186,7 +186,7 @@ describe('Engine - Fisher', function () {
             return done();
         });
 
-        it('should return a full share of fish, so that the stock would exactly collapse, for a completely greedy fisher', function (done) {
+        it('should return a full share of fish, so that the stock would exactly collapse if everyone fished equally, for a completely greedy fisher', function (done) {
             var ocean = {
                 certainFish: 40,
                 mysteryFish: 0,
@@ -209,6 +209,32 @@ describe('Engine - Fisher', function () {
             ocean.fishers = [{}];
             var casts = f.calculateSeasonCasts(1.0);
             casts.should.equal(60);
+            return done();
+        });
+
+        it('should return an exceedingly large share of fish, so that the stock would not be enough if everyone fished equally, for a fisher with greed > 1.0', function (done) {
+            var ocean = {
+                certainFish: 40,
+                mysteryFish: 0,
+                microworld: {
+                    params: {
+                        spawnFactor: 2.0,
+                        chanceCatch: 1.0,
+                    }
+                },
+                fishers: [{}, {}, {}, {}]
+            };
+            var f = new Fisher('Mr. Tuna', 'bot', {}, ocean);
+            var casts = f.calculateSeasonCasts(2.0);
+            casts.should.equal(20);
+
+            ocean.mysteryFish = 20;
+            var casts = f.calculateSeasonCasts(2.0);
+            casts.should.equal(30);
+
+            ocean.fishers = [{}];
+            var casts = f.calculateSeasonCasts(2.0);
+            casts.should.equal(120);
             return done();
         });
 
@@ -271,7 +297,69 @@ describe('Engine - Fisher', function () {
             ocean.fishers = [{}];
             var casts = f.calculateSeasonCasts(0.5);
             casts.should.equal(80);
-            // TODO - chanceCatch at other values
+
+            ocean.mysteryFish = 0;
+            ocean.microworld.params.spawnFactor = 2.0;
+            ocean.microworld.params.chanceCatch = 0.1;
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(200);
+
+            ocean.mysteryFish = 40;
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(400);
+
+            ocean.microworld.params.chanceCatch = 0.9;
+            ocean.mysteryFish = 0;
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(22);
+            return done();
+        });
+    });
+
+    describe('prepareFisherForSeason()', function () {
+        it('should set all of the season parameters for the fisher', function (done) {
+            var params = {
+                greed: 0.5,
+                trend: 'stable',
+                predictability: 'regular'
+            };
+            var ocean = {
+                season: 1,
+                certainFish: 40,
+                mysteryFish: 0,
+                microworld: {
+                    params: {
+                        numSeasons: 4,
+                        spawnFactor: 2.0,
+                        chanceCatch: 0.5,
+                    }
+                },
+                fishers: [{}, {}, {}, {}]
+            };
+            var f = new Fisher('Mr. Tuna', 'bot', params, ocean);
+            f.prepareFisherForSeason(1);
+            f.season.should.equal(1);
+            f.hasReturned.should.equal(false);
+            f.seasonData[1].actualCasts.should.equal(0);
+            f.seasonData[1].greed.should.equal(params.greed);
+            f.seasonData[1].fishCaught.should.equal(0);
+            f.seasonData[1].startMoney.should.equal(0);
+            f.seasonData[1].endMoney.should.equal(0);
+            f.seasonData[1].intendedCasts.should.equal(10);
+            return done();
+        });
+
+        it('should set the basic season parameters for human fishers', function (done) {
+            var f = new Fisher('A Participant', 'human', {}, {});
+            f.prepareFisherForSeason(1);
+            f.season.should.equal(1);
+            f.hasReturned.should.equal(false);
+            f.seasonData[1].actualCasts.should.equal(0);
+            should.not.exist(f.seasonData[1].greed);
+            f.seasonData[1].fishCaught.should.equal(0);
+            f.seasonData[1].startMoney.should.equal(0);
+            f.seasonData[1].endMoney.should.equal(0);
+            should.not.exist(f.seasonData[1].intendedCasts);
             return done();
         });
     });
