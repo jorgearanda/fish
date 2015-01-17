@@ -91,19 +91,24 @@ function updateStatus() {
 function updateWarning(warn) {
     if (warn === 'start') {
         if (!st.season || st.season === 0) {
-            $('#warning-label').text(msgs.status_getReady);
+            $('#warning-alert').text(msgs.status_getReady);
+            $('#warning-alert').fadeIn();
         } else {
-            $('#warning-label').text(msgs.warning_seasonStart);
+            $('#warning-alert').text(msgs.warning_seasonStart);
+            $('#warning-alert').fadeIn();
         }
     } else if (warn === 'end') {
-        $('#warning-label').text(msgs.warning_seasonEnd);
+        $('#warning-alert').text(msgs.warning_seasonEnd);
+        $('#warning-alert').fasdeIn();
     } else {
-        $('#warning-label').text('');
+        $('#warning-alert').text('');
+        $('#warning-alert').fadeOut();
     }
 }
 
 function clearWarnings() {
-    $('#warning-label').text('');
+    $('#warning-alert').text('');
+    $('#warning-alert').fadeOut();
 }
 
 function updateCosts() {

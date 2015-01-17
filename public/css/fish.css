@@ -27,6 +27,22 @@
     height: 70px;
 }
 
+#warning-alert {
+    width: 700px;
+    height: 40px;
+    margin-left: 2px;
+    margin-top: 2px;
+    font-weight: bold;
+    font-size: 1.25em;
+    color: #212121;
+    border: 1px solid white;
+    background-color: #4CAF50;
+    padding-top: 10px;
+    display: none;
+    position: absolute;
+    text-align: center;
+}
+
 #ocean-box {
     width: 702px;
     margin-top: 20px;
