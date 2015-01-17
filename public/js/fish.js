@@ -64,19 +64,24 @@ function displayRules() {
 
 function updateStatus() {
     var statusText = '';
+    $('#fish-remaining-icon').hide();
+    $("#status-sub-label").hide();
     if (st.status === 'loading') {
         statusText = msgs.status_wait;
     } else if (st.status === 'running') {
         statusText = msgs.status_season + st.season + '. ';
-
+        var subLabel = ''
         if (st.reportedMysteryFish > 0) {
-            statusText += msgs.status_fishBetween + st.certainFish +
+            subLabel += st.certainFish +
                 msgs.status_fishAnd + (st.certainFish + st.reportedMysteryFish) +
                 msgs.status_fishRemaining;
         } else {
-            statusText += msgs.status_fishMax + st.certainFish +
-                msgs.status_fishRemaining;
+            subLabel += st.certainFish + msgs.status_fishRemaining;
+            $('#fish-remaining-icon').show();
         }
+
+        $("#status-sub-label").text(subLabel);
+        $("#status-sub-label").show();
     } else if (st.status === 'resting') {
         statusText = msgs.status_spawning;
     } else if (st.status === 'paused') {

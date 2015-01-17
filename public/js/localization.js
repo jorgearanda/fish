@@ -34,9 +34,9 @@ en['status_getReady'] = 'Get ready! The simulation is about to start.';
 pt['status_getReady'] = 'Prepare-se! A simulação esta para começar.';
 es['status_getReady'] = '¡Prepárate! La simulación está por comenzar.';
 
-en['status_season'] = 'This is season ';
-pt['status_season'] = 'Essa é a temporada ';
-es['status_season'] = 'Esta es la temporada ';
+en['status_season'] = 'Season ';
+pt['status_season'] = 'Temporada ';
+es['status_season'] = 'Temporada ';
 
 en['status_fishBetween'] = 'There are between ';
 pt['status_fishBetween'] = 'Existem entre ';
