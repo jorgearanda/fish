@@ -158,4 +158,121 @@ describe('Engine - Fisher', function () {
             return done();
         });
     });
+
+    describe('calculateSeasonCasts()', function () {
+        it('should return zero for a completely non-greedy fisher', function (done) {
+            var ocean = {
+                certainFish: 40,
+                mysteryFish: 0,
+                microworld: {
+                    params: {
+                        spawnFactor: 2.0,
+                        chanceCatch: 1.0,
+                    }
+                },
+                fishers: [{}, {}, {}, {}]
+            };
+            var f = new Fisher('Mr. Tuna', 'bot', {}, ocean);
+            var casts = f.calculateSeasonCasts(0.0);
+            casts.should.equal(0);
+
+            ocean.mysteryFish = 20;
+            var casts = f.calculateSeasonCasts(0.0);
+            casts.should.equal(0);
+
+            ocean.microworld.params.spawnFactor = 20;
+            var casts = f.calculateSeasonCasts(0.0);
+            casts.should.equal(0);
+            return done();
+        });
+
+        it('should return a full share of fish, so that the stock would exactly collapse, for a completely greedy fisher', function (done) {
+            var ocean = {
+                certainFish: 40,
+                mysteryFish: 0,
+                microworld: {
+                    params: {
+                        spawnFactor: 2.0,
+                        chanceCatch: 1.0,
+                    }
+                },
+                fishers: [{}, {}, {}, {}]
+            };
+            var f = new Fisher('Mr. Tuna', 'bot', {}, ocean);
+            var casts = f.calculateSeasonCasts(1.0);
+            casts.should.equal(10);
+
+            ocean.mysteryFish = 20;
+            var casts = f.calculateSeasonCasts(1.0);
+            casts.should.equal(15);
+
+            ocean.fishers = [{}];
+            var casts = f.calculateSeasonCasts(1.0);
+            casts.should.equal(60);
+            return done();
+        });
+
+        it('should return a share of fish so that the stock would exactly restore for a fisher with 0.5 greed', function (done) {
+            var ocean = {
+                certainFish: 40,
+                mysteryFish: 0,
+                microworld: {
+                    params: {
+                        spawnFactor: 2.0,
+                        chanceCatch: 1.0,
+                    }
+                },
+                fishers: [{}, {}, {}, {}]
+            };
+            var f = new Fisher('Mr. Tuna', 'bot', {}, ocean);
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(5);
+
+            ocean.mysteryFish = 40;
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(10);
+
+            ocean.microworld.params.spawnFactor = 3.0;
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(13);
+
+            ocean.mysteryFish = 20
+            ocean.fishers = [{}];
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(40);
+            return done();
+        });
+
+        it('should consider probabilities of catching fish lesser than 100%', function (done) {
+            var ocean = {
+                certainFish: 40,
+                mysteryFish: 0,
+                microworld: {
+                    params: {
+                        spawnFactor: 2.0,
+                        chanceCatch: 0.5,
+                    }
+                },
+                fishers: [{}, {}, {}, {}]
+            };
+            var f = new Fisher('Mr. Tuna', 'bot', {}, ocean);
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(10);
+
+            ocean.mysteryFish = 40;
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(20);
+
+            ocean.microworld.params.spawnFactor = 3.0;
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(27);
+
+            ocean.mysteryFish = 20
+            ocean.fishers = [{}];
+            var casts = f.calculateSeasonCasts(0.5);
+            casts.should.equal(80);
+            // TODO - chanceCatch at other values
+            return done();
+        });
+    });
 });
