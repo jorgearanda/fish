@@ -20,6 +20,14 @@ describe('Engine - Ocean', function () {
                 enableEarlyEnd: true,
                 initialDelay: 5,
                 seasonDelay: 5,
+                certainFish: 10,
+                availableMysteryFish: 0,
+                reportedMysteryFish: 0,
+                fishValue: 1.0,
+                costDeparture: 0.0,
+                costSecond: 0.0,
+                costCast: 0.1,
+                chanceCatch: 1.0,
                 bots: [{
                     name: 'bot 1'
                 }, {
@@ -376,6 +384,84 @@ describe('Engine - Ocean', function () {
             o.hasReachedSeasonDuration().should.equal(false);
             o.seconds = 10;
             o.hasReachedSeasonDuration().should.equal(true);
+            return done();
+        });
+    });
+
+    describe('readRules()', function () {
+        it('should set the ready flag of a human fisher to true', function (done) {
+            o.addFisher('p001');
+            o.fishers[3].ready.should.equal(false);
+            o.readRules('p001');
+            o.fishers[3].ready.should.equal(true);
+            return done();
+        });
+    });
+
+    describe('attemptToFish()', function () {
+        it('should catch a fish for the fisher when chanceCatch is 1.0', function (done) {
+            o.addFisher('p001');
+            o.readRules('p001');
+            o.season = 1;
+            o.setAvailableFish();
+            o.fishers[0].prepareFisherForSeason(1);
+            o.fishers[1].prepareFisherForSeason(1);
+            o.fishers[2].prepareFisherForSeason(1);
+            o.fishers[3].prepareFisherForSeason(1);
+            o.status = 'running';
+            o.attemptToFish('p001');
+            o.certainFish.should.equal(9);
+            o.fishers[3].totalFishCaught.should.equal(1);
+            o.fishers[3].money.should.equal(0.9);
+            o.fishers[3].seasonData[1].actualCasts.should.equal(1);
+            o.fishers[3].seasonData[1].fishCaught.should.equal(1);
+            o.fishers[3].seasonData[1].startMoney.should.equal(0);
+            o.fishers[3].seasonData[1].endMoney.should.equal(0.9);
+            return done();
+        });
+
+        it('should not catch a fish for the fisher when chanceCatch is 0.0', function (done) {
+            o.addFisher('p001');
+            o.readRules('p001');
+            o.microworld.params.chanceCatch = 0.0;
+            o.season = 1;
+            o.setAvailableFish();
+            o.fishers[0].prepareFisherForSeason(1);
+            o.fishers[1].prepareFisherForSeason(1);
+            o.fishers[2].prepareFisherForSeason(1);
+            o.fishers[3].prepareFisherForSeason(1);
+            o.status = 'running';
+            o.attemptToFish('p001');
+            o.certainFish.should.equal(10);
+            o.fishers[3].totalFishCaught.should.equal(0);
+            o.fishers[3].money.should.equal(-0.1);
+            o.fishers[3].seasonData[1].actualCasts.should.equal(1);
+            o.fishers[3].seasonData[1].fishCaught.should.equal(0);
+            o.fishers[3].seasonData[1].startMoney.should.equal(0);
+            o.fishers[3].seasonData[1].endMoney.should.equal(-0.1);
+            return done();
+        });
+
+        it('should not catch a fish if there are no more fish', function (done) {
+            o.addFisher('p001');
+            o.readRules('p001');
+            o.microworld.params.chanceCatch = 1.0;
+            o.season = 1;
+            o.setAvailableFish();
+            o.certainFish = 0;
+            o.fishers[0].prepareFisherForSeason(1);
+            o.fishers[1].prepareFisherForSeason(1);
+            o.fishers[2].prepareFisherForSeason(1);
+            o.fishers[3].prepareFisherForSeason(1);
+            o.status = 'running';
+            o.attemptToFish('p001');
+            o.certainFish.should.equal(0);
+            o.fishers[3].totalFishCaught.should.equal(0);
+            o.fishers[3].money.should.equal(-0.1);
+            o.fishers[3].seasonData[1].actualCasts.should.equal(1);
+            o.fishers[3].seasonData[1].fishCaught.should.equal(0);
+            o.fishers[3].seasonData[1].startMoney.should.equal(0);
+            o.fishers[3].seasonData[1].endMoney.should.equal(-0.1);
             return done();
         });
     });
