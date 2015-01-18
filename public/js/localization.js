@@ -142,13 +142,13 @@ en['buttons_return'] = 'Return to port <i class="icon-lighthouse"></i>';
 pt['buttons_return'] = 'Retornar ao porto <i class="icon-lighthouse"></i>';
 es['buttons_return'] = 'Regresar al puerto <i class="icon-lighthouse"></i>';
 
-en['buttons_pause'] = 'Pause';
-pt['buttons_pause'] = 'Parar';
-es['buttons_pause'] = 'Pausar';
+en['buttons_pause'] = 'Pause <i class="icon-pause"></i>';
+pt['buttons_pause'] = 'Parar <i class="icon-pause"></i>';
+es['buttons_pause'] = 'Pausar <i class="icon-pause"></i>';
 
-en['buttons_resume'] = 'Resume';
-pt['buttons_resume'] = 'Retornar';
-es['buttons_resume'] = 'Continuar';
+en['buttons_resume'] = 'Resume <i class="icon-play"></i>';
+pt['buttons_resume'] = 'Retornar <i class="icon-play"></i>';
+es['buttons_resume'] = 'Continuar <i class="icon-play"></i>';
 
 en['buttons_goFishing'] = 'Go fishing!';
 pt['buttons_goFishing'] = 'Ir pescar!';

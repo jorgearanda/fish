@@ -12,6 +12,7 @@ html
     link(rel='stylesheet', href='/public/fonts/css/fontello-ie7.css')
     link(rel='stylesheet', href='/public/fonts/css/fontello.css')
     script(src='/bower/jquery/jquery.min.js')
+    script(src='/bower/mixitup/build/jquery.mixitup.min.js')
     script(src='/bower/purl/purl.js')
     script(src='/bower/bootstrap/dist/js/bootstrap.min.js')
     script(src='/bower/moment/min/moment.min.js')
@@ -56,103 +57,16 @@ html
               label#fish-total-header
             th#profit-season-header.data-header
             th#profit-total-header.data-header
-          tbody#fisher-table-rows
-            tr
-              td
-                img#f0-status(src='/public/img/bullet_white.png')
-                label#f0-name.fisher-label
-              td#f0-fish-season.fisher-label
-              td#f0-fish-total.fisher-label
-              td#f0-profit-season.fisher-label
-              td#f0-profit-total.fisher-label
-            tr#f1(style='display: none')
-              td
-                img#f1-status(src='/public/img/bullet_white.png')
-                label#f1-name.fisher-label
-              td#f1-fish-season.fisher-label
-              td#f1-fish-total.fisher-label
-              td#f1-profit-season.fisher-label
-              td#f1-profit-total.fisher-label
-            tr#f2(style='display: none')
-              td
-                img#f2-status(src='/public/img/bullet_white.png')
-                label#f2-name.fisher-label
-              td#f2-fish-season.fisher-label
-              td#f2-fish-total.fisher-label
-              td#f2-profit-season.fisher-label
-              td#f2-profit-total.fisher-label
-            tr#f3(style='display: none')
-              td
-                img#f3-status(src='/public/img/bullet_white.png')
-                label#f3-name.fisher-label
-              td#f3-fish-season.fisher-label
-              td#f3-fish-total.fisher-label
-              td#f3-profit-season.fisher-label
-              td#f3-profit-total.fisher-label
-            tr#f4(style='display: none')
-              td
-                img#f4-status(src='/public/img/bullet_white.png')
-                label#f4-name.fisher-label
-              td#f4-fish-season.fisher-label
-              td#f4-fish-total.fisher-label
-              td#f4-profit-season.fisher-label
-              td#f4-profit-total.fisher-label
-            tr#f5(style='display: none')
-              td
-                img#f5-status(src='/public/img/bullet_white.png')
-                label#f5-name.fisher-label
-              td#f5-fish-season.fisher-label
-              td#f5-fish-total.fisher-label
-              td#f5-profit-season.fisher-label
-              td#f5-profit-total.fisher-label
-            tr#f6(style='display: none')
-              td
-                img#f6-status(src='/public/img/bullet_white.png')
-                label#f6-name.fisher-label
-              td#f6-fish-season.fisher-label
-              td#f6-fish-total.fisher-label
-              td#f6-profit-season.fisher-label
-              td#f6-profit-total.fisher-label
-            tr#f7(style='display: none')
-              td
-                img#f7-status(src='/public/img/bullet_white.png')
-                label#f7-name.fisher-label
-              td#f7-fish-season.fisher-label
-              td#f7-fish-total.fisher-label
-              td#f7-profit-season.fisher-label
-              td#f7-profit-total.fisher-label
-            tr#f8(style='display: none')
-              td
-                img#f8-status(src='/public/img/bullet_white.png')
-                label#f8-name.fisher-label
-              td#f8-fish-season.fisher-label
-              td#f8-fish-total.fisher-label
-              td#f8-profit-season.fisher-label
-              td#f8-profit-total.fisher-label
-            tr#f9(style='display: none')
-              td
-                img#f9-status(src='/public/img/bullet_white.png')
-                label#f9-name.fisher-label
-              td#f9-fish-season.fisher-label
-              td#f9-fish-total.fisher-label
-              td#f9-profit-season.fisher-label
-              td#f9-profit-total.fisher-label
-            tr#f10(style='display: none')
-              td
-                img#f10-status(src='/public/img/bullet_white.png')
-                label#f10-name.fisher-label
-              td#f10-fish-season.fisher-label
-              td#f10-fish-total.fisher-label
-              td#f10-profit-season.fisher-label
-              td#f10-profit-total.fisher-label
-            tr#f11(style='display: none')
-              td
-                img#f11-status(src='/public/img/bullet_white.png')
-                label#f11-name.fisher-label
-              td#f11-fish-season.fisher-label
-              td#f11-fish-total.fisher-label
-              td#f11-profit-season.fisher-label
-              td#f11-profit-total.fisher-label
+          tbody#fishers-tbody
+            each i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+              tr(id="f#{i}").fisher-row
+                td
+                  img(id="f#{i}-status", src="/public/img/bullet_white.png")
+                  label(id="f#{i}-name").fisher-label
+                td(id="f#{i}-fish-season").fisher-label
+                td(id="f#{i}-fish-total").fisher-label
+                td(id="f#{i}-profit-season").fisher-label
+                td(id="f#{i}-profit-total").fisher-label
     .row
       #rules-modal.modal.fade(role='dialog', aria-hidden='true')
         .modal-dialog
@@ -167,5 +81,5 @@ html
           .modal-content
             #over-text.modal-body Simulation over text
             .modal-footer
-              buttion#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              button#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
                 | OK

@@ -33,14 +33,16 @@ html
             button#cancel.btn.btn-default(type='button') Cancel
       #results.row.collapse
         .col-md-6
-          h3 Completed runs
-          .row
-            #microworld-runs-table.table-responsive
-              table.table.table-bordered.table-hover
-                thead
-                  th Time
-                  th Participant IDs
-                tbody#microworld-runs-table-rows
+        h3#completed-runs Completed runs
+        button.btn.btn-info(id='download-all-button', type='submit') Download all
+        .row
+          #microworld-runs-table.table-responsive
+            table.table.table-bordered.table-hover
+              thead
+                th Time
+                th Participant IDs
+                th Download
+              tbody#microworld-runs-table-rows
       .row
         .col-md-4
           h3 General settings
@@ -94,7 +96,7 @@ html
             .form-group
               .col-md-10
                 label.form-label.checkbox
-                  | Allow seasons to
+                  | Allow seasons to&nbsp;
                   a#early-end-tooltip(title='Finish a season if all fishers have returned to port and there has been no activity for three seconds.', data-toggle='tooltip', data-placement='top') end early
                   input#enable-early-end(type='checkbox', checked='')
         .col-md-4
@@ -205,7 +207,7 @@ html
             .form-group
               .col-md-10
                 label.form-label.checkbox
-                  | Show their
+                  | Show their&nbsp;
                   a#show-fisher-status-tooltip(title='At port or at sea', data-toggle='tooltip', data-placement='top') status
                   input#show-fisher-status(type='checkbox', checked='')
           .row
