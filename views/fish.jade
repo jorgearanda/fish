@@ -68,19 +68,17 @@ html
                 td(id="f#{i}-fish-total").fisher-label
                 td(id="f#{i}-profit-season").fisher-label
                 td(id="f#{i}-profit-total").fisher-label
-    .row
-      #rules-modal.modal.fade(role='dialog', aria-hidden='true')
-        .modal-dialog
-          .modal-content
-            #rules-text.modal-body
-              | Preparation text
-            .modal-footer
-              button#read-rules.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
-    .row
-      #over-modal.modal.fade(role='dialog', aria-hidden='true')
-        .modal-dialog
-          .modal-content
-            #over-text.modal-body Simulation over text
-            .modal-footer
-              button#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
-                | OK
+    #rules-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #rules-text.modal-body
+            | Preparation text
+          .modal-footer
+            button#read-rules.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+    #over-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #over-text.modal-body Simulation over text
+          .modal-footer
+            button#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK
