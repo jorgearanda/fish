@@ -115,7 +115,7 @@ app.get('/runs/:id', isUser, runs.show);
 app.post('/experimenters', experimenters.create);
 
 var server = http.createServer(app);
-var io = socketio.listen(server, {
+var io = exports.io = socketio.listen(server, {
     logger: {
         debug: logger.debug,
         info: logger.info,

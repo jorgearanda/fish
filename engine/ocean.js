@@ -63,7 +63,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.findFisherIndex = function (pId) {
         for (var i in this.fishers) {
             if (this.fishers[i].name === pId) {
-                return i;
+                return parseInt(i, 10);
             }
         }
 
