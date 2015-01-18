@@ -1,119 +1,102 @@
 .info-label {
-    text-align: left;
-    display: inline-block;
-    font-weight: normal;
-    font-size: 8pt;
-}
+  text-align: left;
+  display: inline-block;
+  font-weight: normal;
+  font-size: 8pt; }
 
 .costs-label {
-    text-align: right;
-    display: inline-block;
-    font-weight: normal;
-    font-size: 9pt;
-    margin-bottom: 0px;
-}
+  text-align: right;
+  display: inline-block;
+  font-weight: normal;
+  font-size: 9pt;
+  margin-bottom: 0px; }
 
 .fisher-label {
-    font-weight: normal;
-}
+  font-weight: normal; }
 
 #status-label {
-    display: block;
-    margin-bottom: 0;
-}
+  display: block;
+  margin-bottom: 0; }
 
 #fish-remaining-icon {
-    padding-bottom: 0.3em;
-}
-#status-sub-label {
-
-}
+  padding-bottom: 0.3em; }
 
 #status-box {
-    display: inline-block;
-    height: 70px;
-    width: 100%;
-    text-align: center;
-}
+  display: inline-block;
+  height: 70px;
+  width: 100%;
+  text-align: center; }
 
 #warning-box {
-    display: inline-block;
-    height: 70px;
-}
+  display: inline-block;
+  height: 70px; }
 
 #warning-alert {
-    width: 700px;
-    height: 40px;
-    margin-left: 2px;
-    margin-top: 2px;
-    font-weight: bold;
-    font-size: 1.25em;
-    color: #212121;
-    border: 1px solid white;
-    background-color: #4CAF50;
-    padding-top: 10px;
-    display: none;
-    position: absolute;
-    text-align: center;
-}
+  width: 700px;
+  height: 40px;
+  margin-left: 2px;
+  margin-top: 2px;
+  font-weight: bold;
+  font-size: 1.25em;
+  color: #212121;
+  border: 1px solid white;
+  background-color: #4CAF50;
+  padding-top: 10px;
+  display: none;
+  position: absolute;
+  text-align: center; }
 
 #ocean-box {
-    width: 702px;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
-}
+  width: 702px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px; }
 
 #ocean-background {
-    background-color: rgb(150, 200, 230);
-}
+  background-color: #96c8e6; }
 
 #ocean-canvas {
-    border: 2px solid darkcyan;
-}
+  border: 2px solid darkcyan; }
 
 #control-box {
-    display: inline-block;
-    height: 82px;
-}
+  display: inline-block;
+  height: 82px; }
 
 #costs-bpx {
-    height: 82px;
-}
+  height: 82px; }
+
 .btn {
-    margin-top: 20px;
-}
+  margin-top: 20px; }
 
 .btn-toolbar {
-    margin-left: 0px;
-}
+  margin-left: 0px; }
 
 .box {
-    border: 1px solid darkgray;
-}
+  border: 1px solid darkgray; }
 
 .left-col {
-    min-width: 702px;
-}
+  min-width: 702px; }
 
 .container-fluid {
-    padding-left: 0px;
-    padding-right: 0px;
-}
+  padding-left: 0px;
+  padding-right: 0px; }
 
 #fisher-header {
-    width: 120px;
-}
+  width: 120px; }
 
 .data-header {
-    width: 50px;
-}
+  width: 50px; }
 
-.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
-    padding: 4px;
-}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+  padding: 4px; }
 
 .fisher-row {
-    display: none;
-}
+  display: none; }
+
+.modal button {
+  display: block;
+  margin: 0 auto; }
+
+.modal-footer {
+  margin-top: 0; }
