@@ -45,6 +45,24 @@ function loadLabels() {
     updateStatus();
 }
 
+function initializeMixItUp() {
+    var $container = $("#fishers-tbody");
+    var $activeFishers = $('#fishers-tbody tr').filter(function() {
+        return $(this).attr('active-fisher');
+    });
+    $container.mixItUp({
+        selectors: {
+            target: 'tr'
+        },
+        layout: {
+            display: 'table-row'
+        },
+        load: {
+            filter: $activeFishers
+        }
+    });
+}
+
 function disableButtons() {
     $('#to-sea').attr('disabled', 'disabled');
     $('#return').attr('disabled', 'disabled');
@@ -150,31 +168,50 @@ function updateCosts() {
 
 function updateFishers() {
     var j = 1;
+    var name;
+    var fishSeason;
+    var fishTotal;
+    var profitSeason;
+    var profitTotal;
+
     for (var i in st.fishers) {
         var fisher = st.fishers[i];
         if (fisher.name === pId) {
             // This is you
-            $('#f0-name').text('You');
+            name = 'You';
+            $('#f0-name').text(name);
+
             if (fisher.status === 'At port') {
                 $('#f0-status').attr('src', '/public/img/anchor.png');
             } else {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
-            $('#f0-fish-season').text(fisher.seasonData[st.season].fishCaught);
-            $('#f0-fish-total').text(fisher.totalFishCaught);
-            $('#f0-profit-season').text(fisher.seasonData[st.season].endMoney.toFixed(2));
-            $('#f0-profit-total').text(fisher.money.toFixed(2));
 
+            fishSeason = fisher.seasonData[st.season].fishCaught;
+            fishTotal = fisher.totalFishCaught;
+            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
+            profitTotal = fisher.money.toFixed(2);
+
+            $('#f0-fish-season').text(fishSeason);
+            $('#f0-fish-total').text(fishTotal);
+            $('#f0-profit-season').text(profitSeason);
+            $('#f0-profit-total').text(profitTotal);
+
+            $('#f0').attr('data-profit-total', profitTotal);
+            $('#f0').attr('data-profit-season', profitSeason);
+            $('#f0').attr('data-name', name);
+            $('#f0').attr('active-fisher', true);
         } else {
             // Everyone else
             if (!ocean.showFishers) continue;
 
             $('#f' + j).show();
             if (ocean.showFisherNames) {
-                $('#f' + j + '-name').text(fisher.name);
+                name = fisher.name;
             } else {
-                $('#f' + j + '-name').text(j);
+                name = j;
             }
+            $('#f' + j + '-name').text(name);
 
             var src = '';
             if (!ocean.showFisherStatus) {
@@ -186,25 +223,40 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
+            fishSeason = fisher.seasonData[st.season].fishCaught;
+            fishTotal = fisher.totalFishCaught;
+            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
+            profitTotal = fisher.money.toFixed(2);
+
             if (ocean.showNumCaught) {
-                $('#f' + j + '-fish-season').text(fisher.seasonData[st.season].fishCaught);
-                $('#f' + j + '-fish-total').text(fisher.totalFishCaught);
+                $('#f' + j + '-fish-season').text(fishSeason);
+                $('#f' + j + '-fish-total').text(fishTotal);
             } else {
                 $('#f' + j + '-fish-season').text('?');
                 $('#f' + j + '-fish-total').text('?');
             }
 
             if (ocean.showFisherBalance) {
-                $('#f' + j + '-profit-season').text(fisher.seasonData[st.season].endMoney.toFixed(2));
-                $('#f' + j + '-profit-total').text(fisher.money.toFixed(2));
+                $('#f' + j + '-profit-season').text(profitSeason);
+                $('#f' + j + '-profit-total').text(profitTotal);
             } else {
                 $('#f' + j + '-profit-season').text('?');
                 $('#f' + j + '-profit-total').text('?');
             }
 
+            $('#f' + j).attr('data-profit-total', profitTotal);
+            $('#f' + j).attr('data-profit-season', profitSeason);
+            $('#f' + j).attr('data-name', name);
+            $('#f' + j).attr('active-fisher', true);
+
             j++;
         }
     }
+}
+
+function sortFisherTable() {
+    var $container = $("#fishers-tbody");
+    $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
 }
 
 function makeUnpausable() {
@@ -245,6 +297,8 @@ function beginSeason(data) {
     updateWarning('');
     drawOcean();
     updateFishers();
+    initializeMixItUp();
+    sortFisherTable();
     $('#to-sea').removeAttr('disabled');
     $('#pause').removeAttr('disabled');
 }
@@ -264,6 +318,7 @@ function receiveStatus(data) {
     st = data;
     updateStatus();
     updateFishers();
+    sortFisherTable();
     drawOcean();
 }
 
