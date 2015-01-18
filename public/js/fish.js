@@ -122,7 +122,7 @@ function updateWarning(warn) {
         }
     } else if (warn === 'end') {
         $('#warning-alert').text(msgs.warning_seasonEnd);
-        $('#warning-alert').fasdeIn();
+        $('#warning-alert').fadeIn();
     } else {
         $('#warning-alert').text('');
         $('#warning-alert').fadeOut();
