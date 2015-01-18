@@ -457,13 +457,19 @@ function noRuns(jqXHR) {
 function gotRuns(r) {
     var table = '';
     for (var i in r) {
-        table += '<tr onclick="location.href=\'../runs/' + r[i]._id + '\'"><td>' + moment(r[i].time).format('llll') + '</td>' +
-            '<td>' + r[i].participants + '</td></tr>'
+        var button = '<button class="btn btn-sm btn-info" type="submit" onclick=location.href=\'/runs/' + r[i]._id + 
+            '?csv=true\'>Download</button>';
+        table += '<tr><td><a href="../runs/' + r[i]._id + '">' + moment(r[i].time).format('llll') + '</a></td>' +
+            '<td>' + r[i].participants + '</td>' + '<td>' + button + '</tr>';
     }
 
     $('#microworld-runs-table-rows').html(table);
-
-    if (r.length > 0) setTimeout(getRuns, 60000);
+   
+    // enabled or disable the download all button depending on if there are any completed runs
+    if (r.length == 0) $('#download-all-button').attr("disabled", "disabled");
+    else $('#download-all-button').removeAttr("disabled");
+    
+    setTimeout(getRuns, 60000);
 }
 
 function getRuns() {
@@ -479,6 +485,11 @@ function backToList() {
     location.href = '../dashboard'; 
 }
 
+// Makes downloading all runs possible
+function initDownloadAll() {
+    $('#download-all-button').attr("onclick", "location.href='/runs?csv=true&mw="+mwId+"'");
+}
+
 function setButtons() {
     $('#create').click(createMicroworld);
     $('#create-2').click(createMicroworld);
@@ -491,6 +502,7 @@ function setButtons() {
     $('#activate-confirmed').click(activateMicroworld);
     $('#archive-confirmed').click(archiveMicroworld);
     $('#delete-confirmed').click(deleteMicroworld);
+    initDownloadAll();
 }
 
 function setOnPageChanges() {

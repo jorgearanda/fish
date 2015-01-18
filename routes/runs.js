@@ -48,9 +48,9 @@ function flattenRunResults(runs) {
 // Generates a CSV file containing the results of the queried runs
 function generateCSVRuns(runs, res) {
     var csvArray = flattenRunResults(runs);
-    var microworldName;
-    if (Array.isArray(runs)) microworldName = runs[0].microworld.name;
-    else microworldName = runs.microworld.name;
+    var sendHeader = { 'Content-Type' : 'text/csv', 'Content-Disposition' : 'attachment; filename=' };
+    if (Array.isArray(runs)) sendHeader['Content-Disposition']+= runs[0].microworld.name + '.csv';
+    else sendHeader['Content-Disposition']+= runs.microworld.name + ' ' + runs.time + '.csv';
     
     csvConvert.json2csv(csvArray, function(err, csv) {
         if(err) {
@@ -58,8 +58,7 @@ function generateCSVRuns(runs, res) {
             return res.send(500);
         }
 
-        res.set({'Content-Type' : 'text/csv',
-                'Content-Disposition' : 'attachment; filename=' + microworldName + '.csv'});
+        res.set(sendHeader);
         return res.status(200).send(csv);
     });
 }
@@ -81,6 +80,7 @@ exports.list = function (req, res) {
             return res.send(500);
         }
 
+        // initiate download
         if (req.query.csv === 'true') return generateCSVRuns(runs, res); 
         return res.status(200).send(runs);
     });
@@ -98,6 +98,7 @@ exports.show = function (req, res) {
             return res.send(500);
         }
         
+        // initiate download
         if (req.query.csv === 'true') return generateCSVRuns(run, res);
         return res.status(200).send(run);
     });
