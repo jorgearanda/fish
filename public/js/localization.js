@@ -58,9 +58,9 @@ en['status_fishTo'] = ' to ';
 pt['status_fishTo'] = ' a ';
 es['status_fishTo'] = ' a ';
 
-en['status_fishRemaining'] = ' fish remaining';
-pt['status_fishRemaining'] = ' peixes restantes';
-es['status_fishRemaining'] = ' peces en el mar';
+en['status_fishRemaining'] = ' remaining';
+pt['status_fishRemaining'] = ' restantes';
+es['status_fishRemaining'] = ' restantes';
 
 en['status_spawning'] = 'We are between seasons';
 pt['status_spawning'] = 'Estamos entre as temporadas';
@@ -130,17 +130,17 @@ pt['end_money'] = 'Você terminou com';
 es['end_money'] = 'Terminaste con';
 
 // Buttons
-en['buttons_goToSea'] = 'Go to sea';
-pt['buttons_goToSea'] = 'Ir para o mar';
-es['buttons_goToSea'] = 'Ir al mar';
+en['buttons_goToSea'] = 'Go to sea <i class="icon-ship"></i>';
+pt['buttons_goToSea'] = 'Ir para o mar <i class="icon-ship"></i>';
+es['buttons_goToSea'] = 'Ir al mar <i class="icon-ship"></i>';
 
-en['buttons_castFish'] = 'Attempt to fish';
-pt['buttons_castFish'] = 'Pescar um peixe';
-es['buttons_castFish'] = 'Pescar un pez';
+en['buttons_castFish'] = 'Attempt to fish <i class="icon-fish-hook"></i>';
+pt['buttons_castFish'] = 'Pescar um peixe <i class="icon-fish-hook"></i>';
+es['buttons_castFish'] = 'Pescar un pez <i class="icon-fish-hook"></i>';
 
-en['buttons_return'] = 'Return to port';
-pt['buttons_return'] = 'Retornar ao porto';
-es['buttons_return'] = 'Regresar al puerto';
+en['buttons_return'] = 'Return to port <i class="icon-lighthouse"></i>';
+pt['buttons_return'] = 'Retornar ao porto <i class="icon-lighthouse"></i>';
+es['buttons_return'] = 'Regresar al puerto <i class="icon-lighthouse"></i>';
 
 en['buttons_pause'] = 'Pause';
 pt['buttons_pause'] = 'Parar';

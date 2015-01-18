@@ -32,9 +32,8 @@ html
             canvas#ocean-canvas(width='700', height='460')
         .row
           #control-box.col-md-8.bg-warning.btn-toolbar.box
-            button#to-sea.btn.btn-success(type='button') Go to sea
-            button#attempt-fish.btn.btn-info(type='button') Attempt to fish
-            button#return.btn.btn-primary(type='button') Return to port
+            button#changeLocation.btn.btn-success(type='button' data-location='port') Go to Sea <i class='icon-ship'></i>
+            button#attempt-fish.btn.btn-info(type='button') Attempt to fish <i class="icon-fish-hook"></i>
             button#pause.btn(type='button') Pause
             button#resume.btn(type='button', style='display:none') Resume
           #costs-box.col-md-4.bg-warning.box
