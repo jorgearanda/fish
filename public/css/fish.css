@@ -1,119 +1,107 @@
-.info-label {
-    text-align: left;
-    display: inline-block;
-    font-weight: normal;
-    font-size: 8pt;
-}
+.btn-changeLocation {
+  background-color: #03A9F4;
+  border-color: #03A9F4;
+  color: #FFFFFF; }
 
-.costs-label {
-    text-align: right;
-    display: inline-block;
-    font-weight: normal;
-    font-size: 9pt;
-    margin-bottom: 0px;
-}
+.btn-changeLocation:hover, .btn-changeLocation:focus,
+.btn-changeLocation:active {
+  background-color: #0286c2;
+  border-color: #0286c2;
+  color: #FFFFFF; }
 
-.fisher-label {
-    font-weight: normal;
-}
+.btn-changeLocation:disabled {
+  background-color: #B3E5FC;
+  border-color: #B3E5FC;
+  color: #212121; }
 
-#status-label {
-    display: block;
-    margin-bottom: 0;
-}
+.btn-fish {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+  color: #FFFFFF; }
 
-#fish-remaining-icon {
-    padding-bottom: 0.3em;
-}
-#status-sub-label {
+.btn-fish:hover, .btn-fish:focus,
+.btn-fish:active {
+  background-color: #3d8b40;
+  border-color: #3d8b40;
+  color: #FFFFFF; }
 
-}
+.btn-fish:disabled {
+  background-color: #6ec071;
+  border-color: #6ec071;
+  color: #212121; }
+
+.btn-pause {
+  background-color: #0288D1;
+  border-color: #0288D1;
+  color: #FFFFFF; }
+
+.btn-pause:hover, .btn-pause:focus,
+.btn-pause:active {
+  background-color: #02679e;
+  border-color: #02679e;
+  color: #FFFFFF; }
+
+.btn-pause:disabled {
+  background-color: #09a7fd;
+  border-color: #09a7fd;
+  color: #212121; }
+
+.col-sm-8, .col-sm-4 {
+  padding-left: 30px;
+  padding-right: 30px; }
 
 #status-box {
-    display: inline-block;
-    height: 70px;
+  text-align: center; }
+
+#ocean-box #warning-alert {
+  display: none;
+  position: relative;
+  top: 50px;
+  margin: 0 auto;
+  text-align: center; }
+#ocean-box #costs-box {
+  position: relative; }
+  #ocean-box #costs-box div {
+    text-align: center;
+    display: inline-block; }
+
+#control-box .col-lg-4 {
+  padding-left: 5px;
+  padding-right: 5px; }
+  #control-box .col-lg-4 button {
     width: 100%;
-    text-align: center;
-}
+    margin-bottom: 5px;
+    font-weight: bold; }
 
-#warning-box {
-    display: inline-block;
-    height: 70px;
-}
+#fishers-box table thead th {
+  white-space: nowrap;
+  vertical-align: top; }
+  #fishers-box table thead th img {
+    float: left;
+    margin-right: 5px; }
+  #fishers-box table thead th p {
+    overflow: hidden; }
+#fishers-box table tbody tr {
+  display: none;
+  font-weight: bold; }
+  #fishers-box table tbody tr td img {
+    float: left;
+    margin-right: 5px; }
+  #fishers-box table tbody tr td p {
+    overflow: hidden; }
+#fishers-box table tbody tr#f0 {
+  background-color: #d9edf7; }
+  #fishers-box table tbody tr#f0 td {
+    background-color: #d9edf7; }
 
-#warning-alert {
-    width: 700px;
-    height: 40px;
-    margin-left: 2px;
-    margin-top: 2px;
-    font-weight: bold;
-    font-size: 1.25em;
-    color: #212121;
-    border: 1px solid white;
-    background-color: #4CAF50;
-    padding-top: 10px;
-    display: none;
-    position: absolute;
-    text-align: center;
-}
+.modal button {
+  display: block;
+  margin: 0 auto; }
+.modal .modal-footer {
+  margin-top: 0; }
 
-#ocean-box {
-    width: 702px;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
-}
+@media (min-width: 768px) {
+  .col-sm-4 {
+    margin-top: 20px; } }
 
-#ocean-background {
-    background-color: rgb(150, 200, 230);
-}
-
-#ocean-canvas {
-    border: 2px solid darkcyan;
-}
-
-#control-box {
-    display: inline-block;
-    height: 82px;
-}
-
-#costs-bpx {
-    height: 82px;
-}
-.btn {
-    margin-top: 20px;
-}
-
-.btn-toolbar {
-    margin-left: 0px;
-}
-
-.box {
-    border: 1px solid darkgray;
-}
-
-.left-col {
-    min-width: 702px;
-}
-
-.container-fluid {
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
-#fisher-header {
-    width: 120px;
-}
-
-.data-header {
-    width: 50px;
-}
-
-.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
-    padding: 4px;
-}
-
-.fisher-row {
-    display: none;
-}
+/*# sourceMappingURL=fish.css.map */

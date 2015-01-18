@@ -1,0 +1,177 @@
+$your-row-background: #d9edf7;
+$media-small: 768px;
+$media-medium: 992px;
+$media-large: 1200px;
+
+$darkPrimaryColor:   #0288D1;
+$primaryColor:       #03A9F4;
+$lightPrimaryColor:  #B3E5FC;
+$textPrimaryColor:   #FFFFFF;
+$accentColor:        #4CAF50;
+$primaryTextColor:   #212121;
+$secondaryTextColor: #727272;
+$dividerColor:       #B6B6B6;
+
+// Bootstrap overrides start
+.btn-changeLocation {
+  background-color: $primaryColor;
+  border-color: $primaryColor;
+  color: $textPrimaryColor;
+}
+
+.btn-changeLocation:hover, .btn-changeLocation:focus, 
+.btn-changeLocation:active {
+  background-color: darken($primaryColor, 10%);
+  border-color: darken($primaryColor, 10%);
+  color: $textPrimaryColor;
+}
+
+.btn-changeLocation:disabled {
+  background-color: $lightPrimaryColor;
+  border-color: $lightPrimaryColor;
+  color: $primaryTextColor;
+}
+
+.btn-fish {
+  background-color: $accentColor;
+  border-color: $accentColor;
+  color: $textPrimaryColor;
+}
+
+.btn-fish:hover, .btn-fish:focus, 
+.btn-fish:active  {
+  background-color: darken($accentColor, 10%);
+  border-color: darken($accentColor, 10%);
+  color: $textPrimaryColor;
+}
+
+.btn-fish:disabled {
+  background-color: lighten($accentColor, 10%);
+  border-color: lighten($accentColor, 10%);
+  color: $primaryTextColor;
+}
+
+.btn-pause {
+  background-color: $darkPrimaryColor;
+  border-color: $darkPrimaryColor;
+  color: $textPrimaryColor;
+}
+
+.btn-pause:hover, .btn-pause:focus, 
+.btn-pause:active  {
+  background-color: darken($darkPrimaryColor, 10%);
+  border-color: darken($darkPrimaryColor, 10%);
+  color: $textPrimaryColor;
+}
+
+.btn-pause:disabled {
+  background-color: lighten($darkPrimaryColor, 10%);
+  border-color: lighten($darkPrimaryColor, 10%);
+  color: $primaryTextColor;
+}
+
+
+//Bootstrap overrides end
+
+.col-sm-8, .col-sm-4 {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+#status-box {
+  text-align: center;
+}
+
+#ocean-box {
+  #warning-alert {
+    display: none;
+    position: relative;
+    top: 50px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  #canvas-container {
+  }
+  #costs-box {
+    position: relative;
+    div {
+      text-align: center;
+      display: inline-block;
+    }
+  }
+}
+
+#control-box {
+  .col-lg-4 {
+    padding-left: 5px;
+    padding-right: 5px;
+    button {
+      width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  }
+}
+
+#fishers-box {
+  table {
+    thead {
+      th {
+        white-space: nowrap;
+        vertical-align: top;
+        img {
+          float: left;
+          margin-right: 5px;
+        }
+        p {
+          overflow: hidden;
+        }
+      }
+    }
+    tbody {
+      tr {
+        display: none;
+        font-weight: bold;
+        td {
+          img {
+            float: left;
+            margin-right: 5px;
+          }
+          p {
+            overflow: hidden;
+          }
+        }
+      }
+      tr#f0 {
+        background-color: $your-row-background;
+        td {
+          background-color: $your-row-background;
+        }
+      }
+    }
+  }
+}
+
+.modal {
+  button {
+    display:block;
+    margin: 0 auto;
+  }
+  .modal-footer {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: $media-small) {
+  .col-sm-4 {
+    margin-top: 20px;
+  }
+}
+
+@media (min-width: $media-medium) {
+
+}
+
+@media (min-width: $media-large) {
+
+}
