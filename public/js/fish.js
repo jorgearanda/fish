@@ -82,21 +82,26 @@ function displayRules() {
 
 function updateStatus() {
     var statusText = '';
+    $("#status-sub-label").html('');
     if (st.status === 'loading') {
         statusText = msgs.status_wait;
+        $("#status-sub-label").html(msgs.status_subWait + ' <i class="icon-spin animate-spin"></i>');
     } else if (st.status === 'running') {
-        statusText = msgs.status_season + st.season + '. ';
-
+        statusText = msgs.status_season + st.season;
+        var subLabel = ''
         if (st.reportedMysteryFish > 0) {
-            statusText += msgs.status_fishBetween + st.certainFish +
-                msgs.status_fishAnd + (st.certainFish + st.reportedMysteryFish) +
+            subLabel += st.certainFish +
+                msgs.status_fishTo + (st.certainFish + st.reportedMysteryFish) + '<i class="icon-fish"></i>' +
                 msgs.status_fishRemaining;
         } else {
-            statusText += msgs.status_fishMax + st.certainFish +
-                msgs.status_fishRemaining;
+            subLabel += st.certainFish + '<i class="icon-fish"></i>' + msgs.status_fishRemaining;
         }
+
+        $("#status-sub-label").html(subLabel);
+        $("#status-sub-label").show();
     } else if (st.status === 'resting') {
         statusText = msgs.status_spawning;
+        $("#status-sub-label").html(msgs.status_subSpawning);
     } else if (st.status === 'paused') {
         statusText = msgs.status_paused;
     } else if (st.status === 'over') {
@@ -104,24 +109,29 @@ function updateStatus() {
     } else {
     }
 
-    $('#status-label').text(statusText);
+    $('#status-label').html(statusText);
 }
 function updateWarning(warn) {
     if (warn === 'start') {
         if (!st.season || st.season === 0) {
-            $('#warning-label').text(msgs.status_getReady);
+            $('#warning-alert').text(msgs.status_getReady);
+            $('#warning-alert').fadeIn();
         } else {
-            $('#warning-label').text(msgs.warning_seasonStart);
+            $('#warning-alert').text(msgs.warning_seasonStart);
+            $('#warning-alert').fadeIn();
         }
     } else if (warn === 'end') {
-        $('#warning-label').text(msgs.warning_seasonEnd);
+        $('#warning-alert').text(msgs.warning_seasonEnd);
+        $('#warning-alert').fasdeIn();
     } else {
-        $('#warning-label').text('');
+        $('#warning-alert').text('');
+        $('#warning-alert').fadeOut();
     }
 }
 
 function clearWarnings() {
-    $('#warning-label').text('');
+    $('#warning-alert').text('');
+    $('#warning-alert').fadeOut();
 }
 
 function updateCosts() {

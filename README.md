@@ -23,9 +23,11 @@ Please ensure these requirements are installed before proceeding to the Installa
 ## Scripts for Developers
 These are located in the developer_scripts folder
 
-* `npm run populate` Run post-install.
+* `npm run populatedb` Run post-install.
  * This populates the database with a user "Admin" and a password "123456789"
 * `npm run cleandb` This will clean all the collections defined in the file (experimenters, microworlds, and sessions)
+* `npm run resetdb` runs cleandb then populatedb
+* `npm run devreset` runs cleandb then populate db and then starts up the server.
 
 ## Administrator
 1. Navigate to http://localhost:8080/admin
@@ -42,3 +44,7 @@ These are located in the developer_scripts folder
 2. Enter the Experiment number of an active microworld
 3. Enter an ID number
 4. Fish!
+
+
+# Attributions
+* Black Fish Icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>
