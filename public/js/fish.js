@@ -106,6 +106,7 @@ function updateStatus() {
         statusText = msgs.status_paused;
     } else if (st.status === 'over') {
         statusText = msgs.end_over;
+        $("#status-sub-label").hide();
     } else {
     }
 
