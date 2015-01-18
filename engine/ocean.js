@@ -192,10 +192,6 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         this.log.debug('Tick. Seconds: ' + this.seconds);
     };
 
-    this.timeStep = function () {
-
-    };
-
     this.hasReachedInitialDelay = function () {
         return (this.seconds >= this.microworld.params.initialDelay);
     };
