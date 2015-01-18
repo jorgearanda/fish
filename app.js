@@ -113,6 +113,7 @@ app.get('/runs', isUser, runs.list);
 app.get('/runs/:id', isUser, runs.show);
 
 app.post('/experimenters', experimenters.create);
+app.put('/experimenters/:id', isUser, experimenters.update);
 
 var server = http.createServer(app);
 var io = exports.io = socketio.listen(server, {
