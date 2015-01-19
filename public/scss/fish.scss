@@ -18,6 +18,10 @@ $your-row-background: #d9edf7;
   padding-right: 30px;
 }
 
+.btn {
+  line-height: 1.9em;
+}
+
 #status-box {
   text-align: center;
 }
@@ -47,7 +51,7 @@ $your-row-background: #d9edf7;
     padding-right: 5px;
     button {
       width: 100%;
-      margin-bottom: 5px;
+      margin-bottom: 10px;
       font-weight: bold;
     }
     .btn-changeLocation {

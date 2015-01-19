@@ -2,6 +2,9 @@
   padding-left: 30px;
   padding-right: 30px; }
 
+.btn {
+  line-height: 1.9em; }
+
 #status-box {
   text-align: center; }
 
@@ -22,7 +25,7 @@
   padding-right: 5px; }
   #control-box .col-lg-4 button {
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     font-weight: bold; }
   #control-box .col-lg-4 .btn-changeLocation {
     background-color: #03A9F4;
