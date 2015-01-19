@@ -80,7 +80,6 @@ function displayRules() {
 
 function updateStatus() {
     var statusText = '';
-    $("#status-sub-label").html('');
     if (st.status === 'loading') {
         statusText = msgs.status_wait;
         $("#status-sub-label").html(msgs.status_subWait + ' <i class="icon-spin animate-spin"></i>');
