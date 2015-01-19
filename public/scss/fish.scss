@@ -1,7 +1,17 @@
-$your-row-background: #d9edf7;
 $media-small: 768px;
 $media-medium: 992px;
 $media-large: 1200px;
+
+$darkPrimaryColor:   #0288D1;
+$primaryColor:       #03A9F4;
+$lightPrimaryColor:  #B3E5FC;
+$textPrimaryColor:   #FFFFFF;
+$accentColor:        #4CAF50;
+$primaryTextColor:   #212121;
+$secondaryTextColor: #727272;
+$dividerColor:       #B6B6B6;
+
+$your-row-background: #d9edf7;
 
 .col-sm-8, .col-sm-4 {
   padding-left: 30px;
@@ -39,6 +49,45 @@ $media-large: 1200px;
       width: 100%;
       margin-bottom: 5px;
       font-weight: bold;
+    }
+    .btn-changeLocation {
+      background-color: $primaryColor;
+      border-color: $primaryColor;
+      color: $textPrimaryColor;
+      &:hover, &:focus, &:active {
+        background-color: darken($primaryColor, 10%);
+        border-color: darken($primaryColor, 10%);
+      }
+      &:disabled {
+        background-color: $lightPrimaryColor;
+        border-color: $lightPrimaryColor;
+      }
+    }
+    .btn-fish {
+      background-color: $accentColor;
+      border-color: $accentColor;
+      color: $textPrimaryColor;
+      &:hover, &:focus, &:active  {
+        background-color: darken($accentColor, 10%);
+        border-color: darken($accentColor, 10%);
+      }
+      &:disabled {
+        background-color: lighten($accentColor, 10%);
+        border-color: lighten($accentColor, 10%);
+      }
+    }
+    .btn-pause {
+      background-color: $darkPrimaryColor;
+      border-color: $darkPrimaryColor;
+      color: $textPrimaryColor;
+      &:hover, &:focus, &:active  {
+        background-color: darken($darkPrimaryColor, 10%);
+        border-color: darken($darkPrimaryColor, 10%);
+      }
+      &:disabled {
+        background-color: lighten($darkPrimaryColor, 10%);
+        border-color: lighten($darkPrimaryColor, 10%);
+      }
     }
   }
 }

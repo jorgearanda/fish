@@ -12,6 +12,7 @@
     "populatedb": "mongo developer_scripts/populate_db.js",
     "resetdb": "mongo developer_scripts/clean_db.js; mongo developer_scripts/populate_db.js; echo 'DB wiped and repopulated with default admin user. user: Admin. pass: 123456789'",
     "devreset": "mongo developer_scripts/clean_db.js; mongo developer_scripts/populate_db.js; echo 'DB wiped and repopulated with default admin user. user: Admin. pass: 123456789'; node app.js",
+    "sass": "sass --watch public/scss/:public/css/",
     "start": "node app.js",
     "test": "node_modules/.bin/mocha"
   },

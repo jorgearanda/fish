@@ -29,11 +29,10 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
 
 function loadLabels() {
     $('#read-rules').text(msgs.buttons_goFishing);
-    $('#to-sea').text(msgs.buttons_goToSea);
-    $('#return').text(msgs.buttons_return);
-    $('#attempt-fish').text(msgs.buttons_castFish);
-    $('#pause').text(msgs.buttons_pause);
-    $('#resume').text(msgs.buttons_resume);
+    $('#changeLocation').html(msgs.buttons_goToSea);
+    $('#attempt-fish').html(msgs.buttons_castFish);
+    $('#pause').html(msgs.buttons_pause);
+    $('#resume').html(msgs.buttons_resume);
 
     $('#fisher-header').text(msgs.info_fisher);
     $('#fish-season-header').text(' ' + msgs.info_season);
@@ -64,8 +63,7 @@ function initializeMixItUp() {
 }
 
 function disableButtons() {
-    $('#to-sea').attr('disabled', 'disabled');
-    $('#return').attr('disabled', 'disabled');
+    $('#changeLocation').attr('disabled', 'disabled');
     $('#attempt-fish').attr('disabled', 'disabled');
     $('#pause').attr('disabled', 'disabled');
 }
@@ -275,17 +273,31 @@ function readRules() {
     socket.emit('readRules');
 }
 
+function changeLocation() {
+    var btn = $('#changeLocation');
+
+    if(btn.data('location') == 'port') {
+
+        goToSea();
+        btn.data('location', 'sea');
+        btn.html(msgs.buttons_return);
+
+    }else {
+
+        goToPort();
+        btn.data('location', 'port');
+        btn.html(msgs.buttons_goToSea);   
+
+    }
+
+}
 function goToSea() {
     socket.emit('goToSea');
-    $('#to-sea').attr('disabled', 'disabled');
-    $('#return').removeAttr('disabled');
     $('#attempt-fish').removeAttr('disabled');
 }
 
 function goToPort() {
     socket.emit('return');
-    $('#to-sea').removeAttr('disabled');
-    $('#return').attr('disabled', 'disabled');
     $('#attempt-fish').attr('disabled', 'disabled');
 }
 
@@ -300,7 +312,7 @@ function beginSeason(data) {
     updateFishers();
     initializeMixItUp();
     sortFisherTable();
-    $('#to-sea').removeAttr('disabled');
+    $('#changeLocation').removeAttr('disabled');
     $('#pause').removeAttr('disabled');
 }
 
@@ -355,19 +367,16 @@ function requestResume() {
 }
 
 function pause() {
-    prePauseButtonsState.toSea = $('#to-sea').attr('disabled');
-    prePauseButtonsState.returnPort = $('#return').attr('disabled');
+    prePauseButtonsState.changeLocation = $('#changeLocation').attr('disabled');
     prePauseButtonsState.attemptFish = $('#attempt-fish').attr('disabled');
-    $('#to-sea').attr('disabled', 'disabled');
-    $('#return').attr('disabled', 'disabled');
+    $('#changeLocation').attr('disabled', 'disabled');
     $('#attempt-fish').attr('disabled', 'disabled');
     $('#pause').hide();
     $('#resume').show();
 }
 
 function resume() {
-    if (prePauseButtonsState.toSea === undefined) $('#to-sea').removeAttr('disabled');
-    if (prePauseButtonsState.returnPort === undefined) $('#return').removeAttr('disabled');
+    if (prePauseButtonsState.changeLocation === undefined) $('#changeLocation').removeAttr('disabled');
     if (prePauseButtonsState.attemptFish === undefined) $('#attempt-fish').removeAttr('disabled');
     $('#pause').show();
     $('#resume').hide();
@@ -415,8 +424,7 @@ socket.on('resume', resume);
 function main() {
     $('#read-rules').on('click', readRules);
     disableButtons();
-    $('#to-sea').on('click', goToSea);
-    $('#return').on('click', goToPort);
+    $('#changeLocation').on('click', changeLocation)
     $('#attempt-fish').on('click', attemptToFish);
     $('#pause').on('click', requestPause);
     $('#resume').on('click', requestResume);

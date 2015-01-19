@@ -1,6 +1,6 @@
 *.log
 node_modules/
-fish.sublime-project
-fish.sublime-workspace
 .sass-cache/*
 public/.sass-cache/*
+fish.sublime-project
+fish.sublime-workspace

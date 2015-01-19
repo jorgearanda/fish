@@ -40,10 +40,9 @@ html
           .row.clearfix
             #control-box.clearfix
               .col-lg-4.clearfix
-                button#to-sea.btn.btn-success(type='button') Go to sea
-                button#return.btn.btn-primary(type='button', style='display:none') Return to port
+                button#changeLocation.btn.btn-changeLocation(type='button' data-location='port') Go to Sea <i class='icon-ship'></i>
               .col-lg-4.clearfix
-                button#attempt-fish.btn.btn-info(type='button') Attempt to fish
+                button#attempt-fish.btn.btn-fish(type='button') Attempt to fish <i class="icon-fish-hook"></i>
               .col-lg-4.clearfix
                 button#pause.btn(type='button') Pause
                 button#resume.btn(type='button', style='display:none') Resume
