@@ -66,28 +66,30 @@
       background-color: #09a7fd;
       border-color: #09a7fd; }
 
-#fishers-box table thead th {
-  white-space: nowrap;
-  vertical-align: top; }
-  #fishers-box table thead th img {
-    float: left;
-    margin-right: 5px; }
-  #fishers-box table thead th p {
-    overflow: hidden; }
-#fishers-box table tbody tr {
-  display: none;
-  font-weight: bold; }
-  #fishers-box table tbody tr td img {
-    float: left;
-    margin-right: 5px; }
-  #fishers-box table tbody tr td p {
-    overflow: hidden; }
-  #fishers-box table tbody tr td:nth-of-type(n+2) {
-    text-align: center; }
-#fishers-box table tbody tr#f0 {
-  background-color: #d9edf7; }
-  #fishers-box table tbody tr#f0 td {
+#fishers-box table {
+  background-color: white; }
+  #fishers-box table thead th {
+    white-space: nowrap;
+    vertical-align: top; }
+    #fishers-box table thead th img {
+      float: left;
+      margin-right: 5px; }
+    #fishers-box table thead th p {
+      overflow: hidden; }
+  #fishers-box table tbody tr {
+    display: none;
+    font-weight: bold; }
+    #fishers-box table tbody tr td img {
+      float: left;
+      margin-right: 5px; }
+    #fishers-box table tbody tr td p {
+      overflow: hidden; }
+    #fishers-box table tbody tr td:nth-of-type(n+2) {
+      text-align: center; }
+  #fishers-box table tbody tr#f0 {
     background-color: #d9edf7; }
+    #fishers-box table tbody tr#f0 td {
+      background-color: #d9edf7; }
 
 .modal button {
   display: block;
