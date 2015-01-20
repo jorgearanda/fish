@@ -17,6 +17,8 @@ fishImage.src = 'public/img/certain-fish.png';
 var mysteryFishImage = new Image();
 mysteryFishImage.src = 'public/img/mystery-fish.png';
 
+var FishGame = {};
+
 var st = {status: 'loading'};
 
 if (lang && lang !== '' && lang.toLowerCase() in langs) {
@@ -109,6 +111,7 @@ function updateStatus() {
 
     $('#status-label').html(statusText);
 }
+
 function updateWarning(warn) {
     if (warn === 'start') {
         if (!st.season || st.season === 0) {
@@ -422,6 +425,178 @@ function resizeOceanCanvasToScreenWidth() {
     }
 }
 
+BasicGame.Boot = function (game) {
+
+};
+
+BasicGame.Boot.prototype = {
+
+    init: function () {
+        //  Unless you specifically know your game needs to support multi-touch I would recommend setting this to 1
+        this.input.maxPointers = 1;
+
+        //  Phaser will automatically pause if the browser tab the game is in loses focus. You can disable that here:
+        this.stage.disableVisibilityChange = false;
+
+        //  This tells the game to resize the renderer to match the game dimensions (i.e. 100% browser width / height)
+        this.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    },
+
+    preload: function () {
+        //  Here we load the assets required for our preloader (in this case a background and a loading bar)
+        this.load.image('preloaderBackground', 'images/preloader_background.jpg');
+        this.load.image('preloaderBar', 'images/preloader_bar.png');
+    },
+
+    create: function () {
+        //  By this point the preloader assets have loaded to the cache, we've set the game settings
+        //  So now let's start the real preloader going
+        this.state.start('Preloader');
+    }
+};
+
+BasicGame.Preloader = function (game) {
+	this.background = null;
+	this.preloadBar = null;
+	this.ready = false;
+};
+
+BasicGame.Preloader.prototype = {
+
+	preload: function () {
+		//	These are the assets we loaded in Boot.js
+		//	A nice sparkly background and a loading progress bar
+		this.background = this.add.sprite(0, 0, 'preloaderBackground');
+		this.preloadBar = this.add.sprite(300, 400, 'preloaderBar');
+
+		//	This sets the preloadBar sprite as a loader sprite.
+		//	What that does is automatically crop the sprite from 0 to full-width
+		//	as the files below are loaded in.
+		this.load.setPreloadSprite(this.preloadBar);
+
+		//	Here we load the rest of the assets our game needs.
+	    this.load.image('tetris1', 'assets/sprites/tetrisblock1.png');
+	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
+
+        var capturedKeys = [ Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT ];
+        this.input.keyboard.addKeyCapture(capturedKeys);
+	},
+
+	create: function () {
+		//	Once the load has finished we disable the crop because we're going to sit in the update loop for a short while as the music decodes
+        this.preloadBar.cropEnabled = false;
+
+	    this.bg = this.add.tileSprite(0, 0, this.game.width, this.game.height, 'starfield');
+	    this.tetrisSprite = this.add.sprite(0, 0, 'tetris1');
+
+        this.game.state.start('MainMenu');
+	},
+
+    resize: function(width, height) {
+		//	If the game container is resized this function will be called automatically.
+		//	You can use it to align sprites that should be fixed in place and other responsive display things.
+
+	    this.bg.width = width;
+	    this.bg.height = height;
+
+	    this.tetrisSprite.x = this.game.world.centerX;
+	    this.tetrisSprite.y = this.game.world.centerY;
+    }
+};
+
+BasicGame.Season = function (game) {
+    /*
+     * When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
+     *
+     * this.game;          // a reference to the currently running game
+     * this.add;           // used to add sprites, text, groups, etc
+     * this.camera;        // a reference to the game camera
+     * this.cache;         // the game cache
+     * this.input;         // the global input manager (you can access this.input.keyboard, this.input.mouse, as well from it)
+     * this.load;          // for preloading assets
+     * this.math;          // lots of useful common math operations
+     * this.sound;         // the sound manager - add a sound, play one, set-up markers, etc
+     * this.stage;         // the game stage
+     * this.time;          // the clock
+     * this.tweens;        // the tween manager
+     * this.state;         // the state manager
+     * this.world;         // the game world
+     * this.particles;     // the particle manager
+     * this.physics;       // the physics manager
+     * this.rnd;           // the repeatable random number generator
+     */
+};
+
+BasicGame.Season.prototype = {
+
+	create: function () {
+
+	},
+
+	update: function () {
+
+	},
+
+	seasonOver: function (pointer) {
+		this.state.start('BetweenSeasons');
+	}
+
+};
+
+
+BasicGame.BetweenSeasons = function (game) {
+
+    /*
+     * When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
+     *
+     * this.game;          // a reference to the currently running game
+     * this.add;           // used to add sprites, text, groups, etc
+     * this.camera;        // a reference to the game camera
+     * this.cache;         // the game cache
+     * this.input;         // the global input manager (you can access this.input.keyboard, this.input.mouse, as well from it)
+     * this.load;          // for preloading assets
+     * this.math;          // lots of useful common math operations
+     * this.sound;         // the sound manager - add a sound, play one, set-up markers, etc
+     * this.stage;         // the game stage
+     * this.time;          // the clock
+     * this.tweens;        // the tween manager
+     * this.state;         // the state manager
+     * this.world;         // the game world
+     * this.particles;     // the particle manager
+     * this.physics;       // the physics manager
+     * this.rnd;           // the repeatable random number generator
+     */
+
+    //  You can use any of these from any function within this State.
+    //  But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
+};
+
+BasicGame.BetweenSeasons.prototype = {
+
+	create: function () {
+
+	},
+
+	update: function () {
+
+	},
+
+	startSeason: function (pointer) {
+		this.state.start('Season');
+	}
+
+};
+
+function initializeGame() {
+    var game = new Phaser.Game("80%", "80%", Phaser.AUTO, "game-container");
+	game.state.add('Boot', BasicGame.Boot);
+	game.state.add('Preloader', BasicGame.Preloader);
+	game.state.add('Season', BasicGame.Season);
+	game.state.add('BetweenSeasons', BasicGame.BetweenSeasons);
+    game.state.add('GameOver', BasicGame.GameOver);
+	game.state.start('Boot');
+}
+
 socket.on('connect', function () {
     socket.emit('enterOcean', mwId, pId);
 });
@@ -447,6 +622,7 @@ function main() {
     loadLabels();
     resizeOceanCanvasToScreenWidth();
     $(window).resize(resizeOceanCanvasToScreenWidth);
+    initializeGame();
 }
 
 $(document).ready(main);
