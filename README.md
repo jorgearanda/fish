@@ -8,6 +8,8 @@ Please ensure these requirements are installed before proceeding to the Installa
 
 * Node (and npm)
 * Mongodb
+* Ruby
+* Sass (through `gem install sass`)
 
 # Installation
 
@@ -28,6 +30,7 @@ These are located in the developer_scripts folder
 * `npm run cleandb` This will clean all the collections defined in the file (experimenters, microworlds, and sessions)
 * `npm run resetdb` runs cleandb then populatedb
 * `npm run devreset` runs cleandb then populate db and then starts up the server.
+* `npm run sass` watches for style changes
 
 ## Administrator
 1. Navigate to http://localhost:8080/admin
