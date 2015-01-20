@@ -35,6 +35,10 @@ $your-row-background: #d9edf7;
     text-align: center;
   }
   #canvas-container {
+    #ocean-canvas {
+      display: block;
+      margin: 0 auto 20px auto;
+    }
   }
   #costs-box {
     position: relative;

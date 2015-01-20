@@ -14,6 +14,9 @@
   top: 50px;
   margin: 0 auto;
   text-align: center; }
+#ocean-box #canvas-container #ocean-canvas {
+  display: block;
+  margin: 0 auto 20px auto; }
 #ocean-box #costs-box {
   position: relative; }
   #ocean-box #costs-box div {
