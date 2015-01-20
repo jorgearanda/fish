@@ -123,6 +123,9 @@ $your-row-background: #d9edf7;
           p {
             overflow: hidden;
           }
+          &:nth-of-type(n+2) {
+            text-align: center;
+          }
         }
       }
       tr#f0 {
