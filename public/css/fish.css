@@ -99,5 +99,15 @@
   margin-top: 0; }
 
 @media (min-width: 768px) {
+  .col-sm-8 {
+    width: 50%; }
+
   .col-sm-4 {
+    width: 50%;
     margin-top: 20px; } }
+@media (min-width: 992px) {
+  .col-sm-8 {
+    width: 60%; }
+
+  .col-sm-4 {
+    width: 40%; } }

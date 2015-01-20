@@ -159,13 +159,22 @@ $your-row-background: #d9edf7;
 }
 
 @media (min-width: $media-small) {
+  .col-sm-8 {
+    width: 50%;
+  }
   .col-sm-4 {
+    width: 50%;
     margin-top: 20px;
   }
 }
 
 @media (min-width: $media-medium) {
-
+  .col-sm-8 {
+    width: 60%;
+  }
+  .col-sm-4 {
+    width: 40%;
+  }
 }
 
 @media (min-width: $media-large) {

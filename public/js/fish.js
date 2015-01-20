@@ -285,7 +285,7 @@ function changeLocation() {
 
         goToPort();
         btn.data('location', 'port');
-        btn.html(msgs.buttons_goToSea);   
+        btn.html(msgs.buttons_goToSea);
 
     }
 
@@ -405,6 +405,23 @@ function drawOcean() {
     }
 }
 
+function resizeOceanCanvasToScreenWidth() {
+    var viewportWidth = $(window).width();
+    var viewportHeight = $(window).height();
+    var BOOTSTRAP_SMALL_WIDTH = 768;
+    var BOOTSTRAP_MEDIUM_WIDTH = 992;
+    var BOOTSTRAP_LARGE_WIDTH = 1200;
+    if (viewportWidth <= BOOTSTRAP_SMALL_WIDTH) {
+        $("#ocean-canvas").width(0.9 * viewportWidth);
+    } else if (viewportWidth <= BOOTSTRAP_MEDIUM_WIDTH) {
+        $("#ocean-canvas").width(0.4 * viewportWidth);
+    } else if (viewportWidth <= BOOTSTRAP_LARGE_WIDTH) {
+        $("#ocean-canvas").width(0.5 * viewportWidth);
+    } else {
+        $("#ocean-canvas").width(0.8 * viewportHeight);
+    }
+}
+
 socket.on('connect', function () {
     socket.emit('enterOcean', mwId, pId);
 });
@@ -428,6 +445,8 @@ function main() {
     $('#pause').on('click', requestPause);
     $('#resume').on('click', requestResume);
     loadLabels();
+    resizeOceanCanvasToScreenWidth();
+    $(window).resize(resizeOceanCanvasToScreenWidth);
 }
 
 $(document).ready(main);
