@@ -3,7 +3,7 @@ html
   head
     title Fish
     meta(name='viewport', content='width=device-width, initial-scale=1.0, user-scalable=no')
-    link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.css')
     link(rel='stylesheet', href='/public/css/fish.css')
     link(rel='stylesheet', href='/public/fonts/css/animation.css')
     link(rel='stylesheet', href='/public/fonts/css/fontello-codes.css')
@@ -21,66 +21,65 @@ html
     script(src='/public/js/localization.js')
     script(src='/public/js/fish.js')
   body
-    .row
-      .col-md-8.left-col
-        .row
-          #status-box.bg-info.col-md-6.box
-            span#status-label.lead.status-label
-            span#status-sub-label.status-label
-        #ocean-background.row.box
-          #ocean-box
-            div#warning-alert.alert
-            canvas#ocean-canvas(width='700', height='460')
-        .row
-          #control-box.col-md-8.bg-warning.btn-toolbar.box
-            button#to-sea.btn.btn-success(type='button') Go to sea
-            button#attempt-fish.btn.btn-info(type='button') Attempt to fish
-            button#return.btn.btn-primary(type='button') Return to port
-            button#pause.btn(type='button') Pause
-            button#resume.btn(type='button', style='display:none') Resume
-          #costs-box.col-md-4.bg-warning.box
-            label#revenue-fish.costs-label
-            br
-            label#cost-departure.costs-label
-            br
-            label#cost-second.costs-label
-            br
-            label#cost-cast.costs-label
-      #fishers-box.col-md-4
-        table.table.table-bordered.table-hover
-          thead
-            th#fisher-header
-            th.data-header
-              img(src='/public/img/fishy.jpg', width='20', height='20')
-              label#fish-season-header
-            th.data-header
-              img(src='/public/img/fishy.jpg', width='20', height='20')
-              label#fish-total-header
-            th#profit-season-header.data-header
-            th#profit-total-header.data-header
-          tbody#fishers-tbody
-            each i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-              tr(id="f#{i}").fisher-row
-                td
-                  img(id="f#{i}-status", src="/public/img/bullet_white.png")
-                  label(id="f#{i}-name").fisher-label
-                td(id="f#{i}-fish-season").fisher-label
-                td(id="f#{i}-fish-total").fisher-label
-                td(id="f#{i}-profit-season").fisher-label
-                td(id="f#{i}-profit-total").fisher-label
-    .row
-      #rules-modal.modal.fade(role='dialog', aria-hidden='true')
-        .modal-dialog
-          .modal-content
-            #rules-text.modal-body
-              | Preparation text
-            .modal-footer
-              button#read-rules.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
-    .row
-      #over-modal.modal.fade(role='dialog', aria-hidden='true')
-        .modal-dialog
-          .modal-content
-            #over-text.modal-body Simulation over text
-            .modal-footer
-              button#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
-                | OK
+    .container-fluid
+      .row
+        .col-sm-8.clearfix
+          .row#status-box
+              h2#status-label.lead.status-label.alert.alert-success
+              h3#status-sub-label.status-label.alert.alert-info
+          .row#ocean-box.clearfix
+            #warning-alert.alert.alert-danger
+            #canvas-container.clearfix
+              canvas#ocean-canvas(width='700', height='460')
+          .row#costs-box.clearfix
+            #cost-departure.costs-label.alert.alert-info
+            #cost-second.costs-label.alert.alert-info
+            #cost-cast.costs-label.alert.alert-info
+            #revenue-fish.costs-label.alert.alert-info
+        .col-sm-4
+          .row.clearfix
+            #control-box.clearfix
+              .col-lg-4.clearfix
+                button#changeLocation.btn.btn-changeLocation(type='button' data-location='port') Go to Sea <i class='icon-ship'></i>
+              .col-lg-4.clearfix
+                button#attempt-fish.btn.btn-fish(type='button') Attempt to fish <i class="icon-fish-hook"></i>
+              .col-lg-4.clearfix
+                button#pause.btn(type='button') Pause
+                button#resume.btn(type='button', style='display:none') Resume
+          .row.clearfix
+            #fishers-box.clearfix
+              table.table.table-striped.table-hover.fishers-table
+                thead
+                  th#fisher-header
+                  th.data-header
+                    img(src='/public/img/fishy.jpg', width='20', height='20')
+                    p#fish-season-header
+                  th.data-header
+                    img(src='/public/img/fishy.jpg', width='20', height='20')
+                    p#fish-total-header
+                  th#profit-season-header.data-header
+                  th#profit-total-header.data-header
+                tbody#fishers-tbody
+                  each i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                    tr(id="f#{i}")
+                      td
+                        img(id="f#{i}-status", src="/public/img/bullet_white.png")
+                        p(id="f#{i}-name").fisher-label
+                      td(id="f#{i}-fish-season").fisher-label
+                      td(id="f#{i}-fish-total").fisher-label
+                      td(id="f#{i}-profit-season").fisher-label
+                      td(id="f#{i}-profit-total").fisher-label
+    #rules-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #rules-text.modal-body
+            | Preparation text
+          .modal-footer
+            button#read-rules.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+    #over-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #over-text.modal-body Simulation over text
+          .modal-footer
+            button#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK

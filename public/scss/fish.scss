@@ -1,0 +1,205 @@
+$media-small: 768px;
+$media-medium: 992px;
+$media-large: 1200px;
+
+$darkPrimaryColor:   #0288D1;
+$primaryColor:       #03A9F4;
+$lightPrimaryColor:  #B3E5FC;
+$textPrimaryColor:   #FFFFFF;
+$accentColor:        #4CAF50;
+$primaryTextColor:   #212121;
+$secondaryTextColor: #727272;
+$dividerColor:       #B6B6B6;
+
+$your-row-background: #d9edf7;
+
+.col-sm-8, .col-sm-4 {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.btn {
+  line-height: 19px;
+  line-height: 1.9rem;
+}
+
+html {
+  // To allow for similar values between px and rem
+  // i.e. 16px = 1.6rem
+  font-size: 62.5%;
+}
+
+#status-box {
+  text-align: center;
+  #status-label {
+    font-size: 25px;
+    font-size: 2.5rem;
+  }
+  #status-sub-label {
+    font-size: 20px;
+    font-size: 2.0rem;
+  }
+}
+
+#ocean-box {
+  position: relative;
+  #warning-alert {
+    display: none;
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-size: 15px;
+    font-size: 1.5rem;
+  }
+  #canvas-container {
+    #ocean-canvas {
+      display: block;
+      margin: 0 auto 20px auto;
+      border-radius: 20px;
+    }
+  }
+  #costs-box {
+    font-size: 18px;
+    font-size: 1.8rem;
+    position: relative;
+    div {
+      text-align: center;
+      display: inline-block;
+    }
+  }
+}
+
+#control-box {
+  .col-lg-4 {
+    padding-left: 5px;
+    padding-right: 5px;
+    button {
+      width: 100%;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .btn-changeLocation {
+      background-color: $primaryColor;
+      border-color: $primaryColor;
+      color: $textPrimaryColor;
+      &:hover, &:focus, &:active {
+        background-color: darken($primaryColor, 10%);
+        border-color: darken($primaryColor, 10%);
+      }
+      &:disabled {
+        background-color: $lightPrimaryColor;
+        border-color: $lightPrimaryColor;
+      }
+    }
+    .btn-fish {
+      background-color: $accentColor;
+      border-color: $accentColor;
+      color: $textPrimaryColor;
+      &:hover, &:focus, &:active  {
+        background-color: darken($accentColor, 10%);
+        border-color: darken($accentColor, 10%);
+      }
+      &:disabled {
+        background-color: lighten($accentColor, 10%);
+        border-color: lighten($accentColor, 10%);
+      }
+    }
+    .btn-pause {
+      background-color: $darkPrimaryColor;
+      border-color: $darkPrimaryColor;
+      color: $textPrimaryColor;
+      &:hover, &:focus, &:active  {
+        background-color: darken($darkPrimaryColor, 10%);
+        border-color: darken($darkPrimaryColor, 10%);
+      }
+      &:disabled {
+        background-color: lighten($darkPrimaryColor, 10%);
+        border-color: lighten($darkPrimaryColor, 10%);
+      }
+    }
+  }
+}
+
+#fishers-box {
+  table {
+    font-size: 16px;
+    font-size: 1.6rem;
+    background-color: white;
+    thead {
+      th {
+        white-space: nowrap;
+        vertical-align: top;
+        img {
+          float: left;
+          margin-right: 5px;
+        }
+        p {
+          overflow: hidden;
+        }
+      }
+    }
+    tbody {
+      tr {
+        display: none;
+        font-weight: bold;
+        td {
+          img {
+            float: left;
+            margin-right: 5px;
+          }
+          p {
+            overflow: hidden;
+          }
+          &:nth-of-type(n+2) {
+            text-align: center;
+          }
+        }
+      }
+      tr#f0 {
+        background-color: $your-row-background;
+        td {
+          background-color: $your-row-background;
+        }
+      }
+    }
+  }
+}
+
+.modal {
+  font-size: 16px;
+  font-size: 1.6rem;
+  button {
+    display:block;
+    margin: 0 auto;
+  }
+  .modal-footer {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: $media-small) {
+  .col-sm-8 {
+    width: 50%;
+  }
+  .col-sm-4 {
+    width: 50%;
+    margin-top: 20px;
+  }
+}
+
+@media (min-width: $media-medium) {
+  .col-sm-8 {
+    width: 60%;
+  }
+  .col-sm-4 {
+    width: 40%;
+  }
+}
+
+@media (min-width: $media-large) {
+
+}

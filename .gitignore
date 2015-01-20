@@ -1,4 +1,6 @@
 *.log
 node_modules/
+.sass-cache/*
+public/.sass-cache/*
 fish.sublime-project
 fish.sublime-workspace
