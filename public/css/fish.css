@@ -3,10 +3,20 @@
   padding-right: 30px; }
 
 .btn {
-  line-height: 1.9em; }
+  line-height: 19px;
+  line-height: 1.9rem; }
+
+html {
+  font-size: 62.5%; }
 
 #status-box {
   text-align: center; }
+  #status-box #status-label {
+    font-size: 25px;
+    font-size: 2.5rem; }
+  #status-box #status-sub-label {
+    font-size: 20px;
+    font-size: 2.0rem; }
 
 #ocean-box {
   position: relative; }
@@ -18,12 +28,16 @@
     right: 0;
     margin-left: auto;
     margin-right: auto;
-    text-align: center; }
+    text-align: center;
+    font-size: 15px;
+    font-size: 1.5rem; }
   #ocean-box #canvas-container #ocean-canvas {
     display: block;
     margin: 0 auto 20px auto;
     border-radius: 20px; }
   #ocean-box #costs-box {
+    font-size: 18px;
+    font-size: 1.8rem;
     position: relative; }
     #ocean-box #costs-box div {
       text-align: center;
@@ -68,6 +82,8 @@
       border-color: #09a7fd; }
 
 #fishers-box table {
+  font-size: 16px;
+  font-size: 1.6rem;
   background-color: white; }
   #fishers-box table thead th {
     white-space: nowrap;
@@ -92,11 +108,14 @@
     #fishers-box table tbody tr#f0 td {
       background-color: #d9edf7; }
 
-.modal button {
-  display: block;
-  margin: 0 auto; }
-.modal .modal-footer {
-  margin-top: 0; }
+.modal {
+  font-size: 16px;
+  font-size: 1.6rem; }
+  .modal button {
+    display: block;
+    margin: 0 auto; }
+  .modal .modal-footer {
+    margin-top: 0; }
 
 @media (min-width: 768px) {
   .col-sm-8 {

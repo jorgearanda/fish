@@ -19,11 +19,26 @@ $your-row-background: #d9edf7;
 }
 
 .btn {
-  line-height: 1.9em;
+  line-height: 19px;
+  line-height: 1.9rem;
+}
+
+html {
+  // To allow for similar values between px and rem
+  // i.e. 16px = 1.6rem
+  font-size: 62.5%;
 }
 
 #status-box {
   text-align: center;
+  #status-label {
+    font-size: 25px;
+    font-size: 2.5rem;
+  }
+  #status-sub-label {
+    font-size: 20px;
+    font-size: 2.0rem;
+  }
 }
 
 #ocean-box {
@@ -37,6 +52,8 @@ $your-row-background: #d9edf7;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    font-size: 15px;
+    font-size: 1.5rem;
   }
   #canvas-container {
     #ocean-canvas {
@@ -46,6 +63,8 @@ $your-row-background: #d9edf7;
     }
   }
   #costs-box {
+    font-size: 18px;
+    font-size: 1.8rem;
     position: relative;
     div {
       text-align: center;
@@ -107,6 +126,8 @@ $your-row-background: #d9edf7;
 
 #fishers-box {
   table {
+    font-size: 16px;
+    font-size: 1.6rem;
     background-color: white;
     thead {
       th {
@@ -149,6 +170,8 @@ $your-row-background: #d9edf7;
 }
 
 .modal {
+  font-size: 16px;
+  font-size: 1.6rem;
   button {
     display:block;
     margin: 0 auto;
