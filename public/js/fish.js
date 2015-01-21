@@ -37,8 +37,10 @@ function loadLabels() {
     $('#fisher-header').text(msgs.info_fisher);
     $('#fish-season-header').text(' ' + msgs.info_season);
     $('#fish-total-header').text(' ' + msgs.info_overall);
-    $('#profit-season-header').text('$ ' + msgs.info_season);
-    $('#profit-total-header').text('$ ' + msgs.info_overall);
+
+    if (!ocean) return;
+    $('#profit-season-header').text(ocean.currencySymbol + msgs.info_season);
+    $('#profit-total-header').text(ocean.currencySymbol + msgs.info_overall);
 
     updateCosts();
     updateStatus();
@@ -264,6 +266,7 @@ function makeUnpausable() {
 function setupOcean(o) {
     ocean = o;
     displayRules();
+    loadLabels();
     updateCosts();
     makeUnpausable();
 }
