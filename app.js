@@ -99,6 +99,9 @@ app.get('/a/:accountId/new/microworld', function (req, res) {
 app.get('/a/:accountId/runs/:runId', function (req, res) {
     res.render('run-results.jade');
 });
+app.get('/a/:accountId/update-experimenter', function (req, res) {
+    res.render('update-experimenter.jade');
+});
 app.get('/fish', function (req, res) {
     res.render('fish.jade');
 });

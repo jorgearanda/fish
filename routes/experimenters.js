@@ -60,8 +60,8 @@ exports.update = function(req, res) {
 function updateExperimenter(req, res, exp) {
     Experimenter.update({ _id : ObjectId(req.params.id) }, exp, function (err, numUpdated, rawRes) {
        if (err) {
-          log.error('Error on PUT /experimenters/' + req.params.id, err);
-          return res.send(500);
+           log.error('Error on PUT /experimenters/' + req.params.id, err);
+           return res.send(500);
        }
 
        if(numUpdated == 0) {
@@ -69,6 +69,6 @@ function updateExperimenter(req, res, exp) {
            return res.send(400);
        }
 
-       return res.status(204);
+       return res.send(204);
     });
 }
