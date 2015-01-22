@@ -6,11 +6,6 @@ function submitUpdate() {
     var email = $('#email').val();
     var password = $('#password').val();
 
-    if(name.length < 1 && username.length < 1 && email.length < 1 && password.length < 1) {
-        alert('At least one field needs to be filled');
-        return;
-    }
-
     var sendData = {};
     if(name.length >= 1) sendData.name = name;
     if(username.length >= 1) sendData.username = username;
@@ -25,7 +20,9 @@ function submitUpdate() {
         success: function() {
             location.replace('./dashboard');
         },
-        error: function() {}
+        error: function() {
+            alert("An error occurred while trying to update your profile.\nPossible causes are invalid email or no fields are filled");
+        }
     });
 }
 
