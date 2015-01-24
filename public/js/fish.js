@@ -356,6 +356,7 @@ function endRun(trigger) {
         overText = ocean.endDepletionText.replace(/\n/g, '<br />');
     }
 
+    socket.disconnect();
     $('#over-text').html(overText);
     $('#over-modal').modal({keyboard: false, backdrop: 'static'});
 }

@@ -37,7 +37,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     /////////////////////
 
     this.hasRoom = function () {
-        return (this.fishers.length < this.microworld.params.numFishers);
+        return (this.isInSetup() && this.fishers.length < this.microworld.params.numFishers);
     };
 
     this.allHumansIn = function () {

@@ -1,5 +1,7 @@
 'use strict';
 
+var log = require('winston');
+
 var Microworld = require('../models/microworld-model').Microworld;
 var Ocean = require('./ocean').Ocean;
 
@@ -56,9 +58,15 @@ exports.OceanManager = function OceanManager(io) {
         for (var i in oKeys) {
             oId = oKeys[i];
             if (this.oceans[oId].isRemovable()) {
+                log.info('Purging ocean ' + this.oceans[oId].microworld.name + ' ' + oId +
+                    ' (' + this.oceans[oId].microworld.experimenter.username + ')');
                 this.deleteOcean(oId);
             }
         }
+
+        setTimeout(this.purgeOceans.bind(this), 5000);
         return;
     };
+
+    this.purgeOceans();
 };
