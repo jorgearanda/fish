@@ -210,28 +210,28 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     this.readRules = function (pId) {
         var idx = this.findFisherIndex(pId);
-        if (idx) this.fishers[idx].ready = true;
+        if (idx !== null) this.fishers[idx].ready = true;
         this.log.info('Fisher ' + pId + ' is ready to start.');
         return;
     };
 
     this.attemptToFish = function (pId) {
         var idx = this.findFisherIndex(pId);
-        if (idx) this.fishers[idx].tryToFish();
+        if (idx !== null) this.fishers[idx].tryToFish();
         io.sockets.in(this.id).emit('status', this.getSimStatus());
         return;
     };
 
     this.goToSea = function (pId) {
         var idx = this.findFisherIndex(pId);
-        if (idx) this.fishers[idx].goToSea();
+        if (idx !== null) this.fishers[idx].goToSea();
         io.sockets.in(this.id).emit('status', this.getSimStatus());
         return;
     };
 
     this.returnToPort = function (pId) {
         var idx = this.findFisherIndex(pId);
-        if (idx) this.fishers[idx].goToPort();
+        if (idx !== null) this.fishers[idx].goToPort();
         io.sockets.in(this.id).emit('status', this.getSimStatus());
         return;
     };
