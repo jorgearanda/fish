@@ -4,7 +4,7 @@
 var should = require('should');
 
 var Ocean = require('../../engine/ocean').Ocean;
-var io, mw;
+var o, io, mw;
 
 describe('Engine - Ocean', function () {
     beforeEach(function (done) {
@@ -18,6 +18,16 @@ describe('Engine - Ocean', function () {
                 numFishers: 4,
                 seasonDuration: 10,
                 enableEarlyEnd: true,
+                initialDelay: 5,
+                seasonDelay: 5,
+                certainFish: 10,
+                availableMysteryFish: 0,
+                reportedMysteryFish: 0,
+                fishValue: 1.0,
+                costDeparture: 0.0,
+                costSecond: 0.0,
+                costCast: 0.1,
+                chanceCatch: 1.0,
                 bots: [{
                     name: 'bot 1'
                 }, {
@@ -27,11 +37,11 @@ describe('Engine - Ocean', function () {
                 }]
             }
         };
+        o = new Ocean(mw, io);
         return done();
     });
 
     it('should initialize with default settings', function (done) {
-        var o = new Ocean(mw, io);
         o.time.should.be.ok;
         o.id.should.be.ok;
         o.status.should.equal('setup');
@@ -52,7 +62,6 @@ describe('Engine - Ocean', function () {
 
     describe('hasRoom()', function () {
         it('should return true if there are fishing spots left', function (done) {
-            var o = new Ocean(mw, io);
             o.hasRoom().should.equal(true);
             o.fishers.push({});
             o.hasRoom().should.equal(false);
@@ -62,7 +71,6 @@ describe('Engine - Ocean', function () {
 
     describe('allHumansIn()', function () {
         it('should return true if there are no fishing spots left', function (done) {
-            var o = new Ocean(mw, io);
             o.allHumansIn().should.equal(false);
             o.fishers.push({});
             o.allHumansIn().should.equal(true);
@@ -72,7 +80,6 @@ describe('Engine - Ocean', function () {
 
     describe('addFisher()', function () {
         it('should add a fisher to the fishers array', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.fishers.length.should.equal(4);
             o.fishers[3].type.should.equal('human');
@@ -83,7 +90,6 @@ describe('Engine - Ocean', function () {
 
     describe('removeFisher()', function () {
         it('should remove a human fisher from the fishers array, if it is present', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.removeFisher('p001');
             o.fishers.length.should.equal(3);
@@ -92,7 +98,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should remove the right human fisher from the fishers array', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.addFisher('p002');
             o.removeFisher('p001');
@@ -102,7 +107,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should not remove a fisher if the name is not found', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.removeFisher('unexistent');
             o.fishers.length.should.equal(4);
@@ -112,7 +116,6 @@ describe('Engine - Ocean', function () {
 
     describe('findFisherIndex()', function () {
         it('should find the location of a fisher in the fishers array', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.findFisherIndex('bot 1').should.equal(0);
             o.findFisherIndex('bot 2').should.equal(1);
@@ -124,20 +127,17 @@ describe('Engine - Ocean', function () {
 
     describe('isEveryoneReady()', function () {
         it('should return false when not all fishers have joined', function (done) {
-            var o = new Ocean(mw, io);
             o.isEveryoneReady().should.equal(false);
             return done();
         });
 
         it('should return false when humans are not ready', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.isEveryoneReady().should.equal(false);
             return done();
         });
 
         it('should return true when humans are ready', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.addFisher('p002');
             o.fishers[3].ready = true;
@@ -150,7 +150,6 @@ describe('Engine - Ocean', function () {
 
     describe('hasEveryoneReturned()', function () {
         it('should only return true when every fisher\'s hasReturned field is true', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.hasEveryoneReturned().should.equal(false);
             o.fishers[0].hasReturned = true;
@@ -166,7 +165,6 @@ describe('Engine - Ocean', function () {
 
     describe('shouldEndSeason()', function () {
         it('should return false when the season still has seconds to go and not all fishers have returned', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.shouldEndSeason().should.equal(false);
             o.seconds = 5;
@@ -177,7 +175,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should return true when the season has no more seconds to go', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.seconds = 10;
             o.shouldEndSeason().should.equal(true);
@@ -185,7 +182,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should return false when all fishers have returned and enableEarlyEnd is false', function (done) {
-            var o = new Ocean(mw, io);
             o.microworld.params.enableEarlyEnd = false;
             o.addFisher('p001');
             o.fishers[0].hasReturned = true;
@@ -198,7 +194,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should return true when all fishers have returned, enableEarlyEnd is true, and three seconds have passed', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.fishers[0].hasReturned = true;
             o.fishers[1].hasReturned = true;
@@ -210,7 +205,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should return false when all fishers have returned, enableEarlyEnd is true, but three seconds have not passed', function (done) {
-            var o = new Ocean(mw, io);
             o.addFisher('p001');
             o.fishers[0].hasReturned = true;
             o.fishers[1].hasReturned = true;
@@ -224,7 +218,6 @@ describe('Engine - Ocean', function () {
 
     describe('pause()', function () {
         it('should not pause if the simulation is not in running nor resting state', function (done) {
-            var o = new Ocean(mw, io);
             o.pause('MrPause');
             o.status.should.equal('setup');
             o.status = 'initial delay';
@@ -237,14 +230,13 @@ describe('Engine - Ocean', function () {
         });
 
         it('should enter the pause state if the simulation is running or resting', function (done) {
-            var o = new Ocean(mw, io);
             o.status = 'running';
             o.pause('MrPause');
             o.status.should.equal('paused');
             o.unpauseState.should.equal('running');
             o.pausedBy.should.equal('MrPause');
 
-            var o = new Ocean(mw, io);
+            o = new Ocean(mw, io);
             o.status = 'resting';
             o.pause('MrPause');
             o.status.should.equal('paused');
@@ -254,8 +246,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should notify clients that the simulation was paused', function (done) {
-            var o = new Ocean(mw, io);
-
             var socket = require('socket.io-client')('http://localhost:8080', {multiplex:false});
             socket.on('connect', function () {
                 socket.on('pause', function () {
@@ -274,7 +264,6 @@ describe('Engine - Ocean', function () {
 
     describe('resume()', function () {
         it('should return to the status prior to paused', function (done) {
-            var o = new Ocean(mw, io);
             o.status = 'running';
             o.pause('MrPause');
             o.status.should.equal('paused');
@@ -285,7 +274,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should not return to the status prior to paused if the request comes from someone else', function (done) {
-            var o = new Ocean(mw, io);
             o.status = 'running';
             o.pause('MrPause');
             o.status.should.equal('paused');
@@ -296,7 +284,6 @@ describe('Engine - Ocean', function () {
         });
 
         it('should notify clients that the simulation has resumed', function (done) {
-            var o = new Ocean(mw, io);
 
             var socket = require('socket.io-client')('http://localhost:8080', {multiplex:false});
             socket.on('connect', function () {
@@ -317,7 +304,6 @@ describe('Engine - Ocean', function () {
 
     describe('getSimStatus()', function () {
         it('should return the relevant status information', function (done) {
-            var o = new Ocean(mw, io);
             o.season = 1;
             o.status = 'running';
             o.fishers[0].prepareFisherForSeason(1);
@@ -331,6 +317,151 @@ describe('Engine - Ocean', function () {
             st.fishers.length.should.equal(3);
             st.fishers[0].name.should.equal('bot 1');
             st.fishers[0].seasonData[1].fishCaught.should.equal(0);
+            return done();
+        });
+    });
+
+    describe('resetTimer()', function () {
+        it('should set the seconds count back to zero', function (done) {
+            o.seconds = 20;
+            o.resetTimer();
+            o.seconds.should.equal(0);
+            return done();
+        });
+    });
+
+    describe('tick()', function () {
+        it('should increment the seconds count', function (done) {
+            o.tick();
+            o.seconds.should.equal(1);
+            o.tick();
+            o.seconds.should.equal(2);
+            return done();
+        });
+
+        it('should increment the secondsSinceAllReturned count, if everyone returned', function (done) {
+            o.fishers[0].hasReturned = true;
+            o.fishers[1].hasReturned = true;
+            o.fishers[2].hasReturned = true;
+            o.tick();
+            o.secondsSinceAllReturned.should.equal(1);
+            o.tick();
+            o.secondsSinceAllReturned.should.equal(2);
+            return done();
+        });
+
+        it('should not increment the secondsSinceAllReturned count, if not everyone returned', function (done) {
+            o.fishers[0].hasReturned = true;
+            o.fishers[1].hasReturned = true;
+            o.tick();
+            o.secondsSinceAllReturned.should.equal(0);
+            o.tick();
+            o.secondsSinceAllReturned.should.equal(0);
+            return done();
+        });
+    });
+
+    describe('hasReachedInitialDelay()', function () {
+        it('should report whether seconds has reached the initialDelay parameter', function (done) {
+            o.hasReachedInitialDelay().should.equal(false);
+            o.seconds = 5;
+            o.hasReachedInitialDelay().should.equal(true);
+            return done();
+        });
+    });
+
+    describe('hasReachedSeasonDelay()', function () {
+        it('should report whether seconds has reached the seasonDelay parameter', function (done) {
+            o.hasReachedSeasonDelay().should.equal(false);
+            o.seconds = 5;
+            o.hasReachedSeasonDelay().should.equal(true);
+            return done();
+        });
+    });
+
+    describe('hasReachedSeasonDuration()', function () {
+        it('should report whether seconds has reached the seasonDuration parameter', function (done) {
+            o.hasReachedSeasonDuration().should.equal(false);
+            o.seconds = 10;
+            o.hasReachedSeasonDuration().should.equal(true);
+            return done();
+        });
+    });
+
+    describe('readRules()', function () {
+        it('should set the ready flag of a human fisher to true', function (done) {
+            o.addFisher('p001');
+            o.fishers[3].ready.should.equal(false);
+            o.readRules('p001');
+            o.fishers[3].ready.should.equal(true);
+            return done();
+        });
+    });
+
+    describe('attemptToFish()', function () {
+        it('should catch a fish for the fisher when chanceCatch is 1.0', function (done) {
+            o.addFisher('p001');
+            o.readRules('p001');
+            o.season = 1;
+            o.setAvailableFish();
+            o.fishers[0].prepareFisherForSeason(1);
+            o.fishers[1].prepareFisherForSeason(1);
+            o.fishers[2].prepareFisherForSeason(1);
+            o.fishers[3].prepareFisherForSeason(1);
+            o.status = 'running';
+            o.attemptToFish('p001');
+            o.certainFish.should.equal(9);
+            o.fishers[3].totalFishCaught.should.equal(1);
+            o.fishers[3].money.should.equal(0.9);
+            o.fishers[3].seasonData[1].actualCasts.should.equal(1);
+            o.fishers[3].seasonData[1].fishCaught.should.equal(1);
+            o.fishers[3].seasonData[1].startMoney.should.equal(0);
+            o.fishers[3].seasonData[1].endMoney.should.equal(0.9);
+            return done();
+        });
+
+        it('should not catch a fish for the fisher when chanceCatch is 0.0', function (done) {
+            o.addFisher('p001');
+            o.readRules('p001');
+            o.microworld.params.chanceCatch = 0.0;
+            o.season = 1;
+            o.setAvailableFish();
+            o.fishers[0].prepareFisherForSeason(1);
+            o.fishers[1].prepareFisherForSeason(1);
+            o.fishers[2].prepareFisherForSeason(1);
+            o.fishers[3].prepareFisherForSeason(1);
+            o.status = 'running';
+            o.attemptToFish('p001');
+            o.certainFish.should.equal(10);
+            o.fishers[3].totalFishCaught.should.equal(0);
+            o.fishers[3].money.should.equal(-0.1);
+            o.fishers[3].seasonData[1].actualCasts.should.equal(1);
+            o.fishers[3].seasonData[1].fishCaught.should.equal(0);
+            o.fishers[3].seasonData[1].startMoney.should.equal(0);
+            o.fishers[3].seasonData[1].endMoney.should.equal(-0.1);
+            return done();
+        });
+
+        it('should not catch a fish if there are no more fish', function (done) {
+            o.addFisher('p001');
+            o.readRules('p001');
+            o.microworld.params.chanceCatch = 1.0;
+            o.season = 1;
+            o.setAvailableFish();
+            o.certainFish = 0;
+            o.fishers[0].prepareFisherForSeason(1);
+            o.fishers[1].prepareFisherForSeason(1);
+            o.fishers[2].prepareFisherForSeason(1);
+            o.fishers[3].prepareFisherForSeason(1);
+            o.status = 'running';
+            o.attemptToFish('p001');
+            o.certainFish.should.equal(0);
+            o.fishers[3].totalFishCaught.should.equal(0);
+            o.fishers[3].money.should.equal(-0.1);
+            o.fishers[3].seasonData[1].actualCasts.should.equal(1);
+            o.fishers[3].seasonData[1].fishCaught.should.equal(0);
+            o.fishers[3].seasonData[1].startMoney.should.equal(0);
+            o.fishers[3].seasonData[1].endMoney.should.equal(-0.1);
             return done();
         });
     });
