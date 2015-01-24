@@ -39,7 +39,12 @@ exports.update = function(req, res) {
         return res.send(401);
     }
 
-    if (req.body.username || req.body.name || req.body.email || req.body.rawPassword) {
+    if ((req.body.rawPassword && !req.body.confirmPass) || (!req.body.rawPassword && req.body.confirmPass) ||
+        (req.body.rawPassword !== req.body.confirmPass)) {
+        return res.status(409).send("password conflict");
+    }
+
+    if (req.body.name || req.body.email || req.body.rawPassword) {
         var exp = {};
         if (req.body.username) exp.username = req.body.username;
         if (req.body.name) exp.name = req.body.name;
@@ -47,7 +52,7 @@ exports.update = function(req, res) {
             var atpos = req.body.email.indexOf("@");
             var dotpos = req.body.email.lastIndexOf(".");
             if (atpos < 1 || dotpos < atpos || dotpos+2 >= req.body.email.length || dotpos <= 2) {
-                return res.send(500);
+                return res.status(409).send("email conflict");
             }
             exp.email = req.body.email;
         }
@@ -63,7 +68,7 @@ exports.update = function(req, res) {
                 return updateExperimenter(req, res, exp);
             });
         } else return updateExperimenter(req, res, exp);
-    } else return res.send(500);
+    } else return res.send(403);  
 }
 
 function updateExperimenter(req, res, exp) {

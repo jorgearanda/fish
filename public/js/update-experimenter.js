@@ -1,16 +1,17 @@
 'use strict';
 
+
 function submitUpdate() {
     var name = $('#name').val();
-    var username = $('#username').val();
     var email = $('#email').val();
     var password = $('#password').val();
+    var confirmPass = $('#confirmPass').val();
 
     var sendData = {};
     if(name.length >= 1) sendData.name = name;
-    if(username.length >= 1) sendData.username = username;
     if(email.length >= 1) sendData.email = email;
     if(password.length >= 1) sendData.rawPassword = password;
+    if(confirmPass.length >= 1) sendData.confirmPass = confirmPass;
 
     var expId = location.pathname.split('/')[2];
     $.ajax({
@@ -20,8 +21,19 @@ function submitUpdate() {
         success: function() {
             location.replace('./dashboard');
         },
-        error: function() {
-            alert("An error occurred while trying to update your profile.\nPossible causes are invalid email or no fields are filled");
+        error: function(jqXHR) {
+            if (jqXHR.status === 409) {
+                if (jqXHR.responseText === 'password conflict') alert('Passwords given did not match!');
+                else alert('Invalid email!');
+            } else if (jqXHR.status === 403) {
+                alert('At least one field needs to be filled');
+            } else if (jqXHR.status === 401) {
+                alert('You are unauthorized to change this profile');
+            } else if (jqXHR.status === 400) {
+                alert('Did not match any experimenters');
+            } else { // status 500
+                alert('Internal error!');
+            }
         }
     });
 }

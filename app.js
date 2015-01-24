@@ -100,7 +100,16 @@ app.get('/a/:accountId/runs/:runId', function (req, res) {
     res.render('run-results.jade');
 });
 app.get('/a/:accountId/update-experimenter', function (req, res) {
-    res.render('update-experimenter.jade');
+    var Experimenter = require('./models/experimenter-model').Experimenter;
+    var ObjectId = mongoose.Types.ObjectId;
+    Experimenter.findOne({ _id : ObjectId(req.params.accountId) }, function (err, exp) {
+        if (err || !exp) {
+            logger.error("Couldn't retrieve experimenter on /a/:accountId/update-experimenter", err);
+            res.send(500);
+        }
+        
+        res.render('update-experimenter.jade', {  name : exp.name, email : exp.email } );
+    });
 });
 app.get('/fish', function (req, res) {
     res.render('fish.jade');
