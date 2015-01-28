@@ -1,5 +1,5 @@
 'use strict';
-
+/*global alert:true*/
 
 function submitUpdate() {
     var name = $('#name').val();
@@ -23,8 +23,11 @@ function submitUpdate() {
         },
         error: function(jqXHR) {
             if (jqXHR.status === 409) {
-                if (jqXHR.responseText === 'password conflict') alert('Passwords given did not match!');
-                else alert('Invalid email!');
+                if (jqXHR.responseText === 'password conflict') {
+                    alert('The passwords given did not match');
+                } else {
+                    alert('Invalid email');
+                }
             } else if (jqXHR.status === 403) {
                 alert('At least one field needs to be filled');
             } else if (jqXHR.status === 401) {
@@ -32,7 +35,7 @@ function submitUpdate() {
             } else if (jqXHR.status === 400) {
                 alert('Did not match any experimenters');
             } else { // status 500
-                alert('Internal error!');
+                alert('Internal error');
             }
         }
     });
