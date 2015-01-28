@@ -19,7 +19,7 @@ exports.displayProfileUpdate = function (req, res) {
             email : exp.email
         });
     });
-};
+}
 
 // POST /experimenters
 exports.create = function (req, res) {

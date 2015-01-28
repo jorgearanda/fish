@@ -18,6 +18,7 @@ var runs = require('./routes/runs');
 var sessions = require('./routes/sessions');
 
 var isUser = access.isUser;
+var checkAuthentication = access.checkAuthentication;
 
 var app = exports.app = express();
 
@@ -84,19 +85,19 @@ app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 app.post('/sessions', sessions.createSession);
 app.post('/participant-sessions', sessions.participantSession);
 
-app.get('/a/:accountId', function (req, res) {
+app.get('/a/:accountId', checkAuthentication, function (req, res) {
     res.render('dashboard.jade');
 });
-app.get('/a/:accountId/dashboard', function (req, res) {
+app.get('/a/:accountId/dashboard', checkAuthentication, function (req, res) {
     res.render('dashboard.jade');
 });
-app.get('/a/:accountId/microworlds/:microworldId', function (req, res) {
+app.get('/a/:accountId/microworlds/:microworldId', checkAuthentication, function (req, res) {
     res.render('microworld.jade');
 });
-app.get('/a/:accountId/new/microworld', function (req, res) {
+app.get('/a/:accountId/new/microworld', checkAuthentication, function (req, res) {
     res.render('microworld.jade');
 });
-app.get('/a/:accountId/runs/:runId', function (req, res) {
+app.get('/a/:accountId/runs/:runId', checkAuthentication, function (req, res) {
     res.render('run-results.jade');
 });
 app.get('/a/:accountId/profile', experimenters.displayProfileUpdate);
