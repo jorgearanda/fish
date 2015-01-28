@@ -46,7 +46,7 @@ function flattenRunResults(runs) {
 }
 
 // Generates a CSV file containing the results of the queried runs
-function generateCSVRuns(runs, res) {
+function generateCSVRuns(runs, req, res) {
     var csvArray = flattenRunResults(runs);
     var sendHeader = { 'Content-Type' : 'text/csv', 'Content-Disposition' : 'attachment; filename=' };
     if (Array.isArray(runs)) sendHeader['Content-Disposition']+= runs[0].microworld.name + '.csv';
@@ -54,7 +54,9 @@ function generateCSVRuns(runs, res) {
     
     csvConvert.json2csv(csvArray, function(err, csv) {
         if(err) {
-            logger.error('Error on GET /runs/:id?csv=true', err);
+            if (Array.isArray(runs)) logger.error('Error on GET /runs/?csv=true&mw=' + req.query.mw, err);
+            else logger.error('Error on GET /runs/' + req.params.id + '?csv=true');
+            
             return res.send(500);
         }
 
@@ -81,7 +83,7 @@ exports.list = function (req, res) {
         }
 
         // initiate download
-        if (req.query.csv === 'true') return generateCSVRuns(runs, res); 
+        if (req.query.csv === 'true') return generateCSVRuns(runs, req, res); 
         return res.status(200).send(runs);
     });
 };
@@ -99,7 +101,7 @@ exports.show = function (req, res) {
         }
         
         // initiate download
-        if (req.query.csv === 'true') return generateCSVRuns(run, res);
+        if (req.query.csv === 'true') return generateCSVRuns(run, req, res);
         return res.status(200).send(run);
     });
 };
