@@ -6,6 +6,13 @@
   line-height: 19px;
   line-height: 1.9rem; }
 
+.btn-primary {
+  background-color: #03A9F4;
+  border-color: #03A9F4; }
+  .btn-primary:hover {
+    background-color: #0288D1;
+    border-color: #0288D1; }
+
 html {
   font-size: 62.5%; }
 
@@ -13,10 +20,16 @@ html {
   text-align: center; }
   #status-box #status-label {
     font-size: 25px;
-    font-size: 2.5rem; }
+    font-size: 2.5rem;
+    background-color: #0288D1;
+    border-color: #0288D1;
+    color: #FFFFFF; }
   #status-box #status-sub-label {
     font-size: 20px;
-    font-size: 2.0rem; }
+    font-size: 2.0rem;
+    background-color: #B3E5FC;
+    border-color: #B3E5FC;
+    color: #FFFFFF; }
 
 #ocean-box {
   position: relative; }
@@ -30,18 +43,26 @@ html {
     margin-right: auto;
     text-align: center;
     font-size: 15px;
-    font-size: 1.5rem; }
+    font-size: 1.5rem;
+    background-color: #D32F2F;
+    border-color: #D32F2F;
+    color: #FFFFFF; }
   #ocean-box #canvas-container #ocean-canvas {
     display: block;
     margin: 0 auto 20px auto;
     border-radius: 20px; }
-  #ocean-box #costs-box {
-    font-size: 18px;
-    font-size: 1.8rem;
-    position: relative; }
-    #ocean-box #costs-box div {
-      text-align: center;
-      display: inline-block; }
+
+#costs-box {
+  font-size: 18px;
+  font-size: 1.8rem;
+  position: relative; }
+  #costs-box div {
+    text-align: center;
+    display: inline-block; }
+  #costs-box .costs-label {
+    background-color: #03A9F4;
+    border-color: #03A9F4;
+    color: #FFFFFF; }
 
 #control-box .col-lg-4 {
   padding-left: 5px;
@@ -104,9 +125,11 @@ html {
     #fishers-box table tbody tr td:nth-of-type(n+2) {
       text-align: center; }
   #fishers-box table tbody tr#f0 {
-    background-color: #d9edf7; }
+    background-color: #4CAF50;
+    color: #FFFFFF; }
     #fishers-box table tbody tr#f0 td {
-      background-color: #d9edf7; }
+      background-color: #4CAF50;
+      color: #FFFFFF; }
 
 .modal {
   font-size: 16px;
@@ -130,3 +153,5 @@ html {
 
   .col-sm-4 {
     width: 40%; } }
+
+/*# sourceMappingURL=fish.css.map */
