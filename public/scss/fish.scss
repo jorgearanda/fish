@@ -11,7 +11,10 @@ $primaryTextColor:   #212121;
 $secondaryTextColor: #727272;
 $dividerColor:       #B6B6B6;
 
-$your-row-background: #d9edf7;
+$your-row-background: $accentColor;
+
+$warningDarkPrimaryColor:   #D32F2F;
+$warningPrimaryColor:       #F44336;
 
 .col-sm-8, .col-sm-4 {
   padding-left: 30px;
@@ -21,6 +24,15 @@ $your-row-background: #d9edf7;
 .btn {
   line-height: 19px;
   line-height: 1.9rem;
+}
+
+.btn-primary {
+  background-color: $primaryColor;
+  border-color: $primaryColor;
+  &:hover {
+    background-color: $darkPrimaryColor;
+    border-color: $darkPrimaryColor;
+  }
 }
 
 html {
@@ -34,10 +46,16 @@ html {
   #status-label {
     font-size: 25px;
     font-size: 2.5rem;
+    background-color: $darkPrimaryColor;
+    border-color: $darkPrimaryColor;
+    color: $textPrimaryColor;
   }
   #status-sub-label {
     font-size: 20px;
     font-size: 2.0rem;
+    background-color: $lightPrimaryColor;
+    border-color: $lightPrimaryColor;
+    color: $textPrimaryColor;
   }
 }
 
@@ -54,6 +72,9 @@ html {
     text-align: center;
     font-size: 15px;
     font-size: 1.5rem;
+    background-color: $warningDarkPrimaryColor;
+    border-color: $warningDarkPrimaryColor;
+    color: $textPrimaryColor;
   }
   #canvas-container {
     #ocean-canvas {
@@ -62,16 +83,24 @@ html {
       border-radius: 20px;
     }
   }
-  #costs-box {
-    font-size: 18px;
-    font-size: 1.8rem;
-    position: relative;
-    div {
-      text-align: center;
-      display: inline-block;
-    }
+}
+
+#costs-box {
+  font-size: 18px;
+  font-size: 1.8rem;
+  position: relative;
+  div {
+    text-align: center;
+    display: inline-block;
+  }
+  .costs-label {
+    background-color: $primaryColor;
+    border-color: $primaryColor;
+    color: $textPrimaryColor;
   }
 }
+
+
 
 #control-box {
   .col-lg-4 {
@@ -161,8 +190,10 @@ html {
       }
       tr#f0 {
         background-color: $your-row-background;
+        color: $textPrimaryColor;
         td {
           background-color: $your-row-background;
+          color: $textPrimaryColor;
         }
       }
     }
