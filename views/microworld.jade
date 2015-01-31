@@ -222,6 +222,43 @@ html
                 label.form-label.checkbox
                   | Show their balance
                   input#show-fisher-balance(type='checkbox', checked='')
+          h4 Ocean Status Table Order
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.radio
+                  | Static (Current user on top)
+                  input#ocean_order_user_top(type='radio', name='ocean_order', value='ocean_order_user_top', checked)
+
+              .col-md-10
+                label.form-label.radio
+                  | Static (Current user in middle)
+                  input#ocean_order_user_mid(type='radio', name='ocean_order', value='ocean_order_user_mid')
+
+              .col-md-10
+                label.form-label.radio
+                  | Static (Current user on bottom)
+                  input#ocean_order_user_bot(type='radio', name='ocean_order', value='ocean_order_user_bot')
+
+              .col-md-10
+                label.form-label.radio
+                  | Dynamic (Descending by fish caught this season)
+                  input#ocean_order_desc_fish_season(type='radio', name='ocean_order', value='ocean_order_desc_fish_season')
+
+              .col-md-10
+                label.form-label.radio
+                  | Dynamic (Descending by fish caught overall)
+                  input#ocean_order_desc_fish_overall(type='radio', name='ocean_order', value='ocean_order_desc_fish_overall')
+
+              .col-md-10
+                label.form-label.radio
+                  | Dynamic (Descending by $ this season)
+                  input#ocean_order_desc_money_season(type='radio', name='ocean_order', value='ocean_order_desc_money_season')
+
+              .col-md-10
+                label.form-label.radio
+                  | Dynamic (Descending by $ overall)
+                  input#ocean_order_desc_money_overall(type='radio', name='ocean_order', value='ocean_order_desc_money_overall')
         .col-md-8
           h3 Bot behaviour
           .row

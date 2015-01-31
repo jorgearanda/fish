@@ -283,6 +283,7 @@ function prepareMicroworldObject() {
             attemptsSecond: $(botPrefix + 'attempts-second').val()
         });
     }
+    mw.oceanOrder = $("input[name=ocean_order]:checked").val();
 
     return mw;
 }

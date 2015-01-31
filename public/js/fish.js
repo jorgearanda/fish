@@ -256,7 +256,36 @@ function updateFishers() {
 
 function sortFisherTable() {
     var $container = $("#fishers-tbody");
-    $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
+    console.log(ocean.oceanOrder)
+    if(ocean.oceanOrder === "ocean_order_user_top")
+    {
+        $container.mixItUp('insert', 1, $("tr#f0"));
+    }
+    else if (ocean.oceanOrder === "ocean_order_user_mid")
+    {
+        $container.mixItUp('insert', ocean.numFishers/2, $("tr#f0"));
+    }
+    else if (ocean.oceanOrder === "ocean_order_user_bot")
+    {
+        $container.mixItUp('insert', ocean.numFishers-1, $("tr#f0"));
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_season")
+    {
+        $container.mixItUp('sort', 'fish-season:desc name:asc');  
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall")
+    {
+        $container.mixItUp('sort', 'fish-total:desc name:asc');  
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_money_season")
+    {
+     $container.mixItUp('sort', 'profit-season:desc name:asc');   
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_money_overall")
+    {
+        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
+    }
+    
 }
 
 function makeUnpausable() {

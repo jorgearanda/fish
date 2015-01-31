@@ -57,7 +57,8 @@ var microworldSchema = new Schema({
             predictability: String,
             probAction: Number,
             attemptsSecond: Number
-        }]
+        }],
+        oceanOrder: String
     }
 });
 
