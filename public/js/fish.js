@@ -267,11 +267,11 @@ function sortFisherTable() {
     }
     else if (ocean.oceanOrder === "ocean_order_user_bot")
     {
-        $container.mixItUp('insert', ocean.numFishers-1, $("tr#f0"));
+        $container.mixItUp('insert', ocean.numFishers, $("tr#f0"));
     }
     else if (ocean.oceanOrder === "ocean_order_desc_fish_season")
     {
-        $container.mixItUp('sort', 'fish-season:desc name:asc');  
+        $container.mixItUp('sort', 'fish-season:desc name:asc');
     }
     else if (ocean.oceanOrder === "ocean_order_desc_fish_overall")
     {

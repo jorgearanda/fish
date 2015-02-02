@@ -428,6 +428,8 @@ function populatePage() {
         $(botPrefix + 'attempts-second').val(mw.params.bots[i - 1].attemptsSecond);
     }
 
+    $("#"+mw.params.oceanOrder).prop('checked', true);
+
     changeBotRowVisibility();
 }
 
@@ -538,6 +540,7 @@ function prepareControls() {
         loadTexts();
         $('#create').removeClass('collapse');
         $('#create-2').removeClass('collapse');
+        $("#ocean_order_user_top").prop("checked", true);
     } else if (mode === 'test') {
         $('title').text('Fish - Microworld in Test');
         $('#microworld-header').text(pageHeader[mode] + mw.code);
