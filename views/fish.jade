@@ -27,16 +27,6 @@ html
           .row#status-box
               h2#status-label.lead.status-label.alert.alert-success
               h3#status-sub-label.status-label.alert.alert-info
-          .row#ocean-box.clearfix
-            #warning-alert.alert.alert-danger
-            #canvas-container.clearfix
-              canvas#ocean-canvas(width='700', height='460')
-          .row#costs-box.clearfix
-            #cost-departure.costs-label.alert.alert-info
-            #cost-second.costs-label.alert.alert-info
-            #cost-cast.costs-label.alert.alert-info
-            #revenue-fish.costs-label.alert.alert-info
-        .col-sm-4
           .row.clearfix
             #control-box.clearfix
               .col-lg-4.clearfix
@@ -69,6 +59,16 @@ html
                       td(id="f#{i}-fish-total").fisher-label
                       td(id="f#{i}-profit-season").fisher-label
                       td(id="f#{i}-profit-total").fisher-label
+          .row#costs-box.clearfix
+            #cost-departure.costs-label.alert.alert-info
+            #cost-second.costs-label.alert.alert-info
+            #cost-cast.costs-label.alert.alert-info
+            #revenue-fish.costs-label.alert.alert-info
+        .col-sm-4
+          .row#ocean-box.clearfix
+            #warning-alert.alert.alert-danger
+            #canvas-container.clearfix
+              canvas#ocean-canvas(width='700', height='460')
     #rules-modal.modal.fade(role='dialog', aria-hidden='true')
       .modal-dialog
         .modal-content

@@ -47,10 +47,6 @@ html {
     background-color: #D32F2F;
     border-color: #D32F2F;
     color: #FFFFFF; }
-  #ocean-box #canvas-container #ocean-canvas {
-    display: block;
-    margin: 0 auto 20px auto;
-    border-radius: 20px; }
 
 #costs-box {
   font-size: 18px;
@@ -131,6 +127,11 @@ html {
       background-color: #4CAF50;
       color: #FFFFFF; }
 
+#canvas-container #ocean-canvas {
+  display: block;
+  margin: 0 auto 20px auto;
+  border-radius: 20px; }
+
 .modal {
   font-size: 16px;
   font-size: 1.6rem; }
@@ -142,16 +143,16 @@ html {
 
 @media (min-width: 768px) {
   .col-sm-8 {
-    width: 50%; }
+    width: 75%; }
 
   .col-sm-4 {
-    width: 50%;
+    width: 25%;
     margin-top: 20px; } }
 @media (min-width: 992px) {
   .col-sm-8 {
-    width: 60%; }
+    width: 75%; }
 
   .col-sm-4 {
-    width: 40%; } }
+    width: 25%; } }
 
 /*# sourceMappingURL=fish.css.map */
