@@ -197,6 +197,8 @@ function updateFishers() {
             $('#f0-profit-season').text(profitSeason);
             $('#f0-profit-total').text(profitTotal);
 
+            $('#f0').attr('data-fish-total', fishTotal);
+            $('#f0').attr('data-fish-season', fishSeason);
             $('#f0').attr('data-profit-total', profitTotal);
             $('#f0').attr('data-profit-season', profitSeason);
             $('#f0').attr('data-name', name);
@@ -244,6 +246,8 @@ function updateFishers() {
                 $('#f' + j + '-profit-total').text('?');
             }
 
+            $('#f' + j).attr('data-fish-total', fishTotal);
+            $('#f' + j).attr('data-fish-season', fishSeason);
             $('#f' + j).attr('data-profit-total', profitTotal);
             $('#f' + j).attr('data-profit-season', profitSeason);
             $('#f' + j).attr('data-name', name);
