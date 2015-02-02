@@ -39,8 +39,8 @@ function loadLabels() {
     $('#fish-total-header').text(' ' + msgs.info_overall);
 
     if (!ocean) return;
-    $('#profit-season-header').text(ocean.currencySymbol + msgs.info_season);
-    $('#profit-total-header').text(ocean.currencySymbol + msgs.info_overall);
+    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season);
+    $('#profit-total-header').text(ocean.currencySymbol + ' ' + msgs.info_overall);
 
     updateCosts();
     updateStatus();
