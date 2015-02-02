@@ -112,7 +112,7 @@ html {
       overflow: hidden; }
   #fishers-box table tbody tr {
     display: none;
-    font-weight: bold; }
+    font-weight: normal; }
     #fishers-box table tbody tr td img {
       float: left;
       margin-right: 5px; }
