@@ -1,0 +1,14 @@
+{
+  "name": "bootstro",
+  "homepage": "https://github.com/clu3/bootstro.js",
+  "_release": "8036a6208b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "8036a6208bfe98ec1b6adcdd6268b51c56aae7a8"
+  },
+  "_source": "git://github.com/clu3/bootstro.js.git",
+  "_target": "*",
+  "_originalSource": "bootstro",
+  "_direct": true
+}
