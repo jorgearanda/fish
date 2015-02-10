@@ -426,6 +426,11 @@ function resizeOceanCanvasToScreenWidth() {
     }
 }
 
+function startTutorial() {
+    requestPause();
+    bootstro.start();
+}
+
 socket.on('connect', function () {
     socket.emit('enterOcean', mwId, pId);
 });
@@ -448,6 +453,7 @@ function main() {
     $('#attempt-fish').on('click', attemptToFish);
     $('#pause').on('click', requestPause);
     $('#resume').on('click', requestResume);
+    $('#tutorial').on('click', startTutorial);
     loadLabels();
     resizeOceanCanvasToScreenWidth();
     $(window).resize(resizeOceanCanvasToScreenWidth);

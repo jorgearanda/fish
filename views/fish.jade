@@ -4,6 +4,7 @@ html
     title Fish
     meta(name='viewport', content='width=device-width, initial-scale=1.0, user-scalable=no')
     link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.css')
+    link(rel='stylesheet', href='/bower/bootstro/bootstro.css')
     link(rel='stylesheet', href='/public/css/fish.css')
     link(rel='stylesheet', href='/public/fonts/css/animation.css')
     link(rel='stylesheet', href='/public/fonts/css/fontello-codes.css')
@@ -16,6 +17,7 @@ html
     script(src='/bower/purl/purl.js')
     script(src='/bower/bootstrap/dist/js/bootstrap.min.js')
     script(src='/bower/moment/min/moment.min.js')
+    script(src='/bower/bootstro/bootstro.js')
     script(src='/socket.io/socket.io.js')
     script(src='/bower/underscore/underscore-min.js')
     script(src='/public/js/localization.js')
@@ -25,30 +27,30 @@ html
       .row
         .col-sm-8.clearfix
           .row#status-box
-              h2#status-label.lead.status-label.alert.alert-success
-              h3#status-sub-label.status-label.alert.alert-info
+              h2#status-label.lead.status-label.alert.alert-success.bootstro(data-bootstro-title="Season status" data-bootstro-content="This status bar indicates which season you are in, when the season has ended, and offers some simulation status information." data-bootstro-placement="bottom")
+              h3#status-sub-label.status-label.alert.alert-info.bootstro(data-bootstro-title="Fish population status" data-bootstro-content="The fish population status shows the number of remaining fish in the ocean and indicates when fish are spawning between seasons." data-bootstro-placement="bottom")
           .row.clearfix
             #control-box.clearfix
               .col-lg-4.clearfix
-                button#changeLocation.btn.btn-changeLocation(type='button' data-location='port') Go to Sea <i class='icon-ship'></i>
+                button#changeLocation.btn.btn-changeLocation(type='button' data-location='port').bootstro(data-bootstro-title="Go to sea/ Return to port" data-bootstro-content="This allows you to take your ship out to sea or return to the port." data-bootstro-placement="bottom") Go to Sea <i class='icon-ship'></i>
               .col-lg-4.clearfix
-                button#attempt-fish.btn.btn-fish(type='button') Attempt to fish <i class="icon-fish-hook"></i>
+                button#attempt-fish.btn.btn-fish(type='button').bootstro(data-bootstro-title="Attempt to fish" data-bootstro-content="Clicking this button simulates choosing to fish in the ocean. You can only attempt to fish if you are at sea." data-bootstro-placement="bottom") Attempt to fish <i class="icon-fish-hook"></i>
               .col-lg-4.clearfix
                 button#pause.btn(type='button') Pause
-                button#resume.btn(type='button', style='display:none') Resume
+                button#resume.btn(type='button', style='display:none').bootstro(data-bootstro-title="Pause/ Resume" data-bootstro-content="This button pauses a simulation in progress or continues a paused simulation." data-bootstro-placement="bottom") Resume
           .row.clearfix
             #fishers-box.clearfix
               table.table.table-striped.table-hover.fishers-table
                 thead
-                  th#fisher-header
+                  th#fisher-header.bootstro(data-bootstro-title="Fisher" data-bootstro-content="This column indicates the name of each fisher. An anchor beside a fisher name shows the fisher is at port and a globe shows the fisher is out to sea." data-bootstro-placement="bottom")
                   th.data-header
                     img(src='/public/img/fishy.jpg', width='20', height='20')
-                    p#fish-season-header
+                    p#fish-season-header.bootstro(data-bootstro-title="Season fish" data-bootstro-content="This column shows how many fish each fisher has caught in the current season." data-bootstro-placement="bottom")
                   th.data-header
                     img(src='/public/img/fishy.jpg', width='20', height='20')
-                    p#fish-total-header
-                  th#profit-season-header.data-header
-                  th#profit-total-header.data-header
+                    p#fish-total-header.bootstro(data-bootstro-title="Overall fish" data-bootstro-content="This column shows how many fish each fisher has caught in total from the beginning of the simulation." data-bootstro-placement="bottom")
+                  th#profit-season-header.data-header.bootstro(data-bootstro-title="Season profit" data-bootstro-content="This column shows the current season's profit for each fisher." data-bootstro-placement="bottom")
+                  th#profit-total-header.data-header.bootstro(data-bootstro-title="Overall profit" data-bootstro-content="This column shows the total profit for each fisher from the beginning of the simulation." data-bootstro-placement="bottom")
                 tbody#fishers-tbody
                   each i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
                     tr(id="f#{i}")
@@ -59,13 +61,15 @@ html
                       td(id="f#{i}-fish-total").fisher-label
                       td(id="f#{i}-profit-season").fisher-label
                       td(id="f#{i}-profit-total").fisher-label
-          .row#costs-box.clearfix
+          .row#costs-box.clearfix.bootstro(data-bootstro-title="Cost information" data-bootstro-content="This area shows different pieces of data pertaining to cost such as the cost to fish, the earnings per fish, and the cost to leave port." data-bootstro-placement="bottom")
             #cost-departure.costs-label.alert.alert-info
             #cost-second.costs-label.alert.alert-info
             #cost-cast.costs-label.alert.alert-info
             #revenue-fish.costs-label.alert.alert-info
+          .row
+            button#tutorial.btn(type="button") Start tutorial
         .col-sm-4
-          .row#ocean-box.clearfix
+          .row#ocean-box.clearfix.bootstro(data-bootstro-title="Ocean window" data-bootstro-content="This window shows a pictorial representation of the ocean's fish population and updates as fish are caught." data-bootstro-placement="bottom")
             #warning-alert.alert.alert-danger
             #canvas-container.clearfix
               canvas#ocean-canvas(width='700', height='460')
