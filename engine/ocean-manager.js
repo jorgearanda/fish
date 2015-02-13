@@ -5,14 +5,19 @@ var log = require('winston');
 var Microworld = require('../models/microworld-model').Microworld;
 var Ocean = require('./ocean').Ocean;
 
-exports.OceanManager = function OceanManager(io) {
+exports.OceanManager = function OceanManager(io, ioAdmin) {
     this.oceans = {};
     this.io = io;
+    this.ioAdmin = ioAdmin;
+    // simulations currently tracked
+    this.simulations = {};
+    // experimenter currently tracking simulations
+    this.experimenters = {};
 
     this.createOcean = function (mwId, cb) {
         Microworld.findOne({_id: mwId}, function onFound(err, mw) {
             // TODO - handle errors
-            var ocean = new Ocean(mw, this.io);
+            var ocean = new Ocean(mw, this.io, this.ioAdmin, this);
             this.oceans[ocean.id] = ocean;
             ocean.log.info('Ocean created.');
             ocean.runOcean();
@@ -23,6 +28,7 @@ exports.OceanManager = function OceanManager(io) {
 
     this.deleteOcean = function (oId) {
         delete this.oceans[oId];
+        delete this.simulations[oId];
         return;
     };
 
@@ -57,7 +63,13 @@ exports.OceanManager = function OceanManager(io) {
 
         for (var i in oKeys) {
             oId = oKeys[i];
+            var expId;
+            var time;
             if (this.oceans[oId].isRemovable()) {
+                expId = this.oceans[oId].microworld.experimenter._id.toString();
+                time = (new Date(this.oceans[oId].id)).toString();
+                // tell experimenter that simulation is finished
+                ioAdmin.in(expId).emit('simulationDone', this.oceans[oId].microworld.code, time);
                 log.info('Purging ocean ' + this.oceans[oId].microworld.name + ' ' + oId +
                     ' (' + this.oceans[oId].microworld.experimenter.username + ')');
                 this.deleteOcean(oId);

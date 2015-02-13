@@ -1,8 +1,10 @@
 'use strict';
-/*global document:true, location:true, $:true, alert:true, moment:true*/
+/*global document:true, location:true, $:true, alert:true, moment:true, io:true*/
 
 var df = 'YYYY-MM-DD';
 var lastMwRes = null;
+var socketAdmin = io.connect('/admin');
+var expId = window.location.pathname.split('/')[2];
 
 var microworldsSuccess = function (mws) {
     if (_.isEqual(lastMwRes, mws)) return;
@@ -98,6 +100,52 @@ var getMicroworlds = function () {
 var overrideSubmit = function () {
     return false;
 };
+
+var listSimulation = function(simulation) {
+    var html = '<li><span class="simulation-list" id="new-simulation">Running: </span><span> Simulation ';
+    html+= simulation.code + ' created on ' + simulation.time + ' ran by participants: <span class="participants">';
+    for (var i = 0; i < simulation.participants.length; i++) {
+        if (i != 0) {
+            html+= ', ';
+            if (i == simulation.participants.length - 1) {
+                html+= 'and ';
+            }
+        }
+        html+= simulation.participants[i];
+    }
+    html+= '</span></span></li>';
+
+    $('#running-list').prepend(html);
+    $('li').delay(300).animate({opacity : 1}, 500);
+};
+
+var currentRunningSimulations = function(simulations) {
+    for (var oceanId in simulations) {
+        if(simulations[oceanId].expId === expId) {
+            listSimulation(simulations[oceanId]);
+        }
+    }
+};
+
+var newSimulation = function(simulation) {
+    listSimulation(simulation);
+}
+
+var simulationDone = function(expCode, time) {
+    var html = '<li><span class="simulation-list" id="done-simulation">Finished: </span><span> Simulation ' + expCode +
+               ' created on ' + time;
+    $('#running-list').prepend(html);
+    $('li').delay(300).animate({opacity : 1}, 500);
+}
+
+socketAdmin.on('connect', function() {
+    socketAdmin.emit('enterDashboard', expId);
+});
+
+socketAdmin.on('currentRunningSimulations', currentRunningSimulations);
+socketAdmin.on('newSimulation', listSimulation);
+socketAdmin.on('simulationDone', simulationDone);
+// socketAdmin.on('newSimulation', listSimulation);
 
 var main = function() {
     $('form').submit(overrideSubmit);

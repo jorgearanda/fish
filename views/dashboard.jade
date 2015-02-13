@@ -5,10 +5,12 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/public/css/grid.css')
+    link(rel='stylesheet', href='/public/css/dashboard.css')
     script(src='/bower/jquery/jquery.min.js')
     script(src='/bower/bootstrap/dist/js/bootstrap.min.js').
     script(src='/bower/moment/min/moment.min.js')
     script(src='/bower/underscore/underscore-min.js')
+    script(src='/socket.io/socket.io.js')
     script(type='text/javascript', src='/public/js/dashboard.js')
   body
     .container
@@ -51,6 +53,22 @@ html
               th Completed
               th Interrupted
             tbody#microworlds-active-table-rows
+      hr
+      h3 Current Simulations
+      #running-and-disconnected-simulations
+        .row
+          .col-md-2.col-md-offset-1
+            .list-simulations
+              .header
+                span Simulations currently running
+              #list-body(style='margin-left:5px')
+                ul#running-list
+          .col-md-2.col-md-offset-4
+            .list-simulations
+              .header
+                span Simulations that were interrupted
+              #list-body(style='margin-left:5px')
+                ul#interrupted-list
       hr
       h3 Archived microworlds
       #microworlds-archived

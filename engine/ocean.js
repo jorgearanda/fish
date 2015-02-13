@@ -6,9 +6,11 @@ var OceanLog = require('./ocean-log').OceanLog;
 var Run = require('../models/run-model').Run;
 
 var io;
+var ioAdmin;
 
-exports.Ocean = function Ocean(mw, incomingIo) {
+exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     io = incomingIo;
+    ioAdmin = incomingIoAdmin;
 
     this.time = new Date();
     this.id = this.time.getTime();
@@ -23,6 +25,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.reportedMysteryFish = 0;
     this.microworld = mw;
     this.results = [];
+    this.originalParticipants = [];
+    this.om = om;
     this.log = new OceanLog(this.microworld.name + ' ' + this.id + ' ' +
         '(' + this.microworld.experimenter.username + ')');
 
@@ -46,6 +50,8 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     this.addFisher = function (pId) {
         this.fishers.push(new Fisher(pId, 'human', null, this));
+        // to track the participants that started this simulation
+        this.originalParticipants.push(pId);
         this.log.info('Human fisher ' + pId + ' joined.');
         return;
     };
@@ -237,9 +243,20 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.getOceanReady = function () {
+        var simulationData = {};
+        var expId = this.microworld.experimenter._id.toString();
         this.status = 'initial delay';
         this.log.info('All fishers ready to start.');
         io.sockets.in(this.id).emit('initial delay');
+       
+        simulationData.expId = this.microworld.experimenter._id.toString();
+        simulationData.code = this.microworld.code;
+        simulationData.participants = this.originalParticipants;
+        simulationData.time = (new Date(this.id)).toString();
+        this.om.simulations[this.id] = simulationData;
+        if(expId in this.om.experimenters) {
+            ioAdmin.in(expId).emit('newSimulation', simulationData);
+        }
     };
 
     this.startNextSeason = function () {

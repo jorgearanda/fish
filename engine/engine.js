@@ -3,10 +3,10 @@
 var log = require('winston');
 var OceanManager = require('./ocean-manager').OceanManager;
 
-exports.engine = function engine(io) {
+exports.engine = function engine(io, ioAdmin) {
     log.info('Starting engine');
 
-    var om = new OceanManager(io);
+    var om = new OceanManager(io, ioAdmin);
 
     io.sockets.on('connection', function (socket) {
         var clientOId;
@@ -22,6 +22,7 @@ exports.engine = function engine(io) {
             var myPId = clientPId;
             socket.join(myOId);
             socket.emit('ocean', om.oceans[myOId].getParams());
+            
 
             socket.on('readRules', function () {
                 om.oceans[myOId].readRules(myPId);
@@ -52,5 +53,23 @@ exports.engine = function engine(io) {
                 om.removeFisherFromOcean(myOId, myPId);
             });
         };
+    });
+
+    ioAdmin.on('connection', function(socket) {
+        var expId;
+
+        socket.on('enterDashboard', function(experimenterId) {
+            expId = experimenterId;
+            log.info('Experimenter ' + expId + ' is viewing dashboard');
+            om.experimenters[expId] = true;
+            socket.join(expId);
+            socket.emit('currentRunningSimulations', om.simulations);
+        });
+
+        socket.on('disconnect', function() {
+            log.info('Experimenter ' + expId + ' disconnected from dashboard');
+            // delete from list of observing experimenters
+            delete om.experimenters[expId];
+        });
     });
 };
