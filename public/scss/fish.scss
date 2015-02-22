@@ -76,13 +76,6 @@ html {
     border-color: $warningDarkPrimaryColor;
     color: $textPrimaryColor;
   }
-  #canvas-container {
-    #ocean-canvas {
-      display: block;
-      margin: 0 auto 20px auto;
-      border-radius: 20px;
-    }
-  }
 }
 
 #costs-box {
@@ -99,8 +92,6 @@ html {
     color: $textPrimaryColor;
   }
 }
-
-
 
 #control-box {
   .col-lg-4 {
@@ -174,7 +165,7 @@ html {
     tbody {
       tr {
         display: none;
-        font-weight: bold;
+        font-weight: normal;
         td {
           img {
             float: left;
@@ -200,6 +191,14 @@ html {
   }
 }
 
+#canvas-container {
+  #ocean-canvas {
+    display: block;
+    margin: 0 auto 20px auto;
+    border-radius: 20px;
+  }
+}
+
 .modal {
   font-size: 16px;
   font-size: 1.6rem;
@@ -214,20 +213,20 @@ html {
 
 @media (min-width: $media-small) {
   .col-sm-8 {
-    width: 50%;
+    width: 75%;
   }
   .col-sm-4 {
-    width: 50%;
+    width: 25%;
     margin-top: 20px;
   }
 }
 
 @media (min-width: $media-medium) {
   .col-sm-8 {
-    width: 60%;
+    width: 75%;
   }
   .col-sm-4 {
-    width: 40%;
+    width: 25%;
   }
 }
 

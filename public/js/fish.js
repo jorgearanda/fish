@@ -39,8 +39,8 @@ function loadLabels() {
     $('#fish-total-header').text(' ' + msgs.info_overall);
 
     if (!ocean) return;
-    $('#profit-season-header').text(ocean.currencySymbol + msgs.info_season);
-    $('#profit-total-header').text(ocean.currencySymbol + msgs.info_overall);
+    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season);
+    $('#profit-total-header').text(ocean.currencySymbol + ' ' + msgs.info_overall);
 
     updateCosts();
     updateStatus();
@@ -451,11 +451,11 @@ function resizeOceanCanvasToScreenWidth() {
     if (viewportWidth <= BOOTSTRAP_SMALL_WIDTH) {
         $("#ocean-canvas").width(0.9 * viewportWidth);
     } else if (viewportWidth <= BOOTSTRAP_MEDIUM_WIDTH) {
-        $("#ocean-canvas").width(0.4 * viewportWidth);
+        $("#ocean-canvas").width(0.2 * viewportWidth);
     } else if (viewportWidth <= BOOTSTRAP_LARGE_WIDTH) {
-        $("#ocean-canvas").width(0.5 * viewportWidth);
+        $("#ocean-canvas").width(0.2 * viewportWidth);
     } else {
-        $("#ocean-canvas").width(0.8 * viewportHeight);
+        $("#ocean-canvas").width(0.2 * viewportWidth);
     }
 }
 
