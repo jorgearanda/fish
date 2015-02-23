@@ -23,13 +23,15 @@ html {
     font-size: 2.5rem;
     background-color: #0288D1;
     border-color: #0288D1;
-    color: #FFFFFF; }
+    color: #FFFFFF;
+    margin: 1px; }
   #status-box #status-sub-label {
     font-size: 20px;
     font-size: 2.0rem;
     background-color: #B3E5FC;
     border-color: #B3E5FC;
-    color: #FFFFFF; }
+    color: #000000;
+    margin: 1px; }
 
 #ocean-box {
   position: relative; }
@@ -56,45 +58,43 @@ html {
     text-align: center;
     display: inline-block; }
   #costs-box .costs-label {
-    background-color: #03A9F4;
-    border-color: #03A9F4;
-    color: #FFFFFF; }
+    background-color: white;
+    color: #505050;
+    border-color: white; }
 
-#control-box .col-lg-4 {
-  padding-left: 5px;
-  padding-right: 5px; }
-  #control-box .col-lg-4 button {
+#control-box .col-xs-4 {
+  padding: 0; }
+  #control-box .col-xs-4 button {
     width: 100%;
-    margin-bottom: 10px;
     font-weight: bold; }
-  #control-box .col-lg-4 .btn-changeLocation {
+  #control-box .col-xs-4 .btn-changeLocation {
     background-color: #03A9F4;
     border-color: #03A9F4;
     color: #FFFFFF; }
-    #control-box .col-lg-4 .btn-changeLocation:hover, #control-box .col-lg-4 .btn-changeLocation:focus, #control-box .col-lg-4 .btn-changeLocation:active {
+    #control-box .col-xs-4 .btn-changeLocation:hover, #control-box .col-xs-4 .btn-changeLocation:focus, #control-box .col-xs-4 .btn-changeLocation:active {
       background-color: #0286c2;
       border-color: #0286c2; }
-    #control-box .col-lg-4 .btn-changeLocation:disabled {
+    #control-box .col-xs-4 .btn-changeLocation:disabled {
       background-color: #B3E5FC;
       border-color: #B3E5FC; }
-  #control-box .col-lg-4 .btn-fish {
+  #control-box .col-xs-4 .btn-fish {
     background-color: #4CAF50;
     border-color: #4CAF50;
     color: #FFFFFF; }
-    #control-box .col-lg-4 .btn-fish:hover, #control-box .col-lg-4 .btn-fish:focus, #control-box .col-lg-4 .btn-fish:active {
+    #control-box .col-xs-4 .btn-fish:hover, #control-box .col-xs-4 .btn-fish:focus, #control-box .col-xs-4 .btn-fish:active {
       background-color: #3d8b40;
       border-color: #3d8b40; }
-    #control-box .col-lg-4 .btn-fish:disabled {
+    #control-box .col-xs-4 .btn-fish:disabled {
       background-color: #6ec071;
       border-color: #6ec071; }
-  #control-box .col-lg-4 .btn-pause {
+  #control-box .col-xs-4 .btn-pause {
     background-color: #0288D1;
     border-color: #0288D1;
     color: #FFFFFF; }
-    #control-box .col-lg-4 .btn-pause:hover, #control-box .col-lg-4 .btn-pause:focus, #control-box .col-lg-4 .btn-pause:active {
+    #control-box .col-xs-4 .btn-pause:hover, #control-box .col-xs-4 .btn-pause:focus, #control-box .col-xs-4 .btn-pause:active {
       background-color: #02679e;
       border-color: #02679e; }
-    #control-box .col-lg-4 .btn-pause:disabled {
+    #control-box .col-xs-4 .btn-pause:disabled {
       background-color: #09a7fd;
       border-color: #09a7fd; }
 
@@ -104,12 +104,15 @@ html {
   background-color: white; }
   #fishers-box table thead th {
     white-space: nowrap;
-    vertical-align: top; }
+    vertical-align: top;
+    text-align: center; }
     #fishers-box table thead th img {
-      float: left;
-      margin-right: 5px; }
+      margin-right: 5px;
+      vertical-align: top; }
     #fishers-box table thead th p {
-      overflow: hidden; }
+      overflow: hidden;
+      margin: 0;
+      display: inline-block; }
   #fishers-box table tbody tr {
     display: none;
     font-weight: normal; }
