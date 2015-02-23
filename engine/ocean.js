@@ -31,6 +31,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         this.fishers.push(new Fisher(bot.name, 'bot', bot, this));
         this.log.debug('Bot fisher ' + bot.name + ' joined.');
     }
+    this.oceanOrder = "ocean_order_user_top";
 
     /////////////////////
     // Membership methods

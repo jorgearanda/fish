@@ -222,6 +222,53 @@ html
                 label.form-label.checkbox
                   | Show their balance
                   input#show-fisher-balance(type='checkbox', checked='')
+          h3 Status Table Behaviour
+          .row
+            .col-md-10
+              .dropdown
+                button#status_table_behaviour.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='true')
+                  span#btn_txt Static Behaviour&nbsp;&nbsp;
+                  span.caret
+                ul.dropdown-menu(role='menu', aria-labelledby='dropdownMenu1')
+                  li(role='presentation')
+                    a.behaviour_group_select#static_option(role='menuitem', tabindex='-1') Static Behaviour
+                  li(role='presentation')
+                    a.behaviour_group_select#dynamic_option(role='menuitem', tabindex='-1')  Dynamic Behaviour
+            .form-group
+              .col-md-10.static_option
+                label.form-label.radio
+                  | Current user on top
+                  input.behaviour_input#ocean_order_user_top(type='radio', name='ocean_order', value='ocean_order_user_top')
+
+              .col-md-10.static_option
+                label.form-label.radio
+                  | Current user in middle
+                  input.behaviour_input#ocean_order_user_mid(type='radio', name='ocean_order', value='ocean_order_user_mid')
+
+              .col-md-10.static_option
+                label.form-label.radio
+                  | Current user on bottom
+                  input.behaviour_input#ocean_order_user_bot(type='radio', name='ocean_order', value='ocean_order_user_bot')
+
+              .col-md-10.dynamic_option.hide
+                label.form-label.radio
+                  | Descending by fish caught this season
+                  input.behaviour_input#ocean_order_desc_fish_season(type='radio', name='ocean_order', value='ocean_order_desc_fish_season')
+
+              .col-md-10.dynamic_option.hide
+                label.form-label.radio
+                  | Descending by fish caught overall
+                  input.behaviour_input#ocean_order_desc_fish_overall(type='radio', name='ocean_order', value='ocean_order_desc_fish_overall')
+
+              .col-md-10.dynamic_option.hide
+                label.form-label.radio
+                  | Descending by $ this season
+                  input.behaviour_input#ocean_order_desc_money_season(type='radio', name='ocean_order', value='ocean_order_desc_money_season')
+
+              .col-md-10.dynamic_option.hide
+                label.form-label.radio
+                  | Descending by $ overall
+                  input.behaviour_input#ocean_order_desc_money_overall(type='radio', name='ocean_order', value='ocean_order_desc_money_overall')
         .col-md-8
           h3 Bot behaviour
           .row
