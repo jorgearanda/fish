@@ -13,6 +13,22 @@ function isNewMicroworld() {
     return ($.url().segment(3) === 'new');
 }
 
+function showStatusTableOptions() {
+    var behaviour_name = $(this).attr('id');
+
+    var behaviour_type = $(this).text();
+    $(this).closest('.dropdown').find('span#btn_txt').text(behaviour_type+"  ")
+
+    $("."+behaviour_name).removeClass('hide');
+
+    if(behaviour_name == "static_option"){
+        $(".dynamic_option").addClass('hide');
+    } else {
+        $(".static_option").addClass('hide');
+    }
+
+}
+
 function readyTooltips() {
     $('#early-end-tooltip').tooltip();
     $('#max-fish-tooltip').tooltip();
@@ -505,6 +521,7 @@ function setButtons() {
     $('#activate-confirmed').click(activateMicroworld);
     $('#archive-confirmed').click(archiveMicroworld);
     $('#delete-confirmed').click(deleteMicroworld);
+    $(".behaviour_group_select").click(showStatusTableOptions);
     initDownloadAll();
 }
 
@@ -567,6 +584,9 @@ function prepareControls() {
         $('#delete-2').removeClass('collapse');
         $('.form-control').prop('disabled', 'disabled');
         $('#results').removeClass('collapse');
+        $("#status_table_behaviour").prop('disabled', true);
+        $(".dynamic_option").removeClass("hide");
+        $(".behaviour_input").attr('disabled', true);
     } else if (mode === 'archived') {
         $('title').text('Fish - Archived Microworld');
         $('#microworld-header').text(pageHeader[mode]);
@@ -580,6 +600,9 @@ function prepareControls() {
         $('#delete-2').removeClass('collapse');
         $('.form-control').prop('disabled', 'disabled');
         $('#results').removeClass('collapse');
+        $("#status_table_behaviour").prop('disabled', true);
+        $(".behaviour_input").attr('disabled', true);
+        $(".dynamic_option").removeClass("hide");
     }
 
     uniformityChanges();
