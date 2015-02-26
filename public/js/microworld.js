@@ -550,6 +550,7 @@ function prepareControls() {
     $('#microworld-panel-body-text').text(panelBody[mode]);
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
 
+
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
         $('#microworld-panel-title').text(panelTitle[mode]);
@@ -558,6 +559,7 @@ function prepareControls() {
         $('#create').removeClass('collapse');
         $('#create-2').removeClass('collapse');
         $("#ocean_order_user_top").prop("checked", true);
+        uniformityChanges();
     } else if (mode === 'test') {
         $('title').text('Fish - Microworld in Test');
         $('#microworld-header').text(pageHeader[mode] + mw.code);
@@ -571,6 +573,7 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
+        uniformityChanges();
     } else if (mode === 'active') {
         $('title').text('Fish - Active Microworld');
         $('#microworld-header').text(pageHeader[mode] + mw.code);
@@ -582,7 +585,12 @@ function prepareControls() {
         $('#archive-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.form-control').prop('disabled', 'disabled');
+        $('.form-control').each( function() { 
+            $(this).prop('disabled', true); 
+        });
+        $('input').each( function() {
+            $(this).prop('disabled', true); 
+        });
         $('#results').removeClass('collapse');
         $("#status_table_behaviour").prop('disabled', true);
         $(".dynamic_option").removeClass("hide");
@@ -598,14 +606,19 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.form-control').prop('disabled', 'disabled');
+        $('.form-control').each( function() { 
+            $(this).prop('disabled', true); 
+        });
+        $('input').each( function() {
+            $(this).prop('disabled', true); 
+        });
         $('#results').removeClass('collapse');
         $("#status_table_behaviour").prop('disabled', true);
         $(".behaviour_input").attr('disabled', true);
         $(".dynamic_option").removeClass("hide");
     }
 
-    uniformityChanges();
+    
 }
 
 function loadData() {
