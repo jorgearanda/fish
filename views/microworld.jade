@@ -34,7 +34,8 @@ html
       #results.row.collapse
         .col-md-6
         h3#completed-runs Completed runs
-        button.btn.btn-info(id='download-all-button', type='submit') Download all
+        button.btn.btn-info(id='download-all-button', type='submit') Download all&nbsp;&nbsp;
+          span.glyphicon.glyphicon-download-alt
         .row
           #microworld-runs-table.table-responsive
             table.table.table-bordered.table-hover
@@ -50,122 +51,122 @@ html
             .form-group
               label.form-label.col-md-6(for='name') Name
               .col-md-6
-                input#name.form-control(type='text', autofocus='')
+                input#name.form-control.to-disable(type='text', autofocus='')
           .row
             .form-group
               label.form-label.col-md-6(for='desc') Description
               .col-md-6
-                input#desc.form-control(type='text')
+                input#desc.form-control.to-disable(type='text')
           .row
             .form-group
               label.form-label.col-md-6(for='num-fishers') Fishers per simulation
               .col-md-6
-                input#num-fishers.form-control(type='number', min='1', step='1', max='12', value='4')
+                input#num-fishers.form-control.to-disable(type='number', min='1', step='1', max='12', value='4')
           .row
             .form-group
               label.form-label.col-md-6(for='num-humans') Humans per simulation
               .col-md-6
-                input#num-humans.form-control(type='number', min='0', step='1', max='13', value='1')
+                input#num-humans.form-control.to-disable(type='number', min='0', step='1', max='13', value='1')
           .row
             .form-group
               label.form-label.col-md-6(for='num-seasons') Seasons
               .col-md-6
-                input#num-seasons.form-control(type='number', min='1', step='1', value='4')
+                input#num-seasons.form-control.to-disable(type='number', min='1', step='1', value='4')
           .row
             .form-group
               label.form-label.col-md-6(for='season-duration') Season duration (seconds)
               .col-md-6
-                input#season-duration.form-control(type='number', min='1', step='1', value='60')
+                input#season-duration.form-control.to-disable(type='number', min='1', step='1', value='60')
           .row
             .form-group
               label.form-label.col-md-6(for='initial-delay') Initial delay (seconds)
               .col-md-6
-                input#initial-delay.form-control(type='number', min='1', step='1', value='5')
+                input#initial-delay.form-control.to-disable(type='number', min='1', step='1', value='5')
           .row
             .form-group
               label.form-label.col-md-6(for='season-delay') Delay between seasons (seconds)
               .col-md-6
-                input#season-delay.form-control(type='number', min='1', step='1', value='10')
+                input#season-delay.form-control.to-disable(type='number', min='1', step='1', value='10')
           .row
             .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Enable pausing
-                  input#enable-pause(type='checkbox', checked='')
+                  input#enable-pause.to-disable(type='checkbox', checked='')
           .row
             .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Allow seasons to&nbsp;
                   a#early-end-tooltip(title='Finish a season if all fishers have returned to port and there has been no activity for three seconds.', data-toggle='tooltip', data-placement='top') end early
-                  input#enable-early-end(type='checkbox', checked='')
+                  input#enable-early-end.to-disable(type='checkbox', checked='')
         .col-md-4
           h3 Economics
           .row
             .form-group
               label.form-label.col-md-6(for='fish-value') Fish value
               .col-md-6
-                input#fish-value.form-control(type='number', min='0.00', step='0.01', value='3.00')
+                input#fish-value.form-control.to-disable(type='number', min='0.00', step='0.01', value='3.00')
           .row
             .form-group
               label.form-label.col-md-6(for='cost-cast') Cost to attempt to fish
               .col-md-6
-                input#cost-cast.form-control(type='number', min='0.00', step='0.01', value='0.00')
+                input#cost-cast.form-control.to-disable(type='number', min='0.00', step='0.01', value='0.00')
           .row
             .form-group
               label.form-label.col-md-6(for='cost-departure') Cost to set sail
               .col-md-6
-                input#cost-departure.form-control(type='number', min='0.00', step='0.01', value='0.00')
+                input#cost-departure.form-control.to-disable(type='number', min='0.00', step='0.01', value='0.00')
           .row
             .form-group
               label.form-label.col-md-6(for='cost-second') Cost per second at sea
               .col-md-6
-                input#cost-second.form-control(type='number', min='0.00', step='0.01', value='0.00')
+                input#cost-second.form-control.to-disable(type='number', min='0.00', step='0.01', value='0.00')
           .row
             .form-group
               label.form-label.col-md-6(for='currency-symbol') Currency symbol
               .col-md-6
-                input#currency-symbol.form-control(type='text', value='$')
+                input#currency-symbol.form-control.to-disable(type='text', value='$')
         .col-md-4
           h3 Fish stocks and fishing
           .row
             .form-group
               label.form-label.col-md-6(for='certain-fish') Certain fish at start
               .col-md-6
-                input#certain-fish.form-control(type='number', min='0', step='1', value='40')
+                input#certain-fish.form-control.to-disable(type='number', min='0', step='1', value='40')
           .row
             .form-group
               label.form-label.col-md-6(for='available-mystery-fish')
                 a#available-mystery-tooltip(title='The real number of mystery fish that fishers can catch.', data-toggle='tooltip', data-placement='top') Available
                 |  mystery fish at start
               .col-md-6
-                input#available-mystery-fish.form-control(type='number', min='0', step='1', value='0')
+                input#available-mystery-fish.form-control.to-disable(type='number', min='0', step='1', value='0')
           .row
             .form-group
               label.form-label.col-md-6(for='reported-mystery-fish')
                 a#reported-mystery-tooltip(title='The number of mystery fish that fishers are told potentially exist in the ocean.', data-toggle='tooltip', data-placement='top') Reported
                 |  mystery fish
               .col-md-6
-                input#reported-mystery-fish.form-control(type='number', min='0', step='1', value='0')
+                input#reported-mystery-fish.form-control.to-disable(type='number', min='0', step='1', value='0')
           .row
             .form-group
               label.form-label.col-md-6(for='max-fish')
                 a#max-fish-tooltip(title='The number of fish in the ocean can never exceed this amount. Must be equal to or higher than the sum of certain and available mystery fish at start.', data-toggle='tooltip', data-placement='top') Maximum
                 |  fish capacity of ocean
               .col-md-6
-                input#max-fish.form-control(type='number', min='0', step='1', value='40')
+                input#max-fish.form-control.to-disable(type='number', min='0', step='1', value='40')
           .row
             .form-group
               label.form-label.col-md-6(for='spawn-factor')
                 a#spawn-factor-tooltip(title='If there are 10 fishes at the end of a season, with a spawn factor of 1.5 there will be 15 at the start of the next.', data-toggle='tooltip', data-placement='top') Spawn factor
               .col-md-6
-                input#spawn-factor.form-control(type='number', min='0', step='0.01', value='2.00')
+                input#spawn-factor.form-control.to-disable(type='number', min='0', step='0.01', value='2.00')
           .row
             .form-group
               label.form-label.col-md-6(for='chance-catch')
                 a#chance-catch-tooltip(title='If the chance of catch is 1.0, every fishing attempt is successful. If it is 0.5, half of them are.', data-toggle='tooltip', data-placement='top') Chance of catch
               .col-md-6
-                input#chance-catch.form-control(type='number', min='0', step='0.01', value='1.00')
+                input#chance-catch.form-control.to-disable(type='number', min='0', step='0.01', value='1.00')
       .row
         .col-md-4
           h3 Preparation text
@@ -173,21 +174,21 @@ html
             .form-group
               label.form-label.col-md-12(for='preparation-text') This text is shown to all participants before starting the simulation
               .col-md-12
-                textarea#preparation-text.form-control(rows='30')
+                textarea#preparation-text.form-control.to-disable(rows='30')
         .col-md-4
           h3 End (by time) text
           .row
             .form-group
               label.form-label.col-md-12(for='end-time-text') This text is shown if the simulation ends because all seasons have passed
               .col-md-12
-                textarea#end-time-text.form-control(rows='30')
+                textarea#end-time-text.form-control.to-disable(rows='30')
         .col-md-4
           h3 End (by depletion) text
           .row
             .form-group
               label.form-label.col-md-12(for='end-depletion-text') This text is shown if the simulation ends because the fish have been depleted
               .col-md-12
-                textarea#end-depletion-text.form-control(rows='30')
+                textarea#end-depletion-text.form-control.to-disable(rows='30')
       .row
         .col-md-4
           h3 Information display
@@ -196,37 +197,37 @@ html
               .col-md-10
                 label.form-label.checkbox
                   | Show all fishers
-                  input#show-fishers(type='checkbox', checked='')
+                  input#show-fishers.to-disable(type='checkbox', checked='')
           .row
             .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Show their names
-                  input#show-fisher-names(type='checkbox', checked='')
+                  input#show-fisher-names.to-disable(type='checkbox', checked='')
           .row
             .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Show their&nbsp;
                   a#show-fisher-status-tooltip(title='At port or at sea', data-toggle='tooltip', data-placement='top') status
-                  input#show-fisher-status(type='checkbox', checked='')
+                  input#show-fisher-status.to-disable(type='checkbox', checked='')
           .row
             .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Show their number of fish caught
-                  input#show-num-caught(type='checkbox', checked='')
+                  input#show-num-caught.to-disable(type='checkbox', checked='')
           .row
             .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Show their balance
-                  input#show-fisher-balance(type='checkbox', checked='')
+                  input#show-fisher-balance.to-disable(type='checkbox', checked='')
           h3 Status Table Behaviour
           .row
             .col-md-10
               .dropdown
-                button#status_table_behaviour.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='true')
+                button.btn.btn-default.dropdown-toggle.to-disable(type='button', data-toggle='dropdown', aria-expanded='true')
                   span#btn_txt Static Behaviour&nbsp;&nbsp;
                   span.caret
                 ul.dropdown-menu(role='menu', aria-labelledby='dropdownMenu1')
@@ -238,37 +239,37 @@ html
               .col-md-10.static_option
                 label.form-label.radio
                   | Current user on top
-                  input.behaviour_input#ocean_order_user_top(type='radio', name='ocean_order', value='ocean_order_user_top')
+                  input.to-disable#ocean_order_user_top(type='radio', name='ocean_order', value='ocean_order_user_top')
 
               .col-md-10.static_option
                 label.form-label.radio
                   | Current user in middle
-                  input.behaviour_input#ocean_order_user_mid(type='radio', name='ocean_order', value='ocean_order_user_mid')
+                  input.to-disable#ocean_order_user_mid(type='radio', name='ocean_order', value='ocean_order_user_mid')
 
               .col-md-10.static_option
                 label.form-label.radio
                   | Current user on bottom
-                  input.behaviour_input#ocean_order_user_bot(type='radio', name='ocean_order', value='ocean_order_user_bot')
+                  input.to-disable#ocean_order_user_bot(type='radio', name='ocean_order', value='ocean_order_user_bot')
 
               .col-md-10.dynamic_option.hide
                 label.form-label.radio
                   | Descending by fish caught this season
-                  input.behaviour_input#ocean_order_desc_fish_season(type='radio', name='ocean_order', value='ocean_order_desc_fish_season')
+                  input.to-disable#ocean_order_desc_fish_season(type='radio', name='ocean_order', value='ocean_order_desc_fish_season')
 
               .col-md-10.dynamic_option.hide
                 label.form-label.radio
                   | Descending by fish caught overall
-                  input.behaviour_input#ocean_order_desc_fish_overall(type='radio', name='ocean_order', value='ocean_order_desc_fish_overall')
+                  input.to-disable#ocean_order_desc_fish_overall(type='radio', name='ocean_order', value='ocean_order_desc_fish_overall')
 
               .col-md-10.dynamic_option.hide
                 label.form-label.radio
                   | Descending by $ this season
-                  input.behaviour_input#ocean_order_desc_money_season(type='radio', name='ocean_order', value='ocean_order_desc_money_season')
+                  input.to-disable#ocean_order_desc_money_season(type='radio', name='ocean_order', value='ocean_order_desc_money_season')
 
               .col-md-10.dynamic_option.hide
                 label.form-label.radio
                   | Descending by $ overall
-                  input.behaviour_input#ocean_order_desc_money_overall(type='radio', name='ocean_order', value='ocean_order_desc_money_overall')
+                  input.to-disable#ocean_order_desc_money_overall(type='radio', name='ocean_order', value='ocean_order_desc_money_overall')
         .col-md-8
           h3 Bot behaviour
           .row
@@ -285,228 +286,228 @@ html
               a#attempts-second-tooltip(title='If bots behave erratically, this controls the maximum number of fish they will try to catch in any second, provided they are doing something that second. If bots behave regularly, this controls how many fish they will try to catch every second (until they fulfill their quota).', data-toggle='tooltip', data-placement='top') Maximum casts per second
           #bot-1-row.row.bot-row
             .col-md-2
-              input#bot-1-name.form-control(type='text', value='Dolphin')
+              input#bot-1-name.form-control.to-disable(type='text', value='Dolphin')
             .col-md-2
-              input#bot-1-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-1-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-1-trend.form-control
+              select#bot-1-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-1-predictability.form-control
+              select#bot-1-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-1-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-1-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-1-attempts-second.form-control(type='number', min='1', step='1', value='3')
+              input#bot-1-attempts-second.form-control.to-disable(type='number', min='1', step='1', value='3')
           #bot-2-row.row.bot-row
             .col-md-2
-              input#bot-2-name.form-control(type='text', value='Shark')
+              input#bot-2-name.form-control.to-disable(type='text', value='Shark')
             .col-md-2
-              input#bot-2-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-2-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-2-trend.form-control
+              select#bot-2-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-2-predictability.form-control
+              select#bot-2-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-2-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-2-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-2-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-2-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-3-row.row.bot-row
             .col-md-2
-              input#bot-3-name.form-control(type='text', value='Octopus')
+              input#bot-3-name.form-control.to-disable(type='text', value='Octopus')
             .col-md-2
-              input#bot-3-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-3-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-3-trend.form-control
+              select#bot-3-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-3-predictability.form-control
+              select#bot-3-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-3-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-3-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-3-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-3-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-4-row.row.bot-row.collapse
             .col-md-2
-              input#bot-4-name.form-control(type='text', value='Whale')
+              input#bot-4-name.form-control.to-disable(type='text', value='Whale')
             .col-md-2
-              input#bot-4-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-4-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-4-trend.form-control
+              select#bot-4-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-4-predictability.form-control
+              select#bot-4-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-4-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-4-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-4-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-4-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-5-row.row.bot-row.collapse
             .col-md-2
-              input#bot-5-name.form-control(type='text', value='Seagull')
+              input#bot-5-name.form-control.to-disable(type='text', value='Seagull')
             .col-md-2
-              input#bot-5-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-5-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-5-trend.form-control
+              select#bot-5-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-5-predictability.form-control
+              select#bot-5-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-5-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-5-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-5-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-5-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-6-row.row.bot-row.collapse
             .col-md-2
-              input#bot-6-name.form-control(type='text', value='Penguin')
+              input#bot-6-name.form-control.to-disable(type='text', value='Penguin')
             .col-md-2
-              input#bot-6-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-6-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-6-trend.form-control
+              select#bot-6-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-6-predictability.form-control
+              select#bot-6-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-6-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-6-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-6-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-6-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-7-row.row.bot-row.collapse
             .col-md-2
-              input#bot-7-name.form-control(type='text', value='Walrus')
+              input#bot-7-name.form-control.to-disable(type='text', value='Walrus')
             .col-md-2
-              input#bot-7-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-7-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-7-trend.form-control
+              select#bot-7-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-7-predictability.form-control
+              select#bot-7-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-7-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-7-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-7-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-7-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-8-row.row.bot-row.collapse
             .col-md-2
-              input#bot-8-name.form-control(type='text', value='Stingray')
+              input#bot-8-name.form-control.to-disable(type='text', value='Stingray')
             .col-md-2
-              input#bot-8-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-8-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-8-trend.form-control
+              select#bot-8-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-8-predictability.form-control
+              select#bot-8-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-8-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-8-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-8-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-8-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-9-row.row.bot-row.collapse
             .col-md-2
-              input#bot-9-name.form-control(type='text', value='Orca')
+              input#bot-9-name.form-control.to-disable(type='text', value='Orca')
             .col-md-2
-              input#bot-9-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-9-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-9-trend.form-control
+              select#bot-9-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-9-predictability.form-control
+              select#bot-9-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-9-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-9-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-9-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-9-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-10-row.row.bot-row.collapse
             .col-md-2
-              input#bot-10-name.form-control(type='text', value='Seal')
+              input#bot-10-name.form-control.to-disable(type='text', value='Seal')
             .col-md-2
-              input#bot-10-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-10-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-10-trend.form-control
+              select#bot-10-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-10-predictability.form-control
+              select#bot-10-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-10-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-10-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-10-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-10-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           #bot-11-row.row.bot-row.collapse
             .col-md-2
-              input#bot-11-name.form-control(type='text', value='Polar Bear')
+              input#bot-11-name.form-control.to-disable(type='text', value='Polar Bear')
             .col-md-2
-              input#bot-11-greed.form-control(type='number', min='0', step='0.01', value='0.50')
+              input#bot-11-greed.form-control.to-disable(type='number', min='0', step='0.01', value='0.50')
             .col-md-2
-              select#bot-11-trend.form-control
+              select#bot-11-trend.form-control.to-disable
                 option(value='stable') Stable
                 option(value='decrease') Decrease
                 option(value='increase') Increase
             .col-md-2
-              select#bot-11-predictability.form-control
+              select#bot-11-predictability.form-control.to-disable
                 option(value='erratic') Erratic
                 option(value='regular') Regular
             .col-md-2
-              input#bot-11-prob-action.form-control(type='number', min='0', step='0.01', value='0.80')
+              input#bot-11-prob-action.form-control.to-disable(type='number', min='0', step='0.01', value='0.80')
             .col-md-2
-              input#bot-11-attempts-second.form-control(type='number', min='0', step='1', value='3')
+              input#bot-11-attempts-second.form-control.to-disable(type='number', min='0', step='1', value='3')
           .row
             .col-md-2.col-md-offset-2
               .form-group
                 label.form-label.checkbox
                   | Uniform
-                  input#uniform-greed(type='checkbox', checked='')
+                  input#uniform-greed.to-disable(type='checkbox', checked='')
             .col-md-2
               .form-group
                 label.form-label.checkbox
                   | Uniform
-                  input#uniform-trend(type='checkbox', checked='')
+                  input#uniform-trend.to-disable(type='checkbox', checked='')
             .col-md-2
               .form-group
                 label.form-label.checkbox
                   | Uniform
-                  input#uniform-predictability(type='checkbox', checked='')
+                  input#uniform-predictability.to-disable(type='checkbox', checked='')
             .col-md-2
               .form-group
                 label.form-label.checkbox
                   | Uniform
-                  input#uniform-prob-action(type='checkbox', checked='')
+                  input#uniform-prob-action.to-disable(type='checkbox', checked='')
             .col-md-2
               .form-group
                 label.form-label.checkbox
                   | Uniform
-                  input#uniform-attempts-second(type='checkbox', checked='')
+                  input#uniform-attempts-second.to-disable(type='checkbox', checked='')
       .panel.panel-info
         #microworld-panel-2-title.panel-heading
           | Panel Title
