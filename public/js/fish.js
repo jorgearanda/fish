@@ -326,6 +326,14 @@ function changeLocation() {
     }
 
 }
+
+function resetLocation() {
+    var btn = $("#changeLocation");
+    goToPort();
+    btn.data('location', 'port');
+    btn.html(msgs.buttons_goToSea);
+}
+
 function goToSea() {
     socket.emit('goToSea');
     $('#attempt-fish').removeAttr('disabled');
@@ -371,11 +379,13 @@ function receiveStatus(data) {
 }
 
 function endSeason() {
+    resetLocation();
     updateWarning();
     disableButtons();
 }
 
 function endRun(trigger) {
+    resetLocation();
     st.status = 'over';
 
     disableButtons();
