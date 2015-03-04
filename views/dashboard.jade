@@ -54,21 +54,16 @@ html
               th Interrupted
             tbody#microworlds-active-table-rows
       hr
-      h3 Current Simulations
-      #running-and-disconnected-simulations
-        .row
-          .col-md-2.col-md-offset-1
-            .list-simulations
-              .header
-                span Simulations currently running
-              #list-body(style='margin-left:5px')
-                ul#running-list
-          .col-md-2.col-md-offset-4
-            .list-simulations
-              .header
-                span Simulations that were interrupted
-              #list-body(style='margin-left:5px')
-                ul#interrupted-list
+      h3 Currently active and tracked simulations
+      #tracked-simulations-by-experimenter.table-responsive
+        table.table.table-bordered.table-hover
+          thead
+            th Experiment code
+            th Time of creation
+            th Participants involved
+            th Event
+          tbody#tracked-simulations-row
+
       hr
       h3 Archived microworlds
       #microworlds-archived

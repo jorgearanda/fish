@@ -101,9 +101,18 @@ var overrideSubmit = function () {
     return false;
 };
 
-var listSimulation = function(simulation) {
-    var html = '<li><span class="simulation-list" id="new-simulation">Running: </span><span> Simulation ';
-    html+= simulation.code + ' created on ' + simulation.time + ' ran by participants: <span class="participants">';
+var displaySimulationStatus = function(simulation, eventStatus) {
+    var rowBootstrapClass;
+    if(eventStatus === 'Currently running') {
+        rowBootstrapClass = '';
+    } else if(eventStatus === 'Finished run') {
+        rowBootstrapClass = 'info';
+    } else {
+        // must be an interruption
+        rowBootstrapClass = 'warning';
+    }
+
+    var html = '<tr class =' + rowBootstrapClass + '><td>' + simulation.code + '</td>' + '<td>' + simulation.time + '<td>';
     for (var i = 0; i < simulation.participants.length; i++) {
         if (i != 0) {
             html+= ', ';
@@ -113,29 +122,30 @@ var listSimulation = function(simulation) {
         }
         html+= simulation.participants[i];
     }
-    html+= '</span></span></li>';
+    html+= '</td><td>' + eventStatus + '</td></tr>';
 
-    $('#running-list').prepend(html);
-    $('li').delay(300).animate({opacity : 1}, 500);
+    $('#tracked-simulations-row').prepend(html);
+    $('tr').delay(300).animate({opacity : 1}, 500);
 };
 
 var currentRunningSimulations = function(simulations) {
     for (var oceanId in simulations) {
         if(simulations[oceanId].expId === expId) {
-            listSimulation(simulations[oceanId]);
+            displaySimulationStatus(simulations[oceanId], 'Currently running');
         }
     }
 };
 
-var newSimulation = function(simulation) {
-    listSimulation(simulation);
+var newSimulation = function (simulation) {
+    displaySimulationStatus(simulation, 'Currently running');
 }
 
-var simulationDone = function(expCode, time) {
-    var html = '<li><span class="simulation-list" id="done-simulation">Finished: </span><span> Simulation ' + expCode +
-               ' created on ' + time;
-    $('#running-list').prepend(html);
-    $('li').delay(300).animate({opacity : 1}, 500);
+var simulationDone = function (simulation) {
+    displaySimulationStatus(simulation, 'Finished run');
+}
+
+var simulationInterrupt = function (simulation) {
+    displaySimulationStatus(simulation, 'Participant abandoned simulation run');
 }
 
 socketAdmin.on('connect', function() {
@@ -143,9 +153,9 @@ socketAdmin.on('connect', function() {
 });
 
 socketAdmin.on('currentRunningSimulations', currentRunningSimulations);
-socketAdmin.on('newSimulation', listSimulation);
+socketAdmin.on('newSimulation', newSimulation);
 socketAdmin.on('simulationDone', simulationDone);
-// socketAdmin.on('newSimulation', listSimulation);
+socketAdmin.on('simulationInterrupt', simulationInterrupt);
 
 var main = function() {
     $('form').submit(overrideSubmit);

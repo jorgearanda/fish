@@ -10,9 +10,7 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     this.io = io;
     this.ioAdmin = ioAdmin;
     // simulations currently tracked
-    this.simulations = {};
-    // experimenter currently tracking simulations
-    this.experimenters = {};
+    this.trackedSimulations = {};
 
     this.createOcean = function (mwId, cb) {
         Microworld.findOne({_id: mwId}, function onFound(err, mw) {
@@ -28,7 +26,7 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
 
     this.deleteOcean = function (oId) {
         delete this.oceans[oId];
-        delete this.simulations[oId];
+        delete this.trackedSimulations[oId];
         return;
     };
 
@@ -69,7 +67,7 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
                 expId = this.oceans[oId].microworld.experimenter._id.toString();
                 time = (new Date(this.oceans[oId].id)).toString();
                 // tell experimenter that simulation is finished
-                ioAdmin.in(expId).emit('simulationDone', this.oceans[oId].microworld.code, time);
+                ioAdmin.in(expId).emit('simulationDone', this.oceans[oId].grabSimulationData());
                 log.info('Purging ocean ' + this.oceans[oId].microworld.name + ' ' + oId +
                     ' (' + this.oceans[oId].microworld.experimenter.username + ')');
                 this.deleteOcean(oId);

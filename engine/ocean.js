@@ -25,7 +25,6 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     this.reportedMysteryFish = 0;
     this.microworld = mw;
     this.results = [];
-    this.originalParticipants = [];
     this.om = om;
     this.log = new OceanLog(this.microworld.name + ' ' + this.id + ' ' +
         '(' + this.microworld.experimenter.username + ')');
@@ -50,8 +49,6 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
 
     this.addFisher = function (pId) {
         this.fishers.push(new Fisher(pId, 'human', null, this));
-        // to track the participants that started this simulation
-        this.originalParticipants.push(pId);
         this.log.info('Human fisher ' + pId + ' joined.');
         return;
     };
@@ -242,21 +239,34 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         return;
     };
 
-    this.getOceanReady = function () {
+    this.getHumansInOcean = function () {
+        var humanList = [];
+        for(var i in this.fishers) {
+            if(this.fishers[i].type === 'human') { 
+                humanList.push(this.fishers[i].name);
+            }
+        }
+        return humanList;
+    }
+
+    this.grabSimulationData = function () {
         var simulationData = {};
+        simulationData.expId = this.microworld.experimenter._id.toString();
+        simulationData.code = this.microworld.code;
+        simulationData.participants = this.getHumansInOcean();
+        simulationData.time = (new Date(this.id)).toString();
+        return simulationData;
+    }
+
+    this.getOceanReady = function () {
         var expId = this.microworld.experimenter._id.toString();
         this.status = 'initial delay';
         this.log.info('All fishers ready to start.');
         io.sockets.in(this.id).emit('initial delay');
-       
-        simulationData.expId = this.microworld.experimenter._id.toString();
-        simulationData.code = this.microworld.code;
-        simulationData.participants = this.originalParticipants;
-        simulationData.time = (new Date(this.id)).toString();
-        this.om.simulations[this.id] = simulationData;
-        if(expId in this.om.experimenters) {
-            ioAdmin.in(expId).emit('newSimulation', simulationData);
-        }
+      
+        var simulationData = this.grabSimulationData();
+        this.om.trackedSimulations[this.id] = simulationData;
+        ioAdmin.in(expId).emit('newSimulation', simulationData);
     };
 
     this.startNextSeason = function () {

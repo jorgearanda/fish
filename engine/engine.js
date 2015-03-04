@@ -50,6 +50,14 @@ exports.engine = function engine(io, ioAdmin) {
             });
 
             socket.on('disconnect', function () {
+                if(!om.oceans[myOId].isRemovable()) {
+                    // disconnected before ocean can be removed i.e before simulation run has finished
+                    var ocean = om.oceans[myOId];
+                    var simulationData = ocean.grabSimulationData();
+                    // replace participants gotten by calling grabSimulationData with the one currently disconnecting
+                    simulationData.participants = [myPId]; 
+                    ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
+                }
                 om.removeFisherFromOcean(myOId, myPId);
             });
         };
@@ -61,15 +69,12 @@ exports.engine = function engine(io, ioAdmin) {
         socket.on('enterDashboard', function(experimenterId) {
             expId = experimenterId;
             log.info('Experimenter ' + expId + ' is viewing dashboard');
-            om.experimenters[expId] = true;
             socket.join(expId);
-            socket.emit('currentRunningSimulations', om.simulations);
+            socket.emit('currentRunningSimulations', om.trackedSimulations);
         });
 
         socket.on('disconnect', function() {
             log.info('Experimenter ' + expId + ' disconnected from dashboard');
-            // delete from list of observing experimenters
-            delete om.experimenters[expId];
         });
     });
 };
