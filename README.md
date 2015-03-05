@@ -1,3 +1,6 @@
+[![Travis](https://img.shields.io/travis/jorgearanda/fish.svg)]()
+[![Coveralls](https://img.shields.io/coveralls/jorgearanda/fish.svg)]()
+
 This is a web-based version of Robert and Jonas Gifford's "FISH", a fish banks simulator for environmental psychology studies.
 
 More information on the original FISH here:

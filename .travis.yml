@@ -1,0 +1,10 @@
+# .travis.yml
+language: node_js
+node_js:
+  - "0.10"
+services:
+  - mongodb
+script:
+  - npm run-script test-travis
+notifications:
+  email: false
