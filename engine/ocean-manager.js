@@ -64,10 +64,6 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
             var expId;
             var time;
             if (this.oceans[oId].isRemovable()) {
-                expId = this.oceans[oId].microworld.experimenter._id.toString();
-                time = (new Date(this.oceans[oId].id)).toString();
-                // tell experimenter that simulation is finished
-                ioAdmin.in(expId).emit('simulationDone', this.oceans[oId].grabSimulationData());
                 log.info('Purging ocean ' + this.oceans[oId].microworld.name + ' ' + oId +
                     ' (' + this.oceans[oId].microworld.experimenter.username + ')');
                 this.deleteOcean(oId);

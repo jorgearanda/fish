@@ -448,6 +448,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
 
     this.endOcean = function (reason) {
         this.status = 'over';
+        ioAdmin.in(this.microworld.experimenter._id.toString()).emit('simulationDone', this.grabSimulationData());
         io.sockets.in(this.id).emit('end run', reason);
 
         if (this.microworld.status !== 'active') {

@@ -50,8 +50,9 @@ exports.engine = function engine(io, ioAdmin) {
             });
 
             socket.on('disconnect', function () {
-                if(!om.oceans[myOId].isRemovable()) {
-                    // disconnected before ocean can be removed i.e before simulation run has finished
+                if(!om.oceans[myOId].isInSetup() && !om.oceans[myOId].isRemovable()) {
+                    // disconnected before ocean i.e before simulation run has finished
+                    // and setup phase is completed
                     var ocean = om.oceans[myOId];
                     var simulationData = ocean.grabSimulationData();
                     // replace participants gotten by calling grabSimulationData with the one currently disconnecting
