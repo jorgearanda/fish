@@ -28,6 +28,7 @@ function flattenRunResults(runs) {
                 toPush.Fisher = fishers[k].name;
                 toPush.Type = fishers[k].type;
                 toPush.Greed = fishers[k].greed;
+                toPush.GreedSpread = fishers[k].greedSpread;
                 toPush.Season = season;
                 toPush['Fish at Start'] = fishAtStart;
                 toPush['Fish at End'] = fishAtEnd;
