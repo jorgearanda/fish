@@ -5,6 +5,7 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/public/css/grid.css')
+    link(rel='stylesheet', href='/public/css/microworld.css')
     script(src='/bower/jquery/jquery.min.js')
     script(src='/bower/purl/purl.js')
     script(src='/bower/bootstrap/dist/js/bootstrap.min.js')
@@ -190,7 +191,7 @@ html
               .col-md-12
                 textarea#end-depletion-text.form-control.to-disable(rows='30')
       .row
-        .col-md-4
+        .col-md-3
           h3 Information display
           .row
             .form-group
@@ -264,7 +265,7 @@ html
                 label.form-label.radio
                   | Descending by $ overall
                   input.to-disable#ocean_order_desc_money_overall(type='radio', name='ocean_order', value='ocean_order_desc_money_overall')
-        .col-md-8
+        .col-md-9
           h3 Bot behaviour
           .row
             label.form-label.col-md-2 Name
