@@ -273,6 +273,8 @@ html
             label.form-label.col-md-2
               a#trend-tooltip(title='A bot with a stable trend will behave the same way at the beginning and at the end of the simulation. A bot with an increasing trend will be more greedy as time goes by (while still being as greedy as specified in its Greed parameter, on average), and one with a decreasing trend will be less greedy in later seasons.', data-toggle='tooltip', data-placement='top') Trend
             label.form-label.col-md-2
+              a#greed-spread-tooltip(title='For bots with regular predictability with increasing or decreasing trends, the greed spread is the difference between the lowest season greed and highest season greed centered around the average greed. For example: a greed of 0.5 and a greed spread of 0.2 will result in a low season greed of 0.4 and high season greed of 0.6 centered around an average greed of 0.5. Must be between 0 and 2 * Greed.', data-toggle='tooltip', data-placement='top') Greed Spread
+            label.form-label.col-md-2
               a#predictability-tooltip(title='Erratic bots appear more lifelike, but they may behave non-optimally.', data-toggle='tooltip', data-placement='top') Predictability
             label.form-label.col-md-2
               a#prob-action-tooltip(title='If bots behave erratically, this parameter (between 0 and 1) controls how frequently they act. The lower the value, the more they will appear to hesitate.', data-toggle='tooltip', data-placement='top') Probability of action
@@ -289,6 +291,8 @@ html
                   option(value='stable') Stable
                   option(value='decrease') Decrease
                   option(value='increase') Increase
+              .col-md-2
+                input.form-control.to-disable(id="bot-#{i}-greed-spread", type='number', min='0', max='2.0', step='0.01', value='0.20')
               .col-md-2
                 select.form-control.to-disable(id="bot-#{i}-predictability")
                   option(value='erratic') Erratic
@@ -308,6 +312,11 @@ html
                 label.form-label.checkbox
                   | Uniform
                   input#uniform-trend.to-disable(type='checkbox', checked='')
+            .col-md-2
+              .form-group
+                label.form-label.checkbox
+                  | Uniform
+                  input#uniform-greed-spread.to-disable(type='checkbox', checked='')
             .col-md-2
               .form-group
                 label.form-label.checkbox
