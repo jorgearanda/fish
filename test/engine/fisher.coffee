@@ -155,16 +155,16 @@ describe "Engine - Fisher", ->
 
         fishers: [
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
         ]
 
@@ -190,16 +190,16 @@ describe "Engine - Fisher", ->
 
         fishers: [
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
         ]
 
@@ -225,16 +225,16 @@ describe "Engine - Fisher", ->
 
         fishers: [
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
         ]
 
@@ -260,16 +260,16 @@ describe "Engine - Fisher", ->
 
         fishers: [
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
         ]
 
@@ -299,16 +299,16 @@ describe "Engine - Fisher", ->
 
         fishers: [
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
         ]
 
@@ -360,16 +360,16 @@ describe "Engine - Fisher", ->
 
         fishers: [
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
           {
-            {}
+
           }
         ]
 
