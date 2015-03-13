@@ -37,35 +37,34 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.calculateSeasonGreed = function () {
-        // greedSpread determines how far the low and high greed bounds will
-        // deviate from the mean
-        var greedSpread = 2.0;
-        var baseGreed = this.params.greed;
-        var lowBound, highBound;
-        if (baseGreed < 0.5) {
-            lowBound = baseGreed / greedSpread;
-            highBound = baseGreed + lowBound;
-        } else {
-            highBound = ((1.0 - baseGreed) / greedSpread) + baseGreed;
-            lowBound = greedSpread * baseGreed - highBound;
-        }
+        var baseGreed      = this.params.greed;
+        var greedSpread    = this.params.greedSpread;
+        var predictability = this.params.predictability;
+        var trend          = this.params.trend;
+
+        var numSeasons     = this.ocean.microworld.params.numSeasons;
+        var currentSeason  = this.ocean.season;
 
         var currentGreed = baseGreed;
-        var seasons = this.ocean.microworld.params.numSeasons;
-        var increment = (highBound - lowBound) / (1.0 * (seasons - 1));
-        if (seasons > 1) {
-            if (this.params.trend === 'decrease') {
-                currentGreed = highBound - (increment * (this.ocean.season - 1));
-            } else if (this.params.trend === 'increase') {
-                currentGreed = lowBound + (increment * (this.ocean.season - 1));
+        var lowBound     = baseGreed - greedSpread / 2;
+        var highBound    = baseGreed + greedSpread / 2;
+
+        if (numSeasons > 1) {
+            var increment = (highBound - lowBound) / (numSeasons - 1);
+
+            if (trend === 'decrease') {
+                currentGreed = highBound - (increment * currentSeason);
+            } else if (trend === 'increase') {
+                currentGreed = lowBound + (increment * currentSeason);
             }
         }
 
-        if (this.params.predictability === 'erratic') {
+        if (predictability === 'erratic') {
             // variation between 0.75 and 1.25
             var variation = 1.0 + ((Math.random() - 0.5) / 2.0);
             currentGreed = currentGreed * variation;
         }
+
         return currentGreed;
     };
 

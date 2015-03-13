@@ -39,6 +39,7 @@ function readyTooltips() {
     $('#show-fisher-status-tooltip').tooltip();
     $('#erratic-tooltip').tooltip();
     $('#greed-tooltip').tooltip();
+    $('#greed-spread-tooltip').tooltip();
     $('#trend-tooltip').tooltip();
     $('#predictability-tooltip').tooltip();
     $('#prob-action-tooltip').tooltip();
@@ -73,6 +74,19 @@ function changeGreedUniformity() {
     } else {
         for (var i = 2; i <= maxBot; i++) {
             $('#bot-' + i + '-greed').attr('disabled', false);
+        }
+    }
+}
+
+function changeGreedSpreadUniformity() {
+    if ($('#uniform-greed-spread').prop('checked') === true) {
+        var greedSpread = $('#bot-1-greed-spread').val();
+        for (var i = 2; i <= maxBot; i++) {
+            $('#bot-' + i + '-greed-spread').val(greedSpread).attr('disabled', true);
+        }
+    } else {
+        for (var i = 2; i <= maxBot; i++) {
+            $('#bot-' + i + '-greedSpread').attr('disabled', false);
         }
     }
 }
@@ -239,6 +253,14 @@ function validate() {
             errors.push('The greed of bot ' + i + ' must be between 0 and 1.');
         }
 
+        var botGreedSpread = parseFloat($('#bot-' + i + '-greed-spread').val());
+        if (botGreedSpread < 0) {
+            errors.push('The greed spread of bot ' + i + ' must be greater than 0.');
+        }
+        if (botGreedSpread > 2 * botGreed) {
+            errors.push('The greed spread of bot ' + i + ' must be less than twice its greed.');
+        }
+
         var botProbAction = parseFloat($('#bot-' + i + '-prob-action').val());
         if (botProbAction < 0 || botProbAction > 1) {
             errors.push('The probability of action of bot ' + i +
@@ -293,6 +315,7 @@ function prepareMicroworldObject() {
         mw.bots.push({
             name: $(botPrefix + 'name').val(),
             greed: $(botPrefix + 'greed').val(),
+            greedSpread: $(botPrefix + 'greed-spread').val(),
             trend: $(botPrefix + 'trend').val(),
             predictability: $(botPrefix + 'predictability').val(),
             probAction: $(botPrefix + 'prob-action').val(),
@@ -429,6 +452,7 @@ function populatePage() {
     $('#show-fisher-balance').prop('checked', mw.params.showFisherBalance);
 
     $('#uniform-greed').prop('checked', false);
+    $('#uniform-greed-spread').prop('checked', false);
     $('#uniform-trend').prop('checked', false);
     $('#uniform-predictability').prop('checked', false);
     $('#uniform-prob-action').prop('checked', false);
@@ -438,6 +462,7 @@ function populatePage() {
         var botPrefix = '#bot-' + i + '-';
         $(botPrefix + 'name').val(mw.params.bots[i - 1].name);
         $(botPrefix + 'greed').val(mw.params.bots[i - 1].greed);
+        $(botPrefix + 'greed-spread').val(mw.params.bots[i - 1].greedSpread);
         $(botPrefix + 'trend').val(mw.params.bots[i - 1].trend);
         $(botPrefix + 'predictability').val(mw.params.bots[i - 1].predictability);
         $(botPrefix + 'prob-action').val(mw.params.bots[i - 1].probAction);
@@ -530,6 +555,8 @@ function setOnPageChanges() {
     $('#num-humans').on('change', changeBotRowVisibility);
     $('#uniform-greed').on('change', changeGreedUniformity);
     $('#bot-1-greed').on('input', changeGreedUniformity);
+    $('#uniform-greed-spread').on('change', changeGreedSpreadUniformity);
+    $('#bot-1-greed-spread').on('input', changeGreedSpreadUniformity);
     $('#uniform-trend').on('change', changeTrendUniformity);
     $('#bot-1-trend').on('change', changeTrendUniformity);
     $('#uniform-predictability').on('change', changePredictabilityUniformity);
@@ -630,6 +657,7 @@ function loadData() {
 
 function uniformityChanges() {
     changeGreedUniformity();
+    changeGreedSpreadUniformity();
     changeTrendUniformity();
     changePredictabilityUniformity();
     changeProbActionUniformity();   

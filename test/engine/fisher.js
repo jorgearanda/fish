@@ -50,6 +50,7 @@ describe('Engine - Fisher', function () {
         it('should maintain a constant greed when the trend is "stable" and the predictability is "regular"', function (done) {
             var params = {
                 greed: 0.4,
+                greedSpread: 0.3,
                 trend: 'stable',
                 predictability: 'regular'
             };
@@ -75,6 +76,7 @@ describe('Engine - Fisher', function () {
         it('should increase greed through the seasons when the trend is set to "increase"', function (done) {
             var params = {
                 greed: 0.4,
+                greedSpread: 0.3,
                 trend: 'increase',
                 predictability: 'regular'
             };
@@ -106,6 +108,7 @@ describe('Engine - Fisher', function () {
         it('should decrease greed through the seasons when the trend is set to "decrease"', function (done) {
             var params = {
                 greed: 0.4,
+                greedSpread: 0.3,
                 trend: 'decrease',
                 predictability: 'regular'
             };
@@ -137,6 +140,7 @@ describe('Engine - Fisher', function () {
         it('should randomize greed when predictability is set to "erratic"', function (done) {
             var params = {
                 greed: 0.4,
+                greedSpread: 0.3,
                 trend: 'stable',
                 predictability: 'erratic'
             };

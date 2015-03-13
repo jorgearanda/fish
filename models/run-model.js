@@ -20,6 +20,7 @@ var runSchema = new Schema({
             fishTaken: Number,
             profit: Number,
             greed: Number,
+            greedSpread: Number,
             individualRestraint: Number,
             individualEfficiency: Number
         }]
