@@ -5,10 +5,12 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/bower/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/public/css/grid.css')
+    link(rel='stylesheet', href='/public/css/dashboard.css')
     script(src='/bower/jquery/jquery.min.js')
     script(src='/bower/bootstrap/dist/js/bootstrap.min.js').
     script(src='/bower/moment/min/moment.min.js')
     script(src='/bower/underscore/underscore-min.js')
+    script(src='/socket.io/socket.io.js')
     script(type='text/javascript', src='/public/js/dashboard.js')
   body
     .container
@@ -51,6 +53,17 @@ html
               th Completed
               th Interrupted
             tbody#microworlds-active-table-rows
+      hr
+      h3 Currently active and tracked simulations
+      #tracked-simulations-by-experimenter.table-responsive
+        table.table.table-bordered.table-hover
+          thead
+            th Experiment code
+            th Time of creation
+            th Participants involved
+            th Event
+          tbody#tracked-simulations-row
+
       hr
       h3 Archived microworlds
       #microworlds-archived
