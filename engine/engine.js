@@ -55,8 +55,17 @@ exports.engine = function engine(io, ioAdmin) {
                     // and setup phase is completed
                     var ocean = om.oceans[myOId];
                     var simulationData = ocean.grabSimulationData();
-                    // replace participants gotten by calling grabSimulationData with the one currently disconnecting
-                    simulationData.participants = [myPId]; 
+                    // replace participants gotten by calling grabSimulationData
+                    // with the one currently disconnecting
+                    simulationData.participants = [myPId];
+                   
+                    // keep track of all disconnected participants 
+                    if(myOId in om.trackedAbandonParticipants) {
+                        om.trackedAbandonParticipants[myOId].participants.push(myPId);
+                    } else {
+                        om.trackedAbandonParticipants[myOId] = ocean.grabSimulationData();
+                        om.trackedAbandonParticipants[myOId].participants = [myPId];
+                    }
                     ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
                 }
                 om.removeFisherFromOcean(myOId, myPId);
@@ -71,7 +80,7 @@ exports.engine = function engine(io, ioAdmin) {
             expId = experimenterId;
             log.info('Experimenter ' + expId + ' is viewing dashboard');
             socket.join(expId);
-            socket.emit('currentRunningSimulations', om.trackedSimulations);
+            socket.emit('postTracked', om.trackedSimulations, om.trackedAbandonParticipants);
         });
 
         socket.on('disconnect', function() {

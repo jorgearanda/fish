@@ -101,7 +101,7 @@ var overrideSubmit = function () {
     return false;
 };
 
-var displaySimulationStatus = function(simulation, eventStatus) {
+var displaySimulationStatus = function(simulation, eventStatus, OId) {
     var rowBootstrapClass;
     if(eventStatus === 'Currently running') {
         rowBootstrapClass = '';
@@ -120,7 +120,26 @@ var displaySimulationStatus = function(simulation, eventStatus) {
                 html+= 'and ';
             }
         }
+        
+        var participant = simulation.participants[i];
+        var timestamp = new Date(simulation.time).getTime();
+        if(eventStatus == 'Currently running') {
+            // right now language defaults to english (en)
+            // link to allow experimenters to observe running participants
+
+            // build URL query string
+            var params = { lang : "en", mwId : simulation.mwId, pid : participant, observer : true }
+            var paramStr = $.param(params);
+            html+= '<a id = "' + timestamp + '-' + participant + '" href=/fish/?' + paramStr + '>';
+        } else {
+            // remove link, disable observing for that participant
+            $('#' + timestamp + '-' + participant).removeAttr('href');
+        }
         html+= simulation.participants[i];
+
+        if(eventStatus == 'Currently running') {
+            html+= '</a>';
+        }
     }
     html+= '</td><td>' + eventStatus + '</td></tr>';
 
@@ -128,10 +147,17 @@ var displaySimulationStatus = function(simulation, eventStatus) {
     $('tr').delay(300).animate({opacity : 1}, 500);
 };
 
-var currentRunningSimulations = function(simulations) {
-    for (var oceanId in simulations) {
-        if(simulations[oceanId].expId === expId) {
-            displaySimulationStatus(simulations[oceanId], 'Currently running');
+var currentTrackedSimulationsAndAbandon = function(simulationsTracked, abandonTracked) {
+    // this order must be retained, do not switch
+    for (var oceanId in simulationsTracked) {
+        if(simulationsTracked[oceanId].expId === expId) {
+            displaySimulationStatus(simulationsTracked[oceanId], 'Currently running');
+        }
+    }
+
+    for(var oceanId in abandonTracked) {
+        if(abandonTracked[oceanId].expId == expId) {
+            displaySimulationStatus(abandonTracked[oceanId], 'Participant abandoned simulation run');
         }
     }
 };
@@ -152,7 +178,7 @@ socketAdmin.on('connect', function() {
     socketAdmin.emit('enterDashboard', expId);
 });
 
-socketAdmin.on('currentRunningSimulations', currentRunningSimulations);
+socketAdmin.on('postTracked', currentTrackedSimulationsAndAbandon);
 socketAdmin.on('newSimulation', newSimulation);
 socketAdmin.on('simulationDone', simulationDone);
 socketAdmin.on('simulationInterrupt', simulationInterrupt);

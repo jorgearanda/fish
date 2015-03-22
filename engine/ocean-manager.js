@@ -11,6 +11,7 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     this.ioAdmin = ioAdmin;
     // simulations currently tracked
     this.trackedSimulations = {};
+    this.trackedAbandonParticipants = {};
 
     this.createOcean = function (mwId, cb) {
         Microworld.findOne({_id: mwId}, function onFound(err, mw) {
@@ -26,7 +27,6 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
 
     this.deleteOcean = function (oId) {
         delete this.oceans[oId];
-        delete this.trackedSimulations[oId];
         return;
     };
 

@@ -252,6 +252,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
 
     this.grabSimulationData = function () {
         var simulationData = {};
+        simulationData.mwId = this.microworld._id.toString();
         simulationData.expId = this.microworld.experimenter._id.toString();
         simulationData.code = this.microworld.code;
         simulationData.participants = this.getHumansInOcean();
@@ -449,6 +450,9 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
 
     this.endOcean = function (reason) {
         this.status = 'over';
+        // delete this ocean from being tracked
+        delete this.om.trackedSimulations[this.id];
+        delete this.om.trackedAbandonParticipants[this.id];
         ioAdmin.in(this.microworld.experimenter._id.toString()).emit('simulationDone', this.grabSimulationData());
         io.sockets.in(this.id).emit('end run', reason);
 
