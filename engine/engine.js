@@ -11,10 +11,17 @@ exports.engine = function engine(io, ioAdmin) {
     io.sockets.on('connection', function (socket) {
         var clientOId;
         var clientPId;
+        var observerMode;
 
-        socket.on('enterOcean', function (mwId, pId) {
+        socket.on('enterOcean', function (mwId, pId, oId, observer) {
             clientPId = pId;
-            clientOId = om.assignFisherToOcean(mwId, pId, enteredOcean);
+            observerMode = observer;
+            if(!observer) {
+                // not an observer, than must be a participant
+                clientOId = om.assignFisherToOcean(mwId, pId, enteredOcean);
+            } else {
+                enteredOcean(oId);
+            }
         });
 
         var enteredOcean = function (newOId) {

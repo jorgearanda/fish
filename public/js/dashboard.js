@@ -122,18 +122,17 @@ var displaySimulationStatus = function(simulation, eventStatus, OId) {
         }
         
         var participant = simulation.participants[i];
-        var timestamp = new Date(simulation.time).getTime();
         if(eventStatus == 'Currently running') {
             // right now language defaults to english (en)
             // link to allow experimenters to observe running participants
 
             // build URL query string
-            var params = { lang : "en", mwId : simulation.mwId, pid : participant, observer : true }
+            var params = { lang : "en", mwid : simulation.mwId, pid : participant, oid : simulation.timestamp, observer : true }
             var paramStr = $.param(params);
-            html+= '<a id = "' + timestamp + '-' + participant + '" href=/fish/?' + paramStr + '>';
+            html+= '<a id = "' + simulation.timestamp + '-' + participant + '" href=/fish?' + paramStr + '>';
         } else {
             // remove link, disable observing for that participant
-            $('#' + timestamp + '-' + participant).removeAttr('href');
+            $('#' + simulation.timestamp + '-' + participant).removeAttr('href');
         }
         html+= simulation.participants[i];
 

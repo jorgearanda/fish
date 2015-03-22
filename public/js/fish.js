@@ -6,6 +6,8 @@ var msgs;
 var socket = io.connect();
 var mwId = $.url().param('mwid');
 var pId = $.url().param('pid');
+var oId = $.url().param('oid');
+var observer = $.url().param('observer');
 var ocean;
 var prePauseButtonsState = {};
 
@@ -176,6 +178,7 @@ function updateFishers() {
 
     for (var i in st.fishers) {
         var fisher = st.fishers[i];
+        console.log("name: " + fisher.name + " pId: " + pId);
         if (fisher.name === pId) {
             // This is you
             name = 'You';
@@ -260,7 +263,6 @@ function updateFishers() {
 
 function sortFisherTable() {
     var $container = $("#fishers-tbody");
-    console.log(ocean.oceanOrder)
     if(ocean.oceanOrder === "ocean_order_user_top")
     {
         $container.mixItUp('insert', 1, $("tr#f0"));
@@ -298,7 +300,11 @@ function makeUnpausable() {
 
 function setupOcean(o) {
     ocean = o;
-    displayRules();
+    if(!observer) {
+        // display rules if not an observer, observer can never observe
+        // when participants are still reading the rules
+        displayRules();
+    }
     loadLabels();
     updateCosts();
     makeUnpausable();
@@ -317,8 +323,7 @@ function changeLocation() {
         btn.data('location', 'sea');
         btn.html(msgs.buttons_return);
 
-    }else {
-
+    } else {
         goToPort();
         btn.data('location', 'port');
         btn.html(msgs.buttons_goToSea);
@@ -470,7 +475,7 @@ function resizeOceanCanvasToScreenWidth() {
 }
 
 socket.on('connect', function () {
-    socket.emit('enterOcean', mwId, pId);
+    socket.emit('enterOcean', mwId, pId, oId, observer);
 });
 
 socket.on('ocean', setupOcean);

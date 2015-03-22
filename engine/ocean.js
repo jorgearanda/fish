@@ -257,6 +257,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         simulationData.code = this.microworld.code;
         simulationData.participants = this.getHumansInOcean();
         simulationData.time = (new Date(this.id)).toString();
+        simulationData.timestamp = this.id;
         return simulationData;
     }
 
