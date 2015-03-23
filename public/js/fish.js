@@ -427,8 +427,16 @@ function resizeOceanCanvasToScreenWidth() {
 }
 
 function startTutorial() {
+    readRules();
     requestPause();
-    bootstro.start();
+    bootstro.start('.bootstro', {
+        onComplete : function(params) {
+            displayRules();
+        },
+        onExit : function(params) {
+            displayRules();
+        }
+    });
 }
 
 socket.on('connect', function () {
@@ -448,12 +456,12 @@ socket.on('resume', resume);
 
 function main() {
     $('#read-rules').on('click', readRules);
+    $('#tutorial').on('click', startTutorial);
     disableButtons();
     $('#changeLocation').on('click', changeLocation)
     $('#attempt-fish').on('click', attemptToFish);
     $('#pause').on('click', requestPause);
     $('#resume').on('click', requestResume);
-    $('#tutorial').on('click', startTutorial);
     loadLabels();
     resizeOceanCanvasToScreenWidth();
     $(window).resize(resizeOceanCanvasToScreenWidth);

@@ -66,8 +66,6 @@ html
             #cost-second.costs-label.alert.alert-info
             #cost-cast.costs-label.alert.alert-info
             #revenue-fish.costs-label.alert.alert-info
-          .row
-            button#tutorial.btn(type="button") Start tutorial
         .col-sm-4
           .row#ocean-box.clearfix.bootstro(data-bootstro-title="Ocean window" data-bootstro-content="This window shows a pictorial representation of the ocean's fish population and updates as fish are caught." data-bootstro-placement="bottom")
             #warning-alert.alert.alert-danger
@@ -80,6 +78,7 @@ html
             | Preparation text
           .modal-footer
             button#read-rules.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+            button#tutorial.btn(type="button", data-dismiss='modal', aria-hidden='true') Start tutorial
     #over-modal.modal.fade(role='dialog', aria-hidden='true')
       .modal-dialog
         .modal-content
