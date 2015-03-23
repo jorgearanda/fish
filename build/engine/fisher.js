@@ -121,16 +121,18 @@ exports.Fisher = Fisher = function(name, type, params, o) {
     if (this.isErratic() && Math.random() > this.params.probAction) {
       return;
     }
+    if (!this.isErratic()) {
+      if (this.status === "At port" && Math.random() > this.params.probAction) {
+        this.goToSea();
+      } else if (this.status === "At sea" && Math.random > this.params.probAction) {
+        this.goToPort();
+      }
+    }
     if (this.getIntendedCasts() <= this.getActualCasts()) {
       this.goToPort();
-    } else {
-      if (this.status === "At port") {
-        this.goToSea();
-      } else {
-        if (this.status === "At sea" && this.ocean.areThereFish()) {
-          this.tryToFish();
-        }
-      }
+    }
+    if (this.status === "At sea" && this.ocean.areThereFish()) {
+      this.tryToFish();
     }
   };
 };
