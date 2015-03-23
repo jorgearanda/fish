@@ -133,23 +133,30 @@ exports.Fisher = function Fisher(name, type, params, o) {
     };
 
     this.runBot = function () {
-        if (this.status === 'At sea') this.changeMoney(-this.ocean.microworld.params.costSecond);
-
-        if (!this.isBot()) return;
-
-        // Don't do anything if I'm erratic and I don't feel like it
-        if (this.isErratic() && Math.random() > this.params.probAction) return;
-
+        if (this.status === "At sea") {
+            this.changeMoney(-this.ocean.microworld.params.costSecond);
+        }
+        if (!this.isBot()) {
+            return;
+        }
+        // If I'm an erratic bot, randomly return early and don't do anything
+        if (this.isErratic() && Math.random() > this.params.probAction) {
+            return;
+        }
+        // If I'm a regular bot, randomly go to sea and randomly return to port
+        if (!this.isErratic()) {
+            if (this.status === "At port" && Math.random() > this.params.probAction) {
+                this.goToSea();
+            } else if (this.status === "At sea" && Math.random > this.params.probAction) {
+                this.goToPort();
+            }
+        }
         // Am I done?
         if (this.getIntendedCasts() <= this.getActualCasts()) {
             this.goToPort();
-        } else {
-            // Should I go out or try to fish?
-            if (this.status === 'At port') {
-                this.goToSea();
-            } else if (this.status === 'At sea' && this.ocean.areThereFish()) {
-                this.tryToFish();
-            }
+        }
+        if (this.status === "At sea" && this.ocean.areThereFish()) {
+            this.tryToFish();
         }
     };
 };
