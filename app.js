@@ -24,6 +24,7 @@ var app = exports.app = express();
 
 
 app.configure(function() {
+    process.title = 'fishServer';
     logger.cli();
     logger.add(logger.transports.File, {
         filename: 'fish.log',
