@@ -43,7 +43,7 @@ exports.Fisher = Fisher = (name, type, params, o) ->
         currentGreed = highBound - (increment * currentSeason)
       else currentGreed = lowBound + (increment * currentSeason)  if trend is "increase"
     if predictability is "erratic"
-      
+
       # variation between 0.75 and 1.25
       variation = 1.0 + ((Math.random() - 0.5) / 2.0)
       currentGreed = currentGreed * variation
@@ -111,19 +111,23 @@ exports.Fisher = Fisher = (name, type, params, o) ->
   @runBot = ->
     @changeMoney -@ocean.microworld.params.costSecond  if @status is "At sea"
     return  unless @isBot()
-    
-    # Don't do anything if I'm erratic and I don't feel like it
-    return  if @isErratic() and Math.random() > @params.probAction
-    
-    # Am I done?
-    if @getIntendedCasts() <= @getActualCasts()
-      @goToPort()
-    else
-      
-      # Should I go out or try to fish?
-      if @status is "At port"
+
+    # If I'm an erratic bot, randomly return early and don't do anything
+    if @isErratic() and Math.random() > @params.probAction
+      return
+
+    # If I'm a regular bot, randomly go to sea and randomly return to port
+    if !@isErratic()
+      if @status is "At port" and Math.random() > @params.probAction
         @goToSea()
-      else @tryToFish()  if @status is "At sea" and @ocean.areThereFish()
+      else if @status is "At sea" and Math.random > @params.probAction
+        @goToPort()
+
+    # Am I done?
+    @goToPort() if @getIntendedCasts() <= @getActualCasts()
+
+    @tryToFish() if @status is "At sea" and @ocean.areThereFish()
+
     return
 
   return

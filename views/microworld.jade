@@ -278,7 +278,7 @@ html
             label.form-label.col-md-2
               a#predictability-tooltip(title='Erratic bots appear more lifelike, but they may behave non-optimally.', data-toggle='tooltip', data-placement='top') Predictability
             label.form-label.col-md-2
-              a#prob-action-tooltip(title='If bots behave erratically, this parameter (between 0 and 1) controls how frequently they act. The lower the value, the more they will appear to hesitate.', data-toggle='tooltip', data-placement='top') Probability of action
+              a#prob-action-tooltip(title='For bots with regular predictability, this parameter (between 0 and 1) controls how likely they go out to sea and go back to port. For erratic bots, this parameter (between 0 and 1) controls how frequently they do any action at all. The lower the value, the more they will appear to hesitate.', data-toggle='tooltip', data-placement='top') Probability of action
             label.form-label.col-md-2
               a#attempts-second-tooltip(title='If bots behave erratically, this controls the maximum number of fish they will try to catch in any second, provided they are doing something that second. If bots behave regularly, this controls how many fish they will try to catch every second (until they fulfill their quota).', data-toggle='tooltip', data-placement='top') Maximum casts per second
           each botName, i in {1: 'Dolphin', 2: 'Shark', 3: 'Octopus', 4: 'Whale', 5: 'Seagull', 6: 'Penguin', 7: 'Walrus', 8: 'Stingray', 9: 'Orca', 10: 'Seal', 11: 'Polar Bear'}
