@@ -70,6 +70,7 @@ function disableButtons() {
     $('#changeLocation').attr('disabled', 'disabled');
     $('#attempt-fish').attr('disabled', 'disabled');
     $('#pause').attr('disabled', 'disabled');
+    $('#resume').attr('disabled', 'disabled');
 }
 
 function updateRulesText() {
@@ -360,8 +361,12 @@ function beginSeason(data) {
     updateFishers();
     initializeMixItUp();
     sortFisherTable();
-    $('#changeLocation').removeAttr('disabled');
-    $('#pause').removeAttr('disabled');
+    if(!observer)  {
+        // not an observer then enable buttons
+        $('#changeLocation').removeAttr('disabled');
+        $('#pause').removeAttr('disabled');
+        $('#resume').removeAttr('disabled');
+    }
 }
 
 function warnInitialDelay() {
@@ -492,10 +497,14 @@ socket.on('resume', resume);
 function main() {
     $('#read-rules').on('click', readRules);
     disableButtons();
-    $('#changeLocation').on('click', changeLocation)
-    $('#attempt-fish').on('click', attemptToFish);
-    $('#pause').on('click', requestPause);
-    $('#resume').on('click', requestResume);
+    if(!observer) {
+        // not an observer, register click on changeLocation, attempt-fish,
+        // pause and resume buttons
+        $('#changeLocation').on('click', changeLocation);
+        $('#attempt-fish').on('click', attemptToFish);
+        $('#pause').on('click', requestPause);
+        $('#resume').on('click', requestResume);
+    }
     loadLabels();
     resizeOceanCanvasToScreenWidth();
     $(window).resize(resizeOceanCanvasToScreenWidth);
