@@ -179,8 +179,8 @@ function updateFishers() {
 
     for (var i in st.fishers) {
         var fisher = st.fishers[i];
-        console.log("name: " + fisher.name + " pId: " + pId);
         if (fisher.name === pId) {
+            console.log("name: " + fisher.name + " pId: " + pId);
             // This is you
             name = 'You';
             $('#f0-name').text(name);
@@ -381,6 +381,7 @@ function warnSeasonEnd() {
 }
 
 function receiveStatus(data) {
+    console.log('got here: ' + observer);
     st = data;
     updateStatus();
     updateFishers();

@@ -29,6 +29,11 @@ exports.engine = function engine(io, ioAdmin) {
             var myPId = clientPId;
             socket.join(myOId);
             socket.emit('ocean', om.oceans[myOId].getParams());
+            if(observerMode && om.oceans[myOId].status !== 'initial delay') {
+                // in observer mode and the ocean's status is not initial delay,
+                // this means the simulation is running
+                socket.emit('begin season', om.oceans[myOId].getSimStatus());
+            }
             
 
             socket.on('readRules', function () {
@@ -57,25 +62,28 @@ exports.engine = function engine(io, ioAdmin) {
             });
 
             socket.on('disconnect', function () {
-                if(!om.oceans[myOId].isInSetup() && !om.oceans[myOId].isRemovable()) {
-                    // disconnected before ocean i.e before simulation run has finished
-                    // and setup phase is completed
-                    var ocean = om.oceans[myOId];
-                    var simulationData = ocean.grabSimulationData();
-                    // replace participants gotten by calling grabSimulationData
-                    // with the one currently disconnecting
-                    simulationData.participants = [myPId];
-                   
-                    // keep track of all disconnected participants 
-                    if(myOId in om.trackedAbandonParticipants) {
-                        om.trackedAbandonParticipants[myOId].participants.push(myPId);
-                    } else {
-                        om.trackedAbandonParticipants[myOId] = ocean.grabSimulationData();
-                        om.trackedAbandonParticipants[myOId].participants = [myPId];
+                if(!observerMode) {
+                    // not in observer mode, then yes do all these things
+                    if(!om.oceans[myOId].isInSetup() && !om.oceans[myOId].isRemovable()) {
+                        // disconnected before ocean i.e before simulation run has finished
+                        // and setup phase is completed
+                        var ocean = om.oceans[myOId];
+                        var simulationData = ocean.grabSimulationData();
+                        // replace participants gotten by calling grabSimulationData
+                        // with the one currently disconnecting
+                        simulationData.participants = [myPId];
+                       
+                        // keep track of all disconnected participants 
+                        if(myOId in om.trackedAbandonParticipants) {
+                            om.trackedAbandonParticipants[myOId].participants.push(myPId);
+                        } else {
+                            om.trackedAbandonParticipants[myOId] = ocean.grabSimulationData();
+                            om.trackedAbandonParticipants[myOId].participants = [myPId];
+                        }
+                        ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
                     }
-                    ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
+                    om.removeFisherFromOcean(myOId, myPId);
                 }
-                om.removeFisherFromOcean(myOId, myPId);
             });
         };
     });
