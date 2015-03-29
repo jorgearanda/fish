@@ -181,8 +181,14 @@ function updateFishers() {
         var fisher = st.fishers[i];
         if (fisher.name === pId) {
             console.log("name: " + fisher.name + " pId: " + pId);
-            // This is you
-            name = 'You';
+            if(!observer) {
+                // This is you
+                name = 'You';
+            } else {
+                // Since I'm an observer I want to see the name
+                // of the one I'm viewing
+                name = pId;
+            }
             $('#f0-name').text(name);
 
             if (fisher.status === 'At port') {
