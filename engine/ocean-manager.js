@@ -30,7 +30,7 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
         return;
     };
 
-    this.assignFisherToOcean = function (mwId, pId, cb) {
+    this.assignFisherToOcean = function (mwId, pId, cb, socketID) {
         var oKeys = Object.keys(this.oceans);
         var oId = null;
 
@@ -38,8 +38,15 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
             oId = oKeys[i];
             if (this.oceans[oId].microworld._id.toString() === mwId &&
                     this.oceans[oId].hasRoom()) {
-                this.oceans[oId].addFisher(pId);
-                return cb(oId);
+                if(this.oceans[oId].findFisherIndex(pId) === null) {
+                    this.oceans[oId].addFisher(pId);
+                    return cb(oId);
+                } else {
+                    // a participant with the same pId that I want
+                    // can be found, emit error message to myself
+                    io.sockets.in(socketID).emit('conflict pid', pId);
+                    return;
+                }
             }
         }
 

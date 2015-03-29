@@ -81,5 +81,10 @@ html
         .modal-content
           #over-text.modal-body Simulation over text
           .modal-footer
-            button#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
-              | OK
+            button#finished.btn.btn-primary(data-dismiss='modal', aria-hidden='true') OK
+    #conflict-pid-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #conflict-pid-text.modal-body Chosen participant ID is being used for this simulation
+          .modal-footer
+            button#conflicted.btn.btn-primary(data-dismiss='modal', aria-hidden='true') OK

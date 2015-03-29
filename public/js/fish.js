@@ -484,6 +484,14 @@ socket.on('connect', function () {
     socket.emit('enterOcean', mwId, pId, oId, observer);
 });
 
+function displayConflictingPIdMessage(conflictingPId) {
+    if(conflictingPId === pId && !observer) {
+        // if the conflicting pId is the same as the pId I have
+        // and I am not an observer
+        $('#conflict-pid-modal').modal({keyboard: false, backdrop: 'static'});
+    }
+}
+
 socket.on('ocean', setupOcean);
 socket.on('initial delay', warnInitialDelay);
 socket.on('begin season', beginSeason);
@@ -494,6 +502,7 @@ socket.on('end season', endSeason);
 socket.on('end run', endRun);
 socket.on('pause', pause);
 socket.on('resume', resume);
+socket.on('conflict pid', displayConflictingPIdMessage);
 
 function main() {
     $('#read-rules').on('click', readRules);

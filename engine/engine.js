@@ -13,12 +13,15 @@ exports.engine = function engine(io, ioAdmin) {
         var clientPId;
         var observerMode;
 
+        // make a room with one's own socket ID, uniqueness
+        // assumed from socket IO
+        socket.join(socket.id);
         socket.on('enterOcean', function (mwId, pId, oId, observer) {
             clientPId = pId;
             observerMode = observer;
             if(!observer) {
                 // not an observer, than must be a participant
-                clientOId = om.assignFisherToOcean(mwId, pId, enteredOcean);
+                clientOId = om.assignFisherToOcean(mwId, pId, enteredOcean, socket.id);
             } else {
                 enteredOcean(oId);
             }
