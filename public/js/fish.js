@@ -180,7 +180,6 @@ function updateFishers() {
     for (var i in st.fishers) {
         var fisher = st.fishers[i];
         if (fisher.name === pId) {
-            console.log("name: " + fisher.name + " pId: " + pId);
             if(!observer) {
                 // This is you
                 name = 'You';
@@ -340,6 +339,7 @@ function changeLocation() {
 }
 
 function resetLocation() {
+    console.log("HYEA");
     var btn = $("#changeLocation");
     goToPort();
     btn.data('location', 'port');
@@ -347,12 +347,19 @@ function resetLocation() {
 }
 
 function goToSea() {
-    socket.emit('goToSea');
+    if(!observer) {
+        // only emit if a participant, an observer
+        // only observes, thus should not emit anything
+        socket.emit('goToSea');
+    }
     $('#attempt-fish').removeAttr('disabled');
 }
 
 function goToPort() {
-    socket.emit('return');
+    if(!observer) {
+        // same reason as in goToSea()
+        socket.emit('return');
+    }
     $('#attempt-fish').attr('disabled', 'disabled');
 }
 
@@ -367,12 +374,9 @@ function beginSeason(data) {
     updateFishers();
     initializeMixItUp();
     sortFisherTable();
-    if(!observer)  {
-        // not an observer then enable buttons
-        $('#changeLocation').removeAttr('disabled');
-        $('#pause').removeAttr('disabled');
-        $('#resume').removeAttr('disabled');
-    }
+    $('#changeLocation').removeAttr('disabled');
+    $('#pause').removeAttr('disabled');
+    $('#resume').removeAttr('disabled');
 }
 
 function warnInitialDelay() {
@@ -387,6 +391,18 @@ function warnSeasonEnd() {
 }
 
 function receiveStatus(data) {
+    if(observer) {
+        // an observer
+        for(var i = 0; i < st.fishers.length; i++) {
+            if(st.fishers[i].name === pId &&
+                  (st.fishers[i].status !== data.fishers[i].status)) {
+                // the participant being observed has changed
+                // his/her location reflect this on the observer's view
+                changeLocation();
+            }
+        }
+    }
+
     st = data;
     updateStatus();
     updateFishers();
@@ -395,13 +411,20 @@ function receiveStatus(data) {
 }
 
 function endSeason() {
-    resetLocation();
+    if(!observer) {
+        // only actively reset location if it's a participant
+        // all observers will just need to passively mimic
+        // the participant they are observing
+        resetLocation();
+    }
     updateWarning();
     disableButtons();
 }
 
 function endRun(trigger) {
-    resetLocation();
+    if(!observer) {
+        resetLocation();
+    }
     st.status = 'over';
 
     disableButtons();
@@ -438,8 +461,8 @@ function pause() {
 }
 
 function resume() {
-    if (prePauseButtonsState.changeLocation === undefined && !observer) $('#changeLocation').removeAttr('disabled');
-    if (prePauseButtonsState.attemptFish === undefined && !observer) $('#attempt-fish').removeAttr('disabled');
+    if (prePauseButtonsState.changeLocation === undefined) $('#changeLocation').removeAttr('disabled');
+    if (prePauseButtonsState.attemptFish === undefined) $('#attempt-fish').removeAttr('disabled');
     $('#pause').show();
     $('#resume').hide();
 }
