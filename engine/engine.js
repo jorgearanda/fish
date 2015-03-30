@@ -34,8 +34,8 @@ exports.engine = function engine(io, ioAdmin) {
             socket.emit('ocean', om.oceans[myOId].getParams());
             if(observerMode && om.oceans[myOId].status !== 'initial delay') {
                 // in observer mode and the ocean's status is not initial delay,
-                // this means the simulation is running
-                socket.emit('begin season', om.oceans[myOId].getSimStatus());
+                // this means the simulation is running so emit to myself this status
+                socket.in(socket.id).emit('synchronize observer', om.oceans[myOId].getSimStatus());
             }
             
 
@@ -86,6 +86,8 @@ exports.engine = function engine(io, ioAdmin) {
                         ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
                     }
                     om.removeFisherFromOcean(myOId, myPId);
+                } else {
+                    om.oceans[myOId].log.info('An observer has finished observing participant ' + myPId);
                 }
             });
         };

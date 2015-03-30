@@ -387,7 +387,6 @@ function warnSeasonEnd() {
 }
 
 function receiveStatus(data) {
-    console.log('got here: ' + observer);
     st = data;
     updateStatus();
     updateFishers();
@@ -439,8 +438,8 @@ function pause() {
 }
 
 function resume() {
-    if (prePauseButtonsState.changeLocation === undefined) $('#changeLocation').removeAttr('disabled');
-    if (prePauseButtonsState.attemptFish === undefined) $('#attempt-fish').removeAttr('disabled');
+    if (prePauseButtonsState.changeLocation === undefined && !observer) $('#changeLocation').removeAttr('disabled');
+    if (prePauseButtonsState.attemptFish === undefined && !observer) $('#attempt-fish').removeAttr('disabled');
     $('#pause').show();
     $('#resume').hide();
 }
@@ -486,10 +485,6 @@ function resizeOceanCanvasToScreenWidth() {
     }
 }
 
-socket.on('connect', function () {
-    socket.emit('enterOcean', mwId, pId, oId, observer);
-});
-
 function displayConflictingPIdMessage(conflictingPId) {
     if(conflictingPId === pId && !observer) {
         // if the conflicting pId is the same as the pId I have
@@ -497,6 +492,36 @@ function displayConflictingPIdMessage(conflictingPId) {
         $('#conflict-pid-modal').modal({keyboard: false, backdrop: 'static'});
     }
 }
+
+function synchronizeObserverAndParticipantView(data) {
+    // function to get observer synchronized with the
+    // observed participant's view in the middle of a simulation
+    st = data;
+    updateStatus();
+    if(st.status !== 'running') {
+        // another call, but now with status running
+        // simply to show how many fishes there are remaining
+        var tmpStatus = st.status;
+        st.status = 'running';
+        updateStatus();
+        // return back original status
+        st.status = tmpStatus;
+    }
+    updateFishers();
+    initializeMixItUp();
+    sortFisherTable();
+    drawOcean();
+
+    if(st.status === 'paused') {
+        // currently things are paused, reflect that in the
+        // observer's view
+        pause();
+    }
+}
+
+socket.on('connect', function () {
+    socket.emit('enterOcean', mwId, pId, oId, observer);
+});
 
 socket.on('ocean', setupOcean);
 socket.on('initial delay', warnInitialDelay);
@@ -508,6 +533,7 @@ socket.on('end season', endSeason);
 socket.on('end run', endRun);
 socket.on('pause', pause);
 socket.on('resume', resume);
+socket.on('synchronize observer', synchronizeObserverAndParticipantView);
 socket.on('conflict pid', displayConflictingPIdMessage);
 
 function main() {

@@ -30,7 +30,19 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
         return;
     };
 
-    this.assignFisherToOcean = function (mwId, pId, cb, socketID) {
+    this.safeAddFisher = function (oId, pId, cb, socketId) {
+        // A function to ensure that fishers' (including bots)
+        // pIds are unique. Used in assignFisherToOcean
+        if(this.oceans[oId].findFisherIndex(pId) === null) {
+            this.oceans[oId].addFisher(pId);
+            return cb(oId);
+        } else {
+            io.sockets.in(socketId).emit('conflict pid', pId);
+        }
+        return;
+    }
+
+    this.assignFisherToOcean = function (mwId, pId, cb, socketId) {
         var oKeys = Object.keys(this.oceans);
         var oId = null;
 
@@ -38,22 +50,13 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
             oId = oKeys[i];
             if (this.oceans[oId].microworld._id.toString() === mwId &&
                     this.oceans[oId].hasRoom()) {
-                if(this.oceans[oId].findFisherIndex(pId) === null) {
-                    this.oceans[oId].addFisher(pId);
-                    return cb(oId);
-                } else {
-                    // a participant with the same pId that I want
-                    // can be found, emit error message to myself
-                    io.sockets.in(socketID).emit('conflict pid', pId);
-                    return;
-                }
+                return this.safeAddFisher(oId, pId, cb, socketId);
             }
         }
 
         this.createOcean(mwId, function onCreated(err, oId) {
             // TODO - handle errors
-            this.oceans[oId].addFisher(pId);
-            return cb(oId);
+            return this.safeAddFisher(oId, pId, cb, socketId);
         }.bind(this));
     };
 
