@@ -83,6 +83,9 @@ exports.engine = function engine(io, ioAdmin) {
                             om.trackedAbandonParticipants[myOId] = ocean.grabSimulationData();
                             om.trackedAbandonParticipants[myOId].participants = [myPId];
                         }
+                        // notify all observing experimenters of my disconnection
+                        io.sockets.in(myOId).emit('participant dc', myPId);
+                        // notify all experimenters in dashboard of my disconnection
                         ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
                     }
                     om.removeFisherFromOcean(myOId, myPId);

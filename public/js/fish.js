@@ -339,7 +339,6 @@ function changeLocation() {
 }
 
 function resetLocation() {
-    console.log("HYEA");
     var btn = $("#changeLocation");
     goToPort();
     btn.data('location', 'port');
@@ -393,9 +392,9 @@ function warnSeasonEnd() {
 function receiveStatus(data) {
     if(observer) {
         // an observer
-        for(var i = 0; i < st.fishers.length; i++) {
-            if(st.fishers[i].name === pId &&
-                  (st.fishers[i].status !== data.fishers[i].status)) {
+        for(var i = 0; i < data.fishers.length; i++) {
+            if(data.fishers[i].name === pId &&
+                  (data.fishers[i].status !== st.fishers[i].status)) {
                 // the participant being observed has changed
                 // his/her location reflect this on the observer's view
                 changeLocation();
@@ -509,7 +508,7 @@ function resizeOceanCanvasToScreenWidth() {
 }
 
 function displayConflictingPIdMessage(conflictingPId) {
-    if(conflictingPId === pId && !observer) {
+    if(conflictingPId === pId) {
         // if the conflicting pId is the same as the pId I have
         // and I am not an observer
         $('#conflict-pid-modal').modal({keyboard: false, backdrop: 'static'});
@@ -520,25 +519,58 @@ function synchronizeObserverAndParticipantView(data) {
     // function to get observer synchronized with the
     // observed participant's view in the middle of a simulation
     st = data;
-    updateStatus();
+    // enable buttons
+    $('#changeLocation').removeAttr('disabled');
+    $('#pause').removeAttr('disabled');
+    $('#resume').removeAttr('disabled');
+
     if(st.status !== 'running') {
-        // another call, but now with status running
-        // simply to show how many fishes there are remaining
+        // status is not running, temporarily make it
+        // running to show the number of fish remaining
         var tmpStatus = st.status;
         st.status = 'running';
         updateStatus();
         // return back original status
         st.status = tmpStatus;
     }
+    // update status with real status
+    updateStatus();
+    for(var i = 0; i < st.fishers.length; i++) {
+        if(st.fishers[i].name === pId && st.fishers[i].status === 'At sea') {
+            // observed participant is at sea, reflect it
+            // on the observer's view
+            changeLocation();
+            break;
+        }
+    }
+
+    if(st.status === 'paused') {
+        // current status is pause, reflect it
+        // on the observer's view
+        pause();
+    }
+
     updateFishers();
     initializeMixItUp();
     sortFisherTable();
     drawOcean();
+}
 
-    if(st.status === 'paused') {
-        // currently things are paused, reflect that in the
-        // observer's view
-        pause();
+function warnObserverOfDC(dcParticipant) {
+    if(dcParticipant === pId) {
+        // if the participant that disconnected is
+        // the participant I'm viewing, then do the following
+        socket.disconnect();
+        $('#disconnected-participant-modal').modal({keyboard: false, backdrop: 'static'});
+    } else {
+        // everyone else will need to do some
+        // splicing
+        for(var i = 0; i < st.fishers.length; i++) {
+            if(st.fishers[i].name === dcParticipant) {
+                st.fishers.splice(i,1);
+                break;
+            }
+        }
     }
 }
 
@@ -557,7 +589,15 @@ socket.on('end run', endRun);
 socket.on('pause', pause);
 socket.on('resume', resume);
 socket.on('synchronize observer', synchronizeObserverAndParticipantView);
-socket.on('conflict pid', displayConflictingPIdMessage);
+if(!observer) {
+    // register events only if not a participant
+    socket.on('conflict pid', displayConflictingPIdMessage);
+}
+
+if(observer) {
+    // register event only if an observer
+    socket.on('participant dc', warnObserverOfDC);
+}
 
 function main() {
     $('#read-rules').on('click', readRules);
