@@ -1,4 +1,4 @@
-.col-sm-8, .col-sm-4 {
+.col-sm-8, .col-sm-6, .col-sm-4 {
   padding-left: 30px;
   padding-right: 30px; }
 
@@ -148,12 +148,18 @@ html {
   .col-sm-8 {
     width: 75%; }
 
+  .col-sm-6 {
+    width: 50%; }
+
   .col-sm-4 {
     width: 25%;
     margin-top: 20px; } }
 @media (min-width: 992px) {
   .col-sm-8 {
     width: 75%; }
+
+  .col-sm-6 {
+    width: 50%; }
 
   .col-sm-4 {
     width: 25%; } }

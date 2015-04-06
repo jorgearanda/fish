@@ -461,11 +461,11 @@ function resizeOceanCanvasToScreenWidth() {
     if (viewportWidth <= BOOTSTRAP_SMALL_WIDTH) {
         $("#ocean-canvas").width(0.9 * viewportWidth);
     } else if (viewportWidth <= BOOTSTRAP_MEDIUM_WIDTH) {
-        $("#ocean-canvas").width(0.2 * viewportWidth);
+        $("#ocean-canvas").width(0.4 * viewportWidth);
     } else if (viewportWidth <= BOOTSTRAP_LARGE_WIDTH) {
-        $("#ocean-canvas").width(0.2 * viewportWidth);
+        $("#ocean-canvas").width(0.4 * viewportWidth);
     } else {
-        $("#ocean-canvas").width(0.2 * viewportWidth);
+        $("#ocean-canvas").width(0.4 * viewportWidth);
     }
 }
 
