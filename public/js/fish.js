@@ -263,12 +263,17 @@ function makeUnpausable() {
     if (!ocean.enablePause) $('#pause').hide();
 }
 
+function hideTutorial() {
+    if (!ocean.enableTutorial) $('#tutorial').hide();
+}
+
 function setupOcean(o) {
     ocean = o;
     displayRules();
     loadLabels();
     updateCosts();
     makeUnpausable();
+    hideTutorial();
 }
 
 function readRules() {
