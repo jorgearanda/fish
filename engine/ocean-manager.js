@@ -30,7 +30,10 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
         return;
     };
 
-    this.safeAddFisher = function (oId, pId, cb, socketId) {
+    this.safeAddFisher = function (mwId, oId, pId, cb, socketId) {
+        Microworld.findOne({ _id : mwId }, function onFound(err, mw) {
+        }.bind(this));
+
         // A function to ensure that fishers' (including bots)
         // pIds are unique. Used in assignFisherToOcean
         if(this.oceans[oId].findFisherIndex(pId) === null) {
@@ -50,13 +53,13 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
             oId = oKeys[i];
             if (this.oceans[oId].microworld._id.toString() === mwId &&
                     this.oceans[oId].hasRoom()) {
-                return this.safeAddFisher(oId, pId, cb, socketId);
+                return this.safeAddFisher(mwId, oId, pId, cb, socketId);
             }
         }
 
         this.createOcean(mwId, function onCreated(err, oId) {
             // TODO - handle errors
-            return this.safeAddFisher(oId, pId, cb, socketId);
+            return this.safeAddFisher(mwId, oId, pId, cb, socketId);
         }.bind(this));
     };
 

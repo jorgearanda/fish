@@ -53,7 +53,8 @@ exports.create = function (req, res) {
         dateArchived: null,
         numCompleted: 0,
         numAborted: 0,
-        params: req.body
+        params: req.body,
+        participants: []
     };
 
     // Don't repeat name and description
