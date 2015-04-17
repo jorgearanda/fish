@@ -61,7 +61,7 @@ var microworldSchema = new Schema({
         }],
         oceanOrder: String
     },
-    participants: [String]
+    usedPIDs: Array
 });
 
 exports.Microworld = mongoose.model('Microworld', microworldSchema);

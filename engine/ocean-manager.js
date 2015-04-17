@@ -31,18 +31,37 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     };
 
     this.safeAddFisher = function (mwId, oId, pId, cb, socketId) {
-        Microworld.findOne({ _id : mwId }, function onFound(err, mw) {
-        }.bind(this));
-
         // A function to ensure that fishers' (including bots)
         // pIds are unique. Used in assignFisherToOcean
-        if(this.oceans[oId].findFisherIndex(pId) === null) {
+
+        Microworld.findOne({_id: mwId}, function onFound(err, mw) {
+            for (var i = 0; i < mw.usedPIDs.length; i++) {
+                if (mw.usedPIDs[i] === pId) {
+                    // if the pId has already been used for this
+                    // microworld by another user
+                    io.sockets.in(socketId).emit('conflict pid', pId);
+                    return;
+                }
+            }
+           
+            var bots = mw.params.bots; 
+            for (var i = 0; i < bots.length; i++) {
+                if(bots[i].name === pId) {
+                    // if the pId has already been used for bots' name
+                    io.sockets.in(socketId).emit('conflict pid', pId);
+                    return;
+                }
+            }
+
+            // if the pId cannot be found (including bots), then do the following
             this.oceans[oId].addFisher(pId);
+            
+            // update list of used participant IDs for this microworld
+            Microworld.update({_id : mwId}, { $push : { usedPIDs : pId } }, function(err) {
+                // TODO: handle error
+            });
             return cb(oId);
-        } else {
-            io.sockets.in(socketId).emit('conflict pid', pId);
-        }
-        return;
+        }.bind(this));
     }
 
     this.assignFisherToOcean = function (mwId, pId, cb, socketId) {

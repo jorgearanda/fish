@@ -54,7 +54,7 @@ exports.create = function (req, res) {
         numCompleted: 0,
         numAborted: 0,
         params: req.body,
-        participants: []
+        usedPIDs: []
     };
 
     // Don't repeat name and description
