@@ -243,6 +243,7 @@ function validate() {
         errors.push('The text for ending on depletion is missing.');
     }
 
+    var botNames = [];
     for (var i = 1; i <= (numFishers - numHumans); i++) {
         if ($('#bot-' + i + '-name').val().length < 1) {
             errors.push('Bot ' + i + ' needs a name.');
@@ -272,6 +273,15 @@ function validate() {
             errors.push('The attempts per second of bot ' + i +
                 ' must be between at least 1.');
         }
+
+        var curBotName = $('#bot-' + i + '-name').val();
+        if ($.inArray(curBotName, botNames) !== -1) {
+            // bot name was repeated
+            errors.push('Names for bots must be unique. Conflicting name: ' + curBotName + '.');
+        } else {
+            botNames.push(curBotName);
+        } 
+
     }
 
     if (errors.length === 0) return null;
