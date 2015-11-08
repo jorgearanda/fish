@@ -13,7 +13,7 @@ exports.displayProfileUpdate = function (req, res) {
             log.error('Could not retrieve experimenter on /a/:accountId/profile', err);
             res.send(500);
         }
-        
+
         res.render('profile.jade', {
             name : exp.name,
             email : exp.email
@@ -50,10 +50,7 @@ exports.create = function (req, res) {
 
 // PUT /experimenters/:id
 exports.update = function(req, res) {
-    if (req.params.id != req.session.userId) {
-        // unauthorized access
-        return res.send(401);
-    }
+    if (req.params.id != req.session.userId) return res.send(401); // unauthorized
 
     if ((req.body.rawPassword && !req.body.confirmPass) || (!req.body.rawPassword && req.body.confirmPass) ||
         (req.body.rawPassword !== req.body.confirmPass)) {
@@ -84,7 +81,7 @@ exports.update = function(req, res) {
                 return updateExperimenter(req, res, exp);
             });
         } else return updateExperimenter(req, res, exp);
-    } else return res.send(403);  
+    } else return res.send(403);
 };
 
 function updateExperimenter(req, res, exp) {
@@ -94,7 +91,7 @@ function updateExperimenter(req, res, exp) {
            return res.send(500);
        }
 
-       if(numUpdated === 0) {
+       if (numUpdated === 0) {
            // no experimenters updated, bad PUT request
            return res.send(400);
        }

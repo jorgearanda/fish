@@ -508,11 +508,14 @@ function gotRuns(r) {
     }
 
     $('#microworld-runs-table-rows').html(table);
-   
+
     // enabled or disable the download all button depending on if there are any completed runs
-    if (r.length == 0) $('#download-all-button').attr("disabled", "disabled");
-    else $('#download-all-button').removeAttr("disabled");
-    
+    if (r.length == 0) {
+        $('#download-all-button').attr("disabled", "disabled");
+    } else {
+        $('#download-all-button').removeAttr("disabled");
+    }
+
     setTimeout(getRuns, 60000);
 }
 
@@ -619,8 +622,8 @@ function prepareControls() {
         $('#archive-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.to-disable').each( function() { 
-            $(this).prop('disabled', true); 
+        $('.to-disable').each( function() {
+            $(this).prop('disabled', true);
         });
         $('#results').removeClass('collapse');
         $(".dynamic_option").removeClass("hide");
@@ -635,14 +638,12 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.to-disable').each( function() { 
-            $(this).prop('disabled', true); 
+        $('.to-disable').each( function() {
+            $(this).prop('disabled', true);
         });
         $('#results').removeClass('collapse');
         $(".dynamic_option").removeClass("hide");
     }
-
-    
 }
 
 function loadData() {
@@ -660,7 +661,7 @@ function uniformityChanges() {
     changeGreedSpreadUniformity();
     changeTrendUniformity();
     changePredictabilityUniformity();
-    changeProbActionUniformity();   
+    changeProbActionUniformity();
     changeAttemptsSecondUniformity();
 }
 

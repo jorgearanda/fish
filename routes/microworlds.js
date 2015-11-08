@@ -81,8 +81,7 @@ exports.create = function (req, res) {
                             if (err) return cb(err);
                             if (tries > 10) {
                                 return cb({
-                                    message: 'Error generating microworld code: ' +
-                                        'too many tries'});
+                                    message: 'Error generating microworld code: too many tries'});
                             }
                             if (!found) foundNewCode = true;
                             return cb();
@@ -100,7 +99,7 @@ exports.create = function (req, res) {
             if (st.params.clone) {
                 st.name = st.name + ' clone ' + st.code;
             }
-            
+
             Microworld.create(st, function onCreate(err, stRes) {
                 if (err) return next({status: 500, message: err.message});
 

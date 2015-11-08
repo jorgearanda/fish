@@ -127,8 +127,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
             this.ocean.takeOneFish();
             this.ocean.log.info('Fisher ' + this.name + ' caught one fish.');
         } else {
-            this.ocean.log.info('Fisher ' + this.name + ' tried to catch ' +
-                'a fish, and failed.');
+            this.ocean.log.info('Fisher ' + this.name + ' tried to catch a fish, and failed.');
         }
     };
 

@@ -27,7 +27,6 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     this.deleteOcean = function (oId) {
         delete this.oceans[oId];
         delete this.trackedSimulations[oId];
-        return;
     };
 
     this.assignFisherToOcean = function (mwId, pId, cb) {
@@ -52,7 +51,6 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
 
     this.removeFisherFromOcean = function (oId, pId) {
         this.oceans[oId].removeFisher(pId);
-        return;
     };
 
     this.purgeOceans = function () {
@@ -71,7 +69,6 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
         }
 
         setTimeout(this.purgeOceans.bind(this), 5000);
-        return;
     };
 
     this.purgeOceans();

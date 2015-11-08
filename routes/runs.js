@@ -21,7 +21,7 @@ function flattenRunResults(runs) {
             var fishAtEnd = results[j].fishEnd;
             var groupRestraint = results[j].groupRestraint;
             var groupEfficiency = results[j].groupEfficiency;
-            
+
             for (var k = 0; k < fishers.length; k++) {
                 var toPush = {};
                 if (produceAllRuns) toPush['Run ID'] = parentalId;
@@ -50,14 +50,20 @@ function flattenRunResults(runs) {
 function generateCSVRuns(runs, req, res) {
     var csvArray = flattenRunResults(runs);
     var sendHeader = { 'Content-Type' : 'text/csv', 'Content-Disposition' : 'attachment; filename=' };
-    if (Array.isArray(runs)) sendHeader['Content-Disposition']+= runs[0].microworld.name + '.csv';
-    else sendHeader['Content-Disposition']+= runs.microworld.name + ' ' + runs.time + '.csv';
-    
+    if (Array.isArray(runs)) {
+        sendHeader['Content-Disposition'] += runs[0].microworld.name + '.csv';
+    } else {
+        sendHeader['Content-Disposition'] += runs.microworld.name + ' ' + runs.time + '.csv';
+    }
+
     csvConvert.json2csv(csvArray, function(err, csv) {
         if(err) {
-            if (Array.isArray(runs)) logger.error('Error on GET /runs/?csv=true&mw=' + req.query.mw, err);
-            else logger.error('Error on GET /runs/' + req.params.id + '?csv=true');
-            
+            if (Array.isArray(runs)) {
+                logger.error('Error on GET /runs/?csv=true&mw=' + req.query.mw, err);
+            } else{
+                logger.error('Error on GET /runs/' + req.params.id + '?csv=true');
+            }
+
             return res.send(500);
         }
 
@@ -70,14 +76,17 @@ function generateCSVRuns(runs, req, res) {
 // GET /runs
 exports.list = function (req, res) {
     var fields;
-    var query = { 'microworld.experimenter._id': ObjectId(req.session.userId) };
+    var query = {'microworld.experimenter._id': ObjectId(req.session.userId)};
     if (req.query.mw) query['microworld._id'] = ObjectId(req.query.mw);
-   
-    if (req.query.csv === 'true' && !req.query.mw) return res.send(400);
-    if (req.query.csv === 'true' && req.query.mw) fields = { results : 1, microworld : 1 };
-    else fields = {_id: 1, time: 1, participants: 1};
 
-    Run.find(query, fields, { sort: {time: 1}}, function found(err, runs) {
+    if (req.query.csv === 'true' && !req.query.mw) return res.send(400);
+    if (req.query.csv === 'true' && req.query.mw) {
+        fields = {results: 1, microworld: 1};
+    } else {
+        fields = {_id: 1, time: 1, participants: 1};
+    }
+
+    Run.find(query, fields, {sort: {time: 1}}, function found(err, runs) {
         if (err) {
             logger.error('Error on GET /runs', err);
             return res.send(500);
@@ -100,7 +109,7 @@ exports.show = function (req, res) {
             logger.error('Error on GET /runs/' + req.params.id, err);
             return res.send(500);
         }
-        
+
         // initiate download
         if (req.query.csv === 'true') return generateCSVRuns(run, req, res);
         return res.status(200).send(run);

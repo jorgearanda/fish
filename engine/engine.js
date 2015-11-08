@@ -5,7 +5,6 @@ var OceanManager = require('./ocean-manager').OceanManager;
 
 exports.engine = function engine(io, ioAdmin) {
     log.info('Starting engine');
-
     var om = new OceanManager(io, ioAdmin);
 
     io.sockets.on('connection', function (socket) {
@@ -22,7 +21,6 @@ exports.engine = function engine(io, ioAdmin) {
             var myPId = clientPId;
             socket.join(myOId);
             socket.emit('ocean', om.oceans[myOId].getParams());
-            
 
             socket.on('readRules', function () {
                 om.oceans[myOId].readRules(myPId);
@@ -56,7 +54,7 @@ exports.engine = function engine(io, ioAdmin) {
                     var ocean = om.oceans[myOId];
                     var simulationData = ocean.grabSimulationData();
                     // replace participants gotten by calling grabSimulationData with the one currently disconnecting
-                    simulationData.participants = [myPId]; 
+                    simulationData.participants = [myPId];
                     ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
                 }
                 om.removeFisherFromOcean(myOId, myPId);

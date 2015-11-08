@@ -279,17 +279,16 @@ function sortFisherTable() {
     }
     else if (ocean.oceanOrder === "ocean_order_desc_fish_overall")
     {
-        $container.mixItUp('sort', 'fish-total:desc name:asc');  
+        $container.mixItUp('sort', 'fish-total:desc name:asc');
     }
     else if (ocean.oceanOrder === "ocean_order_desc_money_season")
     {
-     $container.mixItUp('sort', 'profit-season:desc name:asc');   
+     $container.mixItUp('sort', 'profit-season:desc name:asc');
     }
     else if (ocean.oceanOrder === "ocean_order_desc_money_overall")
     {
         $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
     }
-    
 }
 
 function makeUnpausable() {

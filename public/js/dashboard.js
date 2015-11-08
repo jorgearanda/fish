@@ -1,5 +1,5 @@
 'use strict';
-/*global document:true, location:true, $:true, alert:true, moment:true, io:true*/
+/*global document:true, _:true, $:true, alert:true, moment:true, io:true*/
 
 var df = 'YYYY-MM-DD';
 var lastMwRes = null;
@@ -21,7 +21,7 @@ var microworldsSuccess = function (mws) {
     for (var i in mws) {
         if (mws[i].status === 'test') {
             anyTest = true;
-            testTable += '<tr onclick="location.href=\'./microworlds/' + 
+            testTable += '<tr onclick="location.href=\'./microworlds/' +
                 mws[i]._id + '\'"><td>' + mws[i].name + '</td>' +
                 '<td>' + mws[i].code + '</td>' +
                 '<td>' + mws[i].desc + '</td></tr>';
@@ -29,23 +29,23 @@ var microworldsSuccess = function (mws) {
 
         if (mws[i].status === 'active') {
             anyActive = true;
-            activeTable += '<tr onclick="location.href=\'./microworlds/' + 
-                mws[i]._id + '\'"><td>' + mws[i].name + '</td>' + 
+            activeTable += '<tr onclick="location.href=\'./microworlds/' +
+                mws[i]._id + '\'"><td>' + mws[i].name + '</td>' +
                 '<td>' + mws[i].code + '</td>' +
                 '<td>' + mws[i].desc + '</td>' +
-                '<td>' + moment(mws[i].dateActive).format(df) + '</td>' + 
-                '<td>' + mws[i].numCompleted + '</td>' + 
+                '<td>' + moment(mws[i].dateActive).format(df) + '</td>' +
+                '<td>' + mws[i].numCompleted + '</td>' +
                 '<td>' + mws[i].numAborted + '</td></tr>';
         }
 
         if (mws[i].status === 'archived') {
             anyArchived = true;
-            archivedTable += '<tr onclick="location.href=\'./microworlds/' + 
-                mws[i]._id + '\'"><td>' + mws[i].name + '</td>' + 
+            archivedTable += '<tr onclick="location.href=\'./microworlds/' +
+                mws[i]._id + '\'"><td>' + mws[i].name + '</td>' +
                 '<td>' + mws[i].code + '</td>' +
                 '<td>' + mws[i].desc + '</td>' +
-                '<td>' + moment(mws[i].dateActive).format(df) + '</td>' + 
-                '<td>' + mws[i].numCompleted + '</td>' + 
+                '<td>' + moment(mws[i].dateActive).format(df) + '</td>' +
+                '<td>' + mws[i].numCompleted + '</td>' +
                 '<td>' + mws[i].numAborted + '</td></tr>';
         }
     }
@@ -114,7 +114,7 @@ var displaySimulationStatus = function(simulation, eventStatus) {
 
     var html = '<tr class =' + rowBootstrapClass + '><td>' + simulation.code + '</td>' + '<td>' + simulation.time + '<td>';
     for (var i = 0; i < simulation.participants.length; i++) {
-        if (i != 0) {
+        if (i !== 0) {
             html+= ', ';
             if (i == simulation.participants.length - 1) {
                 html+= 'and ';
@@ -138,15 +138,15 @@ var currentRunningSimulations = function(simulations) {
 
 var newSimulation = function (simulation) {
     displaySimulationStatus(simulation, 'Currently running');
-}
+};
 
 var simulationDone = function (simulation) {
     displaySimulationStatus(simulation, 'Finished run');
-}
+};
 
 var simulationInterrupt = function (simulation) {
     displaySimulationStatus(simulation, 'Participant abandoned simulation run');
-}
+};
 
 socketAdmin.on('connect', function() {
     socketAdmin.emit('enterDashboard', expId);
