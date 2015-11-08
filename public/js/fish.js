@@ -474,8 +474,6 @@ function resizeOceanCanvasToScreenWidth() {
 }
 
 function startTutorial() {
-    readRules();
-    requestPause();
     bootstro.start('.bootstro', {
         onComplete : function(params) {
             displayRules();
