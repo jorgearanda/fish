@@ -3,10 +3,9 @@
 var log = require('winston');
 var OceanManager = require('./ocean-manager').OceanManager;
 
-exports.engine = function engine(io) {
+exports.engine = function engine(io, ioAdmin) {
     log.info('Starting engine');
-
-    var om = new OceanManager(io);
+    var om = new OceanManager(io, ioAdmin);
 
     io.sockets.on('connection', function (socket) {
         var clientOId;
@@ -49,8 +48,32 @@ exports.engine = function engine(io) {
             });
 
             socket.on('disconnect', function () {
+                if(!om.oceans[myOId].isInSetup() && !om.oceans[myOId].isRemovable()) {
+                    // disconnected before ocean i.e before simulation run has finished
+                    // and setup phase is completed
+                    var ocean = om.oceans[myOId];
+                    var simulationData = ocean.grabSimulationData();
+                    // replace participants gotten by calling grabSimulationData with the one currently disconnecting
+                    simulationData.participants = [myPId];
+                    ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
+                }
                 om.removeFisherFromOcean(myOId, myPId);
             });
         };
+    });
+
+    ioAdmin.on('connection', function(socket) {
+        var expId;
+
+        socket.on('enterDashboard', function(experimenterId) {
+            expId = experimenterId;
+            log.info('Experimenter ' + expId + ' is viewing dashboard');
+            socket.join(expId);
+            socket.emit('currentRunningSimulations', om.trackedSimulations);
+        });
+
+        socket.on('disconnect', function() {
+            log.info('Experimenter ' + expId + ' disconnected from dashboard');
+        });
     });
 };

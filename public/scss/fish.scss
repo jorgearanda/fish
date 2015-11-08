@@ -10,13 +10,14 @@ $accentColor:        #4CAF50;
 $primaryTextColor:   #212121;
 $secondaryTextColor: #727272;
 $dividerColor:       #B6B6B6;
+$fishRemainingColor: #000000;
 
 $your-row-background: $accentColor;
 
 $warningDarkPrimaryColor:   #D32F2F;
 $warningPrimaryColor:       #F44336;
 
-.col-sm-8, .col-sm-4 {
+.col-sm-8, .col-sm-6, .col-sm-4 {
   padding-left: 30px;
   padding-right: 30px;
 }
@@ -49,13 +50,15 @@ html {
     background-color: $darkPrimaryColor;
     border-color: $darkPrimaryColor;
     color: $textPrimaryColor;
+    margin: 1px;
   }
   #status-sub-label {
     font-size: 20px;
     font-size: 2.0rem;
     background-color: $lightPrimaryColor;
     border-color: $lightPrimaryColor;
-    color: $textPrimaryColor;
+    color: $fishRemainingColor;
+    margin: 1px;
   }
 }
 
@@ -87,19 +90,17 @@ html {
     display: inline-block;
   }
   .costs-label {
-    background-color: $primaryColor;
-    border-color: $primaryColor;
-    color: $textPrimaryColor;
+    background-color: white;
+    color: #505050;
+    border-color: white;
   }
 }
 
 #control-box {
-  .col-lg-4 {
-    padding-left: 5px;
-    padding-right: 5px;
+  .col-xs-4 {
+    padding: 0;
     button {
       width: 100%;
-      margin-bottom: 10px;
       font-weight: bold;
     }
     .btn-changeLocation {
@@ -153,12 +154,15 @@ html {
       th {
         white-space: nowrap;
         vertical-align: top;
+        text-align: center;
         img {
-          float: left;
           margin-right: 5px;
+          vertical-align: top;
         }
         p {
           overflow: hidden;
+          margin: 0;
+          display: inline-block;
         }
       }
     }
@@ -215,6 +219,9 @@ html {
   .col-sm-8 {
     width: 75%;
   }
+  .col-sm-6 {
+    width: 50%;
+  }
   .col-sm-4 {
     width: 25%;
     margin-top: 20px;
@@ -224,6 +231,9 @@ html {
 @media (min-width: $media-medium) {
   .col-sm-8 {
     width: 75%;
+  }
+  .col-sm-6 {
+    width: 50%;
   }
   .col-sm-4 {
     width: 25%;

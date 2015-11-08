@@ -6,9 +6,11 @@ var OceanLog = require('./ocean-log').OceanLog;
 var Run = require('../models/run-model').Run;
 
 var io;
+var ioAdmin;
 
-exports.Ocean = function Ocean(mw, incomingIo) {
+exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     io = incomingIo;
+    ioAdmin = incomingIoAdmin;
 
     this.time = new Date();
     this.id = this.time.getTime();
@@ -23,6 +25,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.reportedMysteryFish = 0;
     this.microworld = mw;
     this.results = [];
+    this.om = om;
     this.log = new OceanLog(this.microworld.name + ' ' + this.id + ' ' +
         '(' + this.microworld.experimenter.username + ')');
 
@@ -31,6 +34,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         this.fishers.push(new Fisher(bot.name, 'bot', bot, this));
         this.log.debug('Bot fisher ' + bot.name + ' joined.');
     }
+    this.oceanOrder = "ocean_order_user_top";
 
     /////////////////////
     // Membership methods
@@ -91,12 +95,12 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         }
         return true;
     };
-    
+
     this.isInInitialDelay = function () {
         // Before first season
         return (this.status === 'initial delay');
     };
-    
+
     this.isRunning = function () {
         return (this.status === 'running');
     };
@@ -113,11 +117,11 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     this.isResting = function () {
         return (this.status === 'resting'); // between seasons
     };
-    
+
     this.isPaused = function () {
         return (this.status === 'paused');
     };
-    
+
     this.isNotOver = function () {
         return (this.status !== 'over');
     };
@@ -236,10 +240,34 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         return;
     };
 
+    this.getHumansInOcean = function () {
+        var humanList = [];
+        for(var i in this.fishers) {
+            if(this.fishers[i].type === 'human') {
+                humanList.push(this.fishers[i].name);
+            }
+        }
+        return humanList;
+    }
+
+    this.grabSimulationData = function () {
+        var simulationData = {};
+        simulationData.expId = this.microworld.experimenter._id.toString();
+        simulationData.code = this.microworld.code;
+        simulationData.participants = this.getHumansInOcean();
+        simulationData.time = (new Date(this.id)).toString();
+        return simulationData;
+    }
+
     this.getOceanReady = function () {
+        var expId = this.microworld.experimenter._id.toString();
         this.status = 'initial delay';
         this.log.info('All fishers ready to start.');
         io.sockets.in(this.id).emit('initial delay');
+
+        var simulationData = this.grabSimulationData();
+        this.om.trackedSimulations[this.id] = simulationData;
+        ioAdmin.in(expId).emit('newSimulation', simulationData);
     };
 
     this.startNextSeason = function () {
@@ -421,6 +449,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
 
     this.endOcean = function (reason) {
         this.status = 'over';
+        ioAdmin.in(this.microworld.experimenter._id.toString()).emit('simulationDone', this.grabSimulationData());
         io.sockets.in(this.id).emit('end run', reason);
 
         if (this.microworld.status !== 'active') {
@@ -461,8 +490,7 @@ exports.Ocean = function Ocean(mw, incomingIo) {
     };
 
     this.takeOneFish = function () {
-        if (Math.floor(Math.random() *
-                (this.certainFish + this.mysteryFish)) < this.certainFish) {
+        if (Math.floor(Math.random() * (this.certainFish + this.mysteryFish)) < this.certainFish) {
             this.certainFish -= 1;
         } else {
             this.mysteryFish -= 1;
@@ -472,7 +500,10 @@ exports.Ocean = function Ocean(mw, incomingIo) {
         if (!this.areThereFish()) this.endCurrentSeason('depletion');
     };
 
-    // Metric calculations
+    /////////////////////////////
+    // Metric calculation methods
+    /////////////////////////////
+
     this.individualRestraint = function (seasonData, fisherIndex) {
         var fishStart = seasonData.fishStart;
         var numFishers = seasonData.fishers.length;

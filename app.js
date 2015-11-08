@@ -127,7 +127,8 @@ var io = exports.io = socketio.listen(server, {
     }
 });
 
-engine.engine(io);
+var ioAdmin = exports.ioAdmin = io.of('/admin');
+engine.engine(io, ioAdmin);
 
 server.listen(app.get('port'), function () {
     logger.info('Fish server listening on port ' + app.get('port'));

@@ -25,17 +25,17 @@ html
   body
     .container-fluid
       .row
-        .col-sm-8.clearfix
+        .col-sm-6.clearfix
           .row#status-box
               h2#status-label.lead.status-label.alert.alert-success.bootstro(data-bootstro-title="Season status" data-bootstro-content="This status bar indicates which season you are in, when the season has ended, and offers some simulation status information." data-bootstro-placement="bottom")
               h3#status-sub-label.status-label.alert.alert-info.bootstro(data-bootstro-title="Fish population status" data-bootstro-content="The fish population status shows the number of remaining fish in the ocean and indicates when fish are spawning between seasons." data-bootstro-placement="bottom")
           .row.clearfix
             #control-box.clearfix
-              .col-lg-4.clearfix
+              .col-xs-4.clearfix
                 button#changeLocation.btn.btn-changeLocation(type='button' data-location='port').bootstro(data-bootstro-title="Go to sea/ Return to port" data-bootstro-content="This allows you to take your ship out to sea or return to the port." data-bootstro-placement="bottom") Go to Sea <i class='icon-ship'></i>
-              .col-lg-4.clearfix
+              .col-xs-4.clearfix
                 button#attempt-fish.btn.btn-fish(type='button').bootstro(data-bootstro-title="Attempt to fish" data-bootstro-content="Clicking this button simulates choosing to fish in the ocean. You can only attempt to fish if you are at sea." data-bootstro-placement="bottom") Attempt to fish <i class="icon-fish-hook"></i>
-              .col-lg-4.clearfix
+              .col-xs-4.clearfix
                 button#pause.btn(type='button') Pause
                 button#resume.btn(type='button', style='display:none').bootstro(data-bootstro-title="Pause/ Resume" data-bootstro-content="This button pauses a simulation in progress or continues a paused simulation." data-bootstro-placement="bottom") Resume
           .row.clearfix
@@ -66,7 +66,7 @@ html
             #cost-second.costs-label.alert.alert-info
             #cost-cast.costs-label.alert.alert-info
             #revenue-fish.costs-label.alert.alert-info
-        .col-sm-4
+        .col-sm-6
           .row#ocean-box.clearfix.bootstro(data-bootstro-title="Ocean window" data-bootstro-content="This window shows a pictorial representation of the ocean's fish population and updates as fish are caught." data-bootstro-placement="bottom")
             #warning-alert.alert.alert-danger
             #canvas-container.clearfix

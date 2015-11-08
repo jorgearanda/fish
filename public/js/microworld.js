@@ -13,6 +13,22 @@ function isNewMicroworld() {
     return ($.url().segment(3) === 'new');
 }
 
+function showStatusTableOptions() {
+    var behaviour_name = $(this).attr('id');
+
+    var behaviour_type = $(this).text();
+    $(this).closest('.dropdown').find('span#btn_txt').text(behaviour_type+"  ")
+
+    $("."+behaviour_name).removeClass('hide');
+
+    if(behaviour_name == "static_option"){
+        $(".dynamic_option").addClass('hide');
+    } else {
+        $(".static_option").addClass('hide');
+    }
+
+}
+
 function readyTooltips() {
     $('#early-end-tooltip').tooltip();
     $('#max-fish-tooltip').tooltip();
@@ -23,6 +39,7 @@ function readyTooltips() {
     $('#show-fisher-status-tooltip').tooltip();
     $('#erratic-tooltip').tooltip();
     $('#greed-tooltip').tooltip();
+    $('#greed-spread-tooltip').tooltip();
     $('#trend-tooltip').tooltip();
     $('#predictability-tooltip').tooltip();
     $('#prob-action-tooltip').tooltip();
@@ -57,6 +74,19 @@ function changeGreedUniformity() {
     } else {
         for (var i = 2; i <= maxBot; i++) {
             $('#bot-' + i + '-greed').attr('disabled', false);
+        }
+    }
+}
+
+function changeGreedSpreadUniformity() {
+    if ($('#uniform-greed-spread').prop('checked') === true) {
+        var greedSpread = $('#bot-1-greed-spread').val();
+        for (var i = 2; i <= maxBot; i++) {
+            $('#bot-' + i + '-greed-spread').val(greedSpread).attr('disabled', true);
+        }
+    } else {
+        for (var i = 2; i <= maxBot; i++) {
+            $('#bot-' + i + '-greedSpread').attr('disabled', false);
         }
     }
 }
@@ -223,6 +253,14 @@ function validate() {
             errors.push('The greed of bot ' + i + ' must be between 0 and 1.');
         }
 
+        var botGreedSpread = parseFloat($('#bot-' + i + '-greed-spread').val());
+        if (botGreedSpread < 0) {
+            errors.push('The greed spread of bot ' + i + ' must be greater than 0.');
+        }
+        if (botGreedSpread > 2 * botGreed) {
+            errors.push('The greed spread of bot ' + i + ' must be less than twice its greed.');
+        }
+
         var botProbAction = parseFloat($('#bot-' + i + '-prob-action').val());
         if (botProbAction < 0 || botProbAction > 1) {
             errors.push('The probability of action of bot ' + i +
@@ -278,12 +316,14 @@ function prepareMicroworldObject() {
         mw.bots.push({
             name: $(botPrefix + 'name').val(),
             greed: $(botPrefix + 'greed').val(),
+            greedSpread: $(botPrefix + 'greed-spread').val(),
             trend: $(botPrefix + 'trend').val(),
             predictability: $(botPrefix + 'predictability').val(),
             probAction: $(botPrefix + 'prob-action').val(),
             attemptsSecond: $(botPrefix + 'attempts-second').val()
         });
     }
+    mw.oceanOrder = $("input[name=ocean_order]:checked").val();
 
     return mw;
 }
@@ -414,6 +454,7 @@ function populatePage() {
     $('#show-fisher-balance').prop('checked', mw.params.showFisherBalance);
 
     $('#uniform-greed').prop('checked', false);
+    $('#uniform-greed-spread').prop('checked', false);
     $('#uniform-trend').prop('checked', false);
     $('#uniform-predictability').prop('checked', false);
     $('#uniform-prob-action').prop('checked', false);
@@ -423,11 +464,14 @@ function populatePage() {
         var botPrefix = '#bot-' + i + '-';
         $(botPrefix + 'name').val(mw.params.bots[i - 1].name);
         $(botPrefix + 'greed').val(mw.params.bots[i - 1].greed);
+        $(botPrefix + 'greed-spread').val(mw.params.bots[i - 1].greedSpread);
         $(botPrefix + 'trend').val(mw.params.bots[i - 1].trend);
         $(botPrefix + 'predictability').val(mw.params.bots[i - 1].predictability);
         $(botPrefix + 'prob-action').val(mw.params.bots[i - 1].probAction);
         $(botPrefix + 'attempts-second').val(mw.params.bots[i - 1].attemptsSecond);
     }
+
+    $("#"+mw.params.oceanOrder).prop('checked', true);
 
     changeBotRowVisibility();
 }
@@ -460,17 +504,20 @@ function gotRuns(r) {
     var table = '';
     for (var i in r) {
         var button = '<button class="btn btn-sm btn-info" type="submit" onclick=location.href=\'/runs/' + r[i]._id + 
-            '?csv=true\'>Download</button>';
+            '?csv=true\'>Download   <span class="glyphicon glyphicon-download-alt"></span></button>';
         table += '<tr><td><a href="../runs/' + r[i]._id + '">' + moment(r[i].time).format('llll') + '</a></td>' +
             '<td>' + r[i].participants + '</td>' + '<td>' + button + '</tr>';
     }
 
     $('#microworld-runs-table-rows').html(table);
-   
+
     // enabled or disable the download all button depending on if there are any completed runs
-    if (r.length == 0) $('#download-all-button').attr("disabled", "disabled");
-    else $('#download-all-button').removeAttr("disabled");
-    
+    if (r.length == 0) {
+        $('#download-all-button').attr("disabled", "disabled");
+    } else {
+        $('#download-all-button').removeAttr("disabled");
+    }
+
     setTimeout(getRuns, 60000);
 }
 
@@ -504,6 +551,7 @@ function setButtons() {
     $('#activate-confirmed').click(activateMicroworld);
     $('#archive-confirmed').click(archiveMicroworld);
     $('#delete-confirmed').click(deleteMicroworld);
+    $(".behaviour_group_select").click(showStatusTableOptions);
     initDownloadAll();
 }
 
@@ -512,6 +560,8 @@ function setOnPageChanges() {
     $('#num-humans').on('change', changeBotRowVisibility);
     $('#uniform-greed').on('change', changeGreedUniformity);
     $('#bot-1-greed').on('input', changeGreedUniformity);
+    $('#uniform-greed-spread').on('change', changeGreedSpreadUniformity);
+    $('#bot-1-greed-spread').on('input', changeGreedSpreadUniformity);
     $('#uniform-trend').on('change', changeTrendUniformity);
     $('#bot-1-trend').on('change', changeTrendUniformity);
     $('#uniform-predictability').on('change', changePredictabilityUniformity);
@@ -532,6 +582,7 @@ function prepareControls() {
     $('#microworld-panel-body-text').text(panelBody[mode]);
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
 
+
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
         $('#microworld-panel-title').text(panelTitle[mode]);
@@ -539,6 +590,8 @@ function prepareControls() {
         loadTexts();
         $('#create').removeClass('collapse');
         $('#create-2').removeClass('collapse');
+        $("#ocean_order_user_top").prop("checked", true);
+        uniformityChanges();
     } else if (mode === 'test') {
         $('title').text('Fish - Microworld in Test');
         $('#microworld-header').text(pageHeader[mode] + mw.code);
@@ -552,6 +605,14 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
+
+        if($('input[type="radio"]:checked').parent().parent().hasClass('dynamic_option')) {
+            $(".static_option").addClass('hide');
+            $(".dynamic_option").removeClass("hide");
+            $('span#btn_txt').text("Dynamic Behaviour\xa0\xa0"); //\xa0 is the char &nbsp; makes
+        }
+
+        uniformityChanges();
     } else if (mode === 'active') {
         $('title').text('Fish - Active Microworld');
         $('#microworld-header').text(pageHeader[mode] + mw.code);
@@ -563,8 +624,11 @@ function prepareControls() {
         $('#archive-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.form-control').prop('disabled', 'disabled');
+        $('.to-disable').each( function() {
+            $(this).prop('disabled', true);
+        });
         $('#results').removeClass('collapse');
+        $(".dynamic_option").removeClass("hide");
     } else if (mode === 'archived') {
         $('title').text('Fish - Archived Microworld');
         $('#microworld-header').text(pageHeader[mode]);
@@ -576,11 +640,12 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.form-control').prop('disabled', 'disabled');
+        $('.to-disable').each( function() {
+            $(this).prop('disabled', true);
+        });
         $('#results').removeClass('collapse');
+        $(".dynamic_option").removeClass("hide");
     }
-
-    uniformityChanges();
 }
 
 function loadData() {
@@ -595,9 +660,10 @@ function loadData() {
 
 function uniformityChanges() {
     changeGreedUniformity();
+    changeGreedSpreadUniformity();
     changeTrendUniformity();
     changePredictabilityUniformity();
-    changeProbActionUniformity();   
+    changeProbActionUniformity();
     changeAttemptsSecondUniformity();
 }
 

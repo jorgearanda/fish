@@ -197,6 +197,8 @@ function updateFishers() {
             $('#f0-profit-season').text(profitSeason);
             $('#f0-profit-total').text(profitTotal);
 
+            $('#f0').attr('data-fish-total', fishTotal);
+            $('#f0').attr('data-fish-season', fishSeason);
             $('#f0').attr('data-profit-total', profitTotal);
             $('#f0').attr('data-profit-season', profitSeason);
             $('#f0').attr('data-name', name);
@@ -244,6 +246,8 @@ function updateFishers() {
                 $('#f' + j + '-profit-total').text('?');
             }
 
+            $('#f' + j).attr('data-fish-total', fishTotal);
+            $('#f' + j).attr('data-fish-season', fishSeason);
             $('#f' + j).attr('data-profit-total', profitTotal);
             $('#f' + j).attr('data-profit-season', profitSeason);
             $('#f' + j).attr('data-name', name);
@@ -256,7 +260,35 @@ function updateFishers() {
 
 function sortFisherTable() {
     var $container = $("#fishers-tbody");
-    $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
+    console.log(ocean.oceanOrder)
+    if(ocean.oceanOrder === "ocean_order_user_top")
+    {
+        $container.mixItUp('insert', 1, $("tr#f0"));
+    }
+    else if (ocean.oceanOrder === "ocean_order_user_mid")
+    {
+        $container.mixItUp('insert', ocean.numFishers/2, $("tr#f0"));
+    }
+    else if (ocean.oceanOrder === "ocean_order_user_bot")
+    {
+        $container.mixItUp('insert', ocean.numFishers, $("tr#f0"));
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_season")
+    {
+        $container.mixItUp('sort', 'fish-season:desc name:asc');
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall")
+    {
+        $container.mixItUp('sort', 'fish-total:desc name:asc');
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_money_season")
+    {
+     $container.mixItUp('sort', 'profit-season:desc name:asc');
+    }
+    else if (ocean.oceanOrder === "ocean_order_desc_money_overall")
+    {
+        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
+    }
 }
 
 function makeUnpausable() {
@@ -298,6 +330,14 @@ function changeLocation() {
     }
 
 }
+
+function resetLocation() {
+    var btn = $("#changeLocation");
+    goToPort();
+    btn.data('location', 'port');
+    btn.html(msgs.buttons_goToSea);
+}
+
 function goToSea() {
     socket.emit('goToSea');
     $('#attempt-fish').removeAttr('disabled');
@@ -343,11 +383,13 @@ function receiveStatus(data) {
 }
 
 function endSeason() {
+    resetLocation();
     updateWarning();
     disableButtons();
 }
 
 function endRun(trigger) {
+    resetLocation();
     st.status = 'over';
 
     disableButtons();
@@ -423,11 +465,11 @@ function resizeOceanCanvasToScreenWidth() {
     if (viewportWidth <= BOOTSTRAP_SMALL_WIDTH) {
         $("#ocean-canvas").width(0.9 * viewportWidth);
     } else if (viewportWidth <= BOOTSTRAP_MEDIUM_WIDTH) {
-        $("#ocean-canvas").width(0.2 * viewportWidth);
+        $("#ocean-canvas").width(0.4 * viewportWidth);
     } else if (viewportWidth <= BOOTSTRAP_LARGE_WIDTH) {
-        $("#ocean-canvas").width(0.2 * viewportWidth);
+        $("#ocean-canvas").width(0.4 * viewportWidth);
     } else {
-        $("#ocean-canvas").width(0.2 * viewportWidth);
+        $("#ocean-canvas").width(0.4 * viewportWidth);
     }
 }
 

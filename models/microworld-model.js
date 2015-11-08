@@ -54,11 +54,13 @@ var microworldSchema = new Schema({
         bots: [{
             name: String,
             greed: Number,
+            greedSpread: Number,
             trend: String,
             predictability: String,
             probAction: Number,
             attemptsSecond: Number
-        }]
+        }],
+        oceanOrder: String
     }
 });
 

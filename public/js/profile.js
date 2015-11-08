@@ -8,10 +8,10 @@ function submitUpdate() {
     var confirmPass = $('#confirmPass').val();
 
     var sendData = {};
-    if(name.length >= 1) sendData.name = name;
-    if(email.length >= 1) sendData.email = email;
-    if(password.length >= 1) sendData.rawPassword = password;
-    if(confirmPass.length >= 1) sendData.confirmPass = confirmPass;
+    if (name.length >= 1) sendData.name = name;
+    if (email.length >= 1) sendData.email = email;
+    if (password.length >= 1) sendData.rawPassword = password;
+    if (confirmPass.length >= 1) sendData.confirmPass = confirmPass;
 
     var expId = location.pathname.split('/')[2];
     $.ajax({
