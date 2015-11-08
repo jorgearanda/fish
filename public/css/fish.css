@@ -144,6 +144,10 @@ html {
   .modal .modal-footer {
     margin-top: 0; }
 
+#tutorial {
+  display: block;
+  margin: 15px auto 0 auto;}
+
 @media (min-width: 768px) {
   .col-sm-8 {
     width: 75%; }

@@ -295,12 +295,17 @@ function makeUnpausable() {
     if (!ocean.enablePause) $('#pause').hide();
 }
 
+function hideTutorial() {
+    if (!ocean.enableTutorial) $('#tutorial').hide();
+}
+
 function setupOcean(o) {
     ocean = o;
     displayRules();
     loadLabels();
     updateCosts();
     makeUnpausable();
+    hideTutorial();
 }
 
 function readRules() {
@@ -468,6 +473,17 @@ function resizeOceanCanvasToScreenWidth() {
     }
 }
 
+function startTutorial() {
+    bootstro.start('.bootstro', {
+        onComplete : function(params) {
+            displayRules();
+        },
+        onExit : function(params) {
+            displayRules();
+        }
+    });
+}
+
 socket.on('connect', function () {
     socket.emit('enterOcean', mwId, pId);
 });
@@ -485,6 +501,7 @@ socket.on('resume', resume);
 
 function main() {
     $('#read-rules').on('click', readRules);
+    $('#tutorial').on('click', startTutorial);
     disableButtons();
     $('#changeLocation').on('click', changeLocation)
     $('#attempt-fish').on('click', attemptToFish);

@@ -100,7 +100,14 @@ html
                 label.form-label.checkbox
                   | Allow seasons to&nbsp;
                   a#early-end-tooltip(title='Finish a season if all fishers have returned to port and there has been no activity for three seconds.', data-toggle='tooltip', data-placement='top') end early
-                  input#enable-early-end.to-disable(type='checkbox', checked='')
+                  input#enable-early-end(type='checkbox', checked='')
+
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Enable participant tutorial
+                  input#enable-tutorial(type='checkbox', checked='')
         .col-md-4
           h3 Economics
           .row

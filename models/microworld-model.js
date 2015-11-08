@@ -31,6 +31,7 @@ var microworldSchema = new Schema({
         seasonDelay: Number,
         enableEarlyEnd: Boolean,
         enablePause: Boolean,
+        enableTutorial: Boolean,
         fishValue: Number,
         costDeparture: Number,
         costSecond: Number,

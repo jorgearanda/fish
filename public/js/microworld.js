@@ -290,6 +290,7 @@ function prepareMicroworldObject() {
     mw.seasonDelay = $('#season-delay').val();
     mw.enablePause = $('#enable-pause').prop('checked');
     mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
+    mw.enableTutorial = $('#enable-tutorial').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
@@ -431,6 +432,7 @@ function populatePage() {
     $('#season-delay').val(mw.params.seasonDelay);
     $('#enable-pause').prop('checked', mw.params.enablePause);
     $('#enable-early-end').prop('checked', mw.params.enableEarlyEnd);
+    $('#enable-tutorial').prop('checked', mw.params.enableTutorial);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
     $('#cost-departure').val(mw.params.costDeparture);
