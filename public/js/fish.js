@@ -178,7 +178,7 @@ function updateFishers() {
         var fisher = st.fishers[i];
         if (fisher.name === pId) {
             // This is you
-            name = 'You';
+            name = msgs.info_you;
             $('#f0-name').text(name);
 
             if (fisher.status === 'At port') {
