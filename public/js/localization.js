@@ -27,7 +27,7 @@ pt['status_wait'] = 'Por favor aguarde';
 es['status_wait'] = 'Espera por favor';
 
 en['status_subWait'] = 'Loading the application';
-pt['status_subWait'] = 'Carregando o aplicativo';
+pt['status_subWait'] = 'Carregando a aplicação';
 es['status_subwait'] = 'Cargando la aplicación';
 
 en['status_full'] = 'The group you tried to join is full. Please notify the experimenter.';
@@ -35,7 +35,7 @@ pt['status_full'] = 'O grupo que você tentou entrar esta lotado. Por favor, not
 es['status_full'] = 'El grupo al que trataste de entrar está lleno. Por favor, notifica al experimentador.';
 
 en['status_getReady'] = 'Get ready! The simulation is about to start.';
-pt['status_getReady'] = 'Prepare-se! A simulação esta para começar.';
+pt['status_getReady'] = 'Prepare-se! A simulação está prestes a começar.';
 es['status_getReady'] = '¡Prepárate! La simulación está por comenzar.';
 
 en['status_season'] = 'Season ';
@@ -76,11 +76,11 @@ es['status_paused'] = 'Simulación pausada.';
 
 // Warnings
 en['warning_seasonEnd'] = 'Warning: this season is about to end.';
-pt['warning_seasonEnd'] = 'Aviso: essa temporada esta para acabar.';
+pt['warning_seasonEnd'] = 'Aviso: Esta temporada está prestes a acabar.';
 es['warning_seasonEnd'] = 'Alerta: esta temporada está por terminar.';
 
 en['warning_seasonStart'] = 'Get ready: the next season is about to start.';
-pt['warning_seasonStart'] = 'Prepare-se! A próxima temporada esta para começar.';
+pt['warning_seasonStart'] = 'Prepare-se! A próxima temporada está prestes a começar.';
 es['warning_seasonStart'] = '¡Prepárate! La siguiente temporada está por comenzar.';
 
 // Info
