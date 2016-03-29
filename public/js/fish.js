@@ -12,6 +12,8 @@ var prePauseButtonsState = {};
 var oCanvas, oContext;
 var underwater = new Image();
 underwater.src = 'public/img/underwater.jpg';
+var underwaterDying = new Image();
+underwaterDying.src = 'public/img/underwater-dying.jpg';
 var fishImage = new Image();
 fishImage.src = 'public/img/certain-fish.png';
 var mysteryFishImage = new Image();
@@ -260,7 +262,6 @@ function updateFishers() {
 
 function sortFisherTable() {
     var $container = $("#fishers-tbody");
-    console.log(ocean.oceanOrder)
     if(ocean.oceanOrder === "ocean_order_user_top")
     {
         $container.mixItUp('insert', 1, $("tr#f0"));
@@ -442,7 +443,11 @@ function drawOcean() {
 
     if (st.status === 'running' || st.status === 'resting' || st.status === 'paused' || st.status === 'over') {
         // background
-        oContext.drawImage(underwater, 0, 0, 700, 460);
+        if (ocean.enableRespawnWarning && (st.certainFish + st.mysteryFish) * ocean.spawnFactor <= ocean.maxFish) {
+            oContext.drawImage(underwaterDying, 0, 0, 700, 460);
+        } else {
+            oContext.drawImage(underwater, 0, 0, 700, 460);
+        }
         for (var spot = 0; spot < st.certainFish + st.reportedMysteryFish; spot++) {
             if (spot < st.reportedMysteryFish) {
                 drawFish(oContext, mysteryFishImage, spots[spot]);

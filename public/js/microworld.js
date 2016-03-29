@@ -179,7 +179,7 @@ function validate() {
     if (parseInt($('#initial-delay').val(), 10) < 1) {
         errors.push('The initial delay must be at least one second long.');
     }
-        
+
     if (parseInt($('#season-delay').val(), 10) < 1) {
         errors.push('The delay between seasons must be at least one second.');
     }
@@ -291,6 +291,7 @@ function prepareMicroworldObject() {
     mw.enablePause = $('#enable-pause').prop('checked');
     mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
     mw.enableTutorial = $('#enable-tutorial').prop('checked');
+    mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
@@ -372,7 +373,7 @@ function cloneMicroworld() {
 
     var mw = prepareMicroworldObject();
     mw.clone = true;
-    
+
     $.ajax({
         type: 'POST',
         url: '/microworlds',
@@ -433,6 +434,7 @@ function populatePage() {
     $('#enable-pause').prop('checked', mw.params.enablePause);
     $('#enable-early-end').prop('checked', mw.params.enableEarlyEnd);
     $('#enable-tutorial').prop('checked', mw.params.enableTutorial);
+    $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
     $('#cost-departure').val(mw.params.costDeparture);
