@@ -29,7 +29,7 @@
     "jade": "^1.9.0",
     "json-2-csv": "^1.0.6",
     "moment": "2.4.0",
-    "mongoose": "3.8.1",
+    "mongoose": "3.8.35",
     "request": "2.27.0",
     "socket.io": "1.2.1",
     "socket.io-client": "1.2.1",
