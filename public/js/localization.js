@@ -63,7 +63,7 @@ pt['status_fishRemaining'] = ' restantes';
 es['status_fishRemaining'] = ' restantes';
 
 en['status_spawning'] = 'We are between seasons';
-pt['status_spawning'] = 'Estamos entre as temporadas';
+pt['status_spawning'] = 'Estamos entre temporadas';
 es['status_spawning'] = 'Estamos entre temporadas';
 
 en['status_subSpawning'] = 'Fish are now spawning';
