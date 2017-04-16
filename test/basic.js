@@ -8,7 +8,7 @@ var request = require('supertest');
 var testUtils = require('./test-utils');
 var app = require('../app').app;
 
-describe('Sanity checks', function () {
+define(['app', 'jquery', 'underscore'], function(App, $, _) {
     describe('The test system', function () {
         it('should run an isolated test', function (done) {
             'hello'.should.equal('hello');
