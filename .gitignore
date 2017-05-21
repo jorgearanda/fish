@@ -4,3 +4,4 @@ node_modules/
 public/.sass-cache/*
 fish.sublime-project
 fish.sublime-workspace
+*.DS_Store
