@@ -1,0 +1,7 @@
+FROM node:0.10.48
+WORKDIR /fish
+COPY . /fish
+ENV PORT 80
+EXPOSE $PORT
+RUN npm install
+VOLUME /fish
