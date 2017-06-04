@@ -1,4 +1,4 @@
 FROM mongo
 RUN mkdir /scripts
 WORKDIR /scrips
-COPY ./developer_scripts/*db.* /scripts
+COPY ./developer_scripts/*db.* /scripts/

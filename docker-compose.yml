@@ -1,0 +1,20 @@
+version: '3'
+services:
+  fish:
+    build:
+      context: .
+      dockerfile: Dockerfile-App
+    image: fishsim:latest
+    container_name: dockered-fish
+    depends_on:
+      - mongo
+    volumes:
+      - .:/fish/app
+    ports:
+      - "8080:80"
+  mongo-fish:
+    build:
+      context: .
+      dockerfile: Dockerfile-Db
+    image: mongofish
+    container_name: dockered-mongo-fish
