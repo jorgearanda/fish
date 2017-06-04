@@ -19,8 +19,7 @@
     "test-basic": "node_modules/.bin/mocha --require ./node_modules/blanket-node/bin/index.js ./test",
     "test-blanket-coveralls": "node_modules/.bin/mocha --require ./node_modules/blanket-node/bin/index.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js ./test",
 
-
-    "start-docker": "sh developer_scripts/check_fish_docker_image.sh && sh developer_scripts/run_dockered_fish.sh",
+    "start-docker": "docker-compose up --force-create",
     "delete-container": "echo 'Deleting container...' && docker rm dockered-fish",
     "delete-image": "echo 'Deleting image along with container...' && docker rm dockered-fish && docker rmi fishsim && echo 'Pruning volumes...' && docker volume prune -f",
     "docker-logs": "docker logs dockered-fish"

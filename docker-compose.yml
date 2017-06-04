@@ -7,7 +7,7 @@ services:
     image: fishsim:latest
     container_name: dockered-fish
     depends_on:
-      - mongo
+      - mongo-fish
     volumes:
       - .:/fish/app
     ports:

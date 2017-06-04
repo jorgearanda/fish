@@ -1,7 +1,9 @@
+var mongo = process.env.MONGO_HOST || 'localhost';
+
 module.exports = {
     db: {
-        development: 'mongodb://localhost/fish',
-        production: 'mongodb://localhost/fish',
-        test: 'mongodb://localhost/fish-test'
+        development: 'mongodb://' + mongo + '/fish',
+        production: 'mongodb://' + mongo + '/fish',
+        test: 'mongodb://' + mongo + '/fish-test'
     }
 };

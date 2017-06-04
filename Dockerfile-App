@@ -5,5 +5,6 @@ RUN npm install
 COPY . /fish/app
 WORKDIR /fish/app
 ENV PORT 80
+ENV MONGO_HOST mongo-fish
 EXPOSE $PORT
 CMD npm start

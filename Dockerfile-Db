@@ -1,4 +1,4 @@
-FROM mongo
+FROM mongo:2.6.5
 RUN mkdir /scripts
 WORKDIR /scrips
 COPY ./developer_scripts/*db.* /scripts/
