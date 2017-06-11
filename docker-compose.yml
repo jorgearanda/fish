@@ -19,3 +19,5 @@ services:
       dockerfile: Dockerfile-Db
     image: mongofish-compose:latest
     container_name: dockered-mongo-fish
+    volumes:
+      - ./mongo.log:/logs/mongo.log
