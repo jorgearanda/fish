@@ -35,6 +35,41 @@ These are located in the developer_scripts folder
 * `npm run devreset` runs cleandb then populate db and then starts up the server.
 * `npm run sass` watches for style changes
 
+## Docker
+This project is also dockerized (no official repository available however). This project uses and tested on the following Docker technologies:
+
+* Docker for Mac:
+   * Client version: 17.03.1-ce
+   * Server version: 17.03.1-ce
+* Docker Compose version 3
+
+### Container
+The node application is run in a container named _dockered-fish_ and the MongoDB is run in a container
+named _dockered-mongo-fish_. See `docker-compose.yml` for more details.
+
+### Usage
+In order to use the dockerized version do the following
+1. npm run build-docker
+2. Run the Docker services, one of
+   * `npm run start-docker`
+   * `npm run start-docker-detached` (detached docker mode)
+
+### Logs
+If Docker was run in non-detached mode then logs will be visible on console stdout.
+The node application and MongoDB logs may also be found in **fish.log** and **mongo.log** respectively.
+
+If Docker was run in detached mode you may see logs by running the following commands:
+* node application: `npm run logs-docker-fish`
+* MongoDB: `npm run logs-docker-mongo-fish`
+
+### Volumes
+The following volumes are bound from `host` to the `Docker container`
+1. The whole directory of this repository is mounted on _dockered-fish_ to /fish/app
+2. mongo.log is mounted on _dockered-mongo-fish_ to /logs/mongo.log
+
+The first point implies that updates on your local files will propagate to the _dockered-fish_ container.
+You can see more details in `docker-compose.yml` file
+
 ## Administrator
 1. Navigate to http://localhost:8080/admin
 2. Log in with the following credentials:
