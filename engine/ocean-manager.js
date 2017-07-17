@@ -5,6 +5,9 @@ var log = require('winston');
 var Microworld = require('../models/microworld-model').Microworld;
 var Ocean = require('./ocean').Ocean;
 
+/**
+ * @namespace OceanManager
+ */
 exports.OceanManager = function OceanManager(io, ioAdmin) {
     this.oceans = {};
     this.io = io;
@@ -30,37 +33,34 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
         return;
     };
 
-    this.safeAddFisher = function (mwId, oId, pId, cb, socketId) {
-        // A function to ensure that fishers' (including bots)
-        // pIds are unique. Used in assignFisherToOcean
-
+    /**
+     * A function to ensure that fishers' pIds are unique. Also checks<br>
+     * against bots pIDs
+     * @param {String} mwId - Microworld ID
+     * @param {String} oId  - Ocean ID
+     * @param {String} pId  - Fishers' pID
+     * @param {String} socketId - Socket ID of the user
+     * @param {Function} cb - Callback function
+     * @see OceanManager.assignFisherToOcean
+     */
+    this.safeAddFisher = function (mwId, oId, pId, socketId, cb) {
         Microworld.findOne({_id: mwId}, function onFound(err, mw) {
-            for (var i = 0; i < mw.usedPIDs.length; i++) {
-                if (mw.usedPIDs[i] === pId) {
-                    // if the pId has already been used for this
-                    // microworld by another user
-                    io.sockets.in(socketId).emit('conflict pid', pId);
-                    return;
-                }
+            if (mw.usedPIDs.indexOf(pId) !== -1 || mw.params.bots.indexOf(pId) !== -1) {
+              // PIDs have been registered before
+              io.sockets.in(socketId).emit('conflict pid', pId);
+              return;
             }
-           
-            var bots = mw.params.bots; 
-            for (var i = 0; i < bots.length; i++) {
-                if(bots[i].name === pId) {
-                    // if the pId has already been used for bots' name
-                    io.sockets.in(socketId).emit('conflict pid', pId);
-                    return;
-                }
-            }
-
             // if the pId cannot be found (including bots), then do the following
             this.oceans[oId].addFisher(pId);
             
             // update list of used participant IDs for this microworld
             Microworld.update({_id : mwId}, { $push : { usedPIDs : pId } }, function(err) {
-                // TODO: handle error
+                if (err) {
+                  ocean.log.error(err.message);
+                  return io.sockets.in(socketId).emit('observe failure');
+                }
+                return cb(oId);
             });
-            return cb(oId);
         }.bind(this));
     }
 

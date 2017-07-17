@@ -20,8 +20,8 @@ exports.engine = function engine(io, ioAdmin) {
             clientPId = pId;
             observerMode = observer;
             if(!observer) {
-                // not an observer, than must be a participant
-                clientOId = om.assignFisherToOcean(mwId, pId, enteredOcean, socket.id);
+                // not an observer, then must be a participant
+                clientOId = om.assignFisherToOcean(mwId, pId, socket.id, enteredOcean);
             } else {
                 enteredOcean(oId);
             }
@@ -38,7 +38,6 @@ exports.engine = function engine(io, ioAdmin) {
                 socket.in(socket.id).emit('synchronize observer', om.oceans[myOId].getSimStatus());
             }
             
-
             socket.on('readRules', function () {
                 om.oceans[myOId].readRules(myPId);
                 io.sockets.in(myOId).emit('aFisherIsReady', myPId);

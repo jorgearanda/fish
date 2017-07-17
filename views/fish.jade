@@ -88,6 +88,12 @@ html
           #conflict-pid-text.modal-body Chosen participant ID has already been used for this microworld
           .modal-footer
             button#conflicted.btn.btn-primary(data-dismiss='modal', aria-hidden='true') OK
+    #observe-mw-failure-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #failure-observing-text.modal-body Unable to observe modal due to an unexpected error
+          .modal-footer
+            button#failure-observing.btn.btn-primary(data-dismiss='modal', aria-hidden='true') OK
     #disconnected-participant-modal.modal.fade(role='dailog', aria-hidden='true')
       .modal-dialog
         .modal-content

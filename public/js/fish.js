@@ -507,12 +507,23 @@ function resizeOceanCanvasToScreenWidth() {
     }
 }
 
+/**
+ * Displays conflicting pID modal
+ * @param {String} conflictingPId - The pID that is said to be conflicting
+ */
 function displayConflictingPIdMessage(conflictingPId) {
     if(conflictingPId === pId) {
         // if the conflicting pId is the same as the pId I have
         // and I am not an observer
         $('#conflict-pid-modal').modal({keyboard: false, backdrop: 'static'});
     }
+}
+
+/**
+ * Displays failure to observe microworld modal
+ */
+function displayUnableToObserve() {
+    $('#observe-mw-failure-modal').modal({keyboard: false, backdrop: 'static'});
 }
 
 function synchronizeObserverAndParticipantView(data) {
@@ -592,6 +603,7 @@ socket.on('synchronize observer', synchronizeObserverAndParticipantView);
 if(!observer) {
     // register events only if not a participant
     socket.on('conflict pid', displayConflictingPIdMessage);
+    socket.on('observe failure', displayUnableToObserve);
 }
 
 if(observer) {
