@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile-App
     image: fishsim-compose:latest
-    container_name: dockered-fish
+    container_name: fish
     command: ["developer_scripts/./wait_for_http_service_and_run_cmd.sh", "mongo-fish:27017", "3", "2", "npm", "start"]
     depends_on:
       - mongo-fish
@@ -18,6 +18,6 @@ services:
       context: .
       dockerfile: Dockerfile-Db
     image: mongofish-compose:latest
-    container_name: dockered-mongo-fish
+    container_name: mongo-fish
     volumes:
       - ./mongo.log:/logs/mongo.log

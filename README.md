@@ -76,12 +76,15 @@ Several possible changes that needs rebuilding:
 4. Other things that modifies the Dockerfiles
 
 ### Usage
-In order to use the dockerized version do the following
+In order to use the Dockerized version do the following
 1. npm run build-docker
 2. Run the Docker services, one of
    * `npm run start-docker` (standard mode)
    * `npm run start-daemon-docker` (daemon mode a.k.a Docker detached mode)
-3. If you run in daemon mode then you can do `npm run stop-daemon-docker` to stop daemon mode
+4. After running one of the above you should run `npm run docker-populatedb`. It's
+the populate DB setup but for the docker setup
+
+If you run in daemon mode then you can do `npm run stop-daemon-docker` to stop daemon mode
 
 ### Logs
 If Docker was run in non-detached mode then logs will be visible on console stdout.

@@ -3,6 +3,5 @@ RUN mkdir /logs
 RUN mkdir /scripts
 COPY ./developer_scripts /scripts
 WORKDIR /scripts
-CMD mongod --fork --logappend --logpath /logs/mongo.log && \
-  mongo populate_db.js && \
+CMD mongod --fork --logappend --logpath /logs/mongo.log &&\
   tail -F /logs/mongo.log

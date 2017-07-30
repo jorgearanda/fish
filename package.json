@@ -24,7 +24,8 @@
     "stop-daemon-docker": "docker-compose down",
     "build-docker": "docker-compose build --force-rm",
     "logs-docker-fish": "docker-compose logs -f fish",
-    "logs-docker-mongo-fish": "docker-compose logs -f mongo-fish"
+    "logs-docker-mongo-fish": "docker-compose logs -f mongo-fish",
+    "docker-populatedb": "docker exec mongo-fish mongo populate_db.js"
   },
   "dependencies": {
     "async": "0.2.9",
