@@ -47,6 +47,27 @@ This project is also dockerized (no official repository available however). This
 The node application is run in a container named _dockered-fish_ and the MongoDB is run in a container
 named _dockered-mongo-fish_. See `docker-compose.yml` for more details.
 
+### Docker Setup
+The following is a diagram of the Docker setup:
+![Docker diagram](/docs/docker-setup.png)
+
+From the above diagram you can infer several things:
+1. You can access the Fish application from `http://localhost:8080` from your browser
+2. Since all Fish files in this repo is mounted on the Fish container, any changes on the repo will be
+reflected onto the Fish container. Therefore if you make changes to the application you don't need to
+re-build the containers. See [Building the images](#build-image) for more info
+3. Since the `/logs/mongo.log` is mounted to `mongo.log`, you may see all the mongo logs being saved
+to `mongo.log` so you can check it out in the future
+
+### Building the images<a name="build-image"></a>
+Before trying to run Dockerized application, please run `npm run build-docker` first beforehand.
+This command only needs to be run once, unless you want to rebuild the containers due to changes.
+Several possible changes that needs rebuilding:
+1. Changing the commands that the containers execute
+2. Changing the base image of the containers
+3. Adding things to the containers' Dockerfiles, either `Dockerfile-app` or `Dockerfile-Db`
+4. Other things that modifies the Dockerfiles
+
 ### Usage
 In order to use the dockerized version do the following
 1. npm run build-docker

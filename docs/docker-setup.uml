@@ -1,0 +1,37 @@
+@startuml
+node "User Land" {
+	interface "Port 8080" as p8080
+	[NPM Docker Commands]
+	folder "Fish Folder" {
+		[Fish files]
+		[mongo.log]
+	}
+	[Browser] --> p8080 : Use Fish App through localhost:8080
+}
+
+node "Docker Land" {
+	package "Fish" {
+		[Docker Node]
+		[Fish App]
+		[/fish/app dir] as FishAppDir
+		interface "Port 80" as p80
+		[Docker Node] --> [Fish App] : Runs Application
+	}
+
+	package "Mongo Fish" {
+		[Docker MongoDB]
+		[/logs/mongo.log] as DockerMongoLog
+		interface "Port 27017" as p27017
+		[Docker MongoDB] --> DockerMongoLog : Writes logs
+		[Docker MongoDB] --> p27017 : Runs on port 27017 of container
+	}
+	[Fish App] -r-> [p27017] : Connect to mongo DB via 'mongo-fish' on port 27017
+}
+
+p80 --> p8080 : Expose port 80 of Fish container to port 8080 of user's network
+[NPM Docker Commands] --> [Docker Node] : Runs/stops the fish container
+[NPM Docker Commands] --> [Docker MongoDB] : Runs/stops the mongo-fish container
+
+[Fish files] -up-> FishAppDir : Mount/connect user's fish folder 
+[mongo.log] -up-> DockerMongoLog : Mount/connect user's mongo.log folder
+@enduml
