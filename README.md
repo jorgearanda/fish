@@ -51,8 +51,9 @@ named _dockered-mongo-fish_. See `docker-compose.yml` for more details.
 In order to use the dockerized version do the following
 1. npm run build-docker
 2. Run the Docker services, one of
-   * `npm run start-docker`
-   * `npm run start-docker-detached` (detached docker mode)
+   * `npm run start-docker` (standard mode)
+   * `npm run start-daemon-docker` (daemon mode a.k.a Docker detached mode)
+3. If you run in daemon mode then you can do `npm run stop-daemon-docker` to stop daemon mode
 
 ### Logs
 If Docker was run in non-detached mode then logs will be visible on console stdout.
