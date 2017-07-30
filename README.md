@@ -44,8 +44,15 @@ This project is also dockerized (no official repository available however). This
 * Docker Compose version 3
 
 ### Container
-The node application is run in a container named _dockered-fish_ and the MongoDB is run in a container
-named _dockered-mongo-fish_. See `docker-compose.yml` for more details.
+The node application is run in a container named `fish` and the MongoDB is run in a container
+named `mongo-fish`. See `docker-compose.yml` for more details.
+
+### Volumes
+The following volumes are bound from `host` to the `Docker container`
+1. The whole directory of this repository is mounted on `fish` to `/fish/app`
+2. mongo.log is mounted on `mongo-fish` to `/logs/mongo.log`
+
+You can see more details on [Docer setup](#docker-setup)
 
 ### Docker Setup
 The following is a diagram of the Docker setup:
@@ -55,11 +62,11 @@ From the above diagram you can infer several things:
 1. You can access the Fish application from `http://localhost:8080` from your browser
 2. Since all Fish files in this repo is mounted on the Fish container, any changes on the repo will be
 reflected onto the Fish container. Therefore if you make changes to the application you don't need to
-re-build the containers. See [Building the images](#build-image) for more info
+re-build the containers. See [Building the images](#building-the-images) for more info
 3. Since the `/logs/mongo.log` is mounted to `mongo.log`, you may see all the mongo logs being saved
 to `mongo.log` so you can check it out in the future
 
-### Building the images<a name="build-image"></a>
+### Building the images
 Before trying to run Dockerized application, please run `npm run build-docker` first beforehand.
 This command only needs to be run once, unless you want to rebuild the containers due to changes.
 Several possible changes that needs rebuilding:
@@ -78,19 +85,11 @@ In order to use the dockerized version do the following
 
 ### Logs
 If Docker was run in non-detached mode then logs will be visible on console stdout.
-The node application and MongoDB logs may also be found in **fish.log** and **mongo.log** respectively.
+The node application and MongoDB logs may also be found in `fish.log` and `mongo.log` respectively.
 
 If Docker was run in detached mode you may see logs by running the following commands:
 * node application: `npm run logs-docker-fish`
 * MongoDB: `npm run logs-docker-mongo-fish`
-
-### Volumes
-The following volumes are bound from `host` to the `Docker container`
-1. The whole directory of this repository is mounted on _dockered-fish_ to /fish/app
-2. mongo.log is mounted on _dockered-mongo-fish_ to /logs/mongo.log
-
-The first point implies that updates on your local files will propagate to the _dockered-fish_ container.
-You can see more details in `docker-compose.yml` file
 
 ## Administrator
 1. Navigate to http://localhost:8080/admin
