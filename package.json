@@ -17,7 +17,15 @@
     "test": "npm run-script test-basic",
     "test-travis": "npm run-script test-basic; npm run-script test-blanket-coveralls",
     "test-basic": "node_modules/.bin/mocha --require ./node_modules/blanket-node/bin/index.js ./test",
-    "test-blanket-coveralls": "node_modules/.bin/mocha --require ./node_modules/blanket-node/bin/index.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js ./test"
+    "test-blanket-coveralls": "node_modules/.bin/mocha --require ./node_modules/blanket-node/bin/index.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js ./test",
+
+    "start-docker": "touch ./mongo.log && docker-compose up",
+    "start-daemon-docker": "touch ./mongo.log && docker-compose up -d",
+    "stop-daemon-docker": "docker-compose down",
+    "build-docker": "docker-compose build --force-rm",
+    "logs-docker-fish": "docker-compose logs -f fish",
+    "logs-docker-mongo-fish": "docker-compose logs -f mongo-fish",
+    "docker-populatedb": "docker exec mongo-fish mongo populate_db.js"
   },
   "dependencies": {
     "async": "0.2.9",

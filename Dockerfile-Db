@@ -1,0 +1,7 @@
+FROM mongo:2.6.5
+RUN mkdir /logs
+RUN mkdir /scripts
+COPY ./developer_scripts /scripts
+WORKDIR /scripts
+CMD mongod --fork --logappend --logpath /logs/mongo.log &&\
+  tail -F /logs/mongo.log

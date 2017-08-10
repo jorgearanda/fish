@@ -1,0 +1,10 @@
+FROM node:0.10.48
+WORKDIR /fish
+COPY package.json /fish
+RUN npm install
+COPY . /fish/app
+WORKDIR /fish/app
+ENV PORT 80
+ENV MONGO_HOST mongo-fish
+EXPOSE $PORT
+CMD npm start
