@@ -61,7 +61,7 @@ app.configure(function() {
     app.use(express.cookieParser('life is better under the sea'));
     app.use(express.session({
         secret: 'life is better under the sea',
-        store: new MongoStore({ mongoose_connection: mongoose.connections[0] }),
+        store: new MongoStore({ mongooseConnection: mongoose.connections[0] }),
         cookie: { maxAge: null }
     }));
 
