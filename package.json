@@ -27,11 +27,10 @@
     "docker-populatedb": "docker exec mongo-fish mongo populate_db.js"
   },
   "dependencies": {
-    "async": "0.2.9",
+    "async": "^2.6.2",
     "bcrypt": "^3.0.4",
-    "chance": "0.5.3",
+    "chance": "^1.0.18",
     "connect-mongo": "^2.0.3",
-    "ejs": "2.5.5",
     "express": "3.4.4",
     "jade": "^1.9.0",
     "json-2-csv": "^1.0.6",
