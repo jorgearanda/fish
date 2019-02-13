@@ -1,12 +1,19 @@
 'use strict';
 /*jshint -W024 */
 
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var express = require('express');
 var http = require('http');
 var logger = require('winston');
+var methodOverride = require('method-override');
 var mongoose = require('mongoose');
-var MongoStore = require('connect-mongo')(express);
+var morgan = require('morgan');
 var path = require('path');
+var favicon = require('serve-favicon');
+var serveStatic = require('serve-static');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var socketio = require('socket.io');
 
 var access = require('./middlewares/access');
@@ -17,58 +24,57 @@ var microworlds = require('./routes/microworlds');
 var runs = require('./routes/runs');
 var sessions = require('./routes/sessions');
 
+var errorHandler = require('errorhandler');  // after loading the routes
+
 var isUser = access.isUser;
 var authenticate = access.authenticate;
 
 var app = exports.app = express();
 
 
-app.configure(function() {
-    logger.cli();
-    logger.add(logger.transports.File, {
-        filename: 'fish.log',
-        handleExceptions: false
-    });
-
-    if (process.env.NODE_ENV === 'test') {
-        logger.remove(logger.transports.Console);
-    }
-
-    if (app.settings.env === 'development') {
-        process.env.NODE_ENV = 'development';
-        app.use(express.logger('dev'));
-        app.use(express.errorHandler());
-    } else if (app.settings.env === 'production') {
-        var loggerStream = {
-            write: function (message) { logger.info(message.slice(0, -1)); }
-        };
-
-        app.use(express.logger({ stream: loggerStream }));
-    }
-
-    app.set('port', process.env.PORT || 8080);
-
-    mongoose.connect(config.db[app.settings.env]);
-
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-
-    app.use(express.favicon());
-    app.use(express.json());
-    app.use(express.urlencoded());
-    app.use(express.methodOverride());
-
-    app.use(express.cookieParser('life is better under the sea'));
-    app.use(express.session({
-        secret: 'life is better under the sea',
-        store: new MongoStore({ mongooseConnection: mongoose.connections[0] }),
-        cookie: { maxAge: null }
-    }));
-
-    app.use(app.router);
-    app.use('/public', express.static(path.join(__dirname, 'public')));
-    app.use('/bower', express.static(path.join(__dirname, 'bower_components')));
+logger.cli();
+logger.add(logger.transports.File, {
+    filename: 'fish.log',
+    handleExceptions: false
 });
+
+if (process.env.NODE_ENV === 'test') {
+    logger.remove(logger.transports.Console);
+}
+
+if (app.settings.env === 'development') {
+    process.env.NODE_ENV = 'development';
+    app.use(morgan('dev'));
+    app.use(errorHandler());
+} else if (app.settings.env === 'production') {
+    var loggerStream = {
+        write: function (message) { logger.info(message.slice(0, -1)); }
+    };
+
+    app.use(morgan({ stream: loggerStream }));
+}
+
+app.set('port', process.env.PORT || 8080);
+
+mongoose.connect(config.db[app.settings.env]);
+
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+
+app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(methodOverride());
+
+app.use(cookieParser('life is better under the sea'));
+app.use(session({
+    secret: 'life is better under the sea',
+    store: new MongoStore({ mongooseConnection: mongoose.connections[0] }),
+    cookie: { maxAge: null }
+}));
+
+app.use('/public', serveStatic(path.join(__dirname, 'public')));
+app.use('/bower', serveStatic(path.join(__dirname, 'bower_components')));
 
 
 ///////////////////////////////////////////////////////////////////////////////
