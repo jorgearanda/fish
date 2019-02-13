@@ -1,5 +1,5 @@
-[![Travis](https://img.shields.io/travis/jorgearanda/fish.svg)]()
-[![Coveralls](https://img.shields.io/coveralls/jorgearanda/fish.svg)]()
+[![Build Status](https://travis-ci.org/jorgearanda/fish.svg?branch=master)](https://travis-ci.org/jorgearanda/fish)
+[![Coverage Status](https://coveralls.io/repos/github/jorgearanda/fish/badge.svg?branch=master)](https://coveralls.io/github/jorgearanda/fish?branch=master)
 
 This is a web-based version of Robert and Jonas Gifford's "FISH", a fish banks simulator for environmental psychology studies.
 
