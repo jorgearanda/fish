@@ -52,15 +52,15 @@ html
                   th#profit-season-header.data-header.bootstro(data-bootstro-title="Season profit" data-bootstro-content="This column shows the current season's profit for each fisher." data-bootstro-placement="bottom")
                   th#profit-total-header.data-header.bootstro(data-bootstro-title="Overall profit" data-bootstro-content="This column shows the total profit for each fisher from the beginning of the simulation." data-bootstro-placement="bottom")
                 tbody#fishers-tbody
-                  each i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-                    tr(id="f#{i}")
+                  each i in ["f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11"]
+                    tr(id=i)
                       td
-                        img(id="f#{i}-status", src="/public/img/bullet_white.png")
-                        p(id="f#{i}-name").fisher-label
-                      td(id="f#{i}-fish-season").fisher-label
-                      td(id="f#{i}-fish-total").fisher-label
-                      td(id="f#{i}-profit-season").fisher-label
-                      td(id="f#{i}-profit-total").fisher-label
+                        img(id=i + "-status", src="/public/img/bullet_white.png")
+                        p(id=i + "-name").fisher-label
+                      td(id=i + "-fish-season").fisher-label
+                      td(id=i + "-fish-total").fisher-label
+                      td(id=i + "-profit-season").fisher-label
+                      td(id=i + "-profit-total").fisher-label
           .row#costs-box.clearfix.bootstro(data-bootstro-title="Cost information" data-bootstro-content="This area shows different pieces of data pertaining to cost such as the cost to fish, the earnings per fish, and the cost to leave port." data-bootstro-placement="bottom")
             #cost-departure.costs-label.alert.alert-info
             #cost-second.costs-label.alert.alert-info

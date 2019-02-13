@@ -14,7 +14,7 @@ exports.displayProfileUpdate = function (req, res) {
             res.send(500);
         }
 
-        res.render('profile.jade', {
+        res.render('profile.pug', {
             name : exp.name,
             email : exp.email
         });

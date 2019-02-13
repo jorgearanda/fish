@@ -11,17 +11,17 @@ html
     .container
       .page-header
         h1 Update Profile
-      .col-md-4  
+      .col-md-4
         .row
           .form-group
             label.form-label.col-md-6(for='name') Name
             .col-md-6
-              input#name.form-control(type='text', name='name', style='width:250px', value='#{name}', autofocus='')
+              input#name.form-control(type='text', name='name', style='width:250px', value=name, autofocus='')
         .row
           .form-group
             label.form-label.col-md-6(for='email') Email
             .col-md-6
-              input#email.form-control(type='email', name='email', style='width:250px', value='#{email}')
+              input#email.form-control(type='email', name='email', style='width:250px', value=email)
         .row
           .form-group
             label.form-label.col-md-6(for='password') Password
@@ -34,5 +34,5 @@ html
               input#confirmPass.form-control(type='password', name='confirmPass')
 
         button#do-update.btn.btn-success(type='submit') Update profile
-        form(style='display:inline', method='get', action='./dashboard')  
+        form(style='display:inline', method='get', action='./dashboard')
           button.btn.btn-default(type='submit') Cancel

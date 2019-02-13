@@ -59,7 +59,7 @@ app.set('port', process.env.PORT || 8080);
 mongoose.connect(config.db[app.settings.env]);
 
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
 app.use(bodyParser.json());
@@ -83,32 +83,32 @@ app.use('/bower', serveStatic(path.join(__dirname, 'bower_components')));
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-app.get('/', function (req, res) { res.render('participant-access.jade'); });
-app.get('/new-welcome', function (req, res) { res.render('participant-access.jade'); });
-app.get('/admin', function (req, res) { res.render('admin.jade'); });
+app.get('/', function (req, res) { res.render('participant-access.pug'); });
+app.get('/new-welcome', function (req, res) { res.render('participant-access.pug'); });
+app.get('/admin', function (req, res) { res.render('admin.pug'); });
 app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
 
 app.post('/sessions', sessions.createSession);
 app.post('/participant-sessions', sessions.participantSession);
 
 app.get('/a/:accountId', authenticate, function (req, res) {
-    res.render('dashboard.jade');
+    res.render('dashboard.pug');
 });
 app.get('/a/:accountId/dashboard', authenticate, function (req, res) {
-    res.render('dashboard.jade');
+    res.render('dashboard.pug');
 });
 app.get('/a/:accountId/microworlds/:microworldId', authenticate, function (req, res) {
-    res.render('microworld.jade');
+    res.render('microworld.pug');
 });
 app.get('/a/:accountId/new/microworld', authenticate, function (req, res) {
-    res.render('microworld.jade');
+    res.render('microworld.pug');
 });
 app.get('/a/:accountId/runs/:runId', authenticate, function (req, res) {
-    res.render('run-results.jade');
+    res.render('run-results.pug');
 });
 app.get('/a/:accountId/profile', experimenters.displayProfileUpdate);
 app.get('/fish', function (req, res) {
-    res.render('fish.jade');
+    res.render('fish.pug');
 });
 
 app.get('/microworlds', isUser, microworlds.list);
