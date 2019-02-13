@@ -49,11 +49,11 @@
     "winston": "^2.4.4"
   },
   "devDependencies": {
-    "blanket-node": "^2.0.0-beta1",
-    "coveralls": "^2.11.2",
+    "blanket-node": "^2.0.0",
+    "coveralls": "^3.0.2",
     "mocha": "^5.2.0",
     "mocha-lcov-reporter": "^1.3.0",
-    "should": "2.1.1",
+    "should": "^13.2.3",
     "superagent": "0.15.7",
     "supertest": "0.8.2"
   },
