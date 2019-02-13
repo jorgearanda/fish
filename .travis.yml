@@ -5,6 +5,8 @@ node_js:
 services:
   - mongodb
 script:
-  - npm run-script test-travis
+  - npm test
+after_success:
+  - npm run coverage
 notifications:
   email: false
