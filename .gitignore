@@ -6,3 +6,5 @@ fish.sublime-project
 fish.sublime-workspace
 *.DS_Store
 *.swp
+.nyc_output/
+coverage/
