@@ -1,33 +1,30 @@
-'use strict';
-/*jshint -W024 */
+import bodyParser from 'body-parser';
+//var bodyParser = require('body-parser');
+import cookieParser from 'cookie-parser';
+import express from 'express';
+import http from 'http';
+import logger from 'winston';
+import methodOverride from 'method-override';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+import path from 'path';
+import favicon from 'serve-favicon';
+import serveStatic from 'serve-static';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import socketio from 'socket.io';
 
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var express = require('express');
-var http = require('http');
-var logger = require('winston');
-var methodOverride = require('method-override');
-var mongoose = require('mongoose');
-var morgan = require('morgan');
-var path = require('path');
-var favicon = require('serve-favicon');
-var serveStatic = require('serve-static');
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
-var socketio = require('socket.io');
+import { isUser, authenticate } from './middlewares/access';
+import config from './config';
+import engine from './engine/engine';
+import experimenters from './routes/experimenters';
+import microworlds from './routes/microworlds';
+import runs from './routes/runs';
+import sessions from './routes/sessions';
 
-var access = require('./middlewares/access');
-var config = require('./config');
-var engine = require('./engine/engine');
-var experimenters = require('./routes/experimenters');
-var microworlds = require('./routes/microworlds');
-var runs = require('./routes/runs');
-var sessions = require('./routes/sessions');
+import errorHandler from 'errorhandler'; // after loading the routes
 
-var errorHandler = require('errorhandler'); // after loading the routes
-
-var isUser = access.isUser;
-var authenticate = access.authenticate;
+const store = MongoStore(session);
 
 var app = (exports.app = express());
 
@@ -38,10 +35,7 @@ logger.add(logger.transports.File, {
 });
 
 if (process.env.NODE_ENV === 'test') {
-  logger.info('running in test mode :)');
   logger.remove(logger.transports.Console);
-} else {
-  logger.error('running out of test mode!');
 }
 
 if (app.settings.env === 'development') {
@@ -74,7 +68,7 @@ app.use(cookieParser('life is better under the sea'));
 app.use(
   session({
     secret: 'life is better under the sea',
-    store: new MongoStore({ mongooseConnection: mongoose.connections[0] }),
+    store: new store({ mongooseConnection: mongoose.connections[0] }),
     cookie: { maxAge: null },
   })
 );
