@@ -39,7 +39,10 @@ logger.add(logger.transports.File, {
 });
 
 if (process.env.NODE_ENV === 'test') {
+  logger.info('running in test mode :)')
     logger.remove(logger.transports.Console);
+} else {
+  logger.error('running out of test mode!');
 }
 
 if (app.settings.env === 'development') {
@@ -58,10 +61,10 @@ app.set('port', process.env.PORT || 8080);
 
 mongoose.connect(config.db[app.settings.env]);
 
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'pug');
 
-app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, '../favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(methodOverride());
@@ -73,8 +76,8 @@ app.use(session({
     cookie: { maxAge: null }
 }));
 
-app.use('/public', serveStatic(path.join(__dirname, 'public')));
-app.use('/bower', serveStatic(path.join(__dirname, 'bower_components')));
+app.use('/public', serveStatic(path.join(__dirname, '../public')));
+app.use('/bower', serveStatic(path.join(__dirname, '../bower_components')));
 
 
 ///////////////////////////////////////////////////////////////////////////////

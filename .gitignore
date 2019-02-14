@@ -8,3 +8,4 @@ fish.sublime-workspace
 *.swp
 .nyc_output/
 coverage/
+dist/

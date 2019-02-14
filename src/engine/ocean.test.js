@@ -3,12 +3,12 @@
 
 var should = require('should');
 
-var Ocean = require('../../engine/ocean').Ocean;
+var Ocean = require('./ocean').Ocean;
 var o, io, mw;
 
 describe('Engine - Ocean', function () {
     beforeEach(function (done) {
-        io = require('../../app').io;
+        io = require('../app').io;
         mw = {
             name: 'Test Microworld',
             experimenter: {
