@@ -24,37 +24,38 @@ var microworlds = require('./routes/microworlds');
 var runs = require('./routes/runs');
 var sessions = require('./routes/sessions');
 
-var errorHandler = require('errorhandler');  // after loading the routes
+var errorHandler = require('errorhandler'); // after loading the routes
 
 var isUser = access.isUser;
 var authenticate = access.authenticate;
 
-var app = exports.app = express();
-
+var app = (exports.app = express());
 
 logger.cli();
 logger.add(logger.transports.File, {
-    filename: 'fish.log',
-    handleExceptions: false
+  filename: 'fish.log',
+  handleExceptions: false,
 });
 
 if (process.env.NODE_ENV === 'test') {
-  logger.info('running in test mode :)')
-    logger.remove(logger.transports.Console);
+  logger.info('running in test mode :)');
+  logger.remove(logger.transports.Console);
 } else {
   logger.error('running out of test mode!');
 }
 
 if (app.settings.env === 'development') {
-    process.env.NODE_ENV = 'development';
-    app.use(morgan('dev'));
-    app.use(errorHandler());
+  process.env.NODE_ENV = 'development';
+  app.use(morgan('dev'));
+  app.use(errorHandler());
 } else if (app.settings.env === 'production') {
-    var loggerStream = {
-        write: function (message) { logger.info(message.slice(0, -1)); }
-    };
+  var loggerStream = {
+    write: function(message) {
+      logger.info(message.slice(0, -1));
+    },
+  };
 
-    app.use(morgan({ stream: loggerStream }));
+  app.use(morgan({ stream: loggerStream }));
 }
 
 app.set('port', process.env.PORT || 8080);
@@ -70,15 +71,16 @@ app.use(bodyParser.urlencoded());
 app.use(methodOverride());
 
 app.use(cookieParser('life is better under the sea'));
-app.use(session({
+app.use(
+  session({
     secret: 'life is better under the sea',
     store: new MongoStore({ mongooseConnection: mongoose.connections[0] }),
-    cookie: { maxAge: null }
-}));
+    cookie: { maxAge: null },
+  })
+);
 
 app.use('/public', serveStatic(path.join(__dirname, '../public')));
 app.use('/bower', serveStatic(path.join(__dirname, '../bower_components')));
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
@@ -86,32 +88,40 @@ app.use('/bower', serveStatic(path.join(__dirname, '../bower_components')));
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-app.get('/', function (req, res) { res.render('participant-access.pug'); });
-app.get('/new-welcome', function (req, res) { res.render('participant-access.pug'); });
-app.get('/admin', function (req, res) { res.render('admin.pug'); });
-app.get('/ping', function (req, res) { res.send('pong'); }); // Sanity check
+app.get('/', function(req, res) {
+  res.render('participant-access.pug');
+});
+app.get('/new-welcome', function(req, res) {
+  res.render('participant-access.pug');
+});
+app.get('/admin', function(req, res) {
+  res.render('admin.pug');
+});
+app.get('/ping', function(req, res) {
+  res.send('pong');
+}); // Sanity check
 
 app.post('/sessions', sessions.createSession);
 app.post('/participant-sessions', sessions.participantSession);
 
-app.get('/a/:accountId', authenticate, function (req, res) {
-    res.render('dashboard.pug');
+app.get('/a/:accountId', authenticate, function(req, res) {
+  res.render('dashboard.pug');
 });
-app.get('/a/:accountId/dashboard', authenticate, function (req, res) {
-    res.render('dashboard.pug');
+app.get('/a/:accountId/dashboard', authenticate, function(req, res) {
+  res.render('dashboard.pug');
 });
-app.get('/a/:accountId/microworlds/:microworldId', authenticate, function (req, res) {
-    res.render('microworld.pug');
+app.get('/a/:accountId/microworlds/:microworldId', authenticate, function(req, res) {
+  res.render('microworld.pug');
 });
-app.get('/a/:accountId/new/microworld', authenticate, function (req, res) {
-    res.render('microworld.pug');
+app.get('/a/:accountId/new/microworld', authenticate, function(req, res) {
+  res.render('microworld.pug');
 });
-app.get('/a/:accountId/runs/:runId', authenticate, function (req, res) {
-    res.render('run-results.pug');
+app.get('/a/:accountId/runs/:runId', authenticate, function(req, res) {
+  res.render('run-results.pug');
 });
 app.get('/a/:accountId/profile', experimenters.displayProfileUpdate);
-app.get('/fish', function (req, res) {
-    res.render('fish.pug');
+app.get('/fish', function(req, res) {
+  res.render('fish.pug');
 });
 
 app.get('/microworlds', isUser, microworlds.list);
@@ -127,18 +137,18 @@ app.post('/experimenters', experimenters.create);
 app.put('/experimenters/:id', isUser, experimenters.update);
 
 var server = http.createServer(app);
-var io = exports.io = socketio.listen(server, {
-    logger: {
-        debug: logger.debug,
-        info: logger.info,
-        warn: logger.warn,
-        error: logger.error
-    }
-});
+var io = (exports.io = socketio.listen(server, {
+  logger: {
+    debug: logger.debug,
+    info: logger.info,
+    warn: logger.warn,
+    error: logger.error,
+  },
+}));
 
-var ioAdmin = exports.ioAdmin = io.of('/admin');
+var ioAdmin = (exports.ioAdmin = io.of('/admin'));
 engine.engine(io, ioAdmin);
 
-server.listen(app.get('port'), function () {
-    logger.info('Fish server listening on port ' + app.get('port'));
+server.listen(app.get('port'), function() {
+  logger.info('Fish server listening on port ' + app.get('port'));
 });
