@@ -4,7 +4,6 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const DbId = require('./db-id').DbId;
 
-
 describe('DbId', () => {
   const validIdString = '52d823fca288c98f65000000';
   const invalidIdString = 'nope';
@@ -23,5 +22,5 @@ describe('DbId', () => {
     assert(dbId.asObjectId === null, 'Expected an invalid id to return null');
 
     return done();
-  })
+  });
 });

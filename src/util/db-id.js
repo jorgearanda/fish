@@ -1,6 +1,5 @@
 const ObjectId = require('mongoose').Types.ObjectId;
 
-
 class DbId {
   constructor(id_string) {
     this.id_string = id_string;
@@ -12,7 +11,7 @@ class DbId {
   }
 
   isValid() {
-    return (this._objectId instanceof ObjectId);
+    return this._objectId instanceof ObjectId;
   }
 
   get asObjectId() {

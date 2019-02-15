@@ -5,7 +5,6 @@ import request from 'supertest';
 import { app } from '../app';
 import { Experimenter } from '../models/experimenter-model';
 
-
 describe('GET /a/:id/profile', () => {
   let account_id;
   const exp = {
@@ -22,7 +21,7 @@ describe('GET /a/:id/profile', () => {
     });
   });
 
-  it('should return a profile for the experimenter account', (done) => {
+  it('should return a profile for the experimenter account', done => {
     request(app)
       .get('/a/' + account_id + '/profile')
       .expect(200)
@@ -36,7 +35,7 @@ describe('GET /a/:id/profile', () => {
       });
   });
 
-  it('should 404 on a profile for a non-existent account', (done) => {
+  it('should 404 on a profile for a non-existent account', done => {
     request(app)
       .get('/a/notAValidId/profile')
       .expect(404)
