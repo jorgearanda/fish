@@ -8,10 +8,6 @@ const DbId = require('../util/db-id').DbId;
 // GET /a/:id/profile
 exports.displayProfileUpdate = function(req, res) {
   const id = new DbId(req.params.accountId);
-  if (!id.isValid()) {
-    return res.sendStatus(404);
-  }
-
   Experimenter.findOne({ _id: id.asObjectId }, function(err, exp) {
     if (err) {
       log.error('Error retrieving experimenter on /a/:accountId/profile', err);
