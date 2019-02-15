@@ -3,11 +3,11 @@
 var log = require('winston');
 
 var Experimenter = require('../models/experimenter-model').Experimenter;
-var ObjectId = require('mongoose').Types.ObjectId;
+const DbId = require('../util/db-id').DbId;
 
-// GET /account/:id/profile
+// GET /a/:id/profile
 exports.displayProfileUpdate = function(req, res) {
-  const id = new Id(req.params.accountId);
+  const id = new DbId(req.params.accountId);
   if (!id.isValid()) {
     return res.sendStatus(404);
   }
@@ -95,7 +95,7 @@ exports.update = function(req, res) {
 };
 
 function updateExperimenter(req, res, exp) {
-  Experimenter.update({ _id: new ObjectId(req.params.id) }, exp, function(err, numUpdated) {
+  Experimenter.update({ _id: new DbId(req.params.id) }, exp, function(err, numUpdated) {
     if (err) {
       log.error('Error on PUT /experimenters/' + req.params.id, err);
       return res.send(500);
@@ -108,23 +108,4 @@ function updateExperimenter(req, res, exp) {
 
     return res.send(204);
   });
-}
-
-class Id {
-  constructor(id_string) {
-    this.id_string = id_string;
-  }
-
-  isValid() {
-    try {
-      new ObjectId(this.id_string);
-    } catch (error) {
-      return false;
-    }
-    return true;
-  }
-
-  get asObjectId() {
-    return new ObjectId(this.id_string);
-  }
 }
