@@ -5,7 +5,7 @@ var should = require('should');
 var mongoose = require('mongoose');
 var request = require('supertest');
 
-var testUtils = require('./unit-utils');
+require('./unit-utils');
 var app = require('./app').app;
 
 describe('Sanity checks', function() {
