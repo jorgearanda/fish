@@ -4,19 +4,19 @@ const ObjectId = require('mongoose').Types.ObjectId;
 class DbId {
   constructor(id_string) {
     this.id_string = id_string;
+    try {
+      this._objectId = new ObjectId(this.id_string);
+    } catch (error) {
+      this._objectId = null;
+    }
   }
 
   isValid() {
-    try {
-      new ObjectId(this.id_string);
-    } catch (error) {
-      return false;
-    }
-    return true;
+    return (this._objectId instanceof ObjectId);
   }
 
   get asObjectId() {
-    return new ObjectId(this.id_string);
+    return this._objectId;
   }
 }
 
