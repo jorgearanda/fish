@@ -15,8 +15,7 @@ describe('GET /a/:id/profile', () => {
     passwordHash: 'notReallyAHash',
   };
 
-  beforeEach((done) => {
-    // createExperimenter(exp).then(() => done());
+  beforeEach(done => {
     Experimenter.create(exp, (_, doc) => {
       account_id = doc.id;
       return done();
@@ -33,15 +32,17 @@ describe('GET /a/:id/profile', () => {
         assert(res.text.includes(exp.username), 'Bad username');
         assert(res.text.includes(exp.name), 'Bad name');
         assert(res.text.includes(exp.email), 'Bad email');
+        return done();
+      });
+  });
 
+  it('should 404 on a profile for a non-existent account', (done) => {
+    request(app)
+      .get('/a/notAValidId/profile')
+      .expect(404)
+      .end(err => {
+        assert(err === null, err);
         return done();
       });
   });
 });
-
-// async function not working
-// async function createExperimenter(exp) {
-//   Experimenter.create(exp, (_, doc) => {
-//     return doc.id;
-//   });
-// }

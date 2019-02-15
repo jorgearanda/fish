@@ -7,13 +7,21 @@ var ObjectId = require('mongoose').Types.ObjectId;
 
 // GET /account/:id/profile
 exports.displayProfileUpdate = function(req, res) {
-  Experimenter.findOne({ _id: new ObjectId(req.params.accountId) }, function(err, exp) {
-    if (err || !exp) {
-      log.error('Could not retrieve experimenter on /a/:accountId/profile', err);
-      res.send(500);
+  const id = new Id(req.params.accountId);
+  if (!id.isValid()) {
+    return res.sendStatus(404);
+  }
+
+  Experimenter.findOne({ _id: id.asObjectId }, function(err, exp) {
+    if (err) {
+      log.error('Error retrieving experimenter on /a/:accountId/profile', err);
+      return res.sendStatus(500);
+    }
+    if (!exp) {
+      return res.sendStatus(404);
     }
 
-    res.render('profile.pug', {
+    return res.render('profile.pug', {
       name: exp.name,
       email: exp.email,
     });
@@ -100,4 +108,23 @@ function updateExperimenter(req, res, exp) {
 
     return res.send(204);
   });
+}
+
+class Id {
+  constructor(id_string) {
+    this.id_string = id_string;
+  }
+
+  isValid() {
+    try {
+      new ObjectId(this.id_string);
+    } catch (error) {
+      return false;
+    }
+    return true;
+  }
+
+  get asObjectId() {
+    return new ObjectId(this.id_string);
+  }
 }
