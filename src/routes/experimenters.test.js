@@ -5,7 +5,6 @@ const request = require('supertest');
 const app = require('../app').app;
 const Experimenter = require('../models/experimenter-model').Experimenter;
 
-let account_id;
 const experimenter = {
   username: 'honeydew',
   name: 'Professor Honeydew',
@@ -19,19 +18,19 @@ const anotherExperimenter = {
   email: 'beaker@muppets.show',
   passwordHash: 'we do not need a valid hash',
 };
+let account_id;
 let agent;
 
 describe('GET /a/:id/profile', () => {
   describe('when a user is logged in', () => {
     beforeEach(done => {
-      Experimenter.create(experimenter, (_, doc) => {
-        account_id = doc.id;
-        agent = request.agent(app);
-        agent
-          .post('/sessions')
-          .send({ username: experimenter.username, password: experimenter.rawPassword })
-          .end(() => done());
-      });
+      createUser(experimenter)
+        .then(doc => getAgentForUser(doc, experimenter.rawPassword))
+        .then(result => {
+          account_id = result.doc.id;
+          agent = result.agent;
+          return done();
+        });
     });
 
     it('should return a profile for the experimenter account', done => {
@@ -60,9 +59,9 @@ describe('GET /a/:id/profile', () => {
     });
 
     it('should redirect to login when trying to access another valid profile', done => {
-      Experimenter.create(anotherExperimenter, (_, anotherDoc) => {
+      createUser(anotherExperimenter).then(doc => {
         agent
-          .get('/a/' + anotherDoc.id + '/profile')
+          .get('/a/' + doc.id + '/profile')
           .expect(302)
           .end((err, res) => {
             assert(err === null, err);
@@ -75,7 +74,7 @@ describe('GET /a/:id/profile', () => {
 
   describe('when a user is *not* logged in', () => {
     beforeEach(done => {
-      Experimenter.create(experimenter, (_, doc) => {
+      createUser(experimenter).then(doc => {
         account_id = doc.id;
         agent = request.agent(app);
         return done();
@@ -94,3 +93,25 @@ describe('GET /a/:id/profile', () => {
     });
   });
 });
+
+function createUser(fields) {
+  return new Promise((resolve, reject) => {
+    Experimenter.create(fields, (err, doc) => {
+      if (err) reject(err);
+      resolve(doc);
+    });
+  });
+}
+
+function getAgentForUser(fields, rawPassword) {
+  return new Promise((resolve, reject) => {
+    const userAgent = request.agent(app);
+    userAgent
+      .post('/sessions')
+      .send({ username: fields.username, password: rawPassword })
+      .end(err => {
+        if (err) reject(err);
+        resolve({ doc: fields, agent: userAgent });
+      });
+  });
+}

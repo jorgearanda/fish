@@ -25,7 +25,10 @@ exports.createSession = function(req, res) {
         });
       },
       function checkPassword(exp, next) {
-        Experimenter.comparePasswords(password, exp.passwordHash, function onCompared(err, match) {
+        Experimenter.comparePasswords(password, exp.passwordHash, function onCompared(
+          err,
+          match
+        ) {
           if (err) return next({ message: err.message, status: 500 });
           if (!match) return next({ message: 'Invalid credentials', status: 409 });
 
