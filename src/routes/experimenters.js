@@ -6,17 +6,20 @@ const Experimenter = require('../models/experimenter-model').Experimenter;
 
 // GET /a/:id/profile
 exports.displayProfileUpdate = function(req, res) {
-  request.get('http://localhost:8080/experimenters/' + req.params.accountId, (err, apiResponse, body) => {
-    if (apiResponse.statusCode !== 200) {
-      return res.sendStatus(apiResponse.statusCode);
-    }
+  request.get(
+    'http://localhost:8080/experimenters/' + req.params.accountId,
+    (err, apiResponse, body) => {
+      if (apiResponse.statusCode !== 200) {
+        return res.sendStatus(apiResponse.statusCode);
+      }
 
-    const exp = JSON.parse(body);
-    return res.render('profile.pug', {
-      name: exp.name,
-      email: exp.email,
-    });
-  });
+      const exp = JSON.parse(body);
+      return res.render('profile.pug', {
+        name: exp.name,
+        email: exp.email,
+      });
+    }
+  );
 };
 
 // GET /experimenters/:id
@@ -81,7 +84,12 @@ exports.update = function(req, res) {
     if (req.body.email) {
       var atpos = req.body.email.indexOf('@');
       var dotpos = req.body.email.lastIndexOf('.');
-      if (atpos < 1 || dotpos < atpos || dotpos + 2 >= req.body.email.length || dotpos <= 2) {
+      if (
+        atpos < 1 ||
+        dotpos < atpos ||
+        dotpos + 2 >= req.body.email.length ||
+        dotpos <= 2
+      ) {
         return res.status(409).send('email conflict');
       }
       exp.email = req.body.email;

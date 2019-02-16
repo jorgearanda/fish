@@ -1,5 +1,5 @@
 {
-  "printWidth": 120,
+  "printWidth": 88,
   "filepath": "./src/**/*.js",
   "useTabs": false,
   "tabWidth": 2,
