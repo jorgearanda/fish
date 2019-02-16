@@ -1,6 +1,4 @@
-'use strict';
-/*global beforeEach:true, afterEach:true*/
-
+/*global beforeEach:true*/
 process.env.NODE_ENV = 'test';
 
 var mongoose = require('mongoose');
@@ -18,7 +16,9 @@ beforeEach(function(done) {
         if (err) throw err;
 
         count += 1;
-        if (count >= total) return done();
+        if (count >= total) {
+          return done();
+        }
       });
     }
   }
@@ -44,9 +44,4 @@ beforeEach(function(done) {
   }
 
   checkState();
-});
-
-afterEach(function(done) {
-  mongoose.disconnect();
-  return done();
 });
