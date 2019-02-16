@@ -1,9 +1,9 @@
 /*global describe:true, beforeEach:true, it:true*/
-import assert from 'assert';
-import request from 'supertest';
+const assert = require('assert');
+const request = require('supertest');
 
-import { app } from '../app';
-import { Experimenter } from '../models/experimenter-model';
+const app = require('../app').app;
+const Experimenter = require('../models/experimenter-model').Experimenter;
 
 describe('GET /a/:id/profile', () => {
   let account_id;
