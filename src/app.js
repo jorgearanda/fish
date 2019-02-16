@@ -113,7 +113,7 @@ app.get('/a/:accountId/new/microworld', authenticate, function(req, res) {
 app.get('/a/:accountId/runs/:runId', authenticate, function(req, res) {
   res.render('run-results.pug');
 });
-app.get('/a/:accountId/profile', experimenters.displayProfileUpdate);
+app.get('/a/:accountId/profile', authenticate, experimenters.displayProfileUpdate);
 app.get('/fish', function(req, res) {
   res.render('fish.pug');
 });
