@@ -1,39 +1,30 @@
-'use strict';
 /*global describe:true, it:true*/
+const assert = require('assert');
+const request = require('supertest');
 
-var should = require('should');
-var mongoose = require('mongoose');
-var request = require('supertest');
+const app = require('./app').app;
 
-require('./unit-utils');
-var app = require('./app').app;
-
-describe('Sanity checks', function() {
-  describe('The test system', function() {
-    it('should run an isolated test', function(done) {
-      'hello'.should.equal('hello');
+describe('Sanity checks', () => {
+  describe('The test system', () => {
+    it('should run a simple test', done => {
+      assert('hello' === 'hello', 'The `hello` strings should match');
       return done();
     });
 
-    it('should perform tests in the test environment', function(done) {
-      process.env.NODE_ENV.should.equal('test');
-      return done();
-    });
-
-    it('should have a mongoose connection', function(done) {
-      mongoose.connection.readyState.should.equal(1);
+    it('should perform tests in the test environment', done => {
+      assert(process.env.NODE_ENV === 'test', 'The NODE_ENV should be `test`');
       return done();
     });
   });
 
-  describe('The web server', function() {
-    it('should respond to pings', function(done) {
+  describe('The web server', () => {
+    it('should respond to pings', done => {
       request(app)
         .get('/ping')
         .expect(200)
         .end(function(err, res) {
-          should.not.exist(err);
-          res.text.should.equal('pong');
+          assert(err === null, err);
+          assert(res.text === 'pong', 'The app did not return with a `pong`');
           return done();
         });
     });
