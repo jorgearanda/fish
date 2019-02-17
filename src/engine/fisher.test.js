@@ -7,11 +7,6 @@ var testUtils = require('../unit-utils');
 var Fisher = require('./fisher').Fisher;
 
 describe('Engine - Fisher', function() {
-  it('should initialize', function(done) {
-    var f = new Fisher('Mr. Tuna', 'bot', {}, {});
-    return done();
-  });
-
   it('should set new fishers with sensible defaults', function(done) {
     var f = new Fisher('Mr. Tuna', 'bot', {}, {});
     f.name.should.equal('Mr. Tuna');
@@ -19,9 +14,8 @@ describe('Engine - Fisher', function() {
     f.ready.should.equal(true);
     f.status.should.equal('At port');
     f.season.should.equal(0);
-    return done();
 
-    var f = new Fisher('A Participant', 'human', {}, {});
+    f = new Fisher('A Participant', 'human', {}, {});
     f.name.should.equal('A Participant');
     f.type.should.equal('human');
     f.ready.should.equal(false);
