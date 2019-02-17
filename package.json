@@ -10,7 +10,7 @@
     "build": "babel src -d dist",
     "serve": "node dist/app.js",
     "start": "npm run build && npm run serve",
-    "test": "nyc mocha --exit --recursive --require babel-register 'src/**/*.test.js'",
+    "test": "NODE_ENV=test nyc mocha --exit --recursive --require babel-register 'src/**/*.test.js'",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "./node_modules/eslint/bin/eslint.js 'src/**/*.js'",
     "style-check": "./node_modules/prettier/bin-prettier.js --check 'src/**/*.js'",

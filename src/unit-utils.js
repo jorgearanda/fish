@@ -1,47 +1,40 @@
-/*global beforeEach:true*/
-process.env.NODE_ENV = 'test';
+const mongoose = require('mongoose');
 
-var mongoose = require('mongoose');
+const config = require('./config');
 
-var config = require('./config');
+exports.setUpTestDb = function setUpTestDb() {
+  process.env.NODE_ENV = 'test';
+  return new Promise(resolve => {
+    connect()
+      .then(() => clearDatabase())
+      .then(() => resolve());
+  });
+};
 
-beforeEach(function(done) {
-  function clearDB() {
-    var total = Object.keys(mongoose.connection.collections).length;
-    if (total === 0) return done();
+function connect() {
+  return new Promise((resolve, reject) => {
+    mongoose.connect(config.db.test, err => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
+}
 
-    var count = 0;
-    for (var i in mongoose.connection.collections) {
-      mongoose.connection.collections[i].remove(function(err) {
-        if (err) throw err;
+function clearDatabase() {
+  return new Promise((resolve, reject) => {
+    const total = Object.keys(mongoose.connection.collections).length;
+    if (total === 0) resolve();
+
+    let count = 0;
+    for (let i in mongoose.connection.collections) {
+      mongoose.connection.collections[i].deleteMany({}, function(err) {
+        if (err) reject(err);
 
         count += 1;
         if (count >= total) {
-          return done();
+          resolve();
         }
       });
     }
-  }
-
-  function reconnect() {
-    mongoose.connect(config.db.test, function(err) {
-      if (err) throw err;
-      return clearDB();
-    });
-  }
-
-  function checkState() {
-    switch (mongoose.connection.readyState) {
-      case 0:
-        reconnect();
-        break;
-      case 1:
-        clearDB();
-        break;
-      default:
-        global.setImmediate(checkState);
-    }
-  }
-
-  checkState();
-});
+  });
+}

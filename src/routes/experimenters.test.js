@@ -4,6 +4,7 @@ const request = require('supertest');
 
 const app = require('../app').app;
 const Experimenter = require('../models/experimenter-model').Experimenter;
+const setUpTestDb = require('../unit-utils').setUpTestDb;
 
 const experimenter = {
   username: 'honeydew',
@@ -24,7 +25,8 @@ let agent;
 describe('GET /a/:id/profile', () => {
   describe('when a user is logged in', () => {
     beforeEach(done => {
-      createUser(experimenter)
+      setUpTestDb()
+        .then(() => createUser(experimenter))
         .then(doc => getAgentForUser(doc, experimenter.rawPassword))
         .then(result => {
           account_id = result.doc.id;
@@ -74,11 +76,13 @@ describe('GET /a/:id/profile', () => {
 
   describe('when a user is *not* logged in', () => {
     beforeEach(done => {
-      createUser(experimenter).then(doc => {
-        account_id = doc.id;
-        agent = request.agent(app);
-        return done();
-      });
+      setUpTestDb()
+        .then(() => createUser(experimenter))
+        .then(doc => {
+          account_id = doc.id;
+          agent = request.agent(app);
+          return done();
+        });
     });
 
     it('should not return a profile, even if it exists', done => {
