@@ -3,7 +3,6 @@
 
 var should = require('should');
 
-var testUtils = require('../unit-utils');
 var OceanLog = require('./ocean-log').OceanLog;
 
 describe('Engine - Ocean Log', function() {

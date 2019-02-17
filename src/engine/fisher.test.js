@@ -3,7 +3,6 @@
 
 var should = require('should');
 
-var testUtils = require('../unit-utils');
 var Fisher = require('./fisher').Fisher;
 
 describe('Engine - Fisher', function() {
