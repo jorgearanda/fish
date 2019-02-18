@@ -4,12 +4,16 @@ exports.isUser = function isUser(req, res, next) {
 };
 
 // Used for checking experimenter authentication
-exports.authenticate = function(req, res, next) {
-  if (req.session && req.session.userId) {
-    if (req.session.userId === req.params.accountId) {
-      return next();
-    }
+function isUserSameAsParamsId(req, res, next) {
+  if (
+    req.session &&
+    req.session.userId &&
+    req.session.userId === req.params.accountId
+  ) {
+    return next();
+  } else {
     return res.redirect('/admin');
   }
-  return res.redirect('/admin');
-};
+}
+
+exports.isUserSameAsParamsId = isUserSameAsParamsId;

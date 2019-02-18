@@ -14,7 +14,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import socketio from 'socket.io';
 
-import { isUser, authenticate } from './middlewares/access';
+import { isUser, isUserSameAsParamsId } from './middlewares/access';
 import config from './config';
 import engine from './engine/engine';
 import experimenters from './routes/experimenters';
@@ -98,22 +98,29 @@ app.get('/ping', function(req, res) {
 app.post('/sessions', sessions.createSession);
 app.post('/participant-sessions', sessions.participantSession);
 
-app.get('/a/:accountId', authenticate, function(req, res) {
+app.get('/a/:accountId', isUserSameAsParamsId, function(req, res) {
   res.render('dashboard.pug');
 });
-app.get('/a/:accountId/dashboard', authenticate, function(req, res) {
+app.get('/a/:accountId/dashboard', isUserSameAsParamsId, function(req, res) {
   res.render('dashboard.pug');
 });
-app.get('/a/:accountId/microworlds/:microworldId', authenticate, function(req, res) {
+app.get('/a/:accountId/microworlds/:microworldId', isUserSameAsParamsId, function(
+  req,
+  res
+) {
   res.render('microworld.pug');
 });
-app.get('/a/:accountId/new/microworld', authenticate, function(req, res) {
+app.get('/a/:accountId/new/microworld', isUserSameAsParamsId, function(req, res) {
   res.render('microworld.pug');
 });
-app.get('/a/:accountId/runs/:runId', authenticate, function(req, res) {
+app.get('/a/:accountId/runs/:runId', isUserSameAsParamsId, function(req, res) {
   res.render('run-results.pug');
 });
-app.get('/a/:accountId/profile', authenticate, experimenters.displayProfileUpdate);
+app.get(
+  '/a/:accountId/profile',
+  isUserSameAsParamsId,
+  experimenters.displayProfileUpdate
+);
 app.get('/fish', function(req, res) {
   res.render('fish.pug');
 });
