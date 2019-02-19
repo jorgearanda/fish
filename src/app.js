@@ -1,5 +1,4 @@
 import bodyParser from 'body-parser';
-//var bodyParser = require('body-parser');
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import http from 'http';
@@ -91,12 +90,23 @@ app.get('/new-welcome', function(req, res) {
 app.get('/admin', function(req, res) {
   res.render('admin.pug');
 });
+app.get('/super', function(req, res) {
+  res.render('super.pug');
+});
 app.get('/ping', function(req, res) {
   res.send('pong');
 }); // Sanity check
 
+app.post('/superuser-sessions', sessions.createSuperuserSession);
 app.post('/sessions', sessions.createSession);
 app.post('/participant-sessions', sessions.participantSession);
+
+app.get('/s/:accountId', isUserSameAsParamsId, function(req, res) {
+  res.render('super-dashboard.pug');
+});
+app.get('/s/:accountId/dashboard', isUserSameAsParamsId, function(req, res) {
+  res.render('super-dashboard.pug');
+});
 
 app.get('/a/:accountId', isUserSameAsParamsId, function(req, res) {
   res.render('dashboard.pug');
