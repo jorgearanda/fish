@@ -1,5 +1,10 @@
 exports.isUser = function isUser(req, res, next) {
-  if (!req.session || !req.session.userId) return res.send(401);
+  if (!req.session || !req.session.userId) return res.sendStatus(401);
+  return next();
+};
+
+exports.isSuperuser = function isSuperuser(req, res, next) {
+  if (!req.session || !req.session.superuser) return res.sendStatus(401);
   return next();
 };
 

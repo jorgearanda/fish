@@ -13,7 +13,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import socketio from 'socket.io';
 
-import { isUser, isUserSameAsParamsId } from './middlewares/access';
+import { isUser, isSuperuser, isUserSameAsParamsId } from './middlewares/access';
 import config from './config';
 import engine from './engine/engine';
 import experimenters from './routes/experimenters';
@@ -144,7 +144,7 @@ app.delete('/microworlds/:id', isUser, microworlds.delete);
 app.get('/runs', isUser, runs.list);
 app.get('/runs/:id', isUser, runs.show);
 
-app.get('/experimenters', experimenters.list);
+app.get('/experimenters', isSuperuser, experimenters.list);
 app.get('/experimenters/:id', experimenters.details);
 app.post('/experimenters', experimenters.create);
 app.put('/experimenters/:id', isUser, experimenters.update);

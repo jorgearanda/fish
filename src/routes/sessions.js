@@ -97,6 +97,7 @@ exports.createSuperuserSession = function(req, res) {
 
       req.session.username = username;
       req.session.userId = sup._id;
+      req.session.superuser = true;
       log.info('Valid login for superuser ' + username);
       return res.status(200).send(sup);
     }
