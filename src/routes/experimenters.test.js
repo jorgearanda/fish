@@ -98,6 +98,30 @@ describe('GET /a/:id/profile', () => {
   });
 });
 
+describe('GET /experimenters', () => {
+  beforeEach(done => {
+    setUpTestDb()
+      .then(() => createUser(experimenter))
+      .then(() => createUser(anotherExperimenter))
+      .then(doc => getAgentForUser(doc, experimenter.rawPassword))
+      .then(result => {
+        account_id = result.doc.id;
+        agent = result.agent;
+        return done();
+      });
+  });
+
+  it('should return a list with all experimenters', done => {
+    const superuserAgent = request.agent(app);
+    superuserAgent.get('/experimenters').end((err, res) => {
+      assert(err === null, err);
+      assert(res.statusCode === 200, 'Status code should be 200');
+      assert(res.body.length === 2, 'Should return two experimenters');
+      return done();
+    });
+  });
+});
+
 function createUser(fields) {
   return new Promise((resolve, reject) => {
     Experimenter.create(fields, (err, doc) => {

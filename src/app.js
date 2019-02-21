@@ -144,6 +144,7 @@ app.delete('/microworlds/:id', isUser, microworlds.delete);
 app.get('/runs', isUser, runs.list);
 app.get('/runs/:id', isUser, runs.show);
 
+app.get('/experimenters', experimenters.list);
 app.get('/experimenters/:id', experimenters.details);
 app.post('/experimenters', experimenters.create);
 app.put('/experimenters/:id', isUser, experimenters.update);

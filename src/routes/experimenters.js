@@ -22,6 +22,13 @@ exports.displayProfileUpdate = function(req, res) {
   );
 };
 
+// GET /experimenters
+exports.list = function list(req, res) {
+  Experimenter.find({}, function(_, docs) {
+    return res.status(200).send(docs);
+  });
+};
+
 // GET /experimenters/:id
 exports.details = function details(req, res) {
   const id = new DbId(req.params.id);
