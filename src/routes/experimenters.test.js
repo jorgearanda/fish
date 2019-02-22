@@ -153,6 +153,59 @@ describe('GET /experimenters', () => {
   });
 });
 
+describe('POST /experimenters', () => {
+  describe('when a superuser is making the request', () => {
+    beforeEach(done => {
+      setUpTestDb()
+        .then(() => createUser(Superuser, superuser))
+        .then(doc => getAgentForUser('/superuser-sessions', doc, superuser.rawPassword))
+        .then(result => {
+          account_id = result.doc.id;
+          agent = result.agent;
+          return done();
+        });
+    });
+
+    it('should create a new experimenter record', done => {
+      agent
+        .post('/experimenters')
+        .send(experimenter)
+        .end((err, res) => {
+          assert(err === null, err);
+          assert(res.statusCode === 200, 'Status code should be 200');
+          assert(res.body.username === experimenter.username);
+          assert(res.body.id !== null);
+          assert(res.body.rawPassword === undefined);
+          return done();
+        });
+    });
+  });
+
+  describe('when a non-superuser is making the request', () => {
+    beforeEach(done => {
+      setUpTestDb()
+        .then(() => createUser(Experimenter, experimenter))
+        .then(doc => getAgentForUser('/sessions', doc, experimenter.rawPassword))
+        .then(result => {
+          account_id = result.doc.id;
+          agent = result.agent;
+          return done();
+        });
+    });
+
+    it('should return 401', done => {
+      agent
+        .post('/experimenters')
+        .send(anotherExperimenter)
+        .end((err, res) => {
+          assert(err === null, err);
+          assert(res.statusCode === 401, 'Status code should be 401');
+          return done();
+        });
+    });
+  });
+});
+
 function createUser(model, fields) {
   return new Promise((resolve, reject) => {
     model.create(fields, (err, doc) => {

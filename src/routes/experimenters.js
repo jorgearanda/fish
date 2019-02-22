@@ -54,19 +54,9 @@ exports.create = function(req, res) {
     email: req.body.email,
   };
 
-  Experimenter.hashPassword(req.body.rawPassword, function done(err, pwd) {
-    if (err) {
-      log.error('Error on /experimenters POST', err);
-      return res.send(500);
-    }
-
+  Experimenter.hashPassword(req.body.rawPassword, function done(_, pwd) {
     exp.passwordHash = pwd;
-    Experimenter.create(exp, function(err, doc) {
-      if (err) {
-        log.error('Error on /experimenters POST', err);
-        return res.send(500);
-      }
-
+    Experimenter.create(exp, function(_, doc) {
       return res.status(200).send(doc);
     });
   });

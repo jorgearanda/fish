@@ -145,8 +145,8 @@ app.get('/runs', isUser, runs.list);
 app.get('/runs/:id', isUser, runs.show);
 
 app.get('/experimenters', isSuperuser, experimenters.list);
+app.post('/experimenters', isSuperuser, experimenters.create);
 app.get('/experimenters/:id', experimenters.details);
-app.post('/experimenters', experimenters.create);
 app.put('/experimenters/:id', isUser, experimenters.update);
 
 var server = http.createServer(app);
