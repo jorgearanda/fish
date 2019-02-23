@@ -13,7 +13,12 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import socketio from 'socket.io';
 
-import { isUser, isSuperuser, isUserSameAsParamsId } from './middlewares/access';
+import {
+  isUser,
+  isSuperuser,
+  isSuperuserOrAllowedUser,
+  isUserSameAsParamsId,
+} from './middlewares/access';
 import config from './config';
 import engine from './engine/engine';
 import experimenters from './routes/experimenters';
@@ -146,7 +151,7 @@ app.get('/runs/:id', isUser, runs.show);
 
 app.get('/experimenters', isSuperuser, experimenters.list);
 app.post('/experimenters', isSuperuser, experimenters.create);
-app.get('/experimenters/:id', experimenters.details);
+app.get('/experimenters/:id', isSuperuserOrAllowedUser, experimenters.details);
 app.put('/experimenters/:id', isUser, experimenters.update);
 
 var server = http.createServer(app);

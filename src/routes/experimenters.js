@@ -7,7 +7,12 @@ const Experimenter = require('../models/experimenter-model').Experimenter;
 // GET /a/:id/profile
 exports.displayProfileUpdate = function(req, res) {
   request.get(
-    'http://localhost:8080/experimenters/' + req.params.accountId,
+    {
+      url: 'http://localhost:8080/experimenters/' + req.params.accountId,
+      headers: {
+        cookie: req.headers.cookie,
+      },
+    },
     (err, apiResponse, body) => {
       if (apiResponse.statusCode !== 200) {
         return res.sendStatus(apiResponse.statusCode);

@@ -206,6 +206,69 @@ describe('POST /experimenters', () => {
   });
 });
 
+describe('GET /experimenters/:id', () => {
+  describe('when a superuser is making the request', () => {
+    let experimenterId;
+    beforeEach(done => {
+      setUpTestDb()
+        .then(() => createUser(Experimenter, experimenter))
+        .then(exp => (experimenterId = exp.id))
+        .then(() => createUser(Experimenter, anotherExperimenter))
+        .then(() => createUser(Superuser, superuser))
+        .then(doc => getAgentForUser('/superuser-sessions', doc, superuser.rawPassword))
+        .then(result => {
+          account_id = result.doc.id;
+          agent = result.agent;
+          return done();
+        });
+    });
+
+    it('should return the details of the experimenter requested', done => {
+      agent.get('/experimenters/' + experimenterId).end((err, res) => {
+        assert(err === null, err);
+        assert(res.statusCode === 200, 'Status code should be 200');
+        assert(res.body.username === experimenter.username);
+        assert(res.body.name === experimenter.name);
+        return done();
+      });
+    });
+  });
+
+  describe('when a user is making the request', () => {
+    let anotherExperimenterId;
+    beforeEach(done => {
+      setUpTestDb()
+        .then(() => createUser(Experimenter, anotherExperimenter))
+        .then(exp => (anotherExperimenterId = exp.id))
+        .then(() => createUser(Experimenter, experimenter))
+        .then(doc => getAgentForUser('/sessions', doc, experimenter.rawPassword))
+        .then(result => {
+          account_id = result.doc.id;
+          agent = result.agent;
+          return done();
+        });
+    });
+
+    it('should return the details for their own record', done => {
+      agent.get('/experimenters/' + account_id).end((err, res) => {
+        assert(err === null, err);
+        assert(res.statusCode === 200, 'Status code should be 200');
+        assert(res.body.username === experimenter.username);
+        assert(res.body.name === experimenter.name);
+        return done();
+      });
+    });
+
+    it('should return 401 for a different experimenter record', done => {
+      agent.get('/experimenters/' + anotherExperimenterId).end((err, res) => {
+        assert(err === null, err);
+        assert(res.statusCode === 401, 'Status code should be 401');
+        return done();
+      });
+    });
+  });
+});
+
 function createUser(model, fields) {
   return new Promise((resolve, reject) => {
     model.create(fields, (err, doc) => {
