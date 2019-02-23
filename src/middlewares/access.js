@@ -1,21 +1,28 @@
-exports.isUser = function isUser(req, res, next) {
-  if (!req.session || !req.session.userId) return res.sendStatus(401);
-  return next();
-};
+const isUser = req => req.session && req.session.userId;
+const isSuperuser = req => req.session && req.session.superuser;
+const isSameUserAsParam = req => isUser(req) && req.session.userId === req.params.id;
 
-exports.isSuperuser = function isSuperuser(req, res, next) {
-  if (!req.session || !req.session.superuser) return res.sendStatus(401);
-  return next();
-};
-
-exports.isSuperuserOrAllowedUser = function isSuperuserOrAllowedUser(req, res, next) {
-  if (
-    !req.session ||
-    (!req.session.superuser && req.session.userId !== req.params.id)
-  ) {
-    return res.sendStatus(401);
-  } else {
+exports.allowUsers = (req, res, next) => {
+  if (isUser(req)) {
     return next();
+  } else {
+    return res.sendStatus(401);
+  }
+};
+
+exports.allowOnlySuperusers = (req, res, next) => {
+  if (isSuperuser(req)) {
+    return next();
+  } else {
+    return res.sendStatus(401);
+  }
+};
+
+exports.allowSelfAndSuperusers = (req, res, next) => {
+  if (isSuperuser(req) || isSameUserAsParam(req)) {
+    return next();
+  } else {
+    return res.sendStatus(401);
   }
 };
 

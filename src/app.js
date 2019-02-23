@@ -14,9 +14,9 @@ import MongoStore from 'connect-mongo';
 import socketio from 'socket.io';
 
 import {
-  isUser,
-  isSuperuser,
-  isSuperuserOrAllowedUser,
+  allowUsers,
+  allowOnlySuperusers,
+  allowSelfAndSuperusers,
   isUserSameAsParamsId,
 } from './middlewares/access';
 import config from './config';
@@ -140,19 +140,19 @@ app.get('/fish', function(req, res) {
   res.render('fish.pug');
 });
 
-app.get('/microworlds', isUser, microworlds.list);
-app.get('/microworlds/:id', isUser, microworlds.show);
-app.post('/microworlds', isUser, microworlds.create);
-app.put('/microworlds/:id', isUser, microworlds.update);
-app.delete('/microworlds/:id', isUser, microworlds.delete);
+app.get('/microworlds', allowUsers, microworlds.list);
+app.get('/microworlds/:id', allowUsers, microworlds.show);
+app.post('/microworlds', allowUsers, microworlds.create);
+app.put('/microworlds/:id', allowUsers, microworlds.update);
+app.delete('/microworlds/:id', allowUsers, microworlds.delete);
 
-app.get('/runs', isUser, runs.list);
-app.get('/runs/:id', isUser, runs.show);
+app.get('/runs', allowUsers, runs.list);
+app.get('/runs/:id', allowUsers, runs.show);
 
-app.get('/experimenters', isSuperuser, experimenters.list);
-app.post('/experimenters', isSuperuser, experimenters.create);
-app.get('/experimenters/:id', isSuperuserOrAllowedUser, experimenters.details);
-app.put('/experimenters/:id', isUser, experimenters.update);
+app.get('/experimenters', allowOnlySuperusers, experimenters.list);
+app.post('/experimenters', allowOnlySuperusers, experimenters.create);
+app.get('/experimenters/:id', allowSelfAndSuperusers, experimenters.details);
+app.put('/experimenters/:id', allowUsers, experimenters.update);
 
 var server = http.createServer(app);
 var io = (exports.io = socketio.listen(server, {
