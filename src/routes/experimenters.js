@@ -69,8 +69,6 @@ exports.create = function(req, res) {
 
 // PUT /experimenters/:id
 exports.update = function(req, res) {
-  if (req.params.id != req.session.userId) return res.send(401); // unauthorized
-
   if (
     (req.body.rawPassword && !req.body.confirmPass) ||
     (!req.body.rawPassword && req.body.confirmPass) ||
@@ -101,28 +99,31 @@ exports.update = function(req, res) {
       Experimenter.hashPassword(req.body.rawPassword, function done(err, pwd) {
         if (err) {
           log.error('Error on PUT /experimenters/' + req.params.id, err);
-          return res.send(500);
+          return res.sendStatus(500);
         }
 
         exp.passwordHash = pwd;
         return updateExperimenter(req, res, exp);
       });
     } else return updateExperimenter(req, res, exp);
-  } else return res.send(403);
+  } else return res.sendStatus(403);
 };
 
 function updateExperimenter(req, res, exp) {
-  Experimenter.update({ _id: new DbId(req.params.id) }, exp, function(err, numUpdated) {
+  Experimenter.updateOne({ _id: new DbId(req.params.id).asObjectId }, exp, function(
+    err,
+    numUpdated
+  ) {
     if (err) {
       log.error('Error on PUT /experimenters/' + req.params.id, err);
-      return res.send(500);
+      return res.sendStatus(500);
     }
 
     if (numUpdated === 0) {
       // no experimenters updated, bad PUT request
-      return res.send(400);
+      return res.sendStatus(400);
     }
 
-    return res.send(204);
+    return res.sendStatus(204);
   });
 }

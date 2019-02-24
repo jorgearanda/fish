@@ -269,6 +269,91 @@ describe('GET /experimenters/:id', () => {
   });
 });
 
+describe('PUT /experimenters/:id', () => {
+  describe('when a superuser is making the request', () => {
+    let experimenterId;
+    beforeEach(done => {
+      setUpTestDb()
+        .then(() => createUser(Experimenter, honeydew))
+        .then(exp => (experimenterId = exp.id))
+        .then(() => createUser(Superuser, kermit))
+        .then(doc => getAgentForUser('/superuser-sessions', doc, kermit.rawPassword))
+        .then(result => {
+          account_id = result.doc.id;
+          agent = result.agent;
+          return done();
+        });
+    });
+
+    it('should allow them to do it', done => {
+      agent
+        .put('/experimenters/' + experimenterId)
+        .send({
+          username: beaker.username,
+          name: beaker.name,
+          email: beaker.email,
+          rawPassword: 'a new password',
+          confirmPass: 'a new password',
+        })
+        .end((err, res) => {
+          assert(err === null, err);
+          assert(res.statusCode === 204, 'Status code should be 204');
+          return done();
+        });
+    });
+  });
+
+  describe('when a user is making the request', () => {
+    let beakerId;
+    beforeEach(done => {
+      setUpTestDb()
+        .then(() => createUser(Experimenter, beaker))
+        .then(exp => (beakerId = exp.id))
+        .then(() => createUser(Experimenter, honeydew))
+        .then(doc => getAgentForUser('/sessions', doc, honeydew.rawPassword))
+        .then(result => {
+          account_id = result.doc.id;
+          agent = result.agent;
+          return done();
+        });
+    });
+
+    it('should allow them to do it', done => {
+      agent
+        .put('/experimenters/' + account_id)
+        .send({
+          username: kermit.username,
+          name: kermit.name,
+          email: kermit.email,
+          rawPassword: 'a new password',
+          confirmPass: 'a new password',
+        })
+        .end((err, res) => {
+          assert(err === null, err);
+          assert(res.statusCode === 204, 'Status code should be 204');
+          return done();
+        });
+    });
+
+    it('should return 401 for a different experimenter record', done => {
+      agent
+        .put('/experimenters/' + beakerId)
+        .send({
+          username: kermit.username,
+          name: kermit.name,
+          email: kermit.email,
+          rawPassword: 'a new password',
+          confirmPass: 'a new password',
+        })
+        .end((err, res) => {
+          assert(err === null, err);
+          assert(res.statusCode === 401, 'Status code should be 401');
+          return done();
+        });
+    });
+  });
+});
+
 function createUser(model, fields) {
   return new Promise((resolve, reject) => {
     model.create(fields, (err, doc) => {

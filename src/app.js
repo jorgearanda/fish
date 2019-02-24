@@ -152,7 +152,7 @@ app.get('/runs/:id', allowUsers, runs.show);
 app.get('/experimenters', allowOnlySuperusers, experimenters.list);
 app.post('/experimenters', allowOnlySuperusers, experimenters.create);
 app.get('/experimenters/:id', allowSelfAndSuperusers, experimenters.details);
-app.put('/experimenters/:id', allowUsers, experimenters.update);
+app.put('/experimenters/:id', allowSelfAndSuperusers, experimenters.update);
 
 var server = http.createServer(app);
 var io = (exports.io = socketio.listen(server, {
