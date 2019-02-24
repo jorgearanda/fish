@@ -7,20 +7,20 @@ const Experimenter = require('../models/experimenter-model').Experimenter;
 const Superuser = require('../models/superuser-model').Superuser;
 const setUpTestDb = require('../unit-utils').setUpTestDb;
 
-const experimenter = {
+const honeydew = {
   username: 'honeydew',
   name: 'Professor Honeydew',
   email: 'honeydew@muppets.show',
   passwordHash: '$2a$12$I5X7O/wRBX3OtKuy47OHz.0mJBLMN8NmQCRDpY84/5tGN02.zwOFG',
   rawPassword: '123456789',
 };
-const anotherExperimenter = {
+const beaker = {
   username: 'beaker',
   name: 'Assistant Professor Beaker',
   email: 'beaker@muppets.show',
   passwordHash: 'we do not need a valid hash',
 };
-const superuser = {
+const kermit = {
   username: 'kermit',
   name: 'Kermit The Frog',
   email: 'kermit@muppets.show',
@@ -34,8 +34,8 @@ describe('GET /a/:id/profile', () => {
   describe('when a user is logged in', () => {
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Experimenter, experimenter))
-        .then(doc => getAgentForUser('/sessions', doc, experimenter.rawPassword))
+        .then(() => createUser(Experimenter, honeydew))
+        .then(doc => getAgentForUser('/sessions', doc, honeydew.rawPassword))
         .then(result => {
           account_id = result.doc.id;
           agent = result.agent;
@@ -50,9 +50,9 @@ describe('GET /a/:id/profile', () => {
         .end((err, res) => {
           assert(err === null, err);
           assert(res.text.includes('Update Profile'), 'Bad page header');
-          assert(res.text.includes(experimenter.username), 'Bad username');
-          assert(res.text.includes(experimenter.name), 'Bad name');
-          assert(res.text.includes(experimenter.email), 'Bad email');
+          assert(res.text.includes(honeydew.username), 'Bad username');
+          assert(res.text.includes(honeydew.name), 'Bad name');
+          assert(res.text.includes(honeydew.email), 'Bad email');
           return done();
         });
     });
@@ -69,7 +69,7 @@ describe('GET /a/:id/profile', () => {
     });
 
     it('should redirect to login when trying to access another valid profile', done => {
-      createUser(Experimenter, anotherExperimenter).then(doc => {
+      createUser(Experimenter, beaker).then(doc => {
         agent
           .get('/a/' + doc.id + '/profile')
           .expect(302)
@@ -85,7 +85,7 @@ describe('GET /a/:id/profile', () => {
   describe('when a user is *not* logged in', () => {
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Experimenter, experimenter))
+        .then(() => createUser(Experimenter, honeydew))
         .then(doc => {
           account_id = doc.id;
           agent = request.agent(app);
@@ -110,10 +110,10 @@ describe('GET /experimenters', () => {
   describe('when a superuser is making the request', () => {
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Experimenter, experimenter))
-        .then(() => createUser(Experimenter, anotherExperimenter))
-        .then(() => createUser(Superuser, superuser))
-        .then(doc => getAgentForUser('/superuser-sessions', doc, superuser.rawPassword))
+        .then(() => createUser(Experimenter, honeydew))
+        .then(() => createUser(Experimenter, beaker))
+        .then(() => createUser(Superuser, kermit))
+        .then(doc => getAgentForUser('/superuser-sessions', doc, kermit.rawPassword))
         .then(result => {
           account_id = result.doc.id;
           agent = result.agent;
@@ -134,8 +134,8 @@ describe('GET /experimenters', () => {
   describe('when a non-superuser is making the request', () => {
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Experimenter, experimenter))
-        .then(doc => getAgentForUser('/sessions', doc, experimenter.rawPassword))
+        .then(() => createUser(Experimenter, honeydew))
+        .then(doc => getAgentForUser('/sessions', doc, honeydew.rawPassword))
         .then(result => {
           account_id = result.doc.id;
           agent = result.agent;
@@ -157,8 +157,8 @@ describe('POST /experimenters', () => {
   describe('when a superuser is making the request', () => {
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Superuser, superuser))
-        .then(doc => getAgentForUser('/superuser-sessions', doc, superuser.rawPassword))
+        .then(() => createUser(Superuser, kermit))
+        .then(doc => getAgentForUser('/superuser-sessions', doc, kermit.rawPassword))
         .then(result => {
           account_id = result.doc.id;
           agent = result.agent;
@@ -169,11 +169,11 @@ describe('POST /experimenters', () => {
     it('should create a new experimenter record', done => {
       agent
         .post('/experimenters')
-        .send(experimenter)
+        .send(honeydew)
         .end((err, res) => {
           assert(err === null, err);
           assert(res.statusCode === 200, 'Status code should be 200');
-          assert(res.body.username === experimenter.username);
+          assert(res.body.username === honeydew.username);
           assert(res.body.id !== null);
           assert(res.body.rawPassword === undefined);
           return done();
@@ -184,8 +184,8 @@ describe('POST /experimenters', () => {
   describe('when a non-superuser is making the request', () => {
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Experimenter, experimenter))
-        .then(doc => getAgentForUser('/sessions', doc, experimenter.rawPassword))
+        .then(() => createUser(Experimenter, honeydew))
+        .then(doc => getAgentForUser('/sessions', doc, honeydew.rawPassword))
         .then(result => {
           account_id = result.doc.id;
           agent = result.agent;
@@ -196,7 +196,7 @@ describe('POST /experimenters', () => {
     it('should return 401', done => {
       agent
         .post('/experimenters')
-        .send(anotherExperimenter)
+        .send(beaker)
         .end((err, res) => {
           assert(err === null, err);
           assert(res.statusCode === 401, 'Status code should be 401');
@@ -211,11 +211,11 @@ describe('GET /experimenters/:id', () => {
     let experimenterId;
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Experimenter, experimenter))
+        .then(() => createUser(Experimenter, honeydew))
         .then(exp => (experimenterId = exp.id))
-        .then(() => createUser(Experimenter, anotherExperimenter))
-        .then(() => createUser(Superuser, superuser))
-        .then(doc => getAgentForUser('/superuser-sessions', doc, superuser.rawPassword))
+        .then(() => createUser(Experimenter, beaker))
+        .then(() => createUser(Superuser, kermit))
+        .then(doc => getAgentForUser('/superuser-sessions', doc, kermit.rawPassword))
         .then(result => {
           account_id = result.doc.id;
           agent = result.agent;
@@ -227,21 +227,21 @@ describe('GET /experimenters/:id', () => {
       agent.get('/experimenters/' + experimenterId).end((err, res) => {
         assert(err === null, err);
         assert(res.statusCode === 200, 'Status code should be 200');
-        assert(res.body.username === experimenter.username);
-        assert(res.body.name === experimenter.name);
+        assert(res.body.username === honeydew.username);
+        assert(res.body.name === honeydew.name);
         return done();
       });
     });
   });
 
   describe('when a user is making the request', () => {
-    let anotherExperimenterId;
+    let beakerId;
     beforeEach(done => {
       setUpTestDb()
-        .then(() => createUser(Experimenter, anotherExperimenter))
-        .then(exp => (anotherExperimenterId = exp.id))
-        .then(() => createUser(Experimenter, experimenter))
-        .then(doc => getAgentForUser('/sessions', doc, experimenter.rawPassword))
+        .then(() => createUser(Experimenter, beaker))
+        .then(exp => (beakerId = exp.id))
+        .then(() => createUser(Experimenter, honeydew))
+        .then(doc => getAgentForUser('/sessions', doc, honeydew.rawPassword))
         .then(result => {
           account_id = result.doc.id;
           agent = result.agent;
@@ -253,14 +253,14 @@ describe('GET /experimenters/:id', () => {
       agent.get('/experimenters/' + account_id).end((err, res) => {
         assert(err === null, err);
         assert(res.statusCode === 200, 'Status code should be 200');
-        assert(res.body.username === experimenter.username);
-        assert(res.body.name === experimenter.name);
+        assert(res.body.username === honeydew.username);
+        assert(res.body.name === honeydew.name);
         return done();
       });
     });
 
     it('should return 401 for a different experimenter record', done => {
-      agent.get('/experimenters/' + anotherExperimenterId).end((err, res) => {
+      agent.get('/experimenters/' + beakerId).end((err, res) => {
         assert(err === null, err);
         assert(res.statusCode === 401, 'Status code should be 401');
         return done();
