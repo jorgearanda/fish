@@ -13,6 +13,8 @@ function submitUpdate() {
   if (password.length >= 1) sendData.rawPassword = password;
   if (confirmPass.length >= 1) sendData.confirmPass = confirmPass;
 
+  if (!valid(sendData)) return;
+
   var expId = location.pathname.split('/')[2];
   $.ajax({
     type: 'PUT',
@@ -21,25 +23,21 @@ function submitUpdate() {
     success: function() {
       location.replace('./dashboard');
     },
-    error: function(jqXHR) {
-      if (jqXHR.status === 409) {
-        if (jqXHR.responseText === 'password conflict') {
-          alert('The passwords given did not match');
-        } else {
-          alert('Invalid email');
-        }
-      } else if (jqXHR.status === 403) {
-        alert('At least one field needs to be filled');
-      } else if (jqXHR.status === 401) {
-        alert('You are unauthorized to change this profile');
-      } else if (jqXHR.status === 400) {
-        alert('Did not match any experimenters');
-      } else {
-        // status 500
-        alert('Internal error');
-      }
-    },
   });
+}
+
+function valid(data) {
+  if (Object.keys(data).length === 0) {
+    alert('At least one field needs to be filled');
+    return false;
+  }
+
+  if ('rawPassword' in data && data.rawPassword !== data.confirmPass) {
+    alert('The passwords given do not match');
+    return false;
+  }
+
+  return true;
 }
 
 function setButtons() {
