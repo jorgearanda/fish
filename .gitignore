@@ -9,3 +9,4 @@ fish.sublime-workspace
 .nyc_output/
 coverage/
 dist/
+.vscode

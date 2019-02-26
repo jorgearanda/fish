@@ -232,6 +232,14 @@ describe('GET /experimenters/:id', () => {
         return done();
       });
     });
+
+    it('should return 404 if the record does not exist', done => {
+      agent.get('/experimenters/notAValidId').end((err, res) => {
+        assert(err === null, err);
+        assert(res.statusCode === 404, 'Status code should be 404');
+        return done();
+      });
+    });
   });
 
   describe('when a user is making the request', () => {

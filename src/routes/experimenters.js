@@ -37,11 +37,7 @@ exports.list = function list(req, res) {
 // GET /experimenters/:id
 exports.details = function details(req, res) {
   const id = new DbId(req.params.id);
-  Experimenter.findOne({ _id: id.asObjectId }, function(err, exp) {
-    if (err) {
-      log.error('Error retrieving experimenter record on /experimenters/:id', err);
-      return res.sendStatus(500);
-    }
+  Experimenter.findOne({ _id: id.asObjectId }, function(_, exp) {
     if (!exp) {
       return res.sendStatus(404);
     }
