@@ -77,6 +77,7 @@ app.use(
   })
 );
 
+app.use('/publicjs', serveStatic(path.join(__dirname, 'public/js')));
 app.use('/public', serveStatic(path.join(__dirname, '../public')));
 app.use('/bower', serveStatic(path.join(__dirname, '../bower_components')));
 
