@@ -32,7 +32,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "async": "^2.6.2",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "chance": "^1.0.18",
     "connect-mongo": "^2.0.3",
