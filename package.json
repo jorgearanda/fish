@@ -45,7 +45,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
-    "pug": "^2.0.3",
+    "pug": "^3.0.1",
     "request": "^2.88.0",
     "serve-favicon": "^2.5.0",
     "serve-static": "^1.13.2",
