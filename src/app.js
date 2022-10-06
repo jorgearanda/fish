@@ -28,8 +28,6 @@ import sessions from './routes/sessions';
 
 import errorHandler from 'errorhandler'; // after loading the routes
 
-const store = MongoStore(session);
-
 var app = (exports.app = express());
 
 logger.cli();
@@ -72,7 +70,9 @@ app.use(cookieParser('life is better under the sea'));
 app.use(
   session({
     secret: 'life is better under the sea',
-    store: new store({ mongooseConnection: mongoose.connections[0] }),
+    store: MongoStore.create({
+      client: mongoose.connection.getClient()
+    }),
     cookie: { maxAge: null },
   })
 );
