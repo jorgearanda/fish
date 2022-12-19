@@ -291,7 +291,7 @@ function prepareMicroworldObject() {
     mw.enablePause = $('#enable-pause').prop('checked');
     mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
     mw.enableTutorial = $('#enable-tutorial').prop('checked');
-    mw.enableCatchIntentions = $('#enable-catch-intentions').prop('checked', false);
+    mw.enableCatchIntentions = $('#enable-catch-intentions').prop('checked');
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
