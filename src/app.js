@@ -43,7 +43,7 @@ if (process.env.NODE_ENV === 'test') {
 if (app.settings.env === 'development') {
   process.env.NODE_ENV = 'development';
   app.use(morgan('dev'));
-  app.use(errorHandler());
+  app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 } else if (app.settings.env === 'production') {
   var loggerStream = {
     write: function(message) {
