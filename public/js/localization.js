@@ -229,6 +229,8 @@ fr['info_location'] = 'Lieu';
 pt['info_location'] = 'Local';
 ko['info_location'] = '현재 위치';
 
+en['info_intent'] = 'Plan';
+
 en['info_season'] = 'Season';
 cn['info_season'] = '季节';
 ct['info_season'] = '季節';

@@ -43,6 +43,9 @@ html
               table.table.table-striped.table-hover.fishers-table
                 thead
                   th#fisher-header.bootstro(data-bootstro-title="Fisher" data-bootstro-content="This column indicates the name of each fisher. An anchor beside a fisher name shows the fisher is at port and a globe shows the fisher is out to sea." data-bootstro-placement="bottom")
+                  th#intended-catch-th.data-header
+                    img(src='/public/img/fishy.jpg', width='20', height='20')
+                    p#intended-catch-header.bootstro(data-bootstro-title="Season intent" data-bootstro-content="This column shows how many fish each fisher intents to catch in the current season." data-bootstro-placement="bottom")
                   th.data-header
                     img(src='/public/img/fishy.jpg', width='20', height='20')
                     p#fish-season-header.bootstro(data-bootstro-title="Season fish" data-bootstro-content="This column shows how many fish each fisher has caught in the current season." data-bootstro-placement="bottom")
@@ -57,6 +60,7 @@ html
                       td
                         img(id=i + "-status", src="/public/img/bullet_white.png")
                         p(id=i + "-name").fisher-label
+                      td(id=i + "-intended-catch").fisher-label
                       td(id=i + "-fish-season").fisher-label
                       td(id=i + "-fish-total").fisher-label
                       td(id=i + "-profit-season").fisher-label

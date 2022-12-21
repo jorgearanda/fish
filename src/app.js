@@ -39,9 +39,13 @@ logger.add(logger.transports.File, {
 if (process.env.NODE_ENV === 'test') {
   logger.remove(logger.transports.Console);
 }
+else if (process.env.NODE_ENV === 'development') {
+  logger.transports.Console.level = 'debug';
+}
 
 if (app.settings.env === 'development') {
   process.env.NODE_ENV = 'development';
+  logger.transports.Console.level = 'debug';
   app.use(morgan('dev'));
   app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 } else if (app.settings.env === 'production') {

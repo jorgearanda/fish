@@ -29,6 +29,8 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
     lang = 'en';
 }
 
+var intendedCatchEnabled = false;
+
 function loadLabels() {
     $('#read-rules').text(msgs.buttons_goFishing);
     $('#changeLocation').html(msgs.buttons_goToSea);
@@ -37,6 +39,12 @@ function loadLabels() {
     $('#resume').html(msgs.buttons_resume);
 
     $('#fisher-header').text(msgs.info_fisher);
+    if (intendedCatchEnabled) {
+        $('#intended-catch-th').show();
+        $('#intended-catch-header').text(' ' + msgs.info_intent);
+    } else {
+        $('#intended-catch-th').hide();
+    }
     $('#fish-season-header').text(' ' + msgs.info_season);
     $('#fish-total-header').text(' ' + msgs.info_overall);
 
@@ -168,9 +176,16 @@ function updateCosts() {
     }
 }
 
+function determineMyIntendedCatch() {
+    var intendedCatch;
+    intendedCatch = 17;
+    return intendedCatch;
+}
+
 function updateFishers() {
     var j = 1;
     var name;
+    var intendedCatch;
     var fishSeason;
     var fishTotal;
     var profitSeason;
@@ -187,6 +202,15 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/anchor.png');
             } else {
                 $('#f0-status').attr('src', '/public/img/world.png');
+            }
+
+            if (intendedCatchEnabled) {
+                //TODO remove once intendedCatch is communicated to server
+                // intendedCatch = fisher.seasonData[st.season].intendedCatch;
+                intendedCatch = 7;
+                $('#f0-intended-catch').text(intendedCatch);
+            } else {
+                $('#f0-intended-catch').hide();
             }
 
             fishSeason = fisher.seasonData[st.season].fishCaught;
@@ -226,6 +250,15 @@ function updateFishers() {
                 src = '/public/img/world.png';
             }
             $('#f' + j + '-status').attr('src', src);
+
+            if (intendedCatchEnabled) {
+                //TODO remove once intendedCatch is communicated to server
+                // intendedCatch = fisher.seasonData[st.season].intendedCatch;
+                intendedCatch = 5;
+                $('#f' + j + '-intended-catch').text(intendedCatch);
+            } else {
+                $('#f' + j + '-intended-catch').hide();
+            }
 
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
@@ -302,6 +335,9 @@ function hideTutorial() {
 
 function setupOcean(o) {
     ocean = o;
+    if (ocean && ocean.enableCatchIntentions) {
+        intendedCatchEnabled = true;
+    } 
     displayRules();
     loadLabels();
     updateCosts();
