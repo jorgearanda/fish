@@ -29,7 +29,83 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
     lang = 'en';
 }
 
-var intendedCatchEnabled = false;
+////////////////////////////////////////
+//////////// Catch Intentions feature 
+////////////////////////////////////////
+
+function makeIntendedCatchColumnVisible(visible = true) {
+    // console.log('makeIntendedCatchColumnVisible: visible=' + visible);
+    if (visible) {
+        $('#intended-catch-th').show();
+        for (var i in st.fishers) {
+            $('#f' + i + '-intended-catch').show();
+        }
+    }
+    else {
+        $('#intended-catch-th').hide();
+        for (var i in st.fishers) {
+            $('#f' + i + '-intended-catch').hide();
+        }
+    }
+}
+
+function makeIntendedCatchDialogVisible(visible = true) {
+    // console.log('makeIntendedCatchDialogVisible: visible=' + visible);
+    if (visible) {
+        $('#intended-catch-input').val("");
+        $('#intended-catch-dialog-box').show();
+    } else {
+        $('#intended-catch-dialog-box').hide();
+    }
+}
+
+function isIntendedCatchActive(season) {
+    var itIs = ocean && ocean.enableCatchIntentions;
+    // console.log('isIntendedCatchActive: season=' + season + ', itIs=' + itIs);
+    if (itIs) {
+        // TODO: check if given season is in list of seasons
+        // For now, just eliminate first season
+        itIs = season > 1 && season <= ocean.numSeasons;
+    }
+    makeIntendedCatchColumnVisible(itIs);
+    return itIs;
+}
+
+function maybeAskIntendedCatch() {
+    // console.log('maybeAskIntendedCatch: st.season=' + st.season + ', st.status=' + st.status);
+    if (st.status === 'resting' && isIntendedCatchActive(st.season + 1)) {
+        makeIntendedCatchDialogVisible(true);
+    } else {
+        makeIntendedCatchDialogVisible(false);
+    }
+}
+
+function maybeGetIntendedCatchFromDialog() {
+    // console.log('maybeGetIntendedCatchFromDialog: st.season=' + st.season + ', st.status=' + st.status);
+    if (isIntendedCatchActive(st.season)) {
+        for (var i in st.fishers) {
+            var fisher = st.fishers[i];
+            if (fisher.name === pId) {
+                // This is you
+                // TODO: grab entered text from dialog input  
+                var input = $('#intended-catch-input').val();
+                // var regexp = /[0-9]+(,[0-9]+)*/;
+                // var intendedCatch = input.match(regexp) || '?';
+                var intendedCatch = isNaN(parseInt(input)) ? '?' : input;
+                console.log('maybeGetIntendedCatchFromDialog: input=' + input + ', intendedCatch=' + intendedCatch);
+                fisher.seasonData[st.season].intendedCatch = intendedCatch;
+                break;
+            }
+        }
+    }
+    makeIntendedCatchDialogVisible(false);
+}
+
+////////////////////////////////////////
+//////////// END Catch Intentions feature   (except for a few touch points below) 
+////////////////////////////////////////
+
+
 
 function loadLabels() {
     $('#read-rules').text(msgs.buttons_goFishing);
@@ -39,12 +115,7 @@ function loadLabels() {
     $('#resume').html(msgs.buttons_resume);
 
     $('#fisher-header').text(msgs.info_fisher);
-    if (intendedCatchEnabled) {
-        $('#intended-catch-th').show();
-        $('#intended-catch-header').text(' ' + msgs.info_intent);
-    } else {
-        $('#intended-catch-th').hide();
-    }
+    $('#intended-catch-header').text(' ' + msgs.info_intent);
     $('#fish-season-header').text(' ' + msgs.info_season);
     $('#fish-total-header').text(' ' + msgs.info_overall);
 
@@ -204,20 +275,13 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
 
-            if (intendedCatchEnabled) {
-                //TODO remove once intendedCatch is communicated to server
-                // intendedCatch = fisher.seasonData[st.season].intendedCatch;
-                intendedCatch = 7;
-                $('#f0-intended-catch').text(intendedCatch);
-            } else {
-                $('#f0-intended-catch').hide();
-            }
-
+            intendedCatch = fisher.seasonData[st.season].intendedCatch;
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
 
+            $('#f0-intended-catch').text(intendedCatch);
             $('#f0-fish-season').text(fishSeason);
             $('#f0-fish-total').text(fishTotal);
             $('#f0-profit-season').text(profitSeason);
@@ -251,19 +315,13 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
-            if (intendedCatchEnabled) {
-                //TODO remove once intendedCatch is communicated to server
-                // intendedCatch = fisher.seasonData[st.season].intendedCatch;
-                intendedCatch = 5;
-                $('#f' + j + '-intended-catch').text(intendedCatch);
-            } else {
-                $('#f' + j + '-intended-catch').hide();
-            }
-
+            intendedCatch = fisher.seasonData[st.season].intendedCatch;
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
+
+            $('#f' + j + '-intended-catch').text(intendedCatch);
 
             if (ocean.showNumCaught) {
                 $('#f' + j + '-fish-season').text(fishSeason);
@@ -335,14 +393,14 @@ function hideTutorial() {
 
 function setupOcean(o) {
     ocean = o;
-    if (ocean && ocean.enableCatchIntentions) {
-        intendedCatchEnabled = true;
-    } 
+    // console.log('setupOcean: ocean=' + JSON.stringify(ocean));
     displayRules();
     loadLabels();
     updateCosts();
     makeUnpausable();
     hideTutorial();
+    makeIntendedCatchColumnVisible(false);
+    makeIntendedCatchDialogVisible(false);
 }
 
 function readRules() {
@@ -391,6 +449,8 @@ function attemptToFish() {
 
 function beginSeason(data) {
     st = data;
+    // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
+    maybeGetIntendedCatchFromDialog();
     updateWarning('');
     drawOcean();
     updateFishers();
@@ -419,10 +479,14 @@ function receiveStatus(data) {
     drawOcean();
 }
 
-function endSeason() {
+function endSeason(data) {
+    // console.log('endSeason: st.season=' + st.season + ', st.status=' + st.status + ', data=' + JSON.stringify(data));
+    st.season = data.season;
+    st.status = data.status;
     resetLocation();
     updateWarning();
     disableButtons();
+    maybeAskIntendedCatch();
 }
 
 function endRun(trigger) {

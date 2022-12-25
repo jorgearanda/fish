@@ -297,7 +297,11 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
 
     // TODO: Need to get proper numbers for certain and mystery fish on seasons after first!
     this.log.info('Beginning season ' + this.season + '.');
-    io.sockets.in(this.id).emit('begin season', this.getSimStatus());
+    let status = this.getSimStatus();
+    this.log.info("I'M ALIVE");
+    this.log.info("Season status:");
+    this.log.info(JSON.stringify(status));
+    io.sockets.in(this.id).emit('begin season', status);
   };
 
   this.endCurrentSeason = function(reason) {
@@ -338,6 +342,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       this.resetTimer();
       this.log.info('Ending season ' + this.season + '.');
       io.sockets.in(this.id).emit('end season', {
+        status: this.status,
         season: this.season,
       });
     } else {

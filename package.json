@@ -6,12 +6,20 @@
     "type": "git",
     "url": "https://github.com/kodacapo/rmkfish"
   },
-  "scripts": {
-    "build": "babel src -d dist && babel public/js -d dist/public/js",
+  "nodemonConfig": {
+    "verbose": true,
+    "watch": ["./dist/app.js"],
+    "delay": 5000
+  },
+    "scripts": {
+    "build-as-needed" : "find ./src ./public ./views | entr -n -s 'npm run build' &",
+    "build" : "npm run build:server && npm run build:client",
+    "build:server": "echo 'Building server' && babel --verbose src -d dist",
+    "build:client" : "echo 'Building client' && babel --verbose public/js -d dist/public/js",
     "serve": "node dist/app.js",
     "servemon": "nodemon dist/app.js",
     "start": "set NODE_ENV=production && npm run build && npm run serve",
-    "dev": "set NODE_ENV=development && npm run build && npm run servemon",
+    "dev": "set NODE_ENV=development && npm run build-as-needed ; npm run servemon",
     "test": "NODE_ENV=test nyc mocha --exit --recursive --require babel-register 'src/**/*.test.js' 'public/js/**/*.test.js'",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "./node_modules/eslint/bin/eslint.js 'src/**/*.js'",

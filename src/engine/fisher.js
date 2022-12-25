@@ -80,35 +80,32 @@ exports.Fisher = function Fisher(name, type, params, o) {
   };
 
   this.prepareFisherForSeason = function(season) {
-    this.ocean.log.debug('Preparing Fisher ' + this.name + ' for season ' + season);
+    this.ocean.log.info('Preparing Fisher ' + this.name + ' for season ' + season);
     this.season = season;
     this.seasonData[season] = {
-      greed: undefined,
-      intendedCasts: undefined,
-      intendedCatch: undefined,
+      // greed: undefined,
+      // intendedCasts: undefined,
+      // intendedCatch: undefined,
       actualCasts: 0,
       fishCaught: 0,
       startMoney: 0,
       endMoney: 0,
     };
 
-    var intentEnabled = this.ocean.microworld.params.enableCatchIntentions;
-
     if (this.isBot()) {
       var greed = this.calculateSeasonGreed();
       var intendedCasts = this.calculateSeasonCasts(greed);
       this.seasonData[season].greed = greed;
       this.seasonData[season].intendedCasts = intendedCasts;
+      var intentEnabled = this.ocean.microworld.params.enableCatchIntentions;
       if (intentEnabled) {
         var chanceCatch = this.ocean.microworld.params.chanceCatch;
         var variation = 1.0 + (Math.random() - 0.5) / 2.0;  // actual +/- 25%
         this.seasonData[season].intendedCatch = Math.round(intendedCasts * chanceCatch * variation);
         this.ocean.log.debug('Fisher ' + this.name + ': intended catch = ' + this.seasonData[season].intendedCatch);
       }
-    // } else if (intentEnabled) {
-    //   this.seasonData[season].intendedCatch = 11;
     }
-
+  
     this.hasReturned = false;
   };
 
