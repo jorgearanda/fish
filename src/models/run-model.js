@@ -19,6 +19,7 @@ var runSchema = new Schema({
         {
           name: String,
           type: { type: String },
+          fishPlanned: String,
           fishTaken: Number,
           profit: Number,
           greed: Number,

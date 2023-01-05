@@ -59,9 +59,9 @@ function makeIntendedCatchDialogVisible(visible = true) {
     }
 }
 
-function isIntendedCatchActive(season) {
+function intendedCatchIsActive(season) {
     var itIs = ocean && ocean.enableCatchIntentions;
-    // console.log('isIntendedCatchActive: season=' + season + ', itIs=' + itIs);
+    // console.log('intendedCatchIsActive: season=' + season + ', itIs=' + itIs);
     if (itIs) {
         // TODO: check if given season is in list of seasons
         // For now, just eliminate first season
@@ -73,7 +73,7 @@ function isIntendedCatchActive(season) {
 
 function maybeAskIntendedCatch() {
     // console.log('maybeAskIntendedCatch: st.season=' + st.season + ', st.status=' + st.status);
-    if (st.status === 'resting' && isIntendedCatchActive(st.season + 1)) {
+    if (st.status === 'resting' && intendedCatchIsActive(st.season + 1)) {
         makeIntendedCatchDialogVisible(true);
     } else {
         makeIntendedCatchDialogVisible(false);
@@ -82,18 +82,17 @@ function maybeAskIntendedCatch() {
 
 function maybeGetIntendedCatchFromDialog() {
     // console.log('maybeGetIntendedCatchFromDialog: st.season=' + st.season + ', st.status=' + st.status);
-    if (isIntendedCatchActive(st.season)) {
+    if (intendedCatchIsActive(st.season)) {
         for (var i in st.fishers) {
             var fisher = st.fishers[i];
             if (fisher.name === pId) {
                 // This is you
-                // TODO: grab entered text from dialog input  
-                var input = $('#intended-catch-input').val();
-                // var regexp = /[0-9]+(,[0-9]+)*/;
-                // var intendedCatch = input.match(regexp) || '?';
-                var intendedCatch = isNaN(parseInt(input)) ? '?' : input;
-                console.log('maybeGetIntendedCatchFromDialog: input=' + input + ', intendedCatch=' + intendedCatch);
-                fisher.seasonData[st.season].intendedCatch = intendedCatch;
+                var input = $('#intended-catch-input').val().trim();
+                var num = parseInt(input);
+                var intendedCatch = isNaN(num) || num < 0 ? '?' : num.toString();
+                // REMOVE
+                // console.log('maybeGetIntendedCatchFromDialog: input=' + input + ', intendedCatch=' + intendedCatch);
+                recordIntendedCatch(intendedCatch);
                 break;
             }
         }
@@ -245,12 +244,6 @@ function updateCosts() {
     } else {
         $('#cost-second').hide();
     }
-}
-
-function determineMyIntendedCatch() {
-    var intendedCatch;
-    intendedCatch = 17;
-    return intendedCatch;
 }
 
 function updateFishers() {
@@ -445,6 +438,10 @@ function goToPort() {
 
 function attemptToFish() {
     socket.emit('attemptToFish');
+}
+
+function recordIntendedCatch(numFish) {
+    socket.emit('recordIntendedCatch', numFish);
 }
 
 function beginSeason(data) {

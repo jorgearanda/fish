@@ -150,6 +150,11 @@ exports.Fisher = function Fisher(name, type, params, o) {
     }
   };
 
+  this.recordIntendedCatch = function(numFish) {
+    this.seasonData[this.season].intendedCatch = numFish;
+    this.ocean.log.info('Fisher ' + this.name + ' is planning to catch ' + numFish + ' fish.');
+  }
+
   this.runBot = function() {
     if (this.status === 'At sea') this.changeMoney(-this.ocean.microworld.params.costSecond);
 

@@ -226,6 +226,13 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     return;
   };
 
+  this.recordIntendedCatch = function(pId, numFish) {
+    var idx = this.findFisherIndex(pId);
+    if (idx !== null) this.fishers[idx].recordIntendedCatch(numFish);
+    io.sockets.in(this.id).emit('status', this.getSimStatus());
+    return;
+  };
+  
   this.goToSea = function(pId) {
     var idx = this.findFisherIndex(pId);
     if (idx !== null) this.fishers[idx].goToSea();
@@ -298,9 +305,10 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     // TODO: Need to get proper numbers for certain and mystery fish on seasons after first!
     this.log.info('Beginning season ' + this.season + '.');
     let status = this.getSimStatus();
-    this.log.info("I'M ALIVE");
-    this.log.info("Season status:");
-    this.log.info(JSON.stringify(status));
+    // REMOVE
+    // this.log.info("I'M ALIVE");
+    // this.log.info("Season status:");
+    // this.log.info(JSON.stringify(status));
     io.sockets.in(this.id).emit('begin season', status);
   };
 
@@ -325,6 +333,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     for (i in this.fishers) {
       var fisherData = this.fishers[i].seasonData[this.season];
       var fisherResults = this.results[this.season - 1].fishers[i];
+      fisherResults.fishPlanned = fisherData.intendedCatch || 'not asked';
       fisherResults.fishTaken = fisherData.fishCaught;
       fisherResults.greed = fisherData.greed;
       fisherResults.profit = fisherData.endMoney - fisherData.startMoney;

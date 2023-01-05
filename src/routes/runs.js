@@ -32,6 +32,7 @@ function flattenRunResults(runs) {
         toPush.Season = season;
         toPush['Fish at Start'] = fishAtStart;
         toPush['Fish at End'] = fishAtEnd;
+        toPush['Fish Planned'] = fishers[k].fishPlanned;
         toPush['Fish Taken'] = fishers[k].fishTaken;
         toPush.Profit = fishers[k].profit;
         toPush['Individual Restraint'] = fishers[k].individualRestraint;
