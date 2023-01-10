@@ -44,6 +44,7 @@ function readyTooltips() {
     $('#predictability-tooltip').tooltip();
     $('#prob-action-tooltip').tooltip();
     $('#attempts-second-tooltip').tooltip();
+    $('#catch-intentions-tooltip').tooltip();
 }
 
 function changeBotRowVisibility() {
