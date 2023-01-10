@@ -60,7 +60,7 @@ var prepText = 'FISH simulates fishing in an ocean. ' +
     'Fishing can go on this way for many seasons, ' +
     'but all fishing permanently ceases any time that all the fish are caught.\n\n' + 
     'You can make money fishing. ' +
-    'You will be paid $5 for every fish you catch. ' +
+    'You will be paid $3 for every fish you catch. ' +
     '(For now, this is "play" money... ' +
     'but please treat it as if it were real money.)\n\n' +
     'Your job is to consider all these factors, ' +
@@ -73,7 +73,7 @@ var prepText = 'FISH simulates fishing in an ocean. ' +
     'Click on the Go Fishing button on the right when you are ready. ' +
     'Once all the fishers have clicked this button, ' +
     'the first season will begin. ' +
-    '(You may have to wait briefly for all the others fishers to click the button.)';
+    '(You may have to wait briefly for all the other fishers to click the button.)';
 
 var endTimeText = 'Seasons come and seasons go, but for now we are done.';
 
