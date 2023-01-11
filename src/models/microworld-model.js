@@ -33,6 +33,7 @@ var microworldSchema = new Schema({
     enablePause: Boolean,
     enableTutorial: Boolean,
     enableCatchIntentions: Boolean,
+    catchIntentSeasons: [Number],
     enableRespawnWarning: Boolean,
     fishValue: Number,
     costDeparture: Number,

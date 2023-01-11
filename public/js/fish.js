@@ -61,11 +61,11 @@ function makeIntendedCatchDialogVisible(visible = true) {
 
 function intendedCatchIsActive(season) {
     var itIs = ocean && ocean.enableCatchIntentions;
-    // console.log('intendedCatchIsActive: season=' + season + ', itIs=' + itIs);
+    console.log('intendedCatchIsActive: season=' + season + ', itIs=' + itIs);
     if (itIs) {
-        // TODO: check if given season is in list of seasons
-        // For now, just eliminate first season
-        itIs = season > 1 && season <= ocean.numSeasons;
+        console.log('intendedCatchIsActive: ocean.catchIntentSeasons=' + ocean.catchIntentSeasons);
+        itIs = season <= ocean.numSeasons && ocean.catchIntentSeasons.indexOf(season) >= 0;
+        console.log('intendedCatchIsActive: season=' + season + ', itIs=' + itIs);
     }
     makeIntendedCatchColumnVisible(itIs);
     return itIs;

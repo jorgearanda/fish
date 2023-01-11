@@ -45,6 +45,7 @@ function readyTooltips() {
     $('#prob-action-tooltip').tooltip();
     $('#attempts-second-tooltip').tooltip();
     $('#catch-intentions-tooltip').tooltip();
+    $('#catch-intention-seasons-tooltip').tooltip();
 }
 
 function changeBotRowVisibility() {
@@ -144,6 +145,19 @@ function changeAttemptsSecondUniformity() {
     }
 }
 
+function parseCatchIntentSeasons(seasonsList, clean = false) {
+    // Extract all integers > 1 from given list (string)
+    var seasonsRegexp = /([2-9][0-9]*)|([1-9][0-9]+)/g;
+    var seasonNumbers = seasonsList.match(seasonsRegexp);
+    if (!seasonNumbers) return [];
+    seasonNumbers = seasonNumbers.map(Number);
+    if (clean) {
+        seasonNumbers = seasonNumbers.sort((a, b) => a - b);
+        // Worth removing duplicates?
+    }
+    return seasonNumbers;
+}
+
 function validate() {
     var errors = [];
 
@@ -232,6 +246,13 @@ function validate() {
         errors.push('The chance of catch must be a number between 0 and 1.');
     }
 
+    var catchIntentSeasonsStr = $('#catch-intent-seasons').val();
+    var catchIntentSeasons = parseCatchIntentSeasons(catchIntentSeasonsStr);
+    if (catchIntentSeasonsStr !== catchIntentSeasons.toString()) {
+        errors.push('"' + catchIntentSeasonsStr + '" is not a comma-separated list of season numbers greater than 1.');
+        $('#catch-intent-seasons').val(parseCatchIntentSeasons(catchIntentSeasonsStr, true));
+    }
+
     if ($('#preparation-text').val().length < 1) {
         errors.push('The preparation text is missing.');
     }
@@ -293,7 +314,7 @@ function prepareMicroworldObject() {
     mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
     mw.enableTutorial = $('#enable-tutorial').prop('checked');
     mw.enableCatchIntentions = $('#enable-catch-intentions').prop('checked');
-    mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
+    mw.catchIntentSeasons = parseCatchIntentSeasons($('#catch-intent-seasons').val(), true);
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
@@ -437,6 +458,7 @@ function populatePage() {
     $('#enable-early-end').prop('checked', mw.params.enableEarlyEnd);
     $('#enable-tutorial').prop('checked', mw.params.enableTutorial);
     $('#enable-catch-intentions').prop('checked', mw.params.enableCatchIntentions);
+    $('#catch-intent-seasons').val(mw.params.catchIntentSeasons.toString());
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
