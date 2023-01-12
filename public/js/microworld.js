@@ -321,6 +321,7 @@ function prepareMicroworldObject() {
     mw.catchIntentionsEnabled = $('#enable-catch-intentions').prop('checked');
     mw.catchIntentSeasons = parseCatchIntentSeasons($('#catch-intent-seasons').val(), true);
     mw.catchIntentExtraTime = $('#catch-intent-extra-time').val();
+    mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
@@ -615,7 +616,12 @@ function loadTexts() {
 function prepareControls() {
     $('#microworld-panel-body-text').text(panelBody[mode]);
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
-
+    $('#enable-catch-intentions').click(function(){
+        //If the checkbox is checked.
+        var maybe = !($(this).is(':checked'));
+        $('#catch-intent-seasons').attr("disabled", maybe);
+        $('#catch-intent-extra-time').attr("disabled", maybe);
+    });
 
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);

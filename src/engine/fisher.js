@@ -24,7 +24,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
   };
 
   this.getIntendedCatch = function() {
-    return this.seasonData[this.season].intendedCatch;
+    return this.seasonData[this.season].catchIntent;
   };
 
   this.getFishCaught = function() {
@@ -85,7 +85,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
     this.seasonData[season] = {
       // greed: undefined,
       // intendedCasts: undefined,
-      // intendedCatch: undefined,
+      // catchIntent: undefined,
       actualCasts: 0,
       fishCaught: 0,
       startMoney: 0,
@@ -101,8 +101,8 @@ exports.Fisher = function Fisher(name, type, params, o) {
       if (intentEnabled) {
         var chanceCatch = this.ocean.microworld.params.chanceCatch;
         var variation = 1.0 + (Math.random() - 0.5) / 2.0;  // actual +/- 25%
-        this.seasonData[season].intendedCatch = Math.round(intendedCasts * chanceCatch * variation);
-        this.ocean.log.debug('Fisher ' + this.name + ': intended catch = ' + this.seasonData[season].intendedCatch);
+        this.seasonData[season].catchIntent = Math.round(intendedCasts * chanceCatch * variation);
+        this.ocean.log.debug('Fisher ' + this.name + ': intended catch = ' + this.seasonData[season].catchIntent);
       }
     }
   
@@ -151,7 +151,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
   };
 
   this.recordIntendedCatch = function(numFish) {
-    this.seasonData[this.season].intendedCatch = numFish;
+    this.seasonData[this.season].catchIntent = numFish;
     this.ocean.log.info('Fisher ' + this.name + ' is planning to catch ' + numFish + ' fish.');
   }
 

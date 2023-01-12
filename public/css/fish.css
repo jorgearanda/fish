@@ -50,15 +50,15 @@ html {
     border-color: #D32F2F;
     color: #FFFFFF; }
 
-#intended-catch-dialog {
+#catch-intent-dialog {
   font-size: 18px;
   font-size: 1.8rem;
   font-weight: bold;
   position: relative; }
-  #intended-catch-dialog div {
+  #catch-intent-dialog div {
     text-align: center;
     display: inline-block; }
-  #intended-catch-dialog .prompt-label {
+  #catch-intent-dialog .prompt-label {
     background-color: orange;
 }
 

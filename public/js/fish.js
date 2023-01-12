@@ -33,64 +33,64 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
 //////////// Catch Intentions feature 
 ////////////////////////////////////////
 
-function makeIntendedCatchColumnVisible(visible = true) {
-    // console.log('makeIntendedCatchColumnVisible: visible=' + visible);
+function makeCatchIntentColumnVisible(visible = true) {
+    // console.log('makeCatchIntentColumnVisible: visible=' + visible);
     if (visible) {
-        $('#intended-catch-th').show();
+        $('#catch-intent-th').show();
         for (var i in st.fishers) {
-            $('#f' + i + '-intended-catch').show();
+            $('#f' + i + '-catch-intent').show();
         }
     }
     else {
-        $('#intended-catch-th').hide();
+        $('#catch-intent-th').hide();
         for (var i in st.fishers) {
-            $('#f' + i + '-intended-catch').hide();
+            $('#f' + i + '-catch-intent').hide();
         }
     }
 }
 
-function makeIntendedCatchDialogVisible(visible = true) {
-    // console.log('makeIntendedCatchDialogVisible: visible=' + visible);
+function makeCatchIntentDialogVisible(visible = true) {
+    // console.log('makeCatchIntentDialogVisible: visible=' + visible);
     if (visible) {
-        $('#intended-catch-input').val("");
-        $('#intended-catch-dialog-box').show();
+        $('#catch-intent-input').val("");
+        $('#catch-intent-dialog-box').show();
     } else {
-        $('#intended-catch-dialog-box').hide();
+        $('#catch-intent-dialog-box').hide();
     }
 }
 
-function intendedCatchIsActive(season) {
+function catchIntentIsActive(season) {
     var itIs = ocean && ocean.catchIntentionsEnabled;
     if (itIs) {
         itIs = season <= ocean.numSeasons && ocean.catchIntentSeasons.indexOf(season) >= 0;
     }
-    makeIntendedCatchColumnVisible(itIs);
+    makeCatchIntentColumnVisible(itIs);
     return itIs;
 }
 
 function maybeAskIntendedCatch() {
-    if (st.status === 'resting' && intendedCatchIsActive(st.season + 1)) {
-        makeIntendedCatchDialogVisible(true);
+    if (st.status === 'resting' && catchIntentIsActive(st.season + 1)) {
+        makeCatchIntentDialogVisible(true);
     } else {
-        makeIntendedCatchDialogVisible(false);
+        makeCatchIntentDialogVisible(false);
     }
 }
 
 function maybeGetIntendedCatchFromDialog() {
-    if (intendedCatchIsActive(st.season)) {
+    if (catchIntentIsActive(st.season)) {
         for (var i in st.fishers) {
             var fisher = st.fishers[i];
             if (fisher.name === pId) {
                 // This is you
-                var input = $('#intended-catch-input').val().trim();
+                var input = $('#catch-intent-input').val().trim();
                 var num = parseInt(input);
-                var intendedCatch = isNaN(num) || num < 0 ? '?' : num.toString();
-                recordIntendedCatch(intendedCatch);
+                var catchIntent = isNaN(num) || num < 0 ? '?' : num.toString();
+                recordIntendedCatch(catchIntent);
                 break;
             }
         }
     }
-    makeIntendedCatchDialogVisible(false);
+    makeCatchIntentDialogVisible(false);
 }
 
 ////////////////////////////////////////
@@ -107,7 +107,7 @@ function loadLabels() {
     $('#resume').html(msgs.buttons_resume);
 
     $('#fisher-header').text(msgs.info_fisher);
-    $('#intended-catch-header').text(' ' + msgs.info_intent);
+    $('#catch-intent-header').text(' ' + msgs.info_intent);
     $('#fish-season-header').text(' ' + msgs.info_season);
     $('#fish-total-header').text(' ' + msgs.info_overall);
 
@@ -242,7 +242,7 @@ function updateCosts() {
 function updateFishers() {
     var j = 1;
     var name;
-    var intendedCatch;
+    var catchIntent;
     var fishSeason;
     var fishTotal;
     var profitSeason;
@@ -261,13 +261,13 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
 
-            intendedCatch = fisher.seasonData[st.season].intendedCatch;
+            catchIntent = fisher.seasonData[st.season].catchIntent;
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
 
-            $('#f0-intended-catch').text(intendedCatch);
+            $('#f0-catch-intent').text(catchIntent);
             $('#f0-fish-season').text(fishSeason);
             $('#f0-fish-total').text(fishTotal);
             $('#f0-profit-season').text(profitSeason);
@@ -301,13 +301,13 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
-            intendedCatch = fisher.seasonData[st.season].intendedCatch;
+            catchIntent = fisher.seasonData[st.season].catchIntent;
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
 
-            $('#f' + j + '-intended-catch').text(intendedCatch);
+            $('#f' + j + '-catch-intent').text(catchIntent);
 
             if (ocean.showNumCaught) {
                 $('#f' + j + '-fish-season').text(fishSeason);
@@ -385,8 +385,8 @@ function setupOcean(o) {
     updateCosts();
     makeUnpausable();
     hideTutorial();
-    makeIntendedCatchColumnVisible(false);
-    makeIntendedCatchDialogVisible(false);
+    makeCatchIntentColumnVisible(false);
+    makeCatchIntentDialogVisible(false);
 }
 
 function readRules() {

@@ -109,26 +109,6 @@ html
                   | Enable participant tutorial
                   input#enable-tutorial(type='checkbox', checked='')
 
-          .row
-            .form-group
-              .col-md-10
-                label.form-label.checkbox
-                  | Enable&nbsp;
-                  a#catch-intentions-tooltip(title='Before the start of some seasons, prompt human fishers to indicate and broadcast the number of fish they intend to catch.', data-toggle='tooltip', data-placement='top') catch intentions
-                  input#enable-catch-intentions(type='checkbox', checked=false)
-          .row
-            .form-group
-              label.form-label.col-md-6(for='catch-intent-seasons') Catch intention&nbsp;
-                  a#catch-intention-seasons-tooltip(title='Comma-separated list of season numbers, 2 or higher, when to prompt human fishers to indicate their intent.', data-toggle='tooltip', data-placement='top') seasons 
-              .col-md-6
-                input#catch-intent-seasons.form-control.to-disable(type='text', value='2,4,6,8,10')
-          .row
-            .form-group
-              label.form-label.col-md-6(for='catch-intent-extra-time') Catch intention&nbsp;
-                  a#catch-intent-extra-time-tooltip(title='Extra seconds added to the delay between seasons when human fishers are prompted to indicate their intent.', data-toggle='tooltip', data-placement='top') extra time
-                  |  (seconds)
-              .col-md-6
-                input#catch-intent-extra-time.form-control.to-disable(type='number', min='1', step='1', value='10')
         .col-md-4
           h3 Economics
           .row
@@ -156,6 +136,29 @@ html
               label.form-label.col-md-6(for='currency-symbol') Currency symbol
               .col-md-6
                 input#currency-symbol.form-control.to-disable(type='text', value='$')
+
+          h3 Catch Intentions
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Enable&nbsp;
+                  a#catch-intentions-tooltip(title='Before the start of some seasons, prompt human fishers to indicate and broadcast the number of fish they intend to catch.', data-toggle='tooltip', data-placement='top') catch intentions
+                  input#enable-catch-intentions(type='checkbox', checked=false)
+          .row
+            .form-group
+              label.form-label.col-md-6(for='catch-intent-seasons') Catch intention&nbsp;
+                  a#catch-intention-seasons-tooltip(title='Comma-separated list of season numbers, 2 or higher, when to prompt human fishers to indicate their intent.', data-toggle='tooltip', data-placement='top') seasons 
+              .col-md-6
+                input#catch-intent-seasons.form-control.to-disable(type='text', value='2,4,6,8,10', disabled=true)
+          .row
+            .form-group
+              label.form-label.col-md-6(for='catch-intent-extra-time') Catch intention&nbsp;
+                  a#catch-intent-extra-time-tooltip(title='Extra seconds added to the delay between seasons when human fishers are prompted to indicate their intent.', data-toggle='tooltip', data-placement='top') extra time
+                  |  (seconds)
+              .col-md-6
+                input#catch-intent-extra-time.form-control.to-disable(type='number', min='1', step='1', value='10', disabled=true)
+
         .col-md-4
           h3 Fish stocks and fishing
           .row

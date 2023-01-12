@@ -474,27 +474,27 @@ describe('Engine - Ocean', function() {
     });
   });
 
-  describe('intendedCatchIsEnabled()', function() {
+  describe('catchIntentIsEnabled()', function() {
     it('should return true if the catchIntentions parameter is true', function(done) {
-      o.intendedCatchIsEnabled().should.equal(false);
+      o.catchIntentIsEnabled().should.equal(false);
       o.microworld.params.catchIntentionsEnabled = true;
-      o.intendedCatchIsEnabled().should.equal(true);
+      o.catchIntentIsEnabled().should.equal(true);
       return done();
     });
   });
 
-  describe('intendedCatchIsActive()', function() {
+  describe('catchIntentIsActive()', function() {
     it('should return true if it is enabled and a season in in the active list', function(done) {
-      o.intendedCatchIsActive(1).should.equal(false);
-      o.intendedCatchIsActive(2).should.equal(false);
-      o.intendedCatchIsActive(3).should.equal(false);
-      o.intendedCatchIsActive(4).should.equal(false);
+      o.catchIntentIsActive(1).should.equal(false);
+      o.catchIntentIsActive(2).should.equal(false);
+      o.catchIntentIsActive(3).should.equal(false);
+      o.catchIntentIsActive(4).should.equal(false);
       o.microworld.params.catchIntentionsEnabled = true;
       // o.microworld.params.catchIntentSeasons = [2,4];
-      o.intendedCatchIsActive(1).should.equal(false);
-      o.intendedCatchIsActive(2).should.equal(true);
-      o.intendedCatchIsActive(3).should.equal(false);
-      o.intendedCatchIsActive(4).should.equal(true);
+      o.catchIntentIsActive(1).should.equal(false);
+      o.catchIntentIsActive(2).should.equal(true);
+      o.catchIntentIsActive(3).should.equal(false);
+      o.catchIntentIsActive(4).should.equal(true);
       return done();
     });
   });

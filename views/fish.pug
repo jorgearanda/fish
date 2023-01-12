@@ -43,9 +43,9 @@ html
               table.table.table-striped.table-hover.fishers-table
                 thead
                   th#fisher-header.bootstro(data-bootstro-title="Fisher" data-bootstro-content="This column indicates the name of each fisher. An anchor beside a fisher name shows the fisher is at port and a globe shows the fisher is out to sea." data-bootstro-placement="bottom")
-                  th#intended-catch-th.data-header
+                  th#catch-intent-th.data-header
                     img(src='/public/img/fishy.jpg', width='20', height='20')
-                    p#intended-catch-header.bootstro(data-bootstro-title="Season intent" data-bootstro-content="This column shows how many fish each fisher intents to catch in the current season." data-bootstro-placement="bottom")
+                    p#catch-intent-header.bootstro(data-bootstro-title="Season intent" data-bootstro-content="This column shows how many fish each fisher intents to catch in the current season." data-bootstro-placement="bottom")
                   th.data-header
                     img(src='/public/img/fishy.jpg', width='20', height='20')
                     p#fish-season-header.bootstro(data-bootstro-title="Season fish" data-bootstro-content="This column shows how many fish each fisher has caught in the current season." data-bootstro-placement="bottom")
@@ -60,18 +60,18 @@ html
                       td
                         img(id=i + "-status", src="/public/img/bullet_white.png")
                         p(id=i + "-name").fisher-label
-                      td(id=i + "-intended-catch").fisher-label
+                      td(id=i + "-catch-intent").fisher-label
                       td(id=i + "-fish-season").fisher-label
                       td(id=i + "-fish-total").fisher-label
                       td(id=i + "-profit-season").fisher-label
                       td(id=i + "-profit-total").fisher-label
-          .row#intended-catch-dialog-box.clearfix.bootstro
-            #intended-catch-dialog
-              form#intended-catch-dialog-form
-                #intended-catch-dialog-message.prompt-label.alert 
+          .row#catch-intent-dialog-box.clearfix.bootstro
+            #catch-intent-dialog
+              form#catch-intent-dialog-form
+                #catch-intent-dialog-message.prompt-label.alert 
                   h4 How many fish do you plan to catch in the next season?
                   h5 (Optional, and we won't hold you to it!)
-                  input#intended-catch-input(type="text" autofocus)
+                  input#catch-intent-input(type="text" autofocus)
                   input#prevent-single-input-from-submitting-when-the-enter-key-is-pressed(style="display: none;")
           .row#costs-box.clearfix.bootstro(data-bootstro-title="Cost information" data-bootstro-content="This area shows different pieces of data pertaining to cost such as the cost to fish, the earnings per fish, and the cost to leave port." data-bootstro-placement="bottom")
             #cost-departure.costs-label.alert.alert-info

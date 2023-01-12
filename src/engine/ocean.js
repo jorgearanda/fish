@@ -139,18 +139,18 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     return this.hasReachedSeasonDuration() || (this.canEndEarly() && this.secondsSinceAllReturned >= 3);
   };
 
-  this.intendedCatchIsEnabled = function() {
+  this.catchIntentIsEnabled = function() {
     return this.microworld.params.catchIntentionsEnabled;
   }
 
-  this.intendedCatchIsActive = function(season) {
-    return this.intendedCatchIsEnabled() 
+  this.catchIntentIsActive = function(season) {
+    return this.catchIntentIsEnabled() 
       && season <= this.microworld.params.numSeasons
       && this.microworld.params.catchIntentSeasons.indexOf(season) >= 0;
   }
 
   this.setDelayForSeason = function(season) {
-    this.seasonDelayInEffect = this.intendedCatchIsActive(season) 
+    this.seasonDelayInEffect = this.catchIntentIsActive(season) 
     ?  this.microworld.params.seasonDelay + this.microworld.params.catchIntentExtraTime
     :  this.microworld.params.seasonDelay;
   }
@@ -349,7 +349,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     for (i in this.fishers) {
       var fisherData = this.fishers[i].seasonData[this.season];
       var fisherResults = this.results[this.season - 1].fishers[i];
-      fisherResults.fishPlanned = fisherData.intendedCatch || 'not asked';
+      fisherResults.fishPlanned = fisherData.catchIntent || 'not asked';
       fisherResults.fishTaken = fisherData.fishCaught;
       fisherResults.greed = fisherData.greed;
       fisherResults.profit = fisherData.endMoney - fisherData.startMoney;
