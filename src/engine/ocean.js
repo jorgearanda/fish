@@ -139,6 +139,22 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     return this.hasReachedSeasonDuration() || (this.canEndEarly() && this.secondsSinceAllReturned >= 3);
   };
 
+  this.intendedCatchIsEnabled = function() {
+    return this.microworld.params.catchIntentionsEnabled;
+  }
+
+  this.intendedCatchIsActive = function(season) {
+    return this.intendedCatchIsEnabled() 
+      && season <= this.microworld.params.numSeasons
+      && this.microworld.params.catchIntentSeasons.indexOf(season) >= 0;
+  }
+
+  this.setDelayForSeason = function(season) {
+    this.seasonDelayInEffect = this.intendedCatchIsActive(season) 
+    ?  this.microworld.params.seasonDelay + this.microworld.params.catchIntentExtraTime
+    :  this.microworld.params.seasonDelay;
+  }
+
   this.pause = function(pauseRequester) {
     if (this.isRunning() || this.isResting()) {
       this.log.info('Simulation paused by fisher ' + pauseRequester);
@@ -201,7 +217,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   };
 
   this.hasReachedSeasonDelay = function() {
-    return this.seconds >= this.microworld.params.seasonDelay;
+    return this.seconds >= this.seasonDelayInEffect;
   };
 
   this.hasReachedSeasonDuration = function() {
@@ -349,6 +365,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     if (this.season < this.microworld.params.numSeasons && reason !== 'depletion') {
       this.status = 'resting';
       this.resetTimer();
+      this.setDelayForSeason(this.season+1);
       this.log.info('Ending season ' + this.season + '.');
       io.sockets.in(this.id).emit('end season', {
         status: this.status,
@@ -407,7 +424,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         this.tick();
       }
     } else if (this.isResting()) {
-      delay = this.microworld.params.seasonDelay;
+      delay = this.seasonDelayInEffect;
       this.log.debug('Ocean loop - resting: ' + this.seconds + ' of ' + delay + ' seconds.');
       io.sockets.in(this.id).emit('status', this.getSimStatus());
 

@@ -46,6 +46,7 @@ function readyTooltips() {
     $('#attempts-second-tooltip').tooltip();
     $('#catch-intentions-tooltip').tooltip();
     $('#catch-intention-seasons-tooltip').tooltip();
+    $('#catch-intent-extra-time-tooltip').tooltip();
 }
 
 function changeBotRowVisibility() {
@@ -252,6 +253,10 @@ function validate() {
         errors.push('"' + catchIntentSeasonsStr + '" is not a comma-separated list of season numbers greater than 1.');
         $('#catch-intent-seasons').val(parseCatchIntentSeasons(catchIntentSeasonsStr, true));
     }
+    
+    if (parseInt($('#catch-intent-extra-time').val()) < 0) {
+        errors.push('The catch intent extra time cannot be negative.');
+    }
 
     if ($('#preparation-text').val().length < 1) {
         errors.push('The preparation text is missing.');
@@ -313,8 +318,9 @@ function prepareMicroworldObject() {
     mw.enablePause = $('#enable-pause').prop('checked');
     mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
     mw.enableTutorial = $('#enable-tutorial').prop('checked');
-    mw.enableCatchIntentions = $('#enable-catch-intentions').prop('checked');
+    mw.catchIntentionsEnabled = $('#enable-catch-intentions').prop('checked');
     mw.catchIntentSeasons = parseCatchIntentSeasons($('#catch-intent-seasons').val(), true);
+    mw.catchIntentExtraTime = $('#catch-intent-extra-time').val();
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
@@ -457,8 +463,9 @@ function populatePage() {
     $('#enable-pause').prop('checked', mw.params.enablePause);
     $('#enable-early-end').prop('checked', mw.params.enableEarlyEnd);
     $('#enable-tutorial').prop('checked', mw.params.enableTutorial);
-    $('#enable-catch-intentions').prop('checked', mw.params.enableCatchIntentions);
+    $('#enable-catch-intentions').prop('checked', mw.params.catchIntentionsEnabled);
     $('#catch-intent-seasons').val(mw.params.catchIntentSeasons.toString());
+    $('#catch-intent-extra-time').val(mw.params.catchIntentExtraTime);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);

@@ -60,19 +60,15 @@ function makeIntendedCatchDialogVisible(visible = true) {
 }
 
 function intendedCatchIsActive(season) {
-    var itIs = ocean && ocean.enableCatchIntentions;
-    console.log('intendedCatchIsActive: season=' + season + ', itIs=' + itIs);
+    var itIs = ocean && ocean.catchIntentionsEnabled;
     if (itIs) {
-        console.log('intendedCatchIsActive: ocean.catchIntentSeasons=' + ocean.catchIntentSeasons);
         itIs = season <= ocean.numSeasons && ocean.catchIntentSeasons.indexOf(season) >= 0;
-        console.log('intendedCatchIsActive: season=' + season + ', itIs=' + itIs);
     }
     makeIntendedCatchColumnVisible(itIs);
     return itIs;
 }
 
 function maybeAskIntendedCatch() {
-    // console.log('maybeAskIntendedCatch: st.season=' + st.season + ', st.status=' + st.status);
     if (st.status === 'resting' && intendedCatchIsActive(st.season + 1)) {
         makeIntendedCatchDialogVisible(true);
     } else {
@@ -81,7 +77,6 @@ function maybeAskIntendedCatch() {
 }
 
 function maybeGetIntendedCatchFromDialog() {
-    // console.log('maybeGetIntendedCatchFromDialog: st.season=' + st.season + ', st.status=' + st.status);
     if (intendedCatchIsActive(st.season)) {
         for (var i in st.fishers) {
             var fisher = st.fishers[i];
@@ -90,8 +85,6 @@ function maybeGetIntendedCatchFromDialog() {
                 var input = $('#intended-catch-input').val().trim();
                 var num = parseInt(input);
                 var intendedCatch = isNaN(num) || num < 0 ? '?' : num.toString();
-                // REMOVE
-                // console.log('maybeGetIntendedCatchFromDialog: input=' + input + ', intendedCatch=' + intendedCatch);
                 recordIntendedCatch(intendedCatch);
                 break;
             }

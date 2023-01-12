@@ -97,7 +97,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
       var intendedCasts = this.calculateSeasonCasts(greed);
       this.seasonData[season].greed = greed;
       this.seasonData[season].intendedCasts = intendedCasts;
-      var intentEnabled = this.ocean.microworld.params.enableCatchIntentions;
+      var intentEnabled = this.ocean.microworld.params.catchIntentionsEnabled;
       if (intentEnabled) {
         var chanceCatch = this.ocean.microworld.params.chanceCatch;
         var variation = 1.0 + (Math.random() - 0.5) / 2.0;  // actual +/- 25%

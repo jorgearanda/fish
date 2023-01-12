@@ -28,6 +28,10 @@ describe('Engine - Ocean', function() {
         costSecond: 0.0,
         costCast: 0.1,
         chanceCatch: 1.0,
+        numSeasons: 4,
+        catchIntentionsEnabled: false,
+        catchIntentExtraTime: 17,
+        catchIntentSeasons: [2,4,6,8],
         bots: [
           {
             name: 'bot 1',
@@ -375,6 +379,7 @@ describe('Engine - Ocean', function() {
 
   describe('hasReachedSeasonDelay()', function() {
     it('should report whether seconds has reached the seasonDelay parameter', function(done) {
+      o.setDelayForSeason(1);
       o.hasReachedSeasonDelay().should.equal(false);
       o.seconds = 5;
       o.hasReachedSeasonDelay().should.equal(true);
@@ -468,4 +473,30 @@ describe('Engine - Ocean', function() {
       return done();
     });
   });
+
+  describe('intendedCatchIsEnabled()', function() {
+    it('should return true if the catchIntentions parameter is true', function(done) {
+      o.intendedCatchIsEnabled().should.equal(false);
+      o.microworld.params.catchIntentionsEnabled = true;
+      o.intendedCatchIsEnabled().should.equal(true);
+      return done();
+    });
+  });
+
+  describe('intendedCatchIsActive()', function() {
+    it('should return true if it is enabled and a season in in the active list', function(done) {
+      o.intendedCatchIsActive(1).should.equal(false);
+      o.intendedCatchIsActive(2).should.equal(false);
+      o.intendedCatchIsActive(3).should.equal(false);
+      o.intendedCatchIsActive(4).should.equal(false);
+      o.microworld.params.catchIntentionsEnabled = true;
+      // o.microworld.params.catchIntentSeasons = [2,4];
+      o.intendedCatchIsActive(1).should.equal(false);
+      o.intendedCatchIsActive(2).should.equal(true);
+      o.intendedCatchIsActive(3).should.equal(false);
+      o.intendedCatchIsActive(4).should.equal(true);
+      return done();
+    });
+  });
+
 });
