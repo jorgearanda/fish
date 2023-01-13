@@ -349,7 +349,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     for (i in this.fishers) {
       var fisherData = this.fishers[i].seasonData[this.season];
       var fisherResults = this.results[this.season - 1].fishers[i];
-      fisherResults.fishPlanned = fisherData.catchIntent || 'not asked';
+      fisherResults.fishPlanned = fisherData.catchIntent;
       fisherResults.fishTaken = fisherData.fishCaught;
       fisherResults.greed = fisherData.greed;
       fisherResults.profit = fisherData.endMoney - fisherData.startMoney;

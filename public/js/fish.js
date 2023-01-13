@@ -49,8 +49,7 @@ function makeCatchIntentColumnVisible(visible = true) {
     }
 }
 
-var catchIntentUnknownMark = '?';
-var catchIntentDialogIsActive = false;
+var myCatchIntent = 'n/a';
 
 function makeCatchIntentDialogVisible(visible = true) {
     // console.log('makeCatchIntentDialogVisible: visible=' + visible);
@@ -72,48 +71,53 @@ function makeCatchIntentDialogVisible(visible = true) {
         $('#catch-intent-submit').on('click', submitCatchIntent);
         $('#catch-intent-submit').show();
         $('#catch-intent-dialog-box').show();
-        catchIntentDialogIsActive = true;
     } else {
         $('#catch-intent-dialog-box').hide();
-        catchIntentDialogIsActive = false;
     }
 }
 
 function catchIntentIsActive(season) {
-    var itIs = ocean && ocean.catchIntentionsEnabled;
-    if (itIs) {
-        itIs = season <= ocean.numSeasons && ocean.catchIntentSeasons.indexOf(season) >= 0;
-    }
-    makeCatchIntentColumnVisible(itIs);
-    return itIs;
+    return ocean
+        && ocean.catchIntentionsEnabled
+        && (season <= ocean.numSeasons)
+        && (ocean.catchIntentSeasons.indexOf(season) >= 0);
 }
 
 function maybeAskIntendedCatch() {
     if (st.status === 'resting' && catchIntentIsActive(st.season + 1)) {
+        makeCatchIntentColumnVisible(false);
         makeCatchIntentDialogVisible(true);
+        myCatchIntent = '???';
     } else {
+        makeCatchIntentColumnVisible(false);
         makeCatchIntentDialogVisible(false);
+        myCatchIntent = 'n/a';
     }
 }
 
 function maybeStopAskingIntendedCatch() {
-    if (catchIntentDialogIsActive) {
+    recordIntendedCatch(myCatchIntent);
+    if (st.status === 'running' && catchIntentIsActive(st.season)) {
+        makeCatchIntentColumnVisible(true);
         makeCatchIntentDialogVisible(false);
-        recordIntendedCatch(catchIntentUnknownMark);
+    }
+    else {
+        makeCatchIntentColumnVisible(false);
+        makeCatchIntentDialogVisible(false);
     }
 }
 
 function submitCatchIntent() {
     var input = $('#catch-intent-input').val().trim();
     var num = parseInt(input);
-    var catchIntent = isNaN(num) || num < 0 ? catchIntentUnknownMark : num.toString();
-    if (catchIntent === catchIntentUnknownMark) {
-        $('#catch-intent-input').val(catchIntentUnknownMark);
+    if (isNaN(num) || num < 0) {
+        $('#catch-intent-input').val(myCatchIntent);
+        // Leave dialog up in case fisher corrects typo and resubmits
     }
     else {
+        myCatchIntent = num.toString();
         makeCatchIntentDialogVisible(false);
     }
-    recordIntendedCatch(catchIntent);
 }
 
 ////////////////////////////////////////

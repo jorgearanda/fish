@@ -83,13 +83,11 @@ exports.Fisher = function Fisher(name, type, params, o) {
     this.ocean.log.info('Preparing Fisher ' + this.name + ' for season ' + season);
     this.season = season;
     this.seasonData[season] = {
-      // greed: undefined,
-      // intendedCasts: undefined,
-      // catchIntent: undefined,
       actualCasts: 0,
       fishCaught: 0,
       startMoney: 0,
       endMoney: 0,
+      catchIntent: 'missing',
     };
 
     if (this.isBot()) {
