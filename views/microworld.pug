@@ -158,6 +158,16 @@ html
                   |  (seconds)
               .col-md-6
                 input#catch-intent-extra-time.form-control.to-disable(type='number', min='1', step='1', value='10', disabled=true)
+          .row
+            .form-group
+              label.form-label.col-md-6(for='catch-intent-prompt1') Catch intentions prompt (required)
+              .col-md-6
+                input#catch-intent-prompt1.form-control.to-disable(type='text', autofocus='', disabled=true)
+          .row
+            .form-group
+              label.form-label.col-md-6(for='catch-intent-prompt2') Catch intentions subprompt (optional)
+              .col-md-6
+                input#catch-intent-prompt2.form-control.to-disable(type='text', autofocus='', disabled=true)
 
         .col-md-4
           h3 Fish stocks and fishing

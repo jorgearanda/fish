@@ -49,13 +49,33 @@ function makeCatchIntentColumnVisible(visible = true) {
     }
 }
 
+var catchIntentUnknownMark = '?';
+var catchIntentDialogIsActive = false;
+
 function makeCatchIntentDialogVisible(visible = true) {
     // console.log('makeCatchIntentDialogVisible: visible=' + visible);
     if (visible) {
+        $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
+        if (ocean.catchIntentPrompt2.length > 0) {
+            $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
+            $('#catch-intent-prompt2').show();
+        } 
+        else {
+            $('#catch-intent-prompt2').hide();
+        }
         $('#catch-intent-input').val("");
+        $('#catch-intent-input').on('keydown', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                submitCatchIntent();// Do something
+            }
+        });
+        $('#catch-intent-submit').on('click', submitCatchIntent);
+        $('#catch-intent-submit').show();
         $('#catch-intent-dialog-box').show();
+        catchIntentDialogIsActive = true;
     } else {
         $('#catch-intent-dialog-box').hide();
+        catchIntentDialogIsActive = false;
     }
 }
 
@@ -76,21 +96,24 @@ function maybeAskIntendedCatch() {
     }
 }
 
-function maybeGetIntendedCatchFromDialog() {
-    if (catchIntentIsActive(st.season)) {
-        for (var i in st.fishers) {
-            var fisher = st.fishers[i];
-            if (fisher.name === pId) {
-                // This is you
-                var input = $('#catch-intent-input').val().trim();
-                var num = parseInt(input);
-                var catchIntent = isNaN(num) || num < 0 ? '?' : num.toString();
-                recordIntendedCatch(catchIntent);
-                break;
-            }
-        }
+function maybeStopAskingIntendedCatch() {
+    if (catchIntentDialogIsActive) {
+        makeCatchIntentDialogVisible(false);
+        recordIntendedCatch(catchIntentUnknownMark);
     }
-    makeCatchIntentDialogVisible(false);
+}
+
+function submitCatchIntent() {
+    var input = $('#catch-intent-input').val().trim();
+    var num = parseInt(input);
+    var catchIntent = isNaN(num) || num < 0 ? catchIntentUnknownMark : num.toString();
+    if (catchIntent === catchIntentUnknownMark) {
+        $('#catch-intent-input').val(catchIntentUnknownMark);
+    }
+    else {
+        makeCatchIntentDialogVisible(false);
+    }
+    recordIntendedCatch(catchIntent);
 }
 
 ////////////////////////////////////////
@@ -440,7 +463,7 @@ function recordIntendedCatch(numFish) {
 function beginSeason(data) {
     st = data;
     // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
-    maybeGetIntendedCatchFromDialog();
+    maybeStopAskingIntendedCatch();
     updateWarning('');
     drawOcean();
     updateFishers();

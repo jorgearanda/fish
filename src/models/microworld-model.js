@@ -34,6 +34,8 @@ var microworldSchema = new Schema({
     enableTutorial: Boolean,
     catchIntentionsEnabled: Boolean,
     catchIntentSeasons: [Number],
+    catchIntentPrompt1: String,
+    catchIntentPrompt2: String,
     catchIntentExtraTime: Number,
     enableRespawnWarning: Boolean,
     fishValue: Number,

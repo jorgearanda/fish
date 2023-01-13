@@ -321,6 +321,8 @@ function prepareMicroworldObject() {
     mw.catchIntentionsEnabled = $('#enable-catch-intentions').prop('checked');
     mw.catchIntentSeasons = parseCatchIntentSeasons($('#catch-intent-seasons').val(), true);
     mw.catchIntentExtraTime = $('#catch-intent-extra-time').val();
+    mw.catchIntentPrompt1 = $('#catch-intent-prompt1').val();
+    mw.catchIntentPrompt2 = $('#catch-intent-prompt2').val();
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
@@ -467,6 +469,10 @@ function populatePage() {
     $('#enable-catch-intentions').prop('checked', mw.params.catchIntentionsEnabled);
     $('#catch-intent-seasons').val(mw.params.catchIntentSeasons.toString());
     $('#catch-intent-extra-time').val(mw.params.catchIntentExtraTime);
+    $('#catch-intent-prompt1').val(mw.params.catchIntentPrompt1);
+    $('#catch-intent-prompt2').val(mw.params.catchIntentPrompt2);
+    var maybe = !(mw.params.catchIntentionsEnabled);
+    disableCatchIntentControls(maybe);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
@@ -509,6 +515,13 @@ function populatePage() {
     $("#"+mw.params.oceanOrder).prop('checked', true);
 
     changeBotRowVisibility();
+}
+
+function disableCatchIntentControls(maybe) {
+    $('#catch-intent-seasons').attr("disabled", maybe);
+    $('#catch-intent-extra-time').attr("disabled", maybe);
+    $('#catch-intent-prompt1').attr("disabled", maybe);
+    $('#catch-intent-prompt2').attr("disabled", maybe);
 }
 
 function noMicroworld(jqXHR) {
@@ -611,16 +624,17 @@ function loadTexts() {
     $('#preparation-text').val(prepText);
     $('#end-time-text').val(endTimeText);
     $('#end-depletion-text').val(endDepletedText);
+    $('#catch-intent-prompt1').val(catchIntentPrompt1);
+    $('#catch-intent-prompt2').val(catchIntentPrompt2);
 }
 
 function prepareControls() {
     $('#microworld-panel-body-text').text(panelBody[mode]);
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
-    $('#enable-catch-intentions').click(function(){
-        //If the checkbox is checked.
+    $('#enable-catch-intentions').on("click", function(){
+        //Dis- or enable the other CatchIntention controls depending on whether the checkbox is checked.
         var maybe = !($(this).is(':checked'));
-        $('#catch-intent-seasons').attr("disabled", maybe);
-        $('#catch-intent-extra-time').attr("disabled", maybe);
+        disableCatchIntentControls(maybe);
     });
 
     if (mode === 'new') {

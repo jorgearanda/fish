@@ -78,3 +78,6 @@ var prepText = 'FISH simulates fishing in an ocean. ' +
 var endTimeText = 'Seasons come and seasons go, but for now we are done.';
 
 var endDepletedText = 'All the fish are now gone.';
+
+var catchIntentPrompt1 = 'How many fish do you plan to catch in the next season?';
+var catchIntentPrompt2 = '(Optional, and we won\'t hold you to it!)';

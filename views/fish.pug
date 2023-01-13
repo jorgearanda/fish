@@ -69,10 +69,12 @@ html
             #catch-intent-dialog
               form#catch-intent-dialog-form
                 #catch-intent-dialog-message.prompt-label.alert 
-                  h4 How many fish do you plan to catch in the next season?
-                  h5 (Optional, and we won't hold you to it!)
-                  input#catch-intent-input(type="text" autofocus)
+                  h4#catch-intent-prompt1
+                  h5#catch-intent-prompt2
                   input#prevent-single-input-from-submitting-when-the-enter-key-is-pressed(style="display: none;")
+                  input#catch-intent-input(type="text" autofocus)
+                  |  
+                  button#catch-intent-submit.btn(type='button', style='display:none') Submit
           .row#costs-box.clearfix.bootstro(data-bootstro-title="Cost information" data-bootstro-content="This area shows different pieces of data pertaining to cost such as the cost to fish, the earnings per fish, and the cost to leave port." data-bootstro-placement="bottom")
             #cost-departure.costs-label.alert.alert-info
             #cost-second.costs-label.alert.alert-info
