@@ -181,6 +181,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       status: this.status,
       certainFish: this.certainFish,
       mysteryFish: this.mysteryFish,
+      certainSpawn: this.certainSpawn,
       reportedMysteryFish: this.reportedMysteryFish,
       fishers: [],
     };
@@ -426,6 +427,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     } else if (this.isResting()) {
       delay = this.seasonDelayInEffect;
       this.log.debug('Ocean loop - resting: ' + this.seconds + ' of ' + delay + ' seconds.');
+      this.setAvailableSpawn(delay);
       io.sockets.in(this.id).emit('status', this.getSimStatus());
 
       if (this.seconds + this.warnSeconds >= delay) {
@@ -466,6 +468,17 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       var maxMystery = this.microworld.params.availableMysteryFish;
       this.mysteryFish = Math.round(Math.min(spawnedMystery, maxMystery));
     }
+    this.certainSpawn = 0;
+  };
+
+  this.setAvailableSpawn = function(delay) {
+    // This method is called every clock tick in between seasons to compute gradually spawning fish
+    // so that the client can visually represent the growing number of fish in the ocean
+    var spawnFactor = this.microworld.params.spawnFactor;
+    var spawnedFish = this.certainFish * spawnFactor;
+    var maxFish = this.microworld.params.maxFish;
+    var certainNewFish = Math.round(Math.min(spawnedFish, maxFish)) - this.certainFish;
+    this.certainSpawn = delay <= 0 ? 0 : Math.round(certainNewFish * this.seconds / delay);
   };
 
   this.areThereFish = function() {

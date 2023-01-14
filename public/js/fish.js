@@ -565,7 +565,7 @@ function drawOcean() {
         } else {
             oContext.drawImage(underwater, 0, 0, 700, 460);
         }
-        for (var spot = 0; spot < st.certainFish + st.reportedMysteryFish; spot++) {
+        for (var spot = 0; spot < st.certainFish + st.certainSpawn + st.reportedMysteryFish; spot++) {
             if (spot < st.reportedMysteryFish) {
                 drawFish(oContext, mysteryFishImage, spots[spot]);
             } else {
