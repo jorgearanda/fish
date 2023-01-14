@@ -322,10 +322,6 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     // TODO: Need to get proper numbers for certain and mystery fish on seasons after first!
     this.log.info('Beginning season ' + this.season + '.');
     let status = this.getSimStatus();
-    // REMOVE
-    // this.log.info("I'M ALIVE");
-    // this.log.info("Season status:");
-    // this.log.info(JSON.stringify(status));
     io.sockets.in(this.id).emit('begin season', status);
   };
 

@@ -57,6 +57,7 @@ pt['status_wait'] = 'Por favor aguarde';
 ko['status_wait'] = '잠시만 기다려주십시오';
 
 en['status_subWait'] = 'Loading the application';
+en['status_subWait'] = 'while other fishers are joining';           // RMK
 cn['status_subWait'] = '加载应用程序中';
 ct['status_subWait'] = '加載應用程序中';
 de['status_subWait'] = 'Ladevorgang';
@@ -75,6 +76,7 @@ pt['status_full'] = 'O grupo que você tentou entrar esta lotado. Por favor, not
 ko['status_full'] = '참여하고자 하는 그룹이 모두 채워졌습니다. 연구자에게 알려주십시오.';
 
 en['status_getReady'] = 'Get ready! The simulation is about to start.';
+en['status_getReady'] = 'Get ready! The game is about to start.';           // RMK
 cn['status_getReady'] = '请做好准备！模拟活动即将开始';
 ct['status_getReady'] = '請做好準備！模擬活動即將開始';
 de['status_getReady'] = 'Los geht\'s! Die Simulation wird gestartet.';
@@ -156,6 +158,7 @@ pt['status_subSpawning'] = 'Os peixes estão em desova';
 ko['status_subSpawning'] = '산란이 진행 중입니다';
 
 en['status_paused'] = 'Simulation paused.';
+en['status_paused'] = 'Game paused.';           // RMK
 cn['status_paused'] = '模拟活动暂停';
 ct['status_paused'] = '模擬活動暫停';
 de['status_paused'] = 'Die Simulation ist pausiert.';
@@ -251,6 +254,7 @@ ko['info_overall'] = '총';
 
 // End report
 en['end_over'] = 'This simulation is over.';
+en['end_over'] = 'This game is over.';          // RMK
 cn['end_over'] = '模拟活动结束';
 ct['end_over'] = '模擬活動結束';
 de['end_over'] = 'Die Simulation ist nun beendet.';
