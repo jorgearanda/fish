@@ -412,7 +412,7 @@ function setupOcean(o) {
     updateCosts();
     makeUnpausable();
     hideTutorial();
-    makeCatchIntentColumnVisible(false);
+    makeCatchIntentColumnVisible(true);
     makeCatchIntentDialogVisible(false);
 }
 

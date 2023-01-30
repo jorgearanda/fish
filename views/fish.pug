@@ -45,7 +45,7 @@ html
                   th#fisher-header.bootstro(data-bootstro-title="Fisher" data-bootstro-content="This column indicates the name of each fisher. An anchor beside a fisher name shows the fisher is at port and a globe shows the fisher is out to sea." data-bootstro-placement="bottom")
                   th#catch-intent-th.data-header
                     img(src='/public/img/fishy.jpg', width='20', height='20')
-                    p#catch-intent-header.bootstro(data-bootstro-title="Season intent" data-bootstro-content="This column shows how many fish each fisher intents to catch in the current season." data-bootstro-placement="bottom")
+                    p#catch-intent-header.bootstro(data-bootstro-title="Season intent" data-bootstro-content="You may be asked in between some seasons how many fish you plan to catch in the next season. In that case, this column shows how many fish each fisher intents to catch." data-bootstro-placement="bottom")
                   th.data-header
                     img(src='/public/img/fishy.jpg', width='20', height='20')
                     p#fish-season-header.bootstro(data-bootstro-title="Season fish" data-bootstro-content="This column shows how many fish each fisher has caught in the current season." data-bootstro-placement="bottom")
@@ -65,7 +65,7 @@ html
                       td(id=i + "-fish-total").fisher-label
                       td(id=i + "-profit-season").fisher-label
                       td(id=i + "-profit-total").fisher-label
-          .row#catch-intent-dialog-box.clearfix.bootstro
+          .row#catch-intent-dialog-box.clearfix
             #catch-intent-dialog
               form#catch-intent-dialog-form
                 #catch-intent-dialog-message.prompt-label.alert 
