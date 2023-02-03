@@ -37,6 +37,7 @@ var microworldSchema = new Schema({
     catchIntentPrompt1: String,
     catchIntentPrompt2: String,
     catchIntentExtraTime: Number,
+    redirectURL: String,
     enableRespawnWarning: Boolean,
     fishValue: Number,
     costDeparture: Number,

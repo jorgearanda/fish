@@ -521,9 +521,21 @@ function endRun(trigger) {
         overText = ocean.endDepletionText.replace(/\n/g, '<br />');
     }
 
+    overtext = maybeReplaceRedictURL(overtext);
+
     socket.disconnect();
     $('#over-text').html(overText);
     $('#over-modal').modal({keyboard: false, backdrop: 'static'});
+}
+
+function maybeReplaceRedictURL(overtext) {
+    // replace the keyword REDIRECTURL with the value of the redirectURL parameter
+    var url = ocean.redirectURL;
+    var newtext = overtext;
+    if (url && url.length > 0) {
+        newtext = ""; // do some string manipulation
+    }
+    return newtext;
 }
 
 function requestPause() {

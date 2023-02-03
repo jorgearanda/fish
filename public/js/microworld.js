@@ -47,6 +47,7 @@ function readyTooltips() {
     $('#catch-intentions-tooltip').tooltip();
     $('#catch-intention-seasons-tooltip').tooltip();
     $('#catch-intent-extra-time-tooltip').tooltip();
+    $('#redirect-url-tooltip').tooltip();
 }
 
 function changeBotRowVisibility() {
@@ -323,6 +324,7 @@ function prepareMicroworldObject() {
     mw.catchIntentExtraTime = $('#catch-intent-extra-time').val();
     mw.catchIntentPrompt1 = $('#catch-intent-prompt1').val();
     mw.catchIntentPrompt2 = $('#catch-intent-prompt2').val();
+    mw.redirectURL = $('#redirect-url').val();
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
@@ -473,6 +475,7 @@ function populatePage() {
     $('#catch-intent-prompt2').val(mw.params.catchIntentPrompt2);
     var maybe = !(mw.params.catchIntentionsEnabled);
     disableCatchIntentControls(maybe);
+    $('#redirect-url').val(mw.params.redirectURL);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);

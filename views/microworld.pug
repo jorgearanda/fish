@@ -168,6 +168,13 @@ html
               label.form-label.col-md-6(for='catch-intent-prompt2') Catch intentions subprompt (optional)
               .col-md-6
                 input#catch-intent-prompt2.form-control.to-disable(type='text', autofocus='', disabled=true)
+          h3 Redirection
+          .row
+            .form-group
+              label.form-label.col-md-6(for='redirect-url') Redirection&nbsp;
+                  a#redirect-url-tooltip(title='TODO: EXPLAIN USE OF REDIRECT URL.', data-toggle='tooltip', data-placement='top') URL:&nbsp;
+              .col-md-6
+                input#redirect-url.form-control.to-disable(type='text', value='')
 
         .col-md-4
           h3 Fish stocks and fishing
