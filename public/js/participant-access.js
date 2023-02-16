@@ -50,10 +50,60 @@ function overrideSubmit() {
     return false;
 }
 
-function main() {
+function formBasedLogin() {
     loadLabels();
     $('form').submit(overrideSubmit);
     $('#login').click(attemptLogin);
+}
+
+// 
+// REDIRECTION FEATURE
+//
+
+var queryParams = $.url().param();
+
+function attemptRedirect() {
+    var expid = 'expid' in queryParams ? queryParams['expid'] : '';
+    if(expid == '') return false;
+    var partid = 'partid' in queryParams ? queryParams['partid'] : '';
+    if(partid == '') return false;
+    var credentials = {
+        code: expid,
+        pid: partid
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/participant-sessions',
+        data: credentials,
+        error: badRedirect,
+        success: successfulRedirect
+    });
+    return true;
+}
+
+function successfulRedirect(mw) {
+    var newLocation =  '/fish?lang=' + lang +
+        '&mwid=' + mw._id + 
+        '&pid=' + queryParams['partid'];
+    for (var key in queryParams) {
+        if(key != 'lang') {
+            newLocation += '&' + key + '=' + queryParams[key];
+        }
+    }
+    location.href = newLocation;
+}
+
+function badRedirect (jqXHR) {
+    var errors = JSON.parse(jqXHR.responseText).errors;
+    formBasedLogin();
+    alert(errors);
+}
+
+
+function main() {
+    if(!attemptRedirect()) {
+        formBasedLogin();
+    }
 }
 
 $(document).ready(main);
