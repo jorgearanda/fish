@@ -171,10 +171,16 @@ html
           h3 Redirection
           .row
             .form-group
+              label.form-label.col-md-6(for='redirect-url') How does this work?
+              .col-md-6
+                button#show-redirect-explanation.btn.btn-default(type='button') EXPLAIN
+          .row
+            .form-group
               label.form-label.col-md-6(for='redirect-url') Redirection&nbsp;
                   a#redirect-url-tooltip(title='Click the EXPLAIN button to find out how redirection works in Fish.', data-toggle='tooltip', data-placement='top') URL:&nbsp;
               .col-md-6
                 input#redirect-url.form-control.to-disable(type='text', value='')
+
 
         .col-md-4
           h3 Fish stocks and fishing
@@ -448,3 +454,10 @@ html
           .modal-footer
             button.btn.btn-default(data-dismiss='modal', aria-hidden='true') Cancel
             button#delete-confirmed.btn.btn-danger(data-dismiss='modal', aria-hidden='true') Delete
+    #explain-redirect-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #explain-redirect-text.modal-body Explanation of redirection features
+          .modal-footer
+            button#done-redirect-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK

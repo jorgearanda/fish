@@ -603,6 +603,9 @@ function setButtons() {
     $('#archive-confirmed').click(archiveMicroworld);
     $('#delete-confirmed').click(deleteMicroworld);
     $(".behaviour_group_select").click(showStatusTableOptions);
+
+    $('#show-redirect-explanation').click(showRedirectExplanationText);
+
     initDownloadAll();
 }
 
@@ -723,6 +726,16 @@ function uniformityChanges() {
     changeProbActionUniformity();
     changeAttemptsSecondUniformity();
 }
+
+// REDIRECTION FEATURE
+
+function showRedirectExplanationText() {
+    var explanationText = explainRedirectText.replace(/\n/g, '<br />');
+    $('#explain-redirect-text').html(explanationText);
+    $('#explain-redirect-modal').modal({keyboard: false, backdrop: 'static'});
+}
+
+
 
 function main() {
     getMwId();
