@@ -294,6 +294,11 @@ function updateFishers() {
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
 
+            // REDIRECTION FEATURE - provide fish caught and earnings on redirect return
+            queryParams['fishTotal'] = fishTotal.toString();
+            queryParams['profitTotal'] = profitTotal.toString();
+            
+
             $('#f0-catch-intent').text(catchIntent);
             $('#f0-fish-season').text(fishSeason);
             $('#f0-fish-total').text(fishTotal);
@@ -521,22 +526,55 @@ function endRun(trigger) {
         overText = ocean.endDepletionText.replace(/\n/g, '<br />');
     }
 
-    overText = maybeReplaceRedirectURL(overText);
-
     socket.disconnect();
     $('#over-text').html(overText);
     $('#over-modal').modal({keyboard: false, backdrop: 'static'});
 }
 
-function maybeReplaceRedirectURL(overText) {
+// 
+// REDIRECTION FEATURE
+//
+
+var queryParams = $.url().param();
+
+function maybeRedirect() {
+    console.log("Entering maybeRedirect()");
     // replace the keyword REDIRECTURL with the value of the redirectURL parameter
     var url = ocean.redirectURL;
-    var newtext = overText;
     if (url && url.length > 0) {
-        newtext = ""; // do some string manipulation
+        for(var key in queryParams) {
+            url = substituteQueryParameter(url, key);
+        }
+        location.href = url;
     }
-    return newtext;
 }
+
+function substituteQueryParameter(url, key) {
+    var safeKey = escapeRegExp("${"+key+"}"); // "\\$x"
+    var replacement = queryParams[key];
+    var safeReplacement = escapeReplacement(replacement);
+    return url.replace(
+        new RegExp(safeKey, 'gi'),
+        safeReplacement
+    );
+}
+// Some query parameters may contain characters that have meaning in a regular expression
+// and string.replace uses regexp , so we need to escape the parameter names and values 
+// From https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+//
+// To escape the RegExp itself:
+function escapeRegExp(str) {
+    console.log("Entering escapeRegExp("+str+")");
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+// To escape a replacement string:
+function escapeReplacement(str) {
+    console.log("Entering escapeReplacement("+str+")");
+    return str.replace(/\$/g, '$$$$');
+}
+
+// END REDIRECTION FEATURE
+
 
 function requestPause() {
     socket.emit('requestPause', pId);
@@ -641,6 +679,7 @@ function main() {
     $('#attempt-fish').on('click', attemptToFish);
     $('#pause').on('click', requestPause);
     $('#resume').on('click', requestResume);
+    $('#finished').on('click', maybeRedirect);
     loadLabels();
     resizeOceanCanvasToScreenWidth();
     $(window).resize(resizeOceanCanvasToScreenWidth);
