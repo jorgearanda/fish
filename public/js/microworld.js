@@ -730,8 +730,15 @@ function uniformityChanges() {
 // REDIRECTION FEATURE
 
 function showRedirectExplanationText() {
-    var explanationText = explainRedirectText.replace(/\n/g, '<br />');
-    $('#explain-redirect-text').html(explanationText);
+    // var explanationText = explainRedirectText.replace(/\n/g, '<br />');
+    // $('#explain-redirect-content').html('explanationText');
+    // $('#explain-redirect-content').load('explain-redirection');
+    // $.get("explain-redirection", function(data){
+    //     $("#explain-redirect-content").html(data).fadeIn();
+    // });
+    $('#explain-redirect-content').load('/explain-redirection',function(){
+        $('#explain-redirect-modal').modal({show:true});
+    });
     $('#explain-redirect-modal').modal({keyboard: false, backdrop: 'static'});
 }
 
