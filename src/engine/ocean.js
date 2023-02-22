@@ -26,6 +26,8 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   this.microworld = mw;
   this.results = [];
   this.om = om;
+  this.catchIntentSeason = 0;
+  this.catchIntentDisplaySeason = 0;
   this.log = new OceanLog(
     this.microworld.name + ' ' + this.id + ' ' + '(' + this.microworld.experimenter.username + ')'
   );
@@ -177,7 +179,8 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       mysteryFish: this.mysteryFish,
       certainSpawn: this.certainSpawn,
       reportedMysteryFish: this.reportedMysteryFish,
-      intentSeason: this.isResting() ? this.season+1 : this.season,
+      catchIntentSeason: this.catchIntentSeason,
+      catchIntentDisplaySeason: this.catchIntentDisplaySeason,
       fishers: [],
     };
 
@@ -245,6 +248,10 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   this.recordIntendedCatch = function(pId, numFish) {
     var idx = this.findFisherIndex(pId);
     if (idx !== null) this.fishers[idx].recordIntendedCatch(numFish);
+    // the following is true ONLY for fisher idx!!! 
+    // this.catchIntentDisplaySeason = this.catchIntentSeason;
+    // Tell fisher idx to remove the dialog and display the intent column
+    // socket.emit('stop asking intent');
     io.sockets.in(this.id).emit('status', this.getSimStatus());
     return;
   };
@@ -318,6 +325,9 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       });
     }
 
+    this.catchIntentDisplaySeason = this.catchIntentIsActive(this.season) ? this.season : 0;
+    this.log.debug('this.startNextSeason(): ' + ' this.catchIntentDisplaySeason set to ' + this.catchIntentDisplaySeason);
+
     // TODO: Need to get proper numbers for certain and mystery fish on seasons after first!
     this.log.info('Beginning season ' + this.season + '.');
     let status = this.getSimStatus();
@@ -367,10 +377,14 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         season: this.season,
       });
       if (this.catchIntentIsActive(this.season+1)) {
+        this.catchIntentSeason = this.season+1;
         for (i in this.fishers) {
           this.fishers[i].prepareToAskCatchIntent();
         }
         io.sockets.in(this.id).emit('start asking intent');
+      }
+      else { 
+        this.catchIntentSeason = 0;
       }
     } else {
       this.endOcean(reason);
@@ -429,12 +443,14 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       this.log.debug('Ocean loop - resting: ' + this.seconds + ' of ' + delay + ' seconds.');
       this.setAvailableSpawn(delay);
 
-      if (this.catchIntentIsEnabled(this.season + 1)) {
+      if (this.catchIntentSeason > this.season) {
         var duration = this.microworld.params.catchIntentDialogDuration;
-        var likelihood = 0.90; 
-        this.getBotsCatchIntent(this.seconds/duration*likelihood);
+        var certainty = 0.90; 
+        this.getBotsCatchIntent(this.seconds/duration*certainty);
         if (this.hasReachedCatchIntentDialogDuration()) {
-          io.sockets.in(this.id).emit('stop asking intent', this.season + 1);
+          io.sockets.in(this.id).emit('stop asking intent');
+          this.catchIntentDisplaySeason = this.catchIntentSeason;
+          this.log.debug('Ocean loop - resting: ' + ' this.catchIntentDisplaySeason set to ' + this.catchIntentDisplaySeason);
         }
       }
 
@@ -469,7 +485,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         this.fishers[i].maybeGetBotCatchIntent(likelihood);
       }
     }
-  }
+  };
 
   this.setAvailableFish = function() {
     if (this.season === 1) {

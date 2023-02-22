@@ -118,7 +118,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
   this.maybeGetBotCatchIntent = function(likelihood) {
     var data = this.seasonData[this.season];
     if (data.nextCatchIntent === '???') {
-      if (Math.random() > likelihood) {
+      if (Math.random() <= likelihood) {
         data.nextCatchIntent = this.calculateBotCatchIntent(this.season + 1);
       } 
     }

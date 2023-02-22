@@ -9,6 +9,8 @@ var pId = $.url().param('pid');
 var ocean;
 var prePauseButtonsState = {};
 
+var catchIntentDisplaySeasonStatus = 0;
+
 var oCanvas, oContext;
 var underwater = new Image();
 underwater.src = 'public/img/underwater.jpg';
@@ -33,7 +35,10 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
 //////////// Catch Intentions feature 
 ////////////////////////////////////////
 
-function showCatchIntentColumn() {
+function showCatchIntentColumn(season) {
+    var headerText = ' ' + msgs.info_intent;
+    if (season) headerText += ' ' + season;
+    $('#catch-intent-header').text(headerText);
     $('#catch-intent-th').show();
     for (var i in st.fishers) {
         $('#f' + i + '-catch-intent').show();
@@ -73,15 +78,27 @@ function hideCatchIntentDialog() {
     $('#catch-intent-dialog-box').hide();
 }
 
-function catchIntentIsActive(season) {
-    return ocean
-        && ocean.catchIntentionsEnabled
-        && (season <= ocean.numSeasons)
-        && (ocean.catchIntentSeasons.indexOf(season) >= 0);
+// TODO
+// function catchIntentIsActive(season) {
+//     return ocean
+//         && ocean.catchIntentionsEnabled
+//         && (season <= ocean.numSeasons)
+//         && (ocean.catchIntentSeasons.indexOf(season) >= 0);
+// }
+
+function checkCatchIntentDisplay() {
+    if (st.catchIntentDisplaySeason != catchIntentDisplaySeasonStatus) {
+        if (st.catchIntentDisplaySeason == 0) {
+            hideCatchIntentColumn();
+        } else {
+            showCatchIntentColumn(st.catchIntentDisplaySeason);
+        }
+        catchIntentDisplaySeasonStatus = st.catchIntentDisplaySeason;
+    }
 }
 
+
 function startAskingIntendedCatch() {
-    hideCatchIntentColumn();
     showCatchIntentDialog();
     myCatchIntent = '???';
 }
@@ -89,7 +106,6 @@ function startAskingIntendedCatch() {
 function stopAskingIntendedCatch() {
     submitMyCatchIntent();
     hideCatchIntentDialog();
-    showCatchIntentColumn();
 }
 
 function recordMyCatchIntent() {
@@ -198,6 +214,7 @@ function updateStatus() {
         $("#status-sub-label").hide();
     } else {
     }
+    checkCatchIntentDisplay(st.catchIntentDisplaySeason);
 
     $('#status-label').html(statusText);
 }
@@ -278,13 +295,11 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
 
-            if (st.status === 'resting' && catchIntentIsActive(st.season+1)) {
+            if (st.catchIntentDisplaySeason > st.season) {
                 catchIntent = fisher.seasonData[st.season].nextCatchIntent;
-                $('#catch-intent-header').text(' ' + msgs.info_intent + ' ' + (st.season+1));
             }
             else {
                 catchIntent = fisher.seasonData[st.season].catchIntent;
-                $('#catch-intent-header').text(' ' + msgs.info_intent + ' ' + (st.season));
             }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
@@ -330,7 +345,7 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
-            if (st.status === 'resting') {
+            if (st.catchIntentDisplaySeason > st.season) {
                 catchIntent = fisher.seasonData[st.season].nextCatchIntent;
             }
             else {
@@ -473,11 +488,6 @@ function beginSeason(data) {
     $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
     updateWarning('');
     drawOcean();
-    if (catchIntentIsActive(st.season)) {
-        showCatchIntentColumn();
-    } else {
-        hideCatchIntentColumn();
-    }
     updateFishers();
     initializeMixItUp();
     sortFisherTable();
@@ -511,9 +521,6 @@ function endSeason(data) {
     resetLocation();
     updateWarning();
     disableButtons();
-    if (!catchIntentIsActive(st.season+1)) {
-        // hideCatchIntentColumn();
-    }
 }
 
 function endRun(trigger) {
@@ -653,7 +660,7 @@ function resizeOceanCanvasToScreenWidth() {
 function startTutorial() {
     console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
     if(ocean && ocean.catchIntentionsEnabled) {
-        showCatchIntentColumn();
+        showCatchIntentColumn(0);
     }
     else {
         hideCatchIntentColumn();
