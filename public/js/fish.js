@@ -33,47 +33,44 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
 //////////// Catch Intentions feature 
 ////////////////////////////////////////
 
-function makeCatchIntentColumnVisible(visible = true) {
-    // console.log('makeCatchIntentColumnVisible: visible=' + visible);
-    if (visible) {
-        $('#catch-intent-th').show();
-        for (var i in st.fishers) {
-            $('#f' + i + '-catch-intent').show();
-        }
+function showCatchIntentColumn() {
+    $('#catch-intent-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-catch-intent').show();
     }
-    else {
-        $('#catch-intent-th').hide();
-        for (var i in st.fishers) {
-            $('#f' + i + '-catch-intent').hide();
-        }
+}
+
+function hideCatchIntentColumn() {
+    $('#catch-intent-th').hide();
+    for (var i in st.fishers) {
+        $('#f' + i + '-catch-intent').hide();
     }
 }
 
 var myCatchIntent = 'n/a';
 
-function makeCatchIntentDialogVisible(visible = true) {
-    // console.log('makeCatchIntentDialogVisible: visible=' + visible);
-    if (visible) {
-        $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
-        if (ocean.catchIntentPrompt2.length > 0) {
-            $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
-            $('#catch-intent-prompt2').show();
-        } 
-        else {
-            $('#catch-intent-prompt2').hide();
-        }
-        $('#catch-intent-input').val("");
-        $('#catch-intent-input').on('keydown', function (e) {
-            if (e.key === 'Enter' || e.keyCode === 13) {
-                submitCatchIntent();// Do something
-            }
-        });
-        $('#catch-intent-submit').on('click', submitCatchIntent);
-        $('#catch-intent-submit').show();
-        $('#catch-intent-dialog-box').show();
-    } else {
-        $('#catch-intent-dialog-box').hide();
+function showCatchIntentDialog() {
+    $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
+    if (ocean.catchIntentPrompt2.length > 0) {
+        $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
+        $('#catch-intent-prompt2').show();
+    } 
+    else {
+        $('#catch-intent-prompt2').hide();
     }
+    $('#catch-intent-input').val("");
+    $('#catch-intent-input').on('keydown', function (e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            recordMyCatchIntent();
+        }
+    });
+    $('#catch-intent-submit').on('click', recordMyCatchIntent);
+    $('#catch-intent-submit').show();
+    $('#catch-intent-dialog-box').show();
+}
+
+function hideCatchIntentDialog() {
+    $('#catch-intent-dialog-box').hide();
 }
 
 function catchIntentIsActive(season) {
@@ -83,31 +80,19 @@ function catchIntentIsActive(season) {
         && (ocean.catchIntentSeasons.indexOf(season) >= 0);
 }
 
-function maybeAskIntendedCatch() {
-    if (st.status === 'resting' && catchIntentIsActive(st.season + 1)) {
-        makeCatchIntentColumnVisible(false);
-        makeCatchIntentDialogVisible(true);
-        myCatchIntent = '???';
-    } else {
-        makeCatchIntentColumnVisible(false);
-        makeCatchIntentDialogVisible(false);
-        myCatchIntent = 'n/a';
-    }
+function startAskingIntendedCatch() {
+    hideCatchIntentColumn();
+    showCatchIntentDialog();
+    myCatchIntent = '???';
 }
 
-function maybeStopAskingIntendedCatch() {
-    recordIntendedCatch(myCatchIntent);
-    if (st.status === 'running' && catchIntentIsActive(st.season)) {
-        makeCatchIntentColumnVisible(true);
-        makeCatchIntentDialogVisible(false);
-    }
-    else {
-        makeCatchIntentColumnVisible(false);
-        makeCatchIntentDialogVisible(false);
-    }
+function stopAskingIntendedCatch() {
+    submitMyCatchIntent();
+    hideCatchIntentDialog();
+    showCatchIntentColumn();
 }
 
-function submitCatchIntent() {
+function recordMyCatchIntent() {
     var input = $('#catch-intent-input').val().trim();
     var num = parseInt(input);
     if (isNaN(num) || num < 0) {
@@ -116,9 +101,14 @@ function submitCatchIntent() {
     }
     else {
         myCatchIntent = num.toString();
-        makeCatchIntentDialogVisible(false);
+        stopAskingIntendedCatch();
     }
 }
+
+function submitMyCatchIntent() {
+    socket.emit('recordIntendedCatch', myCatchIntent);
+}
+
 
 ////////////////////////////////////////
 //////////// END Catch Intentions feature   (except for a few touch points below) 
@@ -288,7 +278,14 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
 
-            catchIntent = fisher.seasonData[st.season].catchIntent;
+            if (st.status === 'resting' && catchIntentIsActive(st.season+1)) {
+                catchIntent = fisher.seasonData[st.season].nextCatchIntent;
+                $('#catch-intent-header').text(' ' + msgs.info_intent + ' ' + (st.season+1));
+            }
+            else {
+                catchIntent = fisher.seasonData[st.season].catchIntent;
+                $('#catch-intent-header').text(' ' + msgs.info_intent + ' ' + (st.season));
+            }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
@@ -333,7 +330,12 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
-            catchIntent = fisher.seasonData[st.season].catchIntent;
+            if (st.status === 'resting') {
+                catchIntent = fisher.seasonData[st.season].nextCatchIntent;
+            }
+            else {
+                catchIntent = fisher.seasonData[st.season].catchIntent;
+            }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
@@ -417,8 +419,8 @@ function setupOcean(o) {
     updateCosts();
     makeUnpausable();
     hideTutorial();
-    makeCatchIntentColumnVisible(true);
-    makeCatchIntentDialogVisible(false);
+    hideCatchIntentColumn();
+    hideCatchIntentDialog();
 }
 
 function readRules() {
@@ -465,16 +467,17 @@ function attemptToFish() {
     socket.emit('attemptToFish');
 }
 
-function recordIntendedCatch(numFish) {
-    socket.emit('recordIntendedCatch', numFish);
-}
-
 function beginSeason(data) {
     st = data;
     // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
-    maybeStopAskingIntendedCatch();
+    $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
     updateWarning('');
     drawOcean();
+    if (catchIntentIsActive(st.season)) {
+        showCatchIntentColumn();
+    } else {
+        hideCatchIntentColumn();
+    }
     updateFishers();
     initializeMixItUp();
     sortFisherTable();
@@ -508,7 +511,9 @@ function endSeason(data) {
     resetLocation();
     updateWarning();
     disableButtons();
-    maybeAskIntendedCatch();
+    if (!catchIntentIsActive(st.season+1)) {
+        // hideCatchIntentColumn();
+    }
 }
 
 function endRun(trigger) {
@@ -648,20 +653,20 @@ function resizeOceanCanvasToScreenWidth() {
 function startTutorial() {
     console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
     if(ocean && ocean.catchIntentionsEnabled) {
-        makeCatchIntentColumnVisible(true);
+        showCatchIntentColumn();
     }
     else {
-        makeCatchIntentColumnVisible(false);
+        hideCatchIntentColumn();
         // Prevent bootstro from choking on hidden catch intention tutorial data
         $("#catch-intent-th").html("");
     }
     bootstro.start('.bootstro', {
         onComplete : function(params) {
-            makeCatchIntentColumnVisible(false);
+            hideCatchIntentColumn();
             displayRules();
         },
         onExit : function(params) {
-            makeCatchIntentColumnVisible(false);
+            hideCatchIntentColumn();
             displayRules();
         }
     });
@@ -681,9 +686,11 @@ socket.on('end season', endSeason);
 socket.on('end run', endRun);
 socket.on('pause', pause);
 socket.on('resume', resume);
+socket.on('start asking intent', startAskingIntendedCatch);
+socket.on('stop asking intent', stopAskingIntendedCatch);
 
 function main() {
-    makeCatchIntentColumnVisible(false);
+    hideCatchIntentColumn();
     $('#read-rules').on('click', readRules);
     $('#tutorial').on('click', startTutorial);
     disableButtons();

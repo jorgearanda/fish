@@ -30,7 +30,7 @@ describe('Engine - Ocean', function() {
         chanceCatch: 1.0,
         numSeasons: 4,
         catchIntentionsEnabled: false,
-        catchIntentExtraTime: 17,
+        catchIntentDialogDuration: 17,
         catchIntentSeasons: [2,4,6,8],
         bots: [
           {
@@ -379,7 +379,7 @@ describe('Engine - Ocean', function() {
 
   describe('hasReachedSeasonDelay()', function() {
     it('should report whether seconds has reached the seasonDelay parameter', function(done) {
-      o.setDelayForSeason(1);
+      o.seconds = 1;
       o.hasReachedSeasonDelay().should.equal(false);
       o.seconds = 5;
       o.hasReachedSeasonDelay().should.equal(true);

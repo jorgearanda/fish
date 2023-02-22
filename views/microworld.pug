@@ -147,17 +147,17 @@ html
                   input#enable-catch-intentions(type='checkbox', checked=false)
           .row
             .form-group
-              label.form-label.col-md-6(for='catch-intent-seasons') Catch intention&nbsp;
+              label.form-label.col-md-6(for='catch-intent-seasons') Catch intention 
                   a#catch-intention-seasons-tooltip(title='Comma-separated list of season numbers, 2 or higher, when to prompt human fishers to indicate their intent.', data-toggle='tooltip', data-placement='top') seasons 
               .col-md-6
                 input#catch-intent-seasons.form-control.to-disable(type='text', value='2,4,6,8,10', disabled=true)
           .row
             .form-group
-              label.form-label.col-md-6(for='catch-intent-extra-time') Catch intention&nbsp;
-                  a#catch-intent-extra-time-tooltip(title='Extra seconds added to the delay between seasons when human fishers are prompted to indicate their intent.', data-toggle='tooltip', data-placement='top') extra time
+              label.form-label.col-md-6(for='catch-intent-dialog-duration') Catch intention 
+                  a#catch-intent-dialog-duration-tooltip(title='The number of seconds at the beginning of the delay between seasons during which human fishers are prompted to indicate their intent.', data-toggle='tooltip', data-placement='top') dialog duration
                   |  (seconds)
               .col-md-6
-                input#catch-intent-extra-time.form-control.to-disable(type='number', min='1', step='1', value='10', disabled=true)
+                input#catch-intent-dialog-duration.form-control.to-disable(type='number', min='1', step='1', value='5', disabled=true)
           .row
             .form-group
               label.form-label.col-md-6(for='catch-intent-prompt1') Catch intentions prompt (required)
@@ -171,14 +171,13 @@ html
           h3 Redirection
           .row
             .form-group
-              label.form-label.col-md-6(for='redirect-url') How does this work?
+              label.form-label.col-md-6(for='redirect-url') Redirection&nbsp;
+                  a#redirect-url-tooltip(title='Click the EXPLAIN button to find out how redirection works in Fish.', data-toggle='tooltip', data-placement='top') URL:&nbsp;
               .col-md-6
                 button#show-redirect-explanation.btn.btn-default(type='button') EXPLAIN
           .row
             .form-group
-              label.form-label.col-md-6(for='redirect-url') Redirection&nbsp;
-                  a#redirect-url-tooltip(title='Click the EXPLAIN button to find out how redirection works in Fish.', data-toggle='tooltip', data-placement='top') URL:&nbsp;
-              .col-md-6
+              .col-md-12
                 input#redirect-url.form-control.to-disable(type='text', value='')
 
 

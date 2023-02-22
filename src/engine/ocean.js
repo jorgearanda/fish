@@ -149,12 +149,6 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       && this.microworld.params.catchIntentSeasons.indexOf(season) >= 0;
   }
 
-  this.setDelayForSeason = function(season) {
-    this.seasonDelayInEffect = this.catchIntentIsActive(season) 
-    ?  this.microworld.params.seasonDelay + this.microworld.params.catchIntentExtraTime
-    :  this.microworld.params.seasonDelay;
-  }
-
   this.pause = function(pauseRequester) {
     if (this.isRunning() || this.isResting()) {
       this.log.info('Simulation paused by fisher ' + pauseRequester);
@@ -183,6 +177,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       mysteryFish: this.mysteryFish,
       certainSpawn: this.certainSpawn,
       reportedMysteryFish: this.reportedMysteryFish,
+      intentSeason: this.isResting() ? this.season+1 : this.season,
       fishers: [],
     };
 
@@ -218,11 +213,15 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   };
 
   this.hasReachedSeasonDelay = function() {
-    return this.seconds >= this.seasonDelayInEffect;
+    return this.seconds >= this.microworld.params.seasonDelay;
   };
 
   this.hasReachedSeasonDuration = function() {
     return this.seconds >= this.microworld.params.seasonDuration;
+  };
+
+  this.hasReachedCatchIntentDialogDuration = function() {
+    return this.seconds >= this.microworld.params.catchIntentDialogDuration;
   };
 
   //////////////////////
@@ -362,12 +361,17 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     if (this.season < this.microworld.params.numSeasons && reason !== 'depletion') {
       this.status = 'resting';
       this.resetTimer();
-      this.setDelayForSeason(this.season+1);
       this.log.info('Ending season ' + this.season + '.');
       io.sockets.in(this.id).emit('end season', {
         status: this.status,
         season: this.season,
       });
+      if (this.catchIntentIsActive(this.season+1)) {
+        for (i in this.fishers) {
+          this.fishers[i].prepareToAskCatchIntent();
+        }
+        io.sockets.in(this.id).emit('start asking intent');
+      }
     } else {
       this.endOcean(reason);
     }
@@ -421,9 +425,19 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         this.tick();
       }
     } else if (this.isResting()) {
-      delay = this.seasonDelayInEffect;
+      delay = this.microworld.params.seasonDelay;
       this.log.debug('Ocean loop - resting: ' + this.seconds + ' of ' + delay + ' seconds.');
       this.setAvailableSpawn(delay);
+
+      if (this.catchIntentIsEnabled(this.season + 1)) {
+        var duration = this.microworld.params.catchIntentDialogDuration;
+        var likelihood = 0.90; 
+        this.getBotsCatchIntent(this.seconds/duration*likelihood);
+        if (this.hasReachedCatchIntentDialogDuration()) {
+          io.sockets.in(this.id).emit('stop asking intent', this.season + 1);
+        }
+      }
+
       io.sockets.in(this.id).emit('status', this.getSimStatus());
 
       if (this.seconds + this.warnSeconds >= delay) {
@@ -448,6 +462,14 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       setTimeout(this.runOcean.bind(this), 1000);
     }
   };
+
+  this.getBotsCatchIntent = function(likelihood) {
+    for (var i in this.fishers) {
+      if (this.fishers[i].isBot()) {
+        this.fishers[i].maybeGetBotCatchIntent(likelihood);
+      }
+    }
+  }
 
   this.setAvailableFish = function() {
     if (this.season === 1) {

@@ -46,7 +46,7 @@ function readyTooltips() {
     $('#attempts-second-tooltip').tooltip();
     $('#catch-intentions-tooltip').tooltip();
     $('#catch-intention-seasons-tooltip').tooltip();
-    $('#catch-intent-extra-time-tooltip').tooltip();
+    $('#catch-intent-dialog-duration-tooltip').tooltip();
     $('#redirect-url-tooltip').tooltip();
 }
 
@@ -255,7 +255,7 @@ function validate() {
         $('#catch-intent-seasons').val(parseCatchIntentSeasons(catchIntentSeasonsStr, true));
     }
     
-    if (parseInt($('#catch-intent-extra-time').val()) < 0) {
+    if (parseInt($('#catch-intent-dialog-duration').val()) < 0) {
         errors.push('The catch intent extra time cannot be negative.');
     }
 
@@ -321,7 +321,7 @@ function prepareMicroworldObject() {
     mw.enableTutorial = $('#enable-tutorial').prop('checked');
     mw.catchIntentionsEnabled = $('#enable-catch-intentions').prop('checked');
     mw.catchIntentSeasons = parseCatchIntentSeasons($('#catch-intent-seasons').val(), true);
-    mw.catchIntentExtraTime = $('#catch-intent-extra-time').val();
+    mw.catchIntentDialogDuration = $('#catch-intent-dialog-duration').val();
     mw.catchIntentPrompt1 = $('#catch-intent-prompt1').val();
     mw.catchIntentPrompt2 = $('#catch-intent-prompt2').val();
     mw.redirectURL = $('#redirect-url').val();
@@ -470,7 +470,7 @@ function populatePage() {
     $('#enable-tutorial').prop('checked', mw.params.enableTutorial);
     $('#enable-catch-intentions').prop('checked', mw.params.catchIntentionsEnabled);
     $('#catch-intent-seasons').val(mw.params.catchIntentSeasons.toString());
-    $('#catch-intent-extra-time').val(mw.params.catchIntentExtraTime);
+    $('#catch-intent-dialog-duration').val(mw.params.catchIntentDialogDuration);
     $('#catch-intent-prompt1').val(mw.params.catchIntentPrompt1);
     $('#catch-intent-prompt2').val(mw.params.catchIntentPrompt2);
     var maybe = !(mw.params.catchIntentionsEnabled);
@@ -522,7 +522,7 @@ function populatePage() {
 
 function disableCatchIntentControls(maybe) {
     $('#catch-intent-seasons').attr("disabled", maybe);
-    $('#catch-intent-extra-time').attr("disabled", maybe);
+    $('#catch-intent-dialog-duration').attr("disabled", maybe);
     $('#catch-intent-prompt1').attr("disabled", maybe);
     $('#catch-intent-prompt2').attr("disabled", maybe);
 }
