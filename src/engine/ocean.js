@@ -325,8 +325,8 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       });
     }
 
-    this.catchIntentDisplaySeason = this.catchIntentIsActive(this.season) ? this.season : 0;
-    this.log.debug('this.startNextSeason(): ' + ' this.catchIntentDisplaySeason set to ' + this.catchIntentDisplaySeason);
+    this.catchIntentSeason = this.catchIntentIsActive(this.season) ? this.season : 0;
+    this.catchIntentDisplaySeason = this.catchIntentSeason;
 
     // TODO: Need to get proper numbers for certain and mystery fish on seasons after first!
     this.log.info('Beginning season ' + this.season + '.');
@@ -450,7 +450,6 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         if (this.hasReachedCatchIntentDialogDuration()) {
           io.sockets.in(this.id).emit('stop asking intent');
           this.catchIntentDisplaySeason = this.catchIntentSeason;
-          this.log.debug('Ocean loop - resting: ' + ' this.catchIntentDisplaySeason set to ' + this.catchIntentDisplaySeason);
         }
       }
 

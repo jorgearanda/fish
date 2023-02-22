@@ -53,6 +53,7 @@ function hideCatchIntentColumn() {
 }
 
 var myCatchIntent = 'n/a';
+var myCatchIntentSubmitted = false;
 
 function showCatchIntentDialog() {
     $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
@@ -78,22 +79,16 @@ function hideCatchIntentDialog() {
     $('#catch-intent-dialog-box').hide();
 }
 
-// TODO
-// function catchIntentIsActive(season) {
-//     return ocean
-//         && ocean.catchIntentionsEnabled
-//         && (season <= ocean.numSeasons)
-//         && (ocean.catchIntentSeasons.indexOf(season) >= 0);
-// }
-
 function checkCatchIntentDisplay() {
-    if (st.catchIntentDisplaySeason != catchIntentDisplaySeasonStatus) {
-        if (st.catchIntentDisplaySeason == 0) {
+    var season = myCatchIntentSubmitted ? st.catchIntentSeason : st.catchIntentDisplaySeason;
+    // console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' SeasonStatus=' + catchIntentDisplaySeasonStatus);
+    if (season != catchIntentDisplaySeasonStatus) {
+        if (season == 0) {
             hideCatchIntentColumn();
         } else {
-            showCatchIntentColumn(st.catchIntentDisplaySeason);
+            showCatchIntentColumn(season);
         }
-        catchIntentDisplaySeasonStatus = st.catchIntentDisplaySeason;
+        catchIntentDisplaySeasonStatus = season;
     }
 }
 
@@ -101,6 +96,7 @@ function checkCatchIntentDisplay() {
 function startAskingIntendedCatch() {
     showCatchIntentDialog();
     myCatchIntent = '???';
+    myCatchIntentSubmitted = false;
 }
 
 function stopAskingIntendedCatch() {
@@ -123,6 +119,7 @@ function recordMyCatchIntent() {
 
 function submitMyCatchIntent() {
     socket.emit('recordIntendedCatch', myCatchIntent);
+    myCatchIntentSubmitted = true;
 }
 
 
@@ -550,7 +547,7 @@ function endRun(trigger) {
 var queryParams = $.url().param();
 
 function maybeRedirect() {
-    console.log("Entering maybeRedirect()");
+    // console.log("Entering maybeRedirect()");
     // replace the keyword REDIRECTURL with the value of the redirectURL parameter
     var url = ocean.redirectURL;
     if (url && url.length > 0) {
@@ -576,12 +573,12 @@ function substituteQueryParameter(url, key) {
 //
 // To escape the RegExp itself:
 function escapeRegExp(str) {
-    console.log("Entering escapeRegExp("+str+")");
+    // console.log("Entering escapeRegExp("+str+")");
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 // To escape a replacement string:
 function escapeReplacement(str) {
-    console.log("Entering escapeReplacement("+str+")");
+    // console.log("Entering escapeReplacement("+str+")");
     return str.replace(/\$/g, '$$$$');
 }
 
@@ -658,7 +655,7 @@ function resizeOceanCanvasToScreenWidth() {
 }
 
 function startTutorial() {
-    console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
+    // console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
     if(ocean && ocean.catchIntentionsEnabled) {
         showCatchIntentColumn(0);
     }
