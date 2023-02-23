@@ -88,7 +88,7 @@ function hideCatchIntentDialog() {
 
 function checkCatchIntentDisplay() {
     var season = myCatchIntentSubmitted ? st.catchIntentSeason : st.catchIntentDisplaySeason;
-    console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' mySeason=' + myCatchIntentDisplaySeason);
+    // console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' mySeason=' + myCatchIntentDisplaySeason);
     if (season != myCatchIntentDisplaySeason) {
         if (season == 0) {
             hideCatchIntentColumn();

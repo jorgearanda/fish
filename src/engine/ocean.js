@@ -61,12 +61,11 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     for (var i in this.fishers) {
       var fisher = this.fishers[i];
       if (!fisher.isBot() && fisher.name === pId) {
+        this.resume(pId); // just in case this fisher paused the game just before leaving!
         this.fishers.splice(i, 1);
       }
     }
     this.log.info('Human fisher ' + pId + ' left.');
-    // TODO: if this fisher paused the game before leaving, we're stuck waiting for this fisher to resume!!!
-    // TODO: need to check and resume now
   };
 
   this.findFisherIndex = function(pId) {
