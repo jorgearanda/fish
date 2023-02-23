@@ -9,8 +9,6 @@ var pId = $.url().param('pid');
 var ocean;
 var prePauseButtonsState = {};
 
-var catchIntentDisplaySeasonStatus = 0;
-
 var oCanvas, oContext;
 var underwater = new Image();
 underwater.src = 'public/img/underwater.jpg';
@@ -54,25 +52,34 @@ function hideCatchIntentColumn() {
 
 var myCatchIntent = 'n/a';
 var myCatchIntentSubmitted = false;
+var myCatchIntentDisplaySeason = 0;
+var myCatchIntentDialogConfigured = false;
 
 function showCatchIntentDialog() {
-    $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
-    if (ocean.catchIntentPrompt2.length > 0) {
-        $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
-        $('#catch-intent-prompt2').show();
-    } 
-    else {
-        $('#catch-intent-prompt2').hide();
+    if(!myCatchIntentDialogConfigured) {
+        $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
+        if (ocean.catchIntentPrompt2.length > 0) {
+            $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
+            $('#catch-intent-prompt2').show();
+        } 
+        else {
+            $('#catch-intent-prompt2').hide();
+        }
+        // emitter.on() is cumulative! And showCatchIntentDialog() could be called multiple times...
+        // https://nodejs.org/api/events.html#emitteroneventname-listener
+        // NOTE: This is NOT the same as .once() !!!
+        $('#catch-intent-input').on('keydown', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                recordMyCatchIntent();
+            }
+        });
+        $('#catch-intent-submit').on('click', recordMyCatchIntent);
+        myCatchIntentDialogConfigured = true;
     }
     $('#catch-intent-input').val("");
-    $('#catch-intent-input').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            recordMyCatchIntent();
-        }
-    });
-    $('#catch-intent-submit').on('click', recordMyCatchIntent);
     $('#catch-intent-submit').show();
     $('#catch-intent-dialog-box').show();
+    $('#catch-intent-input').trigger('focus');
 }
 
 function hideCatchIntentDialog() {
@@ -81,14 +88,14 @@ function hideCatchIntentDialog() {
 
 function checkCatchIntentDisplay() {
     var season = myCatchIntentSubmitted ? st.catchIntentSeason : st.catchIntentDisplaySeason;
-    // console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' SeasonStatus=' + catchIntentDisplaySeasonStatus);
-    if (season != catchIntentDisplaySeasonStatus) {
+    console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' mySeason=' + myCatchIntentDisplaySeason);
+    if (season != myCatchIntentDisplaySeason) {
         if (season == 0) {
             hideCatchIntentColumn();
         } else {
             showCatchIntentColumn(season);
         }
-        catchIntentDisplaySeasonStatus = season;
+        myCatchIntentDisplaySeason = season;
     }
 }
 
@@ -100,7 +107,6 @@ function startAskingIntendedCatch() {
 }
 
 function stopAskingIntendedCatch() {
-    submitMyCatchIntent();
     hideCatchIntentDialog();
 }
 
@@ -114,6 +120,7 @@ function recordMyCatchIntent() {
     else {
         myCatchIntent = num.toString();
         stopAskingIntendedCatch();
+        submitMyCatchIntent();
     }
 }
 
@@ -292,7 +299,7 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
 
-            if (st.catchIntentDisplaySeason > st.season) {
+            if (myCatchIntentDisplaySeason > st.season) {
                 catchIntent = fisher.seasonData[st.season].nextCatchIntent;
             }
             else {
@@ -342,7 +349,7 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
-            if (st.catchIntentDisplaySeason > st.season) {
+            if (myCatchIntentDisplaySeason > st.season) {
                 catchIntent = fisher.seasonData[st.season].nextCatchIntent;
             }
             else {

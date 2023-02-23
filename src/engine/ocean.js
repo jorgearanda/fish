@@ -65,6 +65,8 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       }
     }
     this.log.info('Human fisher ' + pId + ' left.');
+    // TODO: if this fisher paused the game before leaving, we're stuck waiting for this fisher to resume!!!
+    // TODO: need to check and resume now
   };
 
   this.findFisherIndex = function(pId) {
@@ -444,9 +446,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       this.setAvailableSpawn(delay);
 
       if (this.catchIntentSeason > this.season) {
-        var duration = this.microworld.params.catchIntentDialogDuration;
-        var certainty = 0.90; 
-        this.getBotsCatchIntent(this.seconds/duration*certainty);
+        this.getBotsCatchIntent();
         if (this.hasReachedCatchIntentDialogDuration()) {
           io.sockets.in(this.id).emit('stop asking intent');
           this.catchIntentDisplaySeason = this.catchIntentSeason;
@@ -478,10 +478,10 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     }
   };
 
-  this.getBotsCatchIntent = function(likelihood) {
+  this.getBotsCatchIntent = function() {
     for (var i in this.fishers) {
       if (this.fishers[i].isBot()) {
-        this.fishers[i].maybeGetBotCatchIntent(likelihood);
+        this.fishers[i].maybeGetBotCatchIntent();
       }
     }
   };
