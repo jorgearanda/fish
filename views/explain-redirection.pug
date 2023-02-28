@@ -24,9 +24,9 @@ html(lang='en')
         For example, provide platform A the following FISH URL: 
     tt
         small #{myHost}/?expid=XWDJ6X&partid=225
-
-    p
-        | Of course, instead of '225' you may be able to use platform A's mechanism to put in the actual participant's id.
+    p 
+    p.
+        Of course, instead of '225' you may be able to use platform A's mechanism to put in the actual participant's id.
 
     h4 Transparently sending your participants from FISH to the next best thing
     p.
@@ -35,7 +35,7 @@ html(lang='en')
         (This happens when participants click the OK button on the pop-up window announcing 
         the completion of the experiment.)
     p.
-        Before executing this, FISH will do variable substition on the URL using any query parameters 
+        Before executing this, FISH will perform variable substition on the URL using any query parameters 
         that were passed in when FISH started. Two additional variables are also available for substitution:
     dl
         dt fishTotal
@@ -46,7 +46,7 @@ html(lang='en')
         For example, you could put the following in the Redirection URL textbox: 
     tt
         small.
-            https://www.payme.com/?participant=$(partid)&catch=${fishTotal}&earnings=${totalProfit}
+            https://www.payme.com/?subj=$(partid)&catch=${fishTotal}&earned=${profitTotal}
 
     h4 Transparently sending your participants from FISH back to the previous platform
     p.
@@ -62,16 +62,18 @@ html(lang='en')
         In Gorilla, create a Redirect Node and configure it as follows: 
     dl
         dt URL
-        dd set this to #{myHost}/?expid=YOURFISHEXPERIMENTID
+        dd Set this to: <tt><small> #{myHost}/?expid=<i>YOURFISHEXPERIMENTID</i> </small></tt>
         dt Append Public ID
-        dd name this 'partid'
+        dd Name this: <tt><small> partid </small></tt>
         dt Completion dropdown menu
-        dd select 'Completion Token'
+        dd Select 'Completion Token'
 
     p In FISH, in your experiment's microworld parameters, set the Redirect URL to: 
     tt
         small https://research.sc/participant/login/resume/${completion_token}
+    
+    p 
     p That should do it! 
 
     p For more information on working with redirection in Gorilla, see 
-        a(href="https://support.gorilla.sc/support/reference/tree-nodes#redirect") Gorilla Redirect Nodes
+        a(href="https://support.gorilla.sc/support/reference/tree-nodes#redirect",target="_blank") Gorilla Redirect Nodes

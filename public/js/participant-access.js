@@ -68,10 +68,12 @@ function attemptRedirect() {
     if(!expid && !partid) return false;
     if(!expid) {
         $('#pid').val(partid);
+        $('#code').trigger('focus');
         return false;
     }
     if(!partid) {
         $('#code').val(expid);
+        $('#pid').trigger('focus');
         return false;
     }
     var credentials = {
