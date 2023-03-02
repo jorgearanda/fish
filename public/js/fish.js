@@ -490,6 +490,7 @@ function beginSeason(data) {
     st = data;
     // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
     $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
+    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season);
     updateWarning('');
     drawOcean();
     updateFishers();
