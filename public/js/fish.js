@@ -662,14 +662,14 @@ function resizeOceanCanvasToScreenWidth() {
 }
 
 function startTutorial() {
-    // console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
+    console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
     if(ocean && ocean.catchIntentionsEnabled) {
         showCatchIntentColumn(0);
     }
     else {
         hideCatchIntentColumn();
         // Prevent bootstro from choking on hidden catch intention tutorial data
-        $("#catch-intent-th").html("");
+        $("#catch-intent-th").removeClass("bootstro");
     }
     bootstro.start('.bootstro', {
         onComplete : function(params) {

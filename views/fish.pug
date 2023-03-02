@@ -43,15 +43,15 @@ html
               table.table.table-striped.table-hover.fishers-table
                 thead
                   th#fisher-header.bootstro(data-bootstro-title="Fisher" data-bootstro-content="This column indicates the name of each fisher. An anchor beside a fisher name shows the fisher is at port and a globe shows the fisher is out to sea." data-bootstro-placement="bottom")
-                  th#catch-intent-th.data-header
+                  th#catch-intent-th.data-header.bootstro(data-bootstro-title="Season intent" data-bootstro-content="You may be asked in between some seasons how many fish you plan to catch in the next season. In that case, this column shows how many fish each fisher intents to catch." data-bootstro-placement="bottom")
                     img(src='/public/img/fishy.jpg', width='20', height='20')
-                    p#catch-intent-header.bootstro(data-bootstro-title="Season intent" data-bootstro-content="You may be asked in between some seasons how many fish you plan to catch in the next season. In that case, this column shows how many fish each fisher intents to catch." data-bootstro-placement="bottom")
-                  th.data-header
+                    p#catch-intent-header
+                  th.data-header.bootstro(data-bootstro-title="Season fish" data-bootstro-content="This column shows how many fish each fisher has caught in the current season." data-bootstro-placement="bottom")
                     img(src='/public/img/fishy.jpg', width='20', height='20')
-                    p#fish-season-header.bootstro(data-bootstro-title="Season fish" data-bootstro-content="This column shows how many fish each fisher has caught in the current season." data-bootstro-placement="bottom")
-                  th.data-header
+                    p#fish-season-header
+                  th.data-header.bootstro(data-bootstro-title="Overall fish" data-bootstro-content="This column shows how many fish each fisher has caught in total from the beginning of the simulation." data-bootstro-placement="bottom")
                     img(src='/public/img/fishy.jpg', width='20', height='20')
-                    p#fish-total-header.bootstro(data-bootstro-title="Overall fish" data-bootstro-content="This column shows how many fish each fisher has caught in total from the beginning of the simulation." data-bootstro-placement="bottom")
+                    p#fish-total-header
                   th#profit-season-header.data-header.bootstro(data-bootstro-title="Season profit" data-bootstro-content="This column shows the current season's profit for each fisher." data-bootstro-placement="bottom")
                   th#profit-total-header.data-header.bootstro(data-bootstro-title="Overall profit" data-bootstro-content="This column shows the total profit for each fisher from the beginning of the simulation." data-bootstro-placement="bottom")
                 tbody#fishers-tbody
