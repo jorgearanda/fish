@@ -152,6 +152,10 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       && this.microworld.params.catchIntentSeasons.indexOf(season) >= 0;
   }
 
+  this.profitDisplayEnabled = function() {
+    return this.microworld.params.profitDisplayEnabled;
+  }
+
   this.pause = function(pauseRequester) {
     if (this.isRunning() || this.isResting()) {
       this.log.info('Simulation paused by fisher ' + pauseRequester);

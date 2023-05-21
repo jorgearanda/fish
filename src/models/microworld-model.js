@@ -39,6 +39,7 @@ var microworldSchema = new Schema({
     catchIntentDialogDuration: Number,
     redirectURL: String,
     enableRespawnWarning: Boolean,
+    profitDisplayEnabled: Boolean,
     fishValue: Number,
     costDeparture: Number,
     costSecond: Number,

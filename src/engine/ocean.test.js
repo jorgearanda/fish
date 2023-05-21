@@ -32,6 +32,7 @@ describe('Engine - Ocean', function() {
         catchIntentionsEnabled: false,
         catchIntentDialogDuration: 17,
         catchIntentSeasons: [2,4,6,8],
+        profitDisplayEnabled: false,
         bots: [
           {
             name: 'bot 1',
@@ -495,6 +496,15 @@ describe('Engine - Ocean', function() {
       o.catchIntentIsActive(2).should.equal(true);
       o.catchIntentIsActive(3).should.equal(false);
       o.catchIntentIsActive(4).should.equal(true);
+      return done();
+    });
+  });
+
+  describe('profitDisplayIsEnabled()', function() {
+    it('should return true if the profitDisplay parameter is true', function(done) {
+      o.profitDisplaysEnabled().should.equal(false);
+      o.microworld.params.profitDisplayEnabled = true;
+      o.profitDisplayEnabled().should.equal(true);
       return done();
     });
   });

@@ -134,6 +134,90 @@ function submitMyCatchIntent() {
 //////////// END Catch Intentions feature   (except for a few touch points below) 
 ////////////////////////////////////////
 
+//////////// START Profit Colum Display Feature
+////////////////////////////////////////
+
+//version 1. combines disply of both columns in one function
+
+function showProfitColumns(season) {
+    var headerText = ' ' + msgs.info_intent;
+    if (season) headerText += ' ' + season;
+    $('#profit-season-header').text(headerText);
+    $('#profit-season-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').show();
+    }
+    if (season) headerText += ' ' + season;
+    $('#profit-total-header').text(headerText);
+    $('#profit-total-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-total').show();
+    }
+}
+
+function hideProfitColumns() {
+    $('#profit-season-header').hide();
+    $('#profit-total-header').hide();
+    $('#profit-season-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit').hide();
+    }
+    $('#profit-total-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit').hide();
+    }
+}
+//function hideProfitColumns() {
+//$('#profit-season-th').show();
+//for (var i in st.fishers) {
+//    $('#f' + i + '-profit-season').hide();
+//}
+//$('#profit-total-th').show();
+//for (var i in st.fishers) {
+//    $('#f' + i + '-profit-total').hide();
+//}
+// or -?
+//function hideProfitColumns() {
+//    $('#profit-th').show();
+//    for (var i in st.fishers) {
+//        $('#f' + i + '-profit').hide();
+//    }
+//}
+
+// version 2: allows seasion and total profit columns to be displayed individually
+function profitTotalEnabled() {
+    $('#profit-total-header').hide();
+    $('#profit-total-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-total').hide();
+    }
+}
+
+function hideProfitTotalColumn() {
+    $('#profit-total-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-total').hide();
+    }
+}
+
+function profitSeasonEnabled() {
+    $('#profit-season-header').hide();
+    $('#profit-season-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').hide();
+    }
+}
+
+function hideProfitSeasonColumn() {
+    $('#profit-season-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').hide();
+    }
+}
+
+////////////////////////////////////////
+//////////// END Profit Colum Display Feature   (except for a few touch points below) 
+////////////////////////////////////////
 
 
 function loadLabels() {
@@ -370,12 +454,12 @@ function updateFishers() {
                 $('#f' + j + '-fish-total').text('?');
             }
 
-            if (ocean.showFisherBalance) {
+            if (ocean.showFisherBalance) {    // this is what needs to change
                 $('#f' + j + '-profit-season').text(profitSeason);
                 $('#f' + j + '-profit-total').text(profitTotal);
             } else {
-                $('#f' + j + '-profit-season').text('?');
-                $('#f' + j + '-profit-total').text('?');
+                $('#f' + j + '-profit-season').text(' ');
+                $('#f' + j + '-profit-total').text(' ');
             }
 
             $('#f' + j).attr('data-fish-total', fishTotal);
@@ -408,17 +492,17 @@ function sortFisherTable() {
     {
         $container.mixItUp('sort', 'fish-season:desc name:asc');
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall")
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall") 
     {
-        $container.mixItUp('sort', 'fish-total:desc name:asc');
+        $container.mixItUp('sort', 'fish-total:desc name:asc');  
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_money_season")
+    else if (ocean.oceanOrder === "ocean_order_desc_money_season") // this is what we need to hide
     {
-     $container.mixItUp('sort', 'profit-season:desc name:asc');
+     $container.mixItUp('sort', 'profit-season:desc name:asc'); //
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_money_overall")
-    {
-        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
+    else if (ocean.oceanOrder === "ocean_order_desc_money_overall")  //
+     {
+        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');  // to here
     }
 }
 
@@ -440,6 +524,9 @@ function setupOcean(o) {
     hideTutorial();
     hideCatchIntentColumn();
     hideCatchIntentDialog();
+    hideProfitColumns();
+    // hideProfitTotalColumn();
+    // hideProfitSeasonColumn();
 }
 
 function readRules() {
@@ -662,6 +749,7 @@ function resizeOceanCanvasToScreenWidth() {
     }
 }
 
+//might break here!
 function startTutorial() {
     console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
     if(ocean && ocean.catchIntentionsEnabled) {
@@ -672,13 +760,24 @@ function startTutorial() {
         // Prevent bootstro from choking on hidden catch intention tutorial data
         $("#catch-intent-th").removeClass("bootstro");
     }
+    if(ocean && ocean.profitDisplayEnabled) {  // insert profitDisplayEnabled here or include nested in above?
+        showProfitColumns(0);
+    }
+    else {
+        hideProfitColumns();
+        // Prevent bootstro from choking on hidden catch intention tutorial data
+        $("#profit-total-th").removeClass("bootstro");
+        $("#profit-season-th").removeClass("bootstro");
+    }
     bootstro.start('.bootstro', {
         onComplete : function(params) {
             hideCatchIntentColumn();
+            hideProfitColumns();
             displayRules();
         },
         onExit : function(params) {
             hideCatchIntentColumn();
+            hideProfitColumns();
             displayRules();
         }
     });
@@ -703,6 +802,9 @@ socket.on('stop asking intent', stopAskingIntendedCatch);
 
 function main() {
     hideCatchIntentColumn();
+    hideProfitColumns();
+    //hideProfitSeasonColumn();
+    //hideProfitTotalColumn();
     $('#read-rules').on('click', readRules);
     $('#tutorial').on('click', startTutorial);
     disableButtons();

@@ -325,6 +325,7 @@ function prepareMicroworldObject() {
     mw.catchIntentPrompt1 = $('#catch-intent-prompt1').val();
     mw.catchIntentPrompt2 = $('#catch-intent-prompt2').val();
     mw.redirectURL = $('#redirect-url').val();
+    mw.profitDisplayEnabled = $('#enable-profit-columns').prop('checked'); //BB CHECK
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
@@ -476,6 +477,8 @@ function populatePage() {
     var maybe = !(mw.params.catchIntentionsEnabled);
     disableCatchIntentControls(maybe);
     $('#redirect-url').val(mw.params.redirectURL);
+    $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled);
+    $('#disable-profit-columns').prop('checked', mw.params.profitDisplayDisabled); // would this be easier? check if existing fundtions are for enabling or disabling
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
@@ -642,7 +645,6 @@ function prepareControls() {
         var maybe = !($(this).is(':checked'));
         disableCatchIntentControls(maybe);
     });
-
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
         $('#microworld-panel-title').text(panelTitle[mode]);
