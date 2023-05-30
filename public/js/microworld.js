@@ -479,6 +479,8 @@ function populatePage() {
     $('#redirect-url').val(mw.params.redirectURL);
     $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled);
     $('#disable-profit-columns').prop('checked', mw.params.profitDisplayDisabled); // would this be easier? check if existing fundtions are for enabling or disabling
+    var maybe = !(mw.params.profitDisplayEnabled); // BB check this and line below
+    disableProfitControls(maybe);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
@@ -529,6 +531,14 @@ function disableCatchIntentControls(maybe) {
     $('#catch-intent-prompt1').attr("disabled", maybe);
     $('#catch-intent-prompt2').attr("disabled", maybe);
 }
+
+function disableProfitControls(maybe) {
+    $('#catch-intent-seasons').attr("disabled", maybe);
+    $('#catch-intent-dialog-duration').attr("disabled", maybe);
+    $('#catch-intent-prompt1').attr("disabled", maybe);
+    $('#catch-intent-prompt2').attr("disabled", maybe);
+}
+// disableProfitControls
 
 function noMicroworld(jqXHR) {
     alert(jqXHR.responseText);
@@ -644,6 +654,11 @@ function prepareControls() {
         //Dis- or enable the other CatchIntention controls depending on whether the checkbox is checked.
         var maybe = !($(this).is(':checked'));
         disableCatchIntentControls(maybe);
+    });
+    $('#enable-profit-columns').on("click", function(){
+        //Dis- or enable the other Profit controls depending on whether the checkbox is checked.
+        var maybe = !($(this).is(':checked'));
+        disableProfitControls(maybe);
     });
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
