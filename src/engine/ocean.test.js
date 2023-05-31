@@ -502,9 +502,9 @@ describe('Engine - Ocean', function() {
 
   describe('profitDisplayIsEnabled()', function() {
     it('should return true if the profitDisplay parameter is true', function(done) {
-      o.profitDisplaysEnabled().should.equal(false);
+      o.profitDisplaysIsEnabled().should.equal(false);
       o.microworld.params.profitDisplayEnabled = true;
-      o.profitDisplayEnabled().should.equal(true);
+      o.profitDisplayIsEnabled().should.equal(true);
       return done();
     });
   });

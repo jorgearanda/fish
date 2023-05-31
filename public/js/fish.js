@@ -765,7 +765,7 @@ function startTutorial() {
     }
     else {
         hideProfitColumns();
-        // Prevent bootstro from choking on hidden catch intention tutorial data
+        // Prevent bootstro from choking on hidden profit tutorial data
         $("#profit-total-th").removeClass("bootstro");
         $("#profit-season-th").removeClass("bootstro");
     }
