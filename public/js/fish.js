@@ -454,7 +454,7 @@ function updateFishers() {
                 $('#f' + j + '-fish-total').text('?');
             }
 
-            if (ocean.showFisherBalance) {    // this is what needs to change
+            if (ocean.showFisherBalance) {    // this is what needs to change ***
                 $('#f' + j + '-profit-season').text(profitSeason);
                 $('#f' + j + '-profit-total').text(profitTotal);
             } else {
@@ -525,8 +525,8 @@ function setupOcean(o) {
     hideCatchIntentColumn();
     hideCatchIntentDialog();
     hideProfitColumns();
-    // hideProfitTotalColumn();
-    // hideProfitSeasonColumn();
+    hideProfitTotalColumn();
+    hideProfitSeasonColumn();
 }
 
 function readRules() {
@@ -577,7 +577,7 @@ function beginSeason(data) {
     st = data;
     // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
     $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
-    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season);
+    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season); //change here? ***
     updateWarning('');
     drawOcean();
     updateFishers();
