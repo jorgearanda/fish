@@ -128,7 +128,7 @@ function submitMyCatchIntent() {
     socket.emit('recordIntendedCatch', myCatchIntent);
     myCatchIntentSubmitted = true;
 }
-
+ 
 
 ////////////////////////////////////////
 //////////// END Catch Intentions feature   (except for a few touch points below) 
@@ -140,17 +140,12 @@ function submitMyCatchIntent() {
 //version 1. combines disply of both columns in one function
 
 function showProfitColumns(season) {
-    var headerText = ' ' + msgs.info_intent;
-    if (season) headerText += ' ' + season;
-    $('#profit-season-header').text(headerText);
+    $('#profit-season-header').text();
     $('#profit-season-th').show();
-    for (var i in st.fishers) {
-        $('#f' + i + '-profit-season').show();
-    }
-    if (season) headerText += ' ' + season;
-    $('#profit-total-header').text(headerText);
+    $('#profit-total-header').text();
     $('#profit-total-th').show();
     for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').show();
         $('#f' + i + '-profit-total').show();
     }
 }
@@ -158,15 +153,15 @@ function showProfitColumns(season) {
 function hideProfitColumns() {
     $('#profit-season-header').hide();
     $('#profit-total-header').hide();
-    $('#profit-season-th').show();
+    $('#profit-season-th').hide();
+    $('#profit-total-th').hide();
     for (var i in st.fishers) {
-        $('#f' + i + '-profit').hide();
-    }
-    $('#profit-total-th').show();
-    for (var i in st.fishers) {
-        $('#f' + i + '-profit').hide();
+        $('#f' + i + '-profit-season').hide();
+        $('#f' + i + '-profit-total').hide();
     }
 }
+
+
 //function hideProfitColumns() {
 //$('#profit-season-th').show();
 //for (var i in st.fishers) {
@@ -183,40 +178,10 @@ function hideProfitColumns() {
 //        $('#f' + i + '-profit').hide();
 //    }
 //}
-
-// version 2: allows seasion and total profit columns to be displayed individually
-function profitTotalEnabled() {
-    $('#profit-total-header').hide();
-    $('#profit-total-th').show();
-    for (var i in st.fishers) {
-        $('#f' + i + '-profit-total').hide();
-    }
-}
-
-function hideProfitTotalColumn() {
-    $('#profit-total-th').show();
-    for (var i in st.fishers) {
-        $('#f' + i + '-profit-total').hide();
-    }
-}
-
-function profitSeasonEnabled() {
-    $('#profit-season-header').hide();
-    $('#profit-season-th').show();
-    for (var i in st.fishers) {
-        $('#f' + i + '-profit-season').hide();
-    }
-}
-
-function hideProfitSeasonColumn() {
-    $('#profit-season-th').show();
-    for (var i in st.fishers) {
-        $('#f' + i + '-profit-season').hide();
-    }
-}
+//version 2 here
 
 ////////////////////////////////////////
-//////////// END Profit Colum Display Feature   (except for a few touch points below) 
+//////////// END Profit Colum Display Feature   (except for some touch points below) 
 ////////////////////////////////////////
 
 
@@ -391,8 +356,20 @@ function updateFishers() {
             }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
-            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
-            profitTotal = fisher.money.toFixed(2);
+            if (ocean.profitDisplayEnabled) {    // if profit column checkbox is enabled, calculate and show
+                $('#f' + j + '-profit-season').text(profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2));
+                $('#f' + j + '-profit-total').text(profitTotal = fisher.money.toFixed(2));
+               // $('#f' + j + '-profit-season').show();
+               // $('#f' + j + '-profit-total').show();
+               // $('#f' + j + '-fish-value').text(fish-value);
+               // $('#f' + j + 'show-fisher-balance').text(showFisherBalance);
+                } 
+                else{  // if profit column checkbox is disabled, hide
+                $('#f' + j + '-profit-season').hide();
+                $('#f' + j + '-profit-total').hide();
+                //$('#f' + j + '-fish-value').hide();
+
+            }
 
             // REDIRECTION FEATURE - provide fish caught and earnings on redirect return
             queryParams['fishTotal'] = fishTotal.toString();
@@ -441,9 +418,14 @@ function updateFishers() {
             }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
-            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
+            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2); 
             profitTotal = fisher.money.toFixed(2);
-
+            //if (!ocean.profitDisplayEnabled) {
+                //if (!ocean.showFisherBalance) {
+            //profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2); 
+            //profitTotal = fisher.money.toFixed(2);
+                //}
+            //}
             $('#f' + j + '-catch-intent').text(catchIntent);
 
             if (ocean.showNumCaught) {
@@ -455,11 +437,17 @@ function updateFishers() {
             }
 
             if (ocean.showFisherBalance) {    // this is what needs to change ***
+                if(ocean.profitDisplayEnabled){
                 $('#f' + j + '-profit-season').text(profitSeason);
                 $('#f' + j + '-profit-total').text(profitTotal);
-            } else {
-                $('#f' + j + '-profit-season').text(' ');
-                $('#f' + j + '-profit-total').text(' ');
+                //$('#f' + j + '-fish-value').text(fish-value);
+                } 
+                else{
+                $('#f' + j + '-profit-season').hide();
+                $('#f' + j + '-profit-total').hide();
+                //$('#f' + j + '-fish-value').hide();
+
+                }
             }
 
             $('#f' + j).attr('data-fish-total', fishTotal);
@@ -496,13 +484,13 @@ function sortFisherTable() {
     {
         $container.mixItUp('sort', 'fish-total:desc name:asc');  
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_money_season") // this is what we need to hide
+    else if (ocean.oceanOrder === "ocean_order_desc_money_season") // related to debug issue?
     {
      $container.mixItUp('sort', 'profit-season:desc name:asc'); //
     }
     else if (ocean.oceanOrder === "ocean_order_desc_money_overall")  //
      {
-        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');  // to here
+        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');  //  ?
     }
 }
 
@@ -525,8 +513,8 @@ function setupOcean(o) {
     hideCatchIntentColumn();
     hideCatchIntentDialog();
     hideProfitColumns();
-    hideProfitTotalColumn();
-    hideProfitSeasonColumn();
+    //hideProfitTotalColumn();
+    //hideProfitSeasonColumn();
 }
 
 function readRules() {
@@ -575,9 +563,9 @@ function attemptToFish() {
 
 function beginSeason(data) {
     st = data;
-    // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
+    // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status); //change here? ***
     $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
-    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season); //change here? ***
+    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season); 
     updateWarning('');
     drawOcean();
     updateFishers();
@@ -751,7 +739,7 @@ function resizeOceanCanvasToScreenWidth() {
 
 //might break here!
 function startTutorial() {
-    console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
+    //console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
     if(ocean && ocean.catchIntentionsEnabled) {
         showCatchIntentColumn(0);
     }
@@ -760,24 +748,43 @@ function startTutorial() {
         // Prevent bootstro from choking on hidden catch intention tutorial data
         $("#catch-intent-th").removeClass("bootstro");
     }
+    //console.log("startTutorial: profitDisplayEnabled = " + ocean.profitDisplayEnabled)
     if(ocean && ocean.profitDisplayEnabled) {  // insert profitDisplayEnabled here or include nested in above?
         showProfitColumns(0);
+        //showFisherBalance();
+        //$("#costs-box").addClass("bootstro");
+        //showFisherBalance(0);
+        //profitTotalEnabled(0);
+        //profitSeasonEnabled(0);
     }
     else {
         hideProfitColumns();
+        //hideProfitTotalColumn();
+        //hideProfitSeasonColumn();
         // Prevent bootstro from choking on hidden profit tutorial data
+        $("#profit-total-header").removeClass("bootstro");
+        $("#profit-season-header").removeClass("bootstro");
         $("#profit-total-th").removeClass("bootstro");
         $("#profit-season-th").removeClass("bootstro");
+        $("#show-fisher-balance").removeClass("bootstro");
+        $("#costs-box").removeClass("bootstro");
     }
     bootstro.start('.bootstro', {
         onComplete : function(params) {
             hideCatchIntentColumn();
             hideProfitColumns();
+            //showFisherBalance();
+            //$("#costs-box").addClass("bootstro");
+            //hideProfitTotalColumn();
+            //hideProfitSeasonColumn();
             displayRules();
         },
         onExit : function(params) {
             hideCatchIntentColumn();
             hideProfitColumns();
+            //showFisherBalance();
+            //hideProfitTotalColumn();
+            //hideProfitSeasonColumn();
             displayRules();
         }
     });
@@ -804,9 +811,9 @@ function main() {
     hideCatchIntentColumn();
     hideProfitColumns();
     //hideProfitSeasonColumn();
-    //hideProfitTotalColumn();
+    //hideProfitTotalColumn(); // add showfisherProfits here?
     $('#read-rules').on('click', readRules);
-    $('#tutorial').on('click', startTutorial);
+    $('#tutorial').on('click', startTutorial); 
     disableButtons();
     $('#changeLocation').on('click', changeLocation)
     $('#attempt-fish').on('click', attemptToFish);
