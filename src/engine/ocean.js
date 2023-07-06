@@ -26,7 +26,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   this.microworld = mw;
   this.results = [];
   this.om = om;
-  this.catchIntentSeason = 0;
+  this.catchIntentSeason = 0;  // no equiv. for profit columns as behave the same for all seasons
   this.catchIntentDisplaySeason = 0;
   this.log = new OceanLog(
     this.microworld.name + ' ' + this.id + ' ' + '(' + this.microworld.experimenter.username + ')'
@@ -184,7 +184,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       mysteryFish: this.mysteryFish,
       certainSpawn: this.certainSpawn,
       reportedMysteryFish: this.reportedMysteryFish,
-      catchIntentSeason: this.catchIntentSeason,
+      catchIntentSeason: this.catchIntentSeason, // no entry for show/hide profit columns as all seasons the same
       catchIntentDisplaySeason: this.catchIntentDisplaySeason,
       fishers: [],
     };
