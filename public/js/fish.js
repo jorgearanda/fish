@@ -124,6 +124,39 @@ function submitCatchIntent() {
 //////////// END Catch Intentions feature   (except for a few touch points below) 
 ////////////////////////////////////////
 
+////////////////////////////////////////
+//////////// START Profit Colum Display Feature     //Prof.Vis
+////////////////////////////////////////
+
+//controls visibility of both seasonal and overall profit columns in one function for show and one for hide
+//for tutorial text, table column heading, and table body
+
+function showProfitColumns(season) {
+    $('#profit-season-header').text();
+    $('#profit-season-th').show();
+    $('#profit-total-header').text();
+    $('#profit-total-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').show();
+        $('#f' + i + '-profit-total').show();
+    }
+}
+
+function hideProfitColumns() {
+    $('#profit-season-header').hide();
+    $('#profit-total-header').hide();
+    $('#profit-season-th').hide();
+    $('#profit-total-th').hide();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').hide();
+        $('#f' + i + '-profit-total').hide();
+    }
+}
+
+////////////////////////////////////////
+//////////// END Profit Colum Display Feature   (eadditional points below and related to showFisherBalance) 
+////////////////////////////////////////
+
 
 
 function loadLabels() {
@@ -293,6 +326,7 @@ function updateFishers() {
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
+            //Prof.Vis - section to add here
 
             // REDIRECTION FEATURE - provide fish caught and earnings on redirect return
             queryParams['fishTotal'] = fishTotal.toString();
@@ -338,6 +372,7 @@ function updateFishers() {
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
+            //Prof.Vis - section to add here
 
             $('#f' + j + '-catch-intent').text(catchIntent);
 
@@ -419,6 +454,7 @@ function setupOcean(o) {
     hideTutorial();
     makeCatchIntentColumnVisible(true);
     makeCatchIntentDialogVisible(false);
+    hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
 }
 
 function readRules() {
@@ -648,9 +684,11 @@ function resizeOceanCanvasToScreenWidth() {
 function startTutorial() {
     bootstro.start('.bootstro', {
         onComplete : function(params) {
+            //hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
             displayRules();
         },
         onExit : function(params) {
+            //hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
             displayRules();
         }
     });
@@ -672,6 +710,7 @@ socket.on('pause', pause);
 socket.on('resume', resume);
 
 function main() {
+    // hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
     $('#read-rules').on('click', readRules);
     $('#tutorial').on('click', startTutorial);
     disableButtons();

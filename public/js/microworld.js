@@ -48,6 +48,7 @@ function readyTooltips() {
     $('#catch-intention-seasons-tooltip').tooltip();
     $('#catch-intent-extra-time-tooltip').tooltip();
     $('#redirect-url-tooltip').tooltip();
+    $('#profit-columns-tooltip').tooltip();     //Profit.Vis
 }
 
 function changeBotRowVisibility() {
@@ -327,6 +328,7 @@ function prepareMicroworldObject() {
     mw.redirectURL = $('#redirect-url').val();
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
+    mw.profitDisplayEnabled = $('#enable-profit-columns').prop('checked');  //Profit.Vis
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
     mw.costSecond = $('#cost-second').val();
@@ -477,6 +479,9 @@ function populatePage() {
     disableCatchIntentControls(maybe);
     $('#redirect-url').val(mw.params.redirectURL);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
+    $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled); //Profit.Vis added these three lines for enabling profit columns and disabling associated functions if necessary
+    var maybe = !(mw.params.profitDisplayEnabled); 
+    disableProfitControls(maybe);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
     $('#cost-departure').val(mw.params.costDeparture);
@@ -525,6 +530,14 @@ function disableCatchIntentControls(maybe) {
     $('#catch-intent-extra-time').attr("disabled", maybe);
     $('#catch-intent-prompt1').attr("disabled", maybe);
     $('#catch-intent-prompt2').attr("disabled", maybe);
+}
+
+//Profit.Vis
+function disableProfitControls(maybe) {
+    $('#show-fisher-balance').attr("disabled", maybe);
+    //$('#profit-total-th').attr("disabled", maybe);
+    $('#profit-season-header').attr("disabled", maybe);
+    $('#profit-total-header').attr("disabled", maybe);
 }
 
 function noMicroworld(jqXHR) {
@@ -642,7 +655,11 @@ function prepareControls() {
         var maybe = !($(this).is(':checked'));
         disableCatchIntentControls(maybe);
     });
-
+    $('#enable-profit-columns').on("click", function(){    //Profit.Vis
+        //Dis- or enable the other Profit controls depending on whether the checkbox is checked.
+        var maybe = !($(this).is(':checked'));
+        disableProfitControls(maybe);
+    });
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
         $('#microworld-panel-title').text(panelTitle[mode]);
