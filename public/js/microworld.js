@@ -48,9 +48,10 @@ function readyTooltips() {
     $('#catch-intention-seasons-tooltip').tooltip();
     $('#catch-intent-dialog-duration-tooltip').tooltip();
     $('#redirect-url-tooltip').tooltip();
+    $('#profit-columns-tooltip').tooltip();
 }
 
-function changeBotRowVisibility() {
+function changeBotRowVisibility() { //problem may be something to do with this for the profit row?
     var numFishers = parseInt($('#num-fishers').val(), 10);
     var numHumans = parseInt($('#num-humans').val(), 10);
 
@@ -247,7 +248,7 @@ function validate() {
     if (chanceCatch < 0 || chanceCatch > 1) {
         errors.push('The chance of catch must be a number between 0 and 1.');
     }
-
+    // dont need below for profit columns as doesn't vary by season - same rule applies for all seasons
     var catchIntentSeasonsStr = $('#catch-intent-seasons').val();
     var catchIntentSeasons = parseCatchIntentSeasons(catchIntentSeasonsStr);
     if (catchIntentSeasonsStr !== catchIntentSeasons.toString()) {
@@ -325,7 +326,7 @@ function prepareMicroworldObject() {
     mw.catchIntentPrompt1 = $('#catch-intent-prompt1').val();
     mw.catchIntentPrompt2 = $('#catch-intent-prompt2').val();
     mw.redirectURL = $('#redirect-url').val();
-    mw.profitDisplayEnabled = $('#enable-profit-columns').prop('checked'); //BB CHECK
+    mw.profitDisplayEnabled = $('#enable-profit-columns').prop('checked'); 
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
@@ -342,7 +343,7 @@ function prepareMicroworldObject() {
     mw.showFisherNames = $('#show-fisher-names').prop('checked');
     mw.showFisherStatus = $('#show-fisher-status').prop('checked');
     mw.showNumCaught = $('#show-num-caught').prop('checked');
-    mw.showFisherBalance = $('#show-fisher-balance').prop('checked');
+    mw.showFisherBalance = $('#show-fisher-balance').prop('checked'); //bot profit info - over-rides added fisher functions
     mw.preparationText = $('#preparation-text').val();
     mw.endTimeText = $('#end-time-text').val();
     mw.endDepletionText = $('#end-depletion-text').val();
@@ -477,9 +478,9 @@ function populatePage() {
     var maybe = !(mw.params.catchIntentionsEnabled);
     disableCatchIntentControls(maybe);
     $('#redirect-url').val(mw.params.redirectURL);
-    $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled);
-    $('#disable-profit-columns').prop('checked', mw.params.profitDisplayDisabled); // would this be easier? check if existing fundtions are for enabling or disabling
-    var maybe = !(mw.params.profitDisplayEnabled); // BB check this and line below
+    //$('#disable-profit-columns').prop('checked', mw.params.profitDisplayDisabled); // would this be easier? check if existing fundtions are for enabling or disabling
+    $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled); // added these three lines for enabling profit columns and disabling associated functions if necessary
+    var maybe = !(mw.params.profitDisplayEnabled); 
     disableProfitControls(maybe);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
@@ -500,8 +501,7 @@ function populatePage() {
     $('#show-fisher-names').prop('checked', mw.params.showFisherNames);
     $('#show-fisher-status').prop('checked', mw.params.showFisherStatus);
     $('#show-num-caught').prop('checked', mw.params.showNumCaught);
-    $('#show-fisher-balance').prop('checked', mw.params.showFisherBalance);
-
+    $('#show-fisher-balance').prop('checked', mw.params.showFisherBalance); // is this populating before checking eneable-profit-columns and showing 1st/3rd (lowest row on table) bot?
     $('#uniform-greed').prop('checked', false);
     $('#uniform-greed-spread').prop('checked', false);
     $('#uniform-trend').prop('checked', false);
@@ -533,12 +533,12 @@ function disableCatchIntentControls(maybe) {
 }
 
 function disableProfitControls(maybe) {
-    $('#catch-intent-seasons').attr("disabled", maybe);
-    $('#catch-intent-dialog-duration').attr("disabled", maybe);
-    $('#catch-intent-prompt1').attr("disabled", maybe);
-    $('#catch-intent-prompt2').attr("disabled", maybe);
+    $('#show-fisher-balance').attr("disabled", maybe);
+    //$('#profit-total-th').attr("disabled", maybe);
+    $('#profit-season-header').attr("disabled", maybe);
+    $('#profit-total-header').attr("disabled", maybe);
 }
-// disableProfitControls
+// function above to diable associated function of bot '#show-fisher-balance', which otherwise overrides player comands
 
 function noMicroworld(jqXHR) {
     alert(jqXHR.responseText);
