@@ -44,9 +44,14 @@ function readyTooltips() {
     $('#predictability-tooltip').tooltip();
     $('#prob-action-tooltip').tooltip();
     $('#attempts-second-tooltip').tooltip();
+    $('#catch-intentions-tooltip').tooltip();
+    $('#catch-intention-seasons-tooltip').tooltip();
+    $('#catch-intent-dialog-duration-tooltip').tooltip();
+    $('#redirect-url-tooltip').tooltip();
+    $('#profit-columns-tooltip').tooltip();
 }
 
-function changeBotRowVisibility() {
+function changeBotRowVisibility() { //problem may be something to do with this for the profit row?
     var numFishers = parseInt($('#num-fishers').val(), 10);
     var numHumans = parseInt($('#num-humans').val(), 10);
 
@@ -143,6 +148,19 @@ function changeAttemptsSecondUniformity() {
     }
 }
 
+function parseCatchIntentSeasons(seasonsList, clean = false) {
+    // Extract all integers > 1 from given list (string)
+    var seasonsRegexp = /([2-9][0-9]*)|([1-9][0-9]+)/g;
+    var seasonNumbers = seasonsList.match(seasonsRegexp);
+    if (!seasonNumbers) return [];
+    seasonNumbers = seasonNumbers.map(Number);
+    if (clean) {
+        seasonNumbers = seasonNumbers.sort((a, b) => a - b);
+        // Worth removing duplicates?
+    }
+    return seasonNumbers;
+}
+
 function validate() {
     var errors = [];
 
@@ -230,6 +248,17 @@ function validate() {
     if (chanceCatch < 0 || chanceCatch > 1) {
         errors.push('The chance of catch must be a number between 0 and 1.');
     }
+    // dont need below for profit columns as doesn't vary by season - same rule applies for all seasons
+    var catchIntentSeasonsStr = $('#catch-intent-seasons').val();
+    var catchIntentSeasons = parseCatchIntentSeasons(catchIntentSeasonsStr);
+    if (catchIntentSeasonsStr !== catchIntentSeasons.toString()) {
+        errors.push('"' + catchIntentSeasonsStr + '" is not a comma-separated list of season numbers greater than 1.');
+        $('#catch-intent-seasons').val(parseCatchIntentSeasons(catchIntentSeasonsStr, true));
+    }
+    
+    if (parseInt($('#catch-intent-dialog-duration').val()) < 0) {
+        errors.push('The catch intent extra time cannot be negative.');
+    }
 
     if ($('#preparation-text').val().length < 1) {
         errors.push('The preparation text is missing.');
@@ -291,6 +320,13 @@ function prepareMicroworldObject() {
     mw.enablePause = $('#enable-pause').prop('checked');
     mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
     mw.enableTutorial = $('#enable-tutorial').prop('checked');
+    mw.catchIntentionsEnabled = $('#enable-catch-intentions').prop('checked');
+    mw.catchIntentSeasons = parseCatchIntentSeasons($('#catch-intent-seasons').val(), true);
+    mw.catchIntentDialogDuration = $('#catch-intent-dialog-duration').val();
+    mw.catchIntentPrompt1 = $('#catch-intent-prompt1').val();
+    mw.catchIntentPrompt2 = $('#catch-intent-prompt2').val();
+    mw.redirectURL = $('#redirect-url').val();
+    mw.profitDisplayEnabled = $('#enable-profit-columns').prop('checked'); 
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
     mw.costCast = $('#cost-cast').val();
@@ -307,7 +343,7 @@ function prepareMicroworldObject() {
     mw.showFisherNames = $('#show-fisher-names').prop('checked');
     mw.showFisherStatus = $('#show-fisher-status').prop('checked');
     mw.showNumCaught = $('#show-num-caught').prop('checked');
-    mw.showFisherBalance = $('#show-fisher-balance').prop('checked');
+    mw.showFisherBalance = $('#show-fisher-balance').prop('checked'); //bot profit info - over-rides added fisher functions
     mw.preparationText = $('#preparation-text').val();
     mw.endTimeText = $('#end-time-text').val();
     mw.endDepletionText = $('#end-depletion-text').val();
@@ -434,6 +470,18 @@ function populatePage() {
     $('#enable-pause').prop('checked', mw.params.enablePause);
     $('#enable-early-end').prop('checked', mw.params.enableEarlyEnd);
     $('#enable-tutorial').prop('checked', mw.params.enableTutorial);
+    $('#enable-catch-intentions').prop('checked', mw.params.catchIntentionsEnabled);
+    $('#catch-intent-seasons').val(mw.params.catchIntentSeasons.toString());
+    $('#catch-intent-dialog-duration').val(mw.params.catchIntentDialogDuration);
+    $('#catch-intent-prompt1').val(mw.params.catchIntentPrompt1);
+    $('#catch-intent-prompt2').val(mw.params.catchIntentPrompt2);
+    var maybe = !(mw.params.catchIntentionsEnabled);
+    disableCatchIntentControls(maybe);
+    $('#redirect-url').val(mw.params.redirectURL);
+    //$('#disable-profit-columns').prop('checked', mw.params.profitDisplayDisabled); // would this be easier? check if existing fundtions are for enabling or disabling
+    $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled); // added these three lines for enabling profit columns and disabling associated functions if necessary
+    var maybe = !(mw.params.profitDisplayEnabled); 
+    disableProfitControls(maybe);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
@@ -453,8 +501,7 @@ function populatePage() {
     $('#show-fisher-names').prop('checked', mw.params.showFisherNames);
     $('#show-fisher-status').prop('checked', mw.params.showFisherStatus);
     $('#show-num-caught').prop('checked', mw.params.showNumCaught);
-    $('#show-fisher-balance').prop('checked', mw.params.showFisherBalance);
-
+    $('#show-fisher-balance').prop('checked', mw.params.showFisherBalance); // is this populating before checking eneable-profit-columns and showing 1st/3rd (lowest row on table) bot?
     $('#uniform-greed').prop('checked', false);
     $('#uniform-greed-spread').prop('checked', false);
     $('#uniform-trend').prop('checked', false);
@@ -477,6 +524,21 @@ function populatePage() {
 
     changeBotRowVisibility();
 }
+
+function disableCatchIntentControls(maybe) {
+    $('#catch-intent-seasons').attr("disabled", maybe);
+    $('#catch-intent-dialog-duration').attr("disabled", maybe);
+    $('#catch-intent-prompt1').attr("disabled", maybe);
+    $('#catch-intent-prompt2').attr("disabled", maybe);
+}
+
+function disableProfitControls(maybe) {
+    $('#show-fisher-balance').attr("disabled", maybe);
+    //$('#profit-total-th').attr("disabled", maybe);
+    $('#profit-season-header').attr("disabled", maybe);
+    $('#profit-total-header').attr("disabled", maybe);
+}
+// function above to diable associated function of bot '#show-fisher-balance', which otherwise overrides player comands
 
 function noMicroworld(jqXHR) {
     alert(jqXHR.responseText);
@@ -554,6 +616,9 @@ function setButtons() {
     $('#archive-confirmed').click(archiveMicroworld);
     $('#delete-confirmed').click(deleteMicroworld);
     $(".behaviour_group_select").click(showStatusTableOptions);
+
+    $('#show-redirect-explanation').click(showRedirectExplanationText);
+
     initDownloadAll();
 }
 
@@ -578,13 +643,23 @@ function loadTexts() {
     $('#preparation-text').val(prepText);
     $('#end-time-text').val(endTimeText);
     $('#end-depletion-text').val(endDepletedText);
+    $('#catch-intent-prompt1').val(catchIntentPrompt1);
+    $('#catch-intent-prompt2').val(catchIntentPrompt2);
 }
 
 function prepareControls() {
     $('#microworld-panel-body-text').text(panelBody[mode]);
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
-
-
+    $('#enable-catch-intentions').on("click", function(){
+        //Dis- or enable the other CatchIntention controls depending on whether the checkbox is checked.
+        var maybe = !($(this).is(':checked'));
+        disableCatchIntentControls(maybe);
+    });
+    $('#enable-profit-columns').on("click", function(){
+        //Dis- or enable the other Profit controls depending on whether the checkbox is checked.
+        var maybe = !($(this).is(':checked'));
+        disableProfitControls(maybe);
+    });
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
         $('#microworld-panel-title').text(panelTitle[mode]);
@@ -668,6 +743,23 @@ function uniformityChanges() {
     changeProbActionUniformity();
     changeAttemptsSecondUniformity();
 }
+
+// REDIRECTION FEATURE
+
+function showRedirectExplanationText() {
+    // var explanationText = explainRedirectText.replace(/\n/g, '<br />');
+    // $('#explain-redirect-content').html('explanationText');
+    // $('#explain-redirect-content').load('explain-redirection');
+    // $.get("explain-redirection", function(data){
+    //     $("#explain-redirect-content").html(data).fadeIn();
+    // });
+    $('#explain-redirect-content').load('/explain-redirection',function(){
+        $('#explain-redirect-modal').modal({show:true});
+    });
+    $('#explain-redirect-modal').modal({keyboard: false, backdrop: 'static'});
+}
+
+
 
 function main() {
     getMwId();

@@ -29,6 +29,162 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
     lang = 'en';
 }
 
+////////////////////////////////////////
+//////////// Catch Intentions feature 
+////////////////////////////////////////
+
+function showCatchIntentColumn(season) {
+    var headerText = ' ' + msgs.info_intent;
+    if (season) headerText += ' ' + season;
+    $('#catch-intent-header').text(headerText);
+    $('#catch-intent-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-catch-intent').show();
+    }
+}
+
+function hideCatchIntentColumn() {
+    $('#catch-intent-th').hide();
+    for (var i in st.fishers) {
+        $('#f' + i + '-catch-intent').hide();
+    }
+}
+
+var myCatchIntent = 'n/a';
+var myCatchIntentSubmitted = false;
+var myCatchIntentDisplaySeason = 0;
+var myCatchIntentDialogConfigured = false;
+
+function showCatchIntentDialog() {
+    if(!myCatchIntentDialogConfigured) {
+        $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
+        if (ocean.catchIntentPrompt2.length > 0) {
+            $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
+            $('#catch-intent-prompt2').show();
+        } 
+        else {
+            $('#catch-intent-prompt2').hide();
+        }
+        // emitter.on() is cumulative! And showCatchIntentDialog() could be called multiple times...
+        // https://nodejs.org/api/events.html#emitteroneventname-listener
+        // NOTE: This is NOT the same as .once() !!!
+        $('#catch-intent-input').on('keydown', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                recordMyCatchIntent();
+            }
+        });
+        $('#catch-intent-submit').on('click', recordMyCatchIntent);
+        myCatchIntentDialogConfigured = true;
+    }
+    $('#catch-intent-input').val("");
+    $('#catch-intent-submit').show();
+    $('#catch-intent-dialog-box').show();
+    $('#catch-intent-input').trigger('focus');
+}
+
+function hideCatchIntentDialog() {
+    $('#catch-intent-dialog-box').hide();
+}
+
+function checkCatchIntentDisplay() {
+    var season = myCatchIntentSubmitted ? st.catchIntentSeason : st.catchIntentDisplaySeason;
+    // console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' mySeason=' + myCatchIntentDisplaySeason);
+    if (season != myCatchIntentDisplaySeason) {
+        if (season == 0) {
+            hideCatchIntentColumn();
+        } else {
+            showCatchIntentColumn(season);
+        }
+        myCatchIntentDisplaySeason = season;
+    }
+}
+
+
+function startAskingIntendedCatch() {
+    showCatchIntentDialog();
+    myCatchIntent = '???';
+    myCatchIntentSubmitted = false;
+}
+
+function stopAskingIntendedCatch() {
+    hideCatchIntentDialog();
+}
+
+function recordMyCatchIntent() {
+    var input = $('#catch-intent-input').val().trim();
+    var num = parseInt(input);
+    if (isNaN(num) || num < 0) {
+        $('#catch-intent-input').val(myCatchIntent);
+        // Leave dialog up in case fisher corrects typo and resubmits
+    }
+    else {
+        myCatchIntent = num.toString();
+        stopAskingIntendedCatch();
+        submitMyCatchIntent();
+    }
+}
+
+function submitMyCatchIntent() {
+    socket.emit('recordIntendedCatch', myCatchIntent);
+    myCatchIntentSubmitted = true;
+}
+ 
+
+////////////////////////////////////////
+//////////// END Catch Intentions feature   (except for a few touch points below) 
+////////////////////////////////////////
+
+//////////// START Profit Colum Display Feature
+////////////////////////////////////////
+
+//version 1. combines disply of both columns in one function
+
+function showProfitColumns(season) {
+    $('#profit-season-header').text();
+    $('#profit-season-th').show();
+    $('#profit-total-header').text();
+    $('#profit-total-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').show();
+        $('#f' + i + '-profit-total').show();
+    }
+}
+
+function hideProfitColumns() {
+    $('#profit-season-header').hide();
+    $('#profit-total-header').hide();
+    $('#profit-season-th').hide();
+    $('#profit-total-th').hide();
+    for (var i in st.fishers) {
+        $('#f' + i + '-profit-season').hide();
+        $('#f' + i + '-profit-total').hide();
+    }
+}
+
+
+//function hideProfitColumns() {
+//$('#profit-season-th').show();
+//for (var i in st.fishers) {
+//    $('#f' + i + '-profit-season').hide();
+//}
+//$('#profit-total-th').show();
+//for (var i in st.fishers) {
+//    $('#f' + i + '-profit-total').hide();
+//}
+// or -?
+//function hideProfitColumns() {
+//    $('#profit-th').show();
+//    for (var i in st.fishers) {
+//        $('#f' + i + '-profit').hide();
+//    }
+//}
+//version 2 here
+
+////////////////////////////////////////
+//////////// END Profit Colum Display Feature   (except for some touch points below) 
+////////////////////////////////////////
+
+
 function loadLabels() {
     $('#read-rules').text(msgs.buttons_goFishing);
     $('#changeLocation').html(msgs.buttons_goToSea);
@@ -37,6 +193,7 @@ function loadLabels() {
     $('#resume').html(msgs.buttons_resume);
 
     $('#fisher-header').text(msgs.info_fisher);
+    $('#catch-intent-header').text(' ' + msgs.info_intent);
     $('#fish-season-header').text(' ' + msgs.info_season);
     $('#fish-total-header').text(' ' + msgs.info_overall);
 
@@ -110,6 +267,7 @@ function updateStatus() {
         $("#status-sub-label").hide();
     } else {
     }
+    checkCatchIntentDisplay(st.catchIntentDisplaySeason);
 
     $('#status-label').html(statusText);
 }
@@ -171,6 +329,7 @@ function updateCosts() {
 function updateFishers() {
     var j = 1;
     var name;
+    var catchIntent;
     var fishSeason;
     var fishTotal;
     var profitSeason;
@@ -189,11 +348,35 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
 
+            if (myCatchIntentDisplaySeason > st.season) {
+                catchIntent = fisher.seasonData[st.season].nextCatchIntent;
+            }
+            else {
+                catchIntent = fisher.seasonData[st.season].catchIntent;
+            }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
-            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
-            profitTotal = fisher.money.toFixed(2);
+            if (ocean.profitDisplayEnabled) {    // if profit column checkbox is enabled, calculate and show
+                $('#f' + j + '-profit-season').text(profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2));
+                $('#f' + j + '-profit-total').text(profitTotal = fisher.money.toFixed(2));
+               // $('#f' + j + '-profit-season').show();
+               // $('#f' + j + '-profit-total').show();
+               // $('#f' + j + '-fish-value').text(fish-value);
+               // $('#f' + j + 'show-fisher-balance').text(showFisherBalance);
+                } 
+                else{  // if profit column checkbox is disabled, hide
+                $('#f' + j + '-profit-season').hide();
+                $('#f' + j + '-profit-total').hide();
+                //$('#f' + j + '-fish-value').hide();
 
+            }
+
+            // REDIRECTION FEATURE - provide fish caught and earnings on redirect return
+            queryParams['fishTotal'] = fishTotal.toString();
+            queryParams['profitTotal'] = profitTotal.toString();
+            
+
+            $('#f0-catch-intent').text(catchIntent);
             $('#f0-fish-season').text(fishSeason);
             $('#f0-fish-total').text(fishTotal);
             $('#f0-profit-season').text(profitSeason);
@@ -227,10 +410,23 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
+            if (myCatchIntentDisplaySeason > st.season) {
+                catchIntent = fisher.seasonData[st.season].nextCatchIntent;
+            }
+            else {
+                catchIntent = fisher.seasonData[st.season].catchIntent;
+            }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
-            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
+            profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2); 
             profitTotal = fisher.money.toFixed(2);
+            //if (!ocean.profitDisplayEnabled) {
+                //if (!ocean.showFisherBalance) {
+            //profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2); 
+            //profitTotal = fisher.money.toFixed(2);
+                //}
+            //}
+            $('#f' + j + '-catch-intent').text(catchIntent);
 
             if (ocean.showNumCaught) {
                 $('#f' + j + '-fish-season').text(fishSeason);
@@ -240,12 +436,18 @@ function updateFishers() {
                 $('#f' + j + '-fish-total').text('?');
             }
 
-            if (ocean.showFisherBalance) {
+            if (ocean.showFisherBalance) {    // this is what needs to change ***
+                if(ocean.profitDisplayEnabled){
                 $('#f' + j + '-profit-season').text(profitSeason);
                 $('#f' + j + '-profit-total').text(profitTotal);
-            } else {
-                $('#f' + j + '-profit-season').text('?');
-                $('#f' + j + '-profit-total').text('?');
+                //$('#f' + j + '-fish-value').text(fish-value);
+                } 
+                else{
+                $('#f' + j + '-profit-season').hide();
+                $('#f' + j + '-profit-total').hide();
+                //$('#f' + j + '-fish-value').hide();
+
+                }
             }
 
             $('#f' + j).attr('data-fish-total', fishTotal);
@@ -278,17 +480,17 @@ function sortFisherTable() {
     {
         $container.mixItUp('sort', 'fish-season:desc name:asc');
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall")
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall") 
     {
-        $container.mixItUp('sort', 'fish-total:desc name:asc');
+        $container.mixItUp('sort', 'fish-total:desc name:asc');  
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_money_season")
+    else if (ocean.oceanOrder === "ocean_order_desc_money_season") // related to debug issue?
     {
-     $container.mixItUp('sort', 'profit-season:desc name:asc');
+     $container.mixItUp('sort', 'profit-season:desc name:asc'); //
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_money_overall")
-    {
-        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
+    else if (ocean.oceanOrder === "ocean_order_desc_money_overall")  //
+     {
+        $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');  //  ?
     }
 }
 
@@ -302,11 +504,17 @@ function hideTutorial() {
 
 function setupOcean(o) {
     ocean = o;
+    // console.log('setupOcean: ocean=' + JSON.stringify(ocean));
     displayRules();
     loadLabels();
     updateCosts();
     makeUnpausable();
     hideTutorial();
+    hideCatchIntentColumn();
+    hideCatchIntentDialog();
+    hideProfitColumns();
+    //hideProfitTotalColumn();
+    //hideProfitSeasonColumn();
 }
 
 function readRules() {
@@ -355,6 +563,9 @@ function attemptToFish() {
 
 function beginSeason(data) {
     st = data;
+    // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status); //change here? ***
+    $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
+    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season); 
     updateWarning('');
     drawOcean();
     updateFishers();
@@ -383,7 +594,10 @@ function receiveStatus(data) {
     drawOcean();
 }
 
-function endSeason() {
+function endSeason(data) {
+    // console.log('endSeason: st.season=' + st.season + ', st.status=' + st.status + ', data=' + JSON.stringify(data));
+    st.season = data.season;
+    st.status = data.status;
     resetLocation();
     updateWarning();
     disableButtons();
@@ -408,6 +622,51 @@ function endRun(trigger) {
     $('#over-text').html(overText);
     $('#over-modal').modal({keyboard: false, backdrop: 'static'});
 }
+
+// 
+// REDIRECTION FEATURE
+//
+
+var queryParams = $.url().param();
+
+function maybeRedirect() {
+    // console.log("Entering maybeRedirect()");
+    // replace the keyword REDIRECTURL with the value of the redirectURL parameter
+    var url = ocean.redirectURL;
+    if (url && url.length > 0) {
+        for(var key in queryParams) {
+            url = substituteQueryParameter(url, key);
+        }
+        location.href = url;
+    }
+}
+
+function substituteQueryParameter(url, key) {
+    var safeKey = escapeRegExp("${"+key+"}"); // "\\$x"
+    var replacement = queryParams[key];
+    var safeReplacement = escapeReplacement(replacement);
+    return url.replace(
+        new RegExp(safeKey, 'gi'),
+        safeReplacement
+    );
+}
+// Some query parameters may contain characters that have meaning in a regular expression
+// and string.replace uses regexp , so we need to escape the parameter names and values 
+// From https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+//
+// To escape the RegExp itself:
+function escapeRegExp(str) {
+    // console.log("Entering escapeRegExp("+str+")");
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+// To escape a replacement string:
+function escapeReplacement(str) {
+    // console.log("Entering escapeReplacement("+str+")");
+    return str.replace(/\$/g, '$$$$');
+}
+
+// END REDIRECTION FEATURE
+
 
 function requestPause() {
     socket.emit('requestPause', pId);
@@ -448,7 +707,7 @@ function drawOcean() {
         } else {
             oContext.drawImage(underwater, 0, 0, 700, 460);
         }
-        for (var spot = 0; spot < st.certainFish + st.reportedMysteryFish; spot++) {
+        for (var spot = 0; spot < st.certainFish + st.certainSpawn + st.reportedMysteryFish; spot++) {
             if (spot < st.reportedMysteryFish) {
                 drawFish(oContext, mysteryFishImage, spots[spot]);
             } else {
@@ -478,12 +737,54 @@ function resizeOceanCanvasToScreenWidth() {
     }
 }
 
+//might break here!
 function startTutorial() {
+    //console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
+    if(ocean && ocean.catchIntentionsEnabled) {
+        showCatchIntentColumn(0);
+    }
+    else {
+        hideCatchIntentColumn();
+        // Prevent bootstro from choking on hidden catch intention tutorial data
+        $("#catch-intent-th").removeClass("bootstro");
+    }
+    //console.log("startTutorial: profitDisplayEnabled = " + ocean.profitDisplayEnabled)
+    if(ocean && ocean.profitDisplayEnabled) {  // insert profitDisplayEnabled here or include nested in above?
+        showProfitColumns(0);
+        //showFisherBalance();
+        //$("#costs-box").addClass("bootstro");
+        //showFisherBalance(0);
+        //profitTotalEnabled(0);
+        //profitSeasonEnabled(0);
+    }
+    else {
+        hideProfitColumns();
+        //hideProfitTotalColumn();
+        //hideProfitSeasonColumn();
+        // Prevent bootstro from choking on hidden profit tutorial data
+        $("#profit-total-header").removeClass("bootstro");
+        $("#profit-season-header").removeClass("bootstro");
+        $("#profit-total-th").removeClass("bootstro");
+        $("#profit-season-th").removeClass("bootstro");
+        $("#show-fisher-balance").removeClass("bootstro");
+        $("#costs-box").removeClass("bootstro");
+    }
     bootstro.start('.bootstro', {
         onComplete : function(params) {
+            hideCatchIntentColumn();
+            hideProfitColumns();
+            //showFisherBalance();
+            //$("#costs-box").addClass("bootstro");
+            //hideProfitTotalColumn();
+            //hideProfitSeasonColumn();
             displayRules();
         },
         onExit : function(params) {
+            hideCatchIntentColumn();
+            hideProfitColumns();
+            //showFisherBalance();
+            //hideProfitTotalColumn();
+            //hideProfitSeasonColumn();
             displayRules();
         }
     });
@@ -503,15 +804,22 @@ socket.on('end season', endSeason);
 socket.on('end run', endRun);
 socket.on('pause', pause);
 socket.on('resume', resume);
+socket.on('start asking intent', startAskingIntendedCatch);
+socket.on('stop asking intent', stopAskingIntendedCatch);
 
 function main() {
+    hideCatchIntentColumn();
+    hideProfitColumns();
+    //hideProfitSeasonColumn();
+    //hideProfitTotalColumn(); // add showfisherProfits here?
     $('#read-rules').on('click', readRules);
-    $('#tutorial').on('click', startTutorial);
+    $('#tutorial').on('click', startTutorial); 
     disableButtons();
     $('#changeLocation').on('click', changeLocation)
     $('#attempt-fish').on('click', attemptToFish);
     $('#pause').on('click', requestPause);
     $('#resume').on('click', requestResume);
+    $('#finished').on('click', maybeRedirect);
     loadLabels();
     resizeOceanCanvasToScreenWidth();
     $(window).resize(resizeOceanCanvasToScreenWidth);

@@ -124,7 +124,7 @@ exports.participantSession = function(req, res) {
       }
       if (!mw) {
         log.info('Failed participant session creation for ' + code);
-        return res.status(409).send({ errors: 'Invalid experiment code' });
+        return res.status(409).send({ errors: 'Invalid experiment code: ' + code });
       }
 
       log.info('Valid run creation for ' + code);

@@ -1,4 +1,4 @@
 db = db.getSiblingDB('fish');
-db.getCollection('experimenters').remove();
-db.getCollection('microworlds').remove();
-db.getCollection('sessions').remove();
+db.getCollection('experimenters').deleteMany({});
+db.getCollection('microworlds').deleteMany({});
+db.getCollection('sessions').deleteMany({});

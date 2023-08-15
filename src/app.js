@@ -39,11 +39,15 @@ logger.add(logger.transports.File, {
 if (process.env.NODE_ENV === 'test') {
   logger.remove(logger.transports.Console);
 }
+else if (process.env.NODE_ENV === 'development') {
+  logger.transports.Console.level = 'debug';
+}
 
 if (app.settings.env === 'development') {
   process.env.NODE_ENV = 'development';
+  logger.transports.Console.level = 'debug';
   app.use(morgan('dev'));
-  app.use(errorHandler());
+  app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 } else if (app.settings.env === 'production') {
   var loggerStream = {
     write: function(message) {
@@ -89,6 +93,11 @@ app.use('/bower', serveStatic(path.join(__dirname, '../bower_components')));
 
 app.get('/', function(req, res) {
   res.render('participant-access.pug');
+});
+app.get('/explain-redirection', function(req, res) {
+  res.render('explain-redirection.pug', {
+    myHost: req.protocol + '://' + req.get('host')
+  });
 });
 app.get('/new-welcome', function(req, res) {
   res.render('participant-access.pug');

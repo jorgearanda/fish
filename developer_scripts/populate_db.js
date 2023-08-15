@@ -1,5 +1,5 @@
 db = db.getSiblingDB('fish');
-db.experimenters.insert( 
+db.experimenters.insertOne( 
 	{ 
 		"email" : "test@example.com", 
 		"name" : "The Admin", 
