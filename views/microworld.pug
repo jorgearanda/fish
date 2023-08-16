@@ -108,13 +108,6 @@ html
                 label.form-label.checkbox
                   | Enable participant tutorial
                   input#enable-tutorial(type='checkbox', checked='')
-          .row
-            .form-group
-              .col-md-10     
-                label.form-label.checkbox
-                  | Enable&nbsp;
-                  a#profit-columns-tooltip(title='Display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
-                  input#enable-profit-columns(type='checkbox', checked=false) 
 
         .col-md-4
           h3 Economics
@@ -143,6 +136,13 @@ html
               label.form-label.col-md-6(for='currency-symbol') Currency symbol
               .col-md-6
                 input#currency-symbol.form-control.to-disable(type='text', value='$')
+          .row
+            .form-group
+              .col-md-10     
+                label.form-label.checkbox
+                  | Enable&nbsp;
+                  a#profit-columns-tooltip(title='Display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
+                  input#enable-profit-columns(type='checkbox', checked=false) 
 
           h3 Catch Intentions
           .row
