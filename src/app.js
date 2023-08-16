@@ -94,6 +94,11 @@ app.use('/bower', serveStatic(path.join(__dirname, '../bower_components')));
 app.get('/', function(req, res) {
   res.render('participant-access.pug');
 });
+app.get('/explain-redirection', function(req, res) {
+  res.render('explain-redirection.pug', {
+    myHost: req.protocol + '://' + req.get('host')
+  });
+});
 app.get('/new-welcome', function(req, res) {
   res.render('participant-access.pug');
 });

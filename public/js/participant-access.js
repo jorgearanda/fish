@@ -64,9 +64,18 @@ var queryParams = $.url().param();
 
 function attemptRedirect() {
     var expid = 'expid' in queryParams ? queryParams['expid'] : '';
-    if(expid == '') return false;
     var partid = 'partid' in queryParams ? queryParams['partid'] : '';
-    if(partid == '') return false;
+    if(!expid && !partid) return false;
+    if(!expid) {
+        $('#pid').val(partid);
+        $('#code').trigger('focus');
+        return false;
+    }
+    if(!partid) {
+        $('#code').val(expid);
+        $('#pid').trigger('focus');
+        return false;
+    }
     var credentials = {
         code: expid,
         pid: partid

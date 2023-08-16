@@ -33,27 +33,30 @@ if (lang && lang !== '' && lang.toLowerCase() in langs) {
 //////////// Catch Intentions feature 
 ////////////////////////////////////////
 
-function makeCatchIntentColumnVisible(visible = true) {
-    // console.log('makeCatchIntentColumnVisible: visible=' + visible);
-    if (visible) {
-        $('#catch-intent-th').show();
-        for (var i in st.fishers) {
-            $('#f' + i + '-catch-intent').show();
-        }
+function showCatchIntentColumn(season) {
+    var headerText = ' ' + msgs.info_intent;
+    if (season) headerText += ' ' + season;
+    $('#catch-intent-header').text(headerText);
+    $('#catch-intent-th').show();
+    for (var i in st.fishers) {
+        $('#f' + i + '-catch-intent').show();
     }
-    else {
-        $('#catch-intent-th').hide();
-        for (var i in st.fishers) {
-            $('#f' + i + '-catch-intent').hide();
-        }
+}
+
+function hideCatchIntentColumn() {
+    $('#catch-intent-th').hide();
+    for (var i in st.fishers) {
+        $('#f' + i + '-catch-intent').hide();
     }
 }
 
 var myCatchIntent = 'n/a';
+var myCatchIntentSubmitted = false;
+var myCatchIntentDisplaySeason = 0;
+var myCatchIntentDialogConfigured = false;
 
-function makeCatchIntentDialogVisible(visible = true) {
-    // console.log('makeCatchIntentDialogVisible: visible=' + visible);
-    if (visible) {
+function showCatchIntentDialog() {
+    if(!myCatchIntentDialogConfigured) {
         $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
         if (ocean.catchIntentPrompt2.length > 0) {
             $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
@@ -62,52 +65,52 @@ function makeCatchIntentDialogVisible(visible = true) {
         else {
             $('#catch-intent-prompt2').hide();
         }
-        $('#catch-intent-input').val("");
+        // emitter.on() is cumulative! And showCatchIntentDialog() could be called multiple times...
+        // https://nodejs.org/api/events.html#emitteroneventname-listener
+        // NOTE: This is NOT the same as .once() !!!
         $('#catch-intent-input').on('keydown', function (e) {
             if (e.key === 'Enter' || e.keyCode === 13) {
-                submitCatchIntent();// Do something
+                recordMyCatchIntent();
             }
         });
-        $('#catch-intent-submit').on('click', submitCatchIntent);
-        $('#catch-intent-submit').show();
-        $('#catch-intent-dialog-box').show();
-    } else {
-        $('#catch-intent-dialog-box').hide();
+        $('#catch-intent-submit').on('click', recordMyCatchIntent);
+        myCatchIntentDialogConfigured = true;
+    }
+    $('#catch-intent-input').val("");
+    $('#catch-intent-submit').show();
+    $('#catch-intent-dialog-box').show();
+    $('#catch-intent-input').trigger('focus');
+}
+
+function hideCatchIntentDialog() {
+    $('#catch-intent-dialog-box').hide();
+}
+
+function checkCatchIntentDisplay() {
+    var season = myCatchIntentSubmitted ? st.catchIntentSeason : st.catchIntentDisplaySeason;
+    // console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' mySeason=' + myCatchIntentDisplaySeason);
+    if (season != myCatchIntentDisplaySeason) {
+        if (season == 0) {
+            hideCatchIntentColumn();
+        } else {
+            showCatchIntentColumn(season);
+        }
+        myCatchIntentDisplaySeason = season;
     }
 }
 
-function catchIntentIsActive(season) {
-    return ocean
-        && ocean.catchIntentionsEnabled
-        && (season <= ocean.numSeasons)
-        && (ocean.catchIntentSeasons.indexOf(season) >= 0);
+
+function startAskingIntendedCatch() {
+    showCatchIntentDialog();
+    myCatchIntent = '???';
+    myCatchIntentSubmitted = false;
 }
 
-function maybeAskIntendedCatch() {
-    if (st.status === 'resting' && catchIntentIsActive(st.season + 1)) {
-        makeCatchIntentColumnVisible(false);
-        makeCatchIntentDialogVisible(true);
-        myCatchIntent = '???';
-    } else {
-        makeCatchIntentColumnVisible(false);
-        makeCatchIntentDialogVisible(false);
-        myCatchIntent = 'n/a';
-    }
+function stopAskingIntendedCatch() {
+    hideCatchIntentDialog();
 }
 
-function maybeStopAskingIntendedCatch() {
-    recordIntendedCatch(myCatchIntent);
-    if (st.status === 'running' && catchIntentIsActive(st.season)) {
-        makeCatchIntentColumnVisible(true);
-        makeCatchIntentDialogVisible(false);
-    }
-    else {
-        makeCatchIntentColumnVisible(false);
-        makeCatchIntentDialogVisible(false);
-    }
-}
-
-function submitCatchIntent() {
+function recordMyCatchIntent() {
     var input = $('#catch-intent-input').val().trim();
     var num = parseInt(input);
     if (isNaN(num) || num < 0) {
@@ -116,9 +119,16 @@ function submitCatchIntent() {
     }
     else {
         myCatchIntent = num.toString();
-        makeCatchIntentDialogVisible(false);
+        stopAskingIntendedCatch();
+        submitMyCatchIntent();
     }
 }
+
+function submitMyCatchIntent() {
+    socket.emit('recordIntendedCatch', myCatchIntent);
+    myCatchIntentSubmitted = true;
+}
+
 
 ////////////////////////////////////////
 //////////// END Catch Intentions feature   (except for a few touch points below) 
@@ -276,6 +286,7 @@ function updateStatus() {
         $("#status-sub-label").hide();
     } else {
     }
+    checkCatchIntentDisplay(st.catchIntentDisplaySeason);
 
     $('#status-label').html(statusText);
 }
@@ -356,7 +367,12 @@ function updateFishers() {
                 $('#f0-status').attr('src', '/public/img/world.png');
             }
 
-            catchIntent = fisher.seasonData[st.season].catchIntent;
+            if (myCatchIntentDisplaySeason > st.season) {
+                catchIntent = fisher.seasonData[st.season].nextCatchIntent;
+            }
+            else {
+                catchIntent = fisher.seasonData[st.season].catchIntent;
+            }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
@@ -415,7 +431,12 @@ function updateFishers() {
             }
             $('#f' + j + '-status').attr('src', src);
 
-            catchIntent = fisher.seasonData[st.season].catchIntent;
+            if (myCatchIntentDisplaySeason > st.season) {
+                catchIntent = fisher.seasonData[st.season].nextCatchIntent;
+            }
+            else {
+                catchIntent = fisher.seasonData[st.season].catchIntent;
+            }
             fishSeason = fisher.seasonData[st.season].fishCaught;
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
@@ -511,12 +532,9 @@ function setupOcean(o) {
     updateCosts();
     makeUnpausable();
     hideTutorial();
-    makeCatchIntentColumnVisible(true);
-    makeCatchIntentDialogVisible(false);
-    showProfitColumns();        //Profit.Vis  CatchIntentions handled differently here than inversion I was working from
+    hideCatchIntentColumn();
+    hideCatchIntentDialog();
     hideProfitColumns();        //Profit.Vis  
-    //makeSeasonProfitColumnVisible(false);
-    //makeOverallProfitColumnVisible(false);
 }
 
 function readRules() {
@@ -563,14 +581,11 @@ function attemptToFish() {
     socket.emit('attemptToFish');
 }
 
-function recordIntendedCatch(numFish) {
-    socket.emit('recordIntendedCatch', numFish);
-}
-
 function beginSeason(data) {
     st = data;
     // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
-    maybeStopAskingIntendedCatch();
+    $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
+    $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season);
     updateWarning('');
     drawOcean();
     updateFishers();
@@ -606,7 +621,6 @@ function endSeason(data) {
     resetLocation();
     updateWarning();
     disableButtons();
-    maybeAskIntendedCatch();
 }
 
 function endRun(trigger) {
@@ -636,7 +650,7 @@ function endRun(trigger) {
 var queryParams = $.url().param();
 
 function maybeRedirect() {
-    console.log("Entering maybeRedirect()");
+    // console.log("Entering maybeRedirect()");
     // replace the keyword REDIRECTURL with the value of the redirectURL parameter
     var url = ocean.redirectURL;
     if (url && url.length > 0) {
@@ -662,12 +676,12 @@ function substituteQueryParameter(url, key) {
 //
 // To escape the RegExp itself:
 function escapeRegExp(str) {
-    console.log("Entering escapeRegExp("+str+")");
+    // console.log("Entering escapeRegExp("+str+")");
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 // To escape a replacement string:
 function escapeReplacement(str) {
-    console.log("Entering escapeReplacement("+str+")");
+    // console.log("Entering escapeReplacement("+str+")");
     return str.replace(/\$/g, '$$$$');
 }
 
@@ -745,6 +759,7 @@ function resizeOceanCanvasToScreenWidth() {
 
 function startTutorial() {
     // Profit.Vis - is this correct here? 
+    // HK 2DO: should be shown or hidden before starttutorial() is called
        if(ocean && ocean.profitDisplayEnabled) {  // insert profitDisplayEnabled here or include nested in above?
             showProfitColumns(0);
         }
@@ -758,20 +773,23 @@ function startTutorial() {
             $("#show-fisher-balance").removeClass("bootstro");
             $("#costs-box").removeClass("bootstro");
         }
-        bootstro.start('.bootstro', {
+    console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
+    if(ocean && ocean.catchIntentionsEnabled) {
+        showCatchIntentColumn(0);
+    }
+    else {
+        hideCatchIntentColumn();
+        // Prevent bootstro from choking on hidden catch intention tutorial data
+        $("#catch-intent-th").removeClass("bootstro");
+    }
+    bootstro.start('.bootstro', {
         onComplete : function(params) {
-            hideProfitColumns();        //Profit.Vis  CatchIntentions handled differently here than inversion I was working from
+            hideCatchIntentColumn();
             displayRules();
-            //$("#profit-total-th").removeClass("bootstro"); // testing debiugging - player profits visible when should be hidden
-            //$("#profit-season-th").removeClass("bootstro");
-            //$("#show-fisher-balance").removeClass("bootstro");
         },
         onExit : function(params) {
-            hideProfitColumns();        //Profit.Vis  CatchIntentions handled differently here than inversion I was working from
+            hideCatchIntentColumn();
             displayRules();
-            //$("#profit-total-th").removeClass("bootstro");  // testing debiugging - player profits visible when should be hidden
-            //$("#profit-season-th").removeClass("bootstro");  // ""
-            //$("#show-fisher-balance").removeClass("bootstro");  // ""
         }
     });
 }
@@ -790,9 +808,12 @@ socket.on('end season', endSeason);
 socket.on('end run', endRun);
 socket.on('pause', pause);
 socket.on('resume', resume);
+socket.on('start asking intent', startAskingIntendedCatch);
+socket.on('stop asking intent', stopAskingIntendedCatch);
 
 function main() {
     //hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
+    hideCatchIntentColumn();
     $('#read-rules').on('click', readRules);
     $('#tutorial').on('click', startTutorial);
     disableButtons();

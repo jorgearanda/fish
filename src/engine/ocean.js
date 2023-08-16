@@ -26,6 +26,8 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   this.microworld = mw;
   this.results = [];
   this.om = om;
+  this.catchIntentSeason = 0;
+  this.catchIntentDisplaySeason = 0;
   this.log = new OceanLog(
     this.microworld.name + ' ' + this.id + ' ' + '(' + this.microworld.experimenter.username + ')'
   );
@@ -59,6 +61,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     for (var i in this.fishers) {
       var fisher = this.fishers[i];
       if (!fisher.isBot() && fisher.name === pId) {
+        this.resume(pId); // just in case this fisher paused the game just before leaving!
         this.fishers.splice(i, 1);
       }
     }
@@ -187,6 +190,8 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       mysteryFish: this.mysteryFish,
       certainSpawn: this.certainSpawn,
       reportedMysteryFish: this.reportedMysteryFish,
+      catchIntentSeason: this.catchIntentSeason,
+      catchIntentDisplaySeason: this.catchIntentDisplaySeason,
       fishers: [],
     };
 
@@ -222,11 +227,15 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   };
 
   this.hasReachedSeasonDelay = function() {
-    return this.seconds >= this.seasonDelayInEffect;
+    return this.seconds >= this.microworld.params.seasonDelay;
   };
 
   this.hasReachedSeasonDuration = function() {
     return this.seconds >= this.microworld.params.seasonDuration;
+  };
+
+  this.hasReachedCatchIntentDialogDuration = function() {
+    return this.seconds >= this.microworld.params.catchIntentDialogDuration;
   };
 
   //////////////////////
@@ -250,6 +259,10 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   this.recordIntendedCatch = function(pId, numFish) {
     var idx = this.findFisherIndex(pId);
     if (idx !== null) this.fishers[idx].recordIntendedCatch(numFish);
+    // the following is true ONLY for fisher idx!!! 
+    // this.catchIntentDisplaySeason = this.catchIntentSeason;
+    // Tell fisher idx to remove the dialog and display the intent column
+    // socket.emit('stop asking intent');
     io.sockets.in(this.id).emit('status', this.getSimStatus());
     return;
   };
@@ -323,6 +336,9 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       });
     }
 
+    this.catchIntentSeason = this.catchIntentIsActive(this.season) ? this.season : 0;
+    this.catchIntentDisplaySeason = this.catchIntentSeason;
+
     // TODO: Need to get proper numbers for certain and mystery fish on seasons after first!
     this.log.info('Beginning season ' + this.season + '.');
     let status = this.getSimStatus();
@@ -366,12 +382,21 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     if (this.season < this.microworld.params.numSeasons && reason !== 'depletion') {
       this.status = 'resting';
       this.resetTimer();
-      this.setDelayForSeason(this.season+1);
       this.log.info('Ending season ' + this.season + '.');
       io.sockets.in(this.id).emit('end season', {
         status: this.status,
         season: this.season,
       });
+      if (this.catchIntentIsActive(this.season+1)) {
+        this.catchIntentSeason = this.season+1;
+        for (i in this.fishers) {
+          this.fishers[i].prepareToAskCatchIntent();
+        }
+        io.sockets.in(this.id).emit('start asking intent');
+      }
+      else { 
+        this.catchIntentSeason = 0;
+      }
     } else {
       this.endOcean(reason);
     }
@@ -425,9 +450,18 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
         this.tick();
       }
     } else if (this.isResting()) {
-      delay = this.seasonDelayInEffect;
+      delay = this.microworld.params.seasonDelay;
       this.log.debug('Ocean loop - resting: ' + this.seconds + ' of ' + delay + ' seconds.');
       this.setAvailableSpawn(delay);
+
+      if (this.catchIntentSeason > this.season) {
+        this.getBotsCatchIntent();
+        if (this.hasReachedCatchIntentDialogDuration()) {
+          io.sockets.in(this.id).emit('stop asking intent');
+          this.catchIntentDisplaySeason = this.catchIntentSeason;
+        }
+      }
+
       io.sockets.in(this.id).emit('status', this.getSimStatus());
 
       if (this.seconds + this.warnSeconds >= delay) {
@@ -450,6 +484,14 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
 
     if (loop) {
       setTimeout(this.runOcean.bind(this), 1000);
+    }
+  };
+
+  this.getBotsCatchIntent = function() {
+    for (var i in this.fishers) {
+      if (this.fishers[i].isBot()) {
+        this.fishers[i].maybeGetBotCatchIntent();
+      }
     }
   };
 

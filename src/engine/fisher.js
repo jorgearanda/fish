@@ -39,14 +39,13 @@ exports.Fisher = function Fisher(name, type, params, o) {
     return this.seasonData[this.season].actualCasts;
   };
 
-  this.calculateSeasonGreed = function() {
+  this.calculateSeasonGreed = function(currentSeason) {
     var baseGreed = this.params.greed;
     var greedSpread = this.params.greedSpread;
     var predictability = this.params.predictability;
     var trend = this.params.trend;
 
     var numSeasons = this.ocean.microworld.params.numSeasons;
-    var currentSeason = this.ocean.season;
 
     var currentGreed = baseGreed;
     var lowBound = baseGreed - greedSpread / 2;
@@ -87,25 +86,46 @@ exports.Fisher = function Fisher(name, type, params, o) {
       fishCaught: 0,
       startMoney: 0,
       endMoney: 0,
-      catchIntent: 'missing',
+      catchIntent: season < 2 ? 'n/a' : this.seasonData[season-1].nextCatchIntent,
+      nextCatchIntent: 'n/a',
     };
 
     if (this.isBot()) {
-      var greed = this.calculateSeasonGreed();
+      var greed = this.calculateSeasonGreed(season);
       var intendedCasts = this.calculateSeasonCasts(greed);
       this.seasonData[season].greed = greed;
       this.seasonData[season].intendedCasts = intendedCasts;
-      var intentEnabled = this.ocean.microworld.params.catchIntentionsEnabled;
-      if (intentEnabled) {
-        var chanceCatch = this.ocean.microworld.params.chanceCatch;
-        var variation = 1.0 + (Math.random() - 0.5) / 2.0;  // actual +/- 25%
-        this.seasonData[season].catchIntent = Math.round(intendedCasts * chanceCatch * variation);
-        this.ocean.log.debug('Fisher ' + this.name + ': intended catch = ' + this.seasonData[season].catchIntent);
-      }
     }
   
     this.hasReturned = false;
   };
+
+  this.calculateBotCatchIntent = function(season) {
+    var greed = this.calculateSeasonGreed(season);
+    var intendedCasts = this.calculateSeasonCasts(greed);
+    var chanceCatch = this.ocean.microworld.params.chanceCatch;
+    var variation = 1.0 + (Math.random() - 0.5) / 2.0;  // actual +/- 25%
+    return Math.round(intendedCasts * chanceCatch * variation);
+  }
+
+  this.maybeGetBotCatchIntent = function() {
+    var data = this.seasonData[this.season];
+    if (data.nextCatchIntent === '???') {
+      if (this.ocean.seconds >= data.nextCatchIntentSubmitDelay) {
+        this.recordIntendedCatch(this.calculateBotCatchIntent(this.season + 1));
+      } 
+    }
+  }
+
+  this.prepareToAskCatchIntent = function() {
+    var data = this.seasonData[this.season];
+    data.nextCatchIntent = '???';
+    if (this.isBot()) {
+      var duration = this.ocean.microworld.params.catchIntentDialogDuration;
+      data.nextCatchIntentSubmitDelay = Math.trunc(Math.random() * duration);
+      this.ocean.log.info('Bot fisher ' + this.name + ' will submit catch intent in ' + data.nextCatchIntentSubmitDelay + ' seconds.');
+    }
+  }
 
   this.changeMoney = function(amount) {
     this.money += amount;
@@ -149,7 +169,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
   };
 
   this.recordIntendedCatch = function(numFish) {
-    this.seasonData[this.season].catchIntent = numFish;
+    this.seasonData[this.season].nextCatchIntent = numFish;
     this.ocean.log.info('Fisher ' + this.name + ' is planning to catch ' + numFish + ' fish.');
   }
 
