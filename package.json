@@ -42,7 +42,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "async": "^2.6.4",
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "chai": "^4.3.7",
     "chance": "^1.1.11",
@@ -54,10 +54,10 @@
     "json-2-csv": "^3.20.0",
     "method-override": "^3.0.0",
     "moment": "^2.29.4",
-    "mongoose": "^6.10.1",
+    "mongoose": "^6.11.5",
     "morgan": "^1.10.0",
-    "node": "18.14",
-    "nodemon": "^2.0.21",
+    "node": "18.17",
+    "nodemon": "^2.0.22",
     "pug": "^3.0.2",
     "request": "^2.88.2",
     "serve-favicon": "^2.5.0",
@@ -67,9 +67,9 @@
     "winston": "^2.4.7"
   },
   "devDependencies": {
-    "@babel/cli": "^7.21.0",
-    "@babel/core": "^7.21.0",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/cli": "^7.22.10",
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
     "babel-loader": "^8.3.0",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-polyfill": "^6.26.0",
@@ -77,19 +77,17 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
     "coveralls": "^3.1.1",
-    "eslint": "^8.35.0",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^4.2.1",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "prettier": "^2.8.4",
+    "prettier": "^2.8.8",
     "should": "^13.2.3",
     "superagent": "^4.1.0",
     "supertest": "^3.4.2"
   },
   "engines": { 
-    "node": "16.19.0", 
-    "npm": "9.6.2" 
   },
   "nyc": {
     "all": true,
