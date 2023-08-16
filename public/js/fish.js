@@ -167,9 +167,9 @@ function submitCatchIntent() {
 //}
 
 function showProfitColumns(season) {
-    $('#profit-season-header').text();
+    $('#profit-season-header').show();
     $('#profit-season-th').show();
-    $('#profit-total-header').text();
+    $('#profit-total-header').show();
     $('#profit-total-th').show();
     for (var i in st.fishers) {
         $('#f' + i + '-profit-season').show();
@@ -363,7 +363,7 @@ function updateFishers() {
             profitTotal = fisher.money.toFixed(2);
             //Prof.Vis - section to add here
             if (ocean.profitDisplayEnabled) {    // if profit column checkbox is enabled, calculate and show profits
-                $('#f' + j + '-profit-season').text(profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2)); //should these still be fixed?
+                $('#f' + j + '-profit-season').text(profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2)); 
                 $('#f' + j + '-profit-total').text(profitTotal = fisher.money.toFixed(2));
                // $('#f' + j + '-profit-season').show();
                // $('#f' + j + '-profit-total').show();
