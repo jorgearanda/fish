@@ -125,7 +125,7 @@ function submitCatchIntent() {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-//////////// START Profit Colum Display Feature     //Prof.Vis
+//////////// START Profit Colum Display Feature     //Profit.Vis
 ////////////////////////////////////////
 
 //controls visibility of both seasonal and overall profit columns in one function for show and one for hide
@@ -361,7 +361,7 @@ function updateFishers() {
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
-            //Prof.Vis - section to add here
+            //Profit.Vis - section to add here
             if (ocean.profitDisplayEnabled) {    // if profit column checkbox is enabled, calculate and show profits
                 $('#f' + j + '-profit-season').text(profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2)); 
                 $('#f' + j + '-profit-total').text(profitTotal = fisher.money.toFixed(2));
@@ -372,8 +372,8 @@ function updateFishers() {
              } else{  // if profit column checkbox is disabled, hide
                 $('#f' + j + '-profit-season').hide();
                 $('#f' + j + '-profit-total').hide();
-                //$('#f' + j + '-fish-value').hide();
-                // $('#f' + j + 'show-fisher-balance').text(showFisherBalance);
+                $('#f' + j + '-fish-value').hide();
+                $('#f' + j + 'show-fisher-balance').hide();
             }
 
             // REDIRECTION FEATURE - provide fish caught and earnings on redirect return
@@ -420,7 +420,7 @@ function updateFishers() {
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
-            //Prof.Vis - section to add here?
+            //Profit.Vis - section to add here?
 
             $('#f' + j + '-catch-intent').text(catchIntent);
 
@@ -513,8 +513,8 @@ function setupOcean(o) {
     hideTutorial();
     makeCatchIntentColumnVisible(true);
     makeCatchIntentDialogVisible(false);
-    showProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
-    hideProfitColumns();        //Prof.Vis  
+    showProfitColumns();        //Profit.Vis  CatchIntentions handled differently here than inversion I was working from
+    hideProfitColumns();        //Profit.Vis  
     //makeSeasonProfitColumnVisible(false);
     //makeOverallProfitColumnVisible(false);
 }
@@ -760,14 +760,14 @@ function startTutorial() {
         }
         bootstro.start('.bootstro', {
         onComplete : function(params) {
-            hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
+            hideProfitColumns();        //Profit.Vis  CatchIntentions handled differently here than inversion I was working from
             displayRules();
             //$("#profit-total-th").removeClass("bootstro"); // testing debiugging - player profits visible when should be hidden
             //$("#profit-season-th").removeClass("bootstro");
             //$("#show-fisher-balance").removeClass("bootstro");
         },
         onExit : function(params) {
-            hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
+            hideProfitColumns();        //Profit.Vis  CatchIntentions handled differently here than inversion I was working from
             displayRules();
             //$("#profit-total-th").removeClass("bootstro");  // testing debiugging - player profits visible when should be hidden
             //$("#profit-season-th").removeClass("bootstro");  // ""

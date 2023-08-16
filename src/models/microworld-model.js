@@ -40,7 +40,7 @@ var microworldSchema = new Schema({
     redirectURL: String,
     enableRespawnWarning: Boolean,
     fishValue: Number,
-    profitDisplayEnabled: Boolean,  //Prof.Vis
+    profitDisplayEnabled: Boolean,  //Profit.Vis
     costDeparture: Number,
     costSecond: Number,
     costCast: Number,
