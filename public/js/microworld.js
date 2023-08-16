@@ -535,9 +535,10 @@ function disableCatchIntentControls(maybe) {
 //Profit.Vis
 function disableProfitControls(maybe) {
     $('#show-fisher-balance').attr("disabled", maybe);
-    //$('#profit-total-th').attr("disabled", maybe);
     $('#profit-season-header').attr("disabled", maybe);
     $('#profit-total-header').attr("disabled", maybe);
+    //$('#profit-season-th').attr("disabled", maybe); //testing to remove profits where they should be hidden
+    //$('#profit-total-th').attr("disabled", maybe);
 }
 
 function noMicroworld(jqXHR) {
@@ -761,6 +762,7 @@ function main() {
     setButtons();
     setOnPageChanges();
     loadData();
+ //   hideProfitColumns(); //Profit.vis - testing to remove player profit values that should be hidden
 }
 
 $(document).ready(main);
