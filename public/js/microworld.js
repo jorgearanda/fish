@@ -537,7 +537,7 @@ function disableProfitControls(maybe) {
     $('#show-fisher-balance').attr("disabled", maybe);
     $('#profit-season-header').attr("disabled", maybe);
     $('#profit-total-header').attr("disabled", maybe);
-    //$('#profit-season-th').attr("disabled", maybe); //testing to remove profits where they should be hidden
+    //$('#profit-season-th').attr("disabled", maybe); //testing to remove player profits where they should be hidden
     //$('#profit-total-th').attr("disabled", maybe);
 }
 

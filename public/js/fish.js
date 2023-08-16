@@ -762,10 +762,16 @@ function startTutorial() {
         onComplete : function(params) {
             hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
             displayRules();
+            //$("#profit-total-th").removeClass("bootstro"); // testing debiugging - player profits visible when should be hidden
+            //$("#profit-season-th").removeClass("bootstro");
+            //$("#show-fisher-balance").removeClass("bootstro");
         },
         onExit : function(params) {
             hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
             displayRules();
+            //$("#profit-total-th").removeClass("bootstro");  // testing debiugging - player profits visible when should be hidden
+            //$("#profit-season-th").removeClass("bootstro");  // ""
+            //$("#show-fisher-balance").removeClass("bootstro");  // ""
         }
     });
 }
@@ -786,7 +792,7 @@ socket.on('pause', pause);
 socket.on('resume', resume);
 
 function main() {
-    // hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
+    //hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
     $('#read-rules').on('click', readRules);
     $('#tutorial').on('click', startTutorial);
     disableButtons();
