@@ -136,13 +136,6 @@ html
               label.form-label.col-md-6(for='currency-symbol') Currency symbol
               .col-md-6
                 input#currency-symbol.form-control.to-disable(type='text', value='$')
-          .row
-            .form-group
-              .col-md-10     
-                label.form-label.checkbox
-                  | Enable&nbsp;
-                  a#profit-columns-tooltip(title='Display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
-                  input#enable-profit-columns(type='checkbox', checked=true) 
 
           h3 Catch Intentions
           .row
@@ -253,6 +246,13 @@ html
       .row
         .col-md-3
           h3 Information display
+          .row
+            .form-group
+              .col-md-10     
+                label.form-label.checkbox
+                  | Enable&nbsp;
+                  a#profit-columns-tooltip(title='Display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
+                  input#enable-profit-columns(type='checkbox', checked=true) 
           .row
             .form-group
               .col-md-10

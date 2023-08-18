@@ -17,11 +17,11 @@ function showStatusTableOptions() {
     var behaviour_name = $(this).attr('id');
 
     var behaviour_type = $(this).text();
-    $(this).closest('.dropdown').find('span#btn_txt').text(behaviour_type+"  ")
+    $(this).closest('.dropdown').find('span#btn_txt').text(behaviour_type + "  ")
 
-    $("."+behaviour_name).removeClass('hide');
+    $("." + behaviour_name).removeClass('hide');
 
-    if(behaviour_name == "static_option"){
+    if (behaviour_name == "static_option") {
         $(".dynamic_option").addClass('hide');
     } else {
         $(".static_option").addClass('hide');
@@ -255,7 +255,7 @@ function validate() {
         errors.push('"' + catchIntentSeasonsStr + '" is not a comma-separated list of season numbers greater than 1.');
         $('#catch-intent-seasons').val(parseCatchIntentSeasons(catchIntentSeasonsStr, true));
     }
-    
+
     if (parseInt($('#catch-intent-dialog-duration').val()) < 0) {
         errors.push('The catch intent extra time cannot be negative.');
     }
@@ -366,12 +366,12 @@ function prepareMicroworldObject() {
 }
 
 function reportErrors(err) {
-        var errMessage = 'The form has the following errors:\n\n';
-        for (var i in err) {
-            errMessage += err[i] + '\n';
-        }
-        alert(errMessage);
-        return;
+    var errMessage = 'The form has the following errors:\n\n';
+    for (var i in err) {
+        errMessage += err[i] + '\n';
+    }
+    alert(errMessage);
+    return;
 }
 
 function badMicroworld(jqXHR) {
@@ -475,13 +475,11 @@ function populatePage() {
     $('#catch-intent-dialog-duration').val(mw.params.catchIntentDialogDuration);
     $('#catch-intent-prompt1').val(mw.params.catchIntentPrompt1);
     $('#catch-intent-prompt2').val(mw.params.catchIntentPrompt2);
-    var maybe = !(mw.params.catchIntentionsEnabled);
-    disableCatchIntentControls(maybe);
+    maybeDisableCatchIntentControls();
     $('#redirect-url').val(mw.params.redirectURL);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled); //Profit.Vis added these three lines for enabling profit columns and disabling associated functions if necessary
-    var maybe = !(mw.params.profitDisplayEnabled); 
-    disableProfitControls(maybe);
+    maybeDisableProfitControls(!mw.params.profitDisplayEnabled);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
     $('#cost-departure').val(mw.params.costDeparture);
@@ -520,12 +518,13 @@ function populatePage() {
         $(botPrefix + 'attempts-second').val(mw.params.bots[i - 1].attemptsSecond);
     }
 
-    $("#"+mw.params.oceanOrder).prop('checked', true);
+    $("#" + mw.params.oceanOrder).prop('checked', true);
 
     changeBotRowVisibility();
 }
 
-function disableCatchIntentControls(maybe) {
+function maybeDisableCatchIntentControls() {
+    var maybe = !(mw.params.catchIntentionsEnabled);
     $('#catch-intent-seasons').attr("disabled", maybe);
     $('#catch-intent-dialog-duration').attr("disabled", maybe);
     $('#catch-intent-prompt1').attr("disabled", maybe);
@@ -533,12 +532,9 @@ function disableCatchIntentControls(maybe) {
 }
 
 //Profit.Vis
-function disableProfitControls(maybe) {
-    $('#show-fisher-balance').attr("disabled", maybe);
-    $('#profit-season-header').attr("disabled", maybe);
-    $('#profit-total-header').attr("disabled", maybe);
-    //$('#profit-season-th').attr("disabled", maybe); //testing to remove player profits where they should be hidden
-    //$('#profit-total-th').attr("disabled", maybe);
+function maybeDisableProfitControls(disableflg) {
+    // console.log("maybeDisableProfitControls: disableflg = " + disableflg);
+    $('#show-fisher-balance').attr("disabled", disableflg);
 }
 
 function noMicroworld(jqXHR) {
@@ -568,7 +564,7 @@ function noRuns(jqXHR) {
 function gotRuns(r) {
     var table = '';
     for (var i in r) {
-        var button = '<button class="btn btn-sm btn-info" type="submit" onclick=location.href=\'/runs/' + r[i]._id + 
+        var button = '<button class="btn btn-sm btn-info" type="submit" onclick=location.href=\'/runs/' + r[i]._id +
             '?csv=true\'>Download   <span class="glyphicon glyphicon-download-alt"></span></button>';
         table += '<tr><td><a href="../runs/' + r[i]._id + '">' + moment(r[i].time).format('llll') + '</a></td>' +
             '<td>' + r[i].participants + '</td>' + '<td>' + button + '</tr>';
@@ -596,12 +592,12 @@ function getRuns() {
 }
 
 function backToList() {
-    location.href = '../dashboard'; 
+    location.href = '../dashboard';
 }
 
 // Makes downloading all runs possible
 function initDownloadAll() {
-    $('#download-all-button').attr("onclick", "location.href='/runs?csv=true&mw="+mwId+"'");
+    $('#download-all-button').attr("onclick", "location.href='/runs?csv=true&mw=" + mwId + "'");
 }
 
 function setButtons() {
@@ -651,15 +647,15 @@ function loadTexts() {
 function prepareControls() {
     $('#microworld-panel-body-text').text(panelBody[mode]);
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
-    $('#enable-catch-intentions').on("click", function(){
+    $('#enable-catch-intentions').on("click", function () {
         //Dis- or enable the other CatchIntention controls depending on whether the checkbox is checked.
         var maybe = !($(this).is(':checked'));
-        disableCatchIntentControls(maybe);
+        maybeDisableCatchIntentControls(maybe);
     });
-    $('#enable-profit-columns').on("click", function(){    //Profit.Vis
+    $('#enable-profit-columns').on("click", function () {    //Profit.Vis
         //Dis- or enable the other Profit controls depending on whether the checkbox is checked.
-        var maybe = !($(this).is(':checked'));
-        disableProfitControls(maybe);
+        var disableflg = !($(this).is(':checked'));
+        maybeDisableProfitControls(disableflg);
     });
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
@@ -684,7 +680,7 @@ function prepareControls() {
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
 
-        if($('input[type="radio"]:checked').parent().parent().hasClass('dynamic_option')) {
+        if ($('input[type="radio"]:checked').parent().parent().hasClass('dynamic_option')) {
             $(".static_option").addClass('hide');
             $(".dynamic_option").removeClass("hide");
             $('span#btn_txt').text("Dynamic Behaviour\xa0\xa0"); //\xa0 is the char &nbsp; makes
@@ -702,7 +698,7 @@ function prepareControls() {
         $('#archive-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.to-disable').each( function() {
+        $('.to-disable').each(function () {
             $(this).prop('disabled', true);
         });
         $('#results').removeClass('collapse');
@@ -718,7 +714,7 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.to-disable').each( function() {
+        $('.to-disable').each(function () {
             $(this).prop('disabled', true);
         });
         $('#results').removeClass('collapse');
@@ -754,10 +750,10 @@ function showRedirectExplanationText() {
     // $.get("explain-redirection", function(data){
     //     $("#explain-redirect-content").html(data).fadeIn();
     // });
-    $('#explain-redirect-content').load('/explain-redirection',function(){
-        $('#explain-redirect-modal').modal({show:true});
+    $('#explain-redirect-content').load('/explain-redirection', function () {
+        $('#explain-redirect-modal').modal({ show: true });
     });
-    $('#explain-redirect-modal').modal({keyboard: false, backdrop: 'static'});
+    $('#explain-redirect-modal').modal({ keyboard: false, backdrop: 'static' });
 }
 
 
@@ -769,7 +765,6 @@ function main() {
     setButtons();
     setOnPageChanges();
     loadData();
- //   hideProfitColumns(); //Profit.vis - testing to remove player profit values that should be hidden
 }
 
 $(document).ready(main);

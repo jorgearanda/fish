@@ -19,7 +19,7 @@ fishImage.src = 'public/img/certain-fish.png';
 var mysteryFishImage = new Image();
 mysteryFishImage.src = 'public/img/mystery-fish.png';
 
-var st = {status: 'loading'};
+var st = { status: 'loading' };
 
 if (lang && lang !== '' && lang.toLowerCase() in langs) {
     lang = lang.toLowerCase();
@@ -56,12 +56,12 @@ var myCatchIntentDisplaySeason = 0;
 var myCatchIntentDialogConfigured = false;
 
 function showCatchIntentDialog() {
-    if(!myCatchIntentDialogConfigured) {
+    if (!myCatchIntentDialogConfigured) {
         $('#catch-intent-prompt1').text(ocean.catchIntentPrompt1);
         if (ocean.catchIntentPrompt2.length > 0) {
             $('#catch-intent-prompt2').text(ocean.catchIntentPrompt2);
             $('#catch-intent-prompt2').show();
-        } 
+        }
         else {
             $('#catch-intent-prompt2').hide();
         }
@@ -141,51 +141,17 @@ function submitMyCatchIntent() {
 //controls visibility of both seasonal and overall profit columns in one function for show and one for hide
 //for tutorial text, table column heading, and table body
 
-//
-// *** USE this new way? to match changes in catch intentions? ***
-//
-//function makeSeasonProfitColumnVisible(visible = true) {
-//    // console.log('makeSeasonProfitColumnVisible: visible=' + visible);
-//    if (visible) {
-//        $('#cprofit-season-th').show();
-//        for (var i in st.fishers) {
-//            $('#f' + i + '-profit-season').show();
-//        }
-//    }
-//    else {
-//        $('#profit-season-th').hide();
-//        for (var i in st.fishers) {
-//            $('#f' + i + '-profit-season').hide();
-//        }
-//    }
-//}
-
-//function makeOverallProfitColumnVisible(visible = true) {
-//    // console.log('makeSeasonProfitColumnVisible: visible=' + visible);
-//    if (visible) {
-//        $('#cprofit-total-th').show();
-//        for (var i in st.fishers) {
-//            $('#f' + i + '-profit-total').show();
-//        }
-//    }
-//    else {
-//        $('#profit-total-th').hide();
-//        for (var i in st.fishers) {
-//            $('#f' + i + '-profit-total').hide();
-//        }
-//    }
-//}
-
-function showProfitColumns(season) {
-    $('#profit-season-header').show();
-    $('#profit-season-th').show();
-    $('#profit-total-header').show();
-    $('#profit-total-th').show();
-    for (var i in st.fishers) {
-        $('#f' + i + '-profit-season').show();
-        $('#f' + i + '-profit-total').show();
-    }
-}
+// Not needed now. Maybe later?
+// function showProfitColumns(season) {
+//     $('#profit-season-header').show();
+//     $('#profit-season-th').show();
+//     $('#profit-total-header').show();
+//     $('#profit-total-th').show();
+//     for (var i in st.fishers) {
+//         $('#f' + i + '-profit-season').show();
+//         $('#f' + i + '-profit-total').show();
+//     }
+// }
 
 function hideProfitColumns() {
     $('#profit-season-header').hide();
@@ -196,6 +162,13 @@ function hideProfitColumns() {
         $('#f' + i + '-profit-season').hide();
         $('#f' + i + '-profit-total').hide();
     }
+    $("#costs-box").hide();
+    // Prevent bootstro from choking on hidden profit tutorial data
+    $("#profit-season-header").removeClass("bootstro");
+    $("#profit-total-header").removeClass("bootstro");
+    $("#profit-season-th").removeClass("bootstro");
+    $("#profit-total-th").removeClass("bootstro");
+    $("#costs-box").removeClass("bootstro");
 }
 
 ////////////////////////////////////////
@@ -226,7 +199,7 @@ function loadLabels() {
 
 function initializeMixItUp() {
     var $container = $("#fishers-tbody");
-    var $activeFishers = $('#fishers-tbody tr').filter(function() {
+    var $activeFishers = $('#fishers-tbody tr').filter(function () {
         return $(this).attr('active-fisher');
     });
     $container.mixItUp({
@@ -255,7 +228,7 @@ function updateRulesText() {
 
 function displayRules() {
     updateRulesText();
-    $('#rules-modal').modal({keyboard: false, backdrop: 'static'});
+    $('#rules-modal').modal({ keyboard: false, backdrop: 'static' });
 }
 
 function updateStatus() {
@@ -377,31 +350,19 @@ function updateFishers() {
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
-            //Profit.Vis - section to add here
-            if (ocean.profitDisplayEnabled) {    // if profit column checkbox is enabled, calculate and show profits
-                $('#f' + j + '-profit-season').text(profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2)); 
-                $('#f' + j + '-profit-total').text(profitTotal = fisher.money.toFixed(2));
-               // $('#f' + j + '-profit-season').show();
-               // $('#f' + j + '-profit-total').show();
-               // $('#f' + j + '-fish-value').text(fish-value);
-               // $('#f' + j + 'show-fisher-balance').text(showFisherBalance);
-             } else{  // if profit column checkbox is disabled, hide
-                $('#f' + j + '-profit-season').hide();
-                $('#f' + j + '-profit-total').hide();
-                $('#f' + j + '-fish-value').hide();
-                $('#f' + j + 'show-fisher-balance').hide();
-            }
 
             // REDIRECTION FEATURE - provide fish caught and earnings on redirect return
             queryParams['fishTotal'] = fishTotal.toString();
             queryParams['profitTotal'] = profitTotal.toString();
-            
+
 
             $('#f0-catch-intent').text(catchIntent);
             $('#f0-fish-season').text(fishSeason);
             $('#f0-fish-total').text(fishTotal);
-            $('#f0-profit-season').text(profitSeason);
-            $('#f0-profit-total').text(profitTotal);
+            if (ocean.profitDisplayEnabled) {    // Profit.vis : if profit column checkbox is enabled, calculate and show profits
+                $('#f0-profit-season').text(profitSeason);
+                $('#f0-profit-total').text(profitTotal);
+            }
 
             $('#f0').attr('data-fish-total', fishTotal);
             $('#f0').attr('data-fish-season', fishSeason);
@@ -441,7 +402,6 @@ function updateFishers() {
             fishTotal = fisher.totalFishCaught;
             profitSeason = fisher.seasonData[st.season].endMoney.toFixed(2);
             profitTotal = fisher.money.toFixed(2);
-            //Profit.Vis - section to add here?
 
             $('#f' + j + '-catch-intent').text(catchIntent);
 
@@ -453,23 +413,15 @@ function updateFishers() {
                 $('#f' + j + '-fish-total').text('?');
             }
 
-            if (ocean.showFisherBalance) {      //Profit.Vis
-                if(ocean.profitDisplayEnabled){
-                    $('#f' + j + '-profit-season').text(profitSeason);
-                    $('#f' + j + '-profit-total').text(profitTotal);
-                    //$('#f' + j + '-fish-value').text(fish-value);
-                } else{
-                    $('#f' + j + '-profit-season').hide();
-                    $('#f' + j + '-profit-total').hide();
-                }
-            } else { //if(ocean.showFisherBalance = false) & (ocean.profitDisplayEnabled = true){  //Profit.Vis check this
-                if(ocean.profitDisplayEnabled){
-                    $('#f' + j + '-profit-season').text('?');
-                    $('#f' + j + '-profit-total').text('?');
-                } else{
-                $('#f' + j + '-profit-season').hide();
-                $('#f' + j + '-profit-total').hide();
-                }
+            if (!ocean.profitDisplayEnabled) {  // Profit.vis
+                // ignore update profits
+            } else if (ocean.showFisherBalance) {
+                $('#f' + j + '-profit-season').text(profitSeason);
+                $('#f' + j + '-profit-total').text(profitTotal);
+            }
+            else {
+                $('#f' + j + '-profit-season').text('?');
+                $('#f' + j + '-profit-total').text('?');
             }
 
             $('#f' + j).attr('data-fish-total', fishTotal);
@@ -478,40 +430,34 @@ function updateFishers() {
             $('#f' + j).attr('data-profit-season', profitSeason);
             $('#f' + j).attr('data-name', name);
             $('#f' + j).attr('active-fisher', true);
-
-            j++;
         }
+
+        j++;
     }
 }
 
+
 function sortFisherTable() {
     var $container = $("#fishers-tbody");
-    if(ocean.oceanOrder === "ocean_order_user_top")
-    {
+    if (ocean.oceanOrder === "ocean_order_user_top") {
         $container.mixItUp('insert', 1, $("tr#f0"));
     }
-    else if (ocean.oceanOrder === "ocean_order_user_mid")
-    {
-        $container.mixItUp('insert', ocean.numFishers/2, $("tr#f0"));
+    else if (ocean.oceanOrder === "ocean_order_user_mid") {
+        $container.mixItUp('insert', ocean.numFishers / 2, $("tr#f0"));
     }
-    else if (ocean.oceanOrder === "ocean_order_user_bot")
-    {
+    else if (ocean.oceanOrder === "ocean_order_user_bot") {
         $container.mixItUp('insert', ocean.numFishers, $("tr#f0"));
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_fish_season")
-    {
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_season") {
         $container.mixItUp('sort', 'fish-season:desc name:asc');
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall")
-    {
+    else if (ocean.oceanOrder === "ocean_order_desc_fish_overall") {
         $container.mixItUp('sort', 'fish-total:desc name:asc');
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_money_season")
-    {
-     $container.mixItUp('sort', 'profit-season:desc name:asc');
+    else if (ocean.oceanOrder === "ocean_order_desc_money_season") {
+        $container.mixItUp('sort', 'profit-season:desc name:asc');
     }
-    else if (ocean.oceanOrder === "ocean_order_desc_money_overall")
-    {
+    else if (ocean.oceanOrder === "ocean_order_desc_money_overall") {
         $container.mixItUp('sort', 'profit-total:desc profit-season:desc name:asc');
     }
 }
@@ -534,7 +480,9 @@ function setupOcean(o) {
     hideTutorial();
     hideCatchIntentColumn();
     hideCatchIntentDialog();
-    hideProfitColumns();        //Profit.Vis  
+    if (!ocean.profitDisplayEnabled) {    // Profit.vis : if profit column checkbox is disabled, hide all relevant elements
+        hideProfitColumns();
+    }
 }
 
 function readRules() {
@@ -544,13 +492,13 @@ function readRules() {
 function changeLocation() {
     var btn = $('#changeLocation');
 
-    if(btn.data('location') == 'port') {
+    if (btn.data('location') == 'port') {
 
         goToSea();
         btn.data('location', 'sea');
         btn.html(msgs.buttons_return);
 
-    }else {
+    } else {
 
         goToPort();
         btn.data('location', 'port');
@@ -640,7 +588,7 @@ function endRun(trigger) {
 
     socket.disconnect();
     $('#over-text').html(overText);
-    $('#over-modal').modal({keyboard: false, backdrop: 'static'});
+    $('#over-modal').modal({ keyboard: false, backdrop: 'static' });
 }
 
 // 
@@ -654,7 +602,7 @@ function maybeRedirect() {
     // replace the keyword REDIRECTURL with the value of the redirectURL parameter
     var url = ocean.redirectURL;
     if (url && url.length > 0) {
-        for(var key in queryParams) {
+        for (var key in queryParams) {
             url = substituteQueryParameter(url, key);
         }
         location.href = url;
@@ -662,7 +610,7 @@ function maybeRedirect() {
 }
 
 function substituteQueryParameter(url, key) {
-    var safeKey = escapeRegExp("${"+key+"}"); // "\\$x"
+    var safeKey = escapeRegExp("${" + key + "}"); // "\\$x"
     var replacement = queryParams[key];
     var safeReplacement = escapeReplacement(replacement);
     return url.replace(
@@ -760,21 +708,14 @@ function resizeOceanCanvasToScreenWidth() {
 function startTutorial() {
     // Profit.Vis - is this correct here? 
     // HK 2DO: should be shown or hidden before starttutorial() is called
-       if(ocean && ocean.profitDisplayEnabled) {  // insert profitDisplayEnabled here or include nested in above?
-            showProfitColumns(0);
-        }
-        else {
-            hideProfitColumns();
-            // Prevent bootstro from choking on hidden profit tutorial data
-            $("#profit-total-header").removeClass("bootstro");
-            $("#profit-season-header").removeClass("bootstro");
-            $("#profit-total-th").removeClass("bootstro");
-            $("#profit-season-th").removeClass("bootstro");
-            $("#show-fisher-balance").removeClass("bootstro");
-            $("#costs-box").removeClass("bootstro");
-        }
+    //    if(ocean && ocean.profitDisplayEnabled) {  // insert profitDisplayEnabled here or include nested in above?
+    //         showProfitColumns(0);
+    //     }
+    //     else {
+    //         hideProfitColumns();
+    //     }
     console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
-    if(ocean && ocean.catchIntentionsEnabled) {
+    if (ocean && ocean.catchIntentionsEnabled) {
         showCatchIntentColumn(0);
     }
     else {
@@ -783,11 +724,11 @@ function startTutorial() {
         $("#catch-intent-th").removeClass("bootstro");
     }
     bootstro.start('.bootstro', {
-        onComplete : function(params) {
+        onComplete: function (params) {
             hideCatchIntentColumn();
             displayRules();
         },
-        onExit : function(params) {
+        onExit: function (params) {
             hideCatchIntentColumn();
             displayRules();
         }
@@ -829,57 +770,57 @@ function main() {
 
 $(document).ready(main);
 
-var spots = [[100,190],[10,160],[590,70],[40,170],[410,210],[590,70],[540,280],
-    [120,240],[370,280],[510,110],[160,10],[550,400],[620,180],[330,340],[200,270],
-    [120,40],[230,90],[250,290],[360,200],[370,40],[420,230],[650,240],[10,370],
-    [10,250],[600,10],[70,380],[630,350],[600,270],[410,60],[500,100],[150,50],
-    [70,40],[300,280],[520,90],[100,200],[10,150],[310,330],[490,280],[30,170],
-    [380,300],[460,30],[560,280],[50,150],[400,100],[300,330],[50,100],[200,130],
-    [170,260],[510,350],[110,50],[30,230],[550,240],[100,210],[600,230],[100,10],
-    [540,110],[450,180],[250,200],[10,200],[300,180],[160,50],[380,380],[200,240],
-    [540,220],[470,210],[500,350],[290,80],[510,110],[220,20],[350,80],[540,90],
-    [100,310],[640,300],[340,50],[60,120],[420,310],[20,230],[120,360],[370,190],
-    [350,190],[420,160],[250,160],[460,260],[650,110],[340,90],[520,180],[140,90],
-    [210,340],[490,30],[480,250],[590,170],[550,290],[290,130],[200,240],[580,170],
-    [410,270],[600,10],[20,400],[280,270],[490,70],[460,340],[280,220],[340,320],
-    [380,180],[420,110],[580,120],[170,60],[230,290],[360,180],[60,380],[560,320],
-    [130,210],[100,260],[410,130],[380,40],[90,290],[20,270],[500,270],[140,120],
-    [430,110],[580,400],[330,20],[120,150],[390,10],[380,130],[340,100],[550,350],
-    [210,250],[100,120],[20,30],[220,360],[70,90],[200,140],[170,220],[480,280],
-    [30,330],[150,250],[380,60],[240,130],[400,230],[490,220],[430,250],[100,350],
-    [640,230],[100,260],[50,250],[390,130],[480,120],[10,60],[590,380],[250,50],
-    [50,340],[200,130],[360,150],[520,120],[120,170],[490,140],[190,230],[60,180],
-    [40,130],[130,50],[190,260],[410,130],[500,170],[260,270],[160,270],[210,250],
-    [270,110],[500,40],[580,100],[40,120],[50,260],[430,260],[20,90],[390,50],
-    [520,80],[150,60],[560,20],[170,350],[350,280],[610,70],[270,280],[300,390],
-    [160,50],[510,340],[20,330],[20,370],[470,350],[160,300],[570,360],[230,180],
-    [260,60],[320,180],[230,90],[440,130],[480,340],[50,380],[520,390],[590,200],
-    [370,370],[200,210],[420,110],[130,90],[530,370],[180,180],[140,90],[430,290],
-    [440,130],[260,340],[510,20],[160,370],[330,10],[520,380],[170,220],[520,280],
-    [90,190],[20,80],[60,220],[210,10],[150,110],[650,230],[370,350],[320,310],
-    [270,330],[540,180],[590,360],[510,310],[460,170],[650,340],[450,90],[140,400],
-    [250,220],[220,220],[490,290],[290,360],[210,360],[270,300],[150,100],[450,340],
-    [250,400],[650,220],[240,300],[540,70],[90,240],[150,30],[180,40],[270,230],
-    [120,400],[60,100],[10,390],[630,20],[90,350],[600,220],[120,320],[310,100],
-    [420,180],[220,330],[320,220],[260,170],[300,330],[520,10],[420,400],[180,150],
-    [500,220],[650,250],[180,300],[120,240],[560,100],[330,270],[590,350],[320,10],
-    [90,320],[190,380],[230,10],[200,210],[130,170],[550,10],[190,190],[20,320],
-    [400,320],[60,350],[610,390],[620,70],[350,300],[80,270],[180,330],[620,40],
-    [360,260],[510,160],[80,320],[210,210],[380,120],[400,60],[130,140],[530,150],
-    [530,280],[620,220],[310,290],[450,10],[330,230],[90,90],[520,330],[20,90],
-    [160,190],[520,310],[20,110],[110,100],[180,170],[120,390],[640,360],[270,260],
-    [110,260],[430,240],[560,340],[210,70],[610,110],[630,80],[370,80],[380,60],
-    [200,170],[10,370],[200,380],[170,120],[530,50],[550,100],[590,380],[280,340],
-    [560,310],[470,370],[470,300],[220,90],[360,90],[560,310],[280,30],[440,320],
-    [530,260],[450,340],[150,260],[90,320],[360,30],[460,300],[420,390],[640,140],
-    [630,250],[50,160],[60,340],[200,60],[380,350],[170,350],[640,330],[280,300],
-    [420,230],[490,310],[550,400],[630,320],[100,110],[100,170],[320,230],[250,310],
-    [50,10],[420,190],[50,280],[320,340],[570,230],[420,210],[460,190],[110,300],
-    [580,20],[50,310],[340,190],[160,160],[620,140],[300,370],[560,230],[110,110],
-    [60,350],[650,110],[60,280],[540,250],[620,300],[340,320],[600,150],[240,190],
-    [390,200],[190,330],[320,300],[60,50],[180,160],[580,310],[320,230],[400,90],
-    [280,170],[600,50],[330,200],[270,150],[640,150],[160,60],[330,140],[540,10],
-    [130,10],[360,80],[370,380],[610,320],[50,370],[90,290],[620,20],[50,50],[350,180],
-    [180,70],[80,200],[520,400],[460,330],[350,380],[610,400],[330,340],[330,150],
-    [180,70],[110,380],[30,330],[450,310],[490,60],[550,70],[320,330],[40,240],
-    [540,300],[190,270],[420,200],[490,100],[620,240],[440,100],[450,390],[480,200]];
+var spots = [[100, 190], [10, 160], [590, 70], [40, 170], [410, 210], [590, 70], [540, 280],
+[120, 240], [370, 280], [510, 110], [160, 10], [550, 400], [620, 180], [330, 340], [200, 270],
+[120, 40], [230, 90], [250, 290], [360, 200], [370, 40], [420, 230], [650, 240], [10, 370],
+[10, 250], [600, 10], [70, 380], [630, 350], [600, 270], [410, 60], [500, 100], [150, 50],
+[70, 40], [300, 280], [520, 90], [100, 200], [10, 150], [310, 330], [490, 280], [30, 170],
+[380, 300], [460, 30], [560, 280], [50, 150], [400, 100], [300, 330], [50, 100], [200, 130],
+[170, 260], [510, 350], [110, 50], [30, 230], [550, 240], [100, 210], [600, 230], [100, 10],
+[540, 110], [450, 180], [250, 200], [10, 200], [300, 180], [160, 50], [380, 380], [200, 240],
+[540, 220], [470, 210], [500, 350], [290, 80], [510, 110], [220, 20], [350, 80], [540, 90],
+[100, 310], [640, 300], [340, 50], [60, 120], [420, 310], [20, 230], [120, 360], [370, 190],
+[350, 190], [420, 160], [250, 160], [460, 260], [650, 110], [340, 90], [520, 180], [140, 90],
+[210, 340], [490, 30], [480, 250], [590, 170], [550, 290], [290, 130], [200, 240], [580, 170],
+[410, 270], [600, 10], [20, 400], [280, 270], [490, 70], [460, 340], [280, 220], [340, 320],
+[380, 180], [420, 110], [580, 120], [170, 60], [230, 290], [360, 180], [60, 380], [560, 320],
+[130, 210], [100, 260], [410, 130], [380, 40], [90, 290], [20, 270], [500, 270], [140, 120],
+[430, 110], [580, 400], [330, 20], [120, 150], [390, 10], [380, 130], [340, 100], [550, 350],
+[210, 250], [100, 120], [20, 30], [220, 360], [70, 90], [200, 140], [170, 220], [480, 280],
+[30, 330], [150, 250], [380, 60], [240, 130], [400, 230], [490, 220], [430, 250], [100, 350],
+[640, 230], [100, 260], [50, 250], [390, 130], [480, 120], [10, 60], [590, 380], [250, 50],
+[50, 340], [200, 130], [360, 150], [520, 120], [120, 170], [490, 140], [190, 230], [60, 180],
+[40, 130], [130, 50], [190, 260], [410, 130], [500, 170], [260, 270], [160, 270], [210, 250],
+[270, 110], [500, 40], [580, 100], [40, 120], [50, 260], [430, 260], [20, 90], [390, 50],
+[520, 80], [150, 60], [560, 20], [170, 350], [350, 280], [610, 70], [270, 280], [300, 390],
+[160, 50], [510, 340], [20, 330], [20, 370], [470, 350], [160, 300], [570, 360], [230, 180],
+[260, 60], [320, 180], [230, 90], [440, 130], [480, 340], [50, 380], [520, 390], [590, 200],
+[370, 370], [200, 210], [420, 110], [130, 90], [530, 370], [180, 180], [140, 90], [430, 290],
+[440, 130], [260, 340], [510, 20], [160, 370], [330, 10], [520, 380], [170, 220], [520, 280],
+[90, 190], [20, 80], [60, 220], [210, 10], [150, 110], [650, 230], [370, 350], [320, 310],
+[270, 330], [540, 180], [590, 360], [510, 310], [460, 170], [650, 340], [450, 90], [140, 400],
+[250, 220], [220, 220], [490, 290], [290, 360], [210, 360], [270, 300], [150, 100], [450, 340],
+[250, 400], [650, 220], [240, 300], [540, 70], [90, 240], [150, 30], [180, 40], [270, 230],
+[120, 400], [60, 100], [10, 390], [630, 20], [90, 350], [600, 220], [120, 320], [310, 100],
+[420, 180], [220, 330], [320, 220], [260, 170], [300, 330], [520, 10], [420, 400], [180, 150],
+[500, 220], [650, 250], [180, 300], [120, 240], [560, 100], [330, 270], [590, 350], [320, 10],
+[90, 320], [190, 380], [230, 10], [200, 210], [130, 170], [550, 10], [190, 190], [20, 320],
+[400, 320], [60, 350], [610, 390], [620, 70], [350, 300], [80, 270], [180, 330], [620, 40],
+[360, 260], [510, 160], [80, 320], [210, 210], [380, 120], [400, 60], [130, 140], [530, 150],
+[530, 280], [620, 220], [310, 290], [450, 10], [330, 230], [90, 90], [520, 330], [20, 90],
+[160, 190], [520, 310], [20, 110], [110, 100], [180, 170], [120, 390], [640, 360], [270, 260],
+[110, 260], [430, 240], [560, 340], [210, 70], [610, 110], [630, 80], [370, 80], [380, 60],
+[200, 170], [10, 370], [200, 380], [170, 120], [530, 50], [550, 100], [590, 380], [280, 340],
+[560, 310], [470, 370], [470, 300], [220, 90], [360, 90], [560, 310], [280, 30], [440, 320],
+[530, 260], [450, 340], [150, 260], [90, 320], [360, 30], [460, 300], [420, 390], [640, 140],
+[630, 250], [50, 160], [60, 340], [200, 60], [380, 350], [170, 350], [640, 330], [280, 300],
+[420, 230], [490, 310], [550, 400], [630, 320], [100, 110], [100, 170], [320, 230], [250, 310],
+[50, 10], [420, 190], [50, 280], [320, 340], [570, 230], [420, 210], [460, 190], [110, 300],
+[580, 20], [50, 310], [340, 190], [160, 160], [620, 140], [300, 370], [560, 230], [110, 110],
+[60, 350], [650, 110], [60, 280], [540, 250], [620, 300], [340, 320], [600, 150], [240, 190],
+[390, 200], [190, 330], [320, 300], [60, 50], [180, 160], [580, 310], [320, 230], [400, 90],
+[280, 170], [600, 50], [330, 200], [270, 150], [640, 150], [160, 60], [330, 140], [540, 10],
+[130, 10], [360, 80], [370, 380], [610, 320], [50, 370], [90, 290], [620, 20], [50, 50], [350, 180],
+[180, 70], [80, 200], [520, 400], [460, 330], [350, 380], [610, 400], [330, 340], [330, 150],
+[180, 70], [110, 380], [30, 330], [450, 310], [490, 60], [550, 70], [320, 330], [40, 240],
+[540, 300], [190, 270], [420, 200], [490, 100], [620, 240], [440, 100], [450, 390], [480, 200]];
