@@ -475,11 +475,11 @@ function populatePage() {
     $('#catch-intent-dialog-duration').val(mw.params.catchIntentDialogDuration);
     $('#catch-intent-prompt1').val(mw.params.catchIntentPrompt1);
     $('#catch-intent-prompt2').val(mw.params.catchIntentPrompt2);
-    maybeDisableCatchIntentControls();
+    maybeDisableCatchIntentControls(mw.params.catchIntentionsEnabled);
     $('#redirect-url').val(mw.params.redirectURL);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
     $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled); //Profit.Vis added these three lines for enabling profit columns and disabling associated functions if necessary
-    maybeDisableProfitControls(!mw.params.profitDisplayEnabled);
+    maybeDisableProfitControls(mw.params.profitDisplayEnabled);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
     $('#cost-departure').val(mw.params.costDeparture);
@@ -523,18 +523,17 @@ function populatePage() {
     changeBotRowVisibility();
 }
 
-function maybeDisableCatchIntentControls() {
-    var maybe = !(mw.params.catchIntentionsEnabled);
-    $('#catch-intent-seasons').attr("disabled", maybe);
-    $('#catch-intent-dialog-duration').attr("disabled", maybe);
-    $('#catch-intent-prompt1').attr("disabled", maybe);
-    $('#catch-intent-prompt2').attr("disabled", maybe);
+function maybeDisableCatchIntentControls(enabledflg) {
+    $('#catch-intent-seasons').attr("disabled", !enabledflg);
+    $('#catch-intent-dialog-duration').attr("disabled", !enabledflg);
+    $('#catch-intent-prompt1').attr("disabled", !enabledflg);
+    $('#catch-intent-prompt2').attr("disabled", !enabledflg);
 }
 
 //Profit.Vis
-function maybeDisableProfitControls(disableflg) {
+function maybeDisableProfitControls(enabledflg) {
     // console.log("maybeDisableProfitControls: disableflg = " + disableflg);
-    $('#show-fisher-balance').attr("disabled", disableflg);
+    $('#show-fisher-balance').attr("disabled", !enabledflg);
 }
 
 function noMicroworld(jqXHR) {
@@ -649,13 +648,13 @@ function prepareControls() {
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
     $('#enable-catch-intentions').on("click", function () {
         //Dis- or enable the other CatchIntention controls depending on whether the checkbox is checked.
-        var maybe = !($(this).is(':checked'));
-        maybeDisableCatchIntentControls(maybe);
+        var enabledflg = $(this).is(':checked');
+        maybeDisableCatchIntentControls(enabledflg);
     });
     $('#enable-profit-columns').on("click", function () {    //Profit.Vis
         //Dis- or enable the other Profit controls depending on whether the checkbox is checked.
-        var disableflg = !($(this).is(':checked'));
-        maybeDisableProfitControls(disableflg);
+        var enabledflg = $(this).is(':checked');
+        maybeDisableProfitControls(enabledflg);
     });
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
