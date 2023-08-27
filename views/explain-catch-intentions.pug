@@ -1,0 +1,47 @@
+doctype html
+html(lang='en')
+  head
+    title FISH Catch Intentions Explained
+  body
+    h2 FISH CATCH INTENTIONS FEATURE
+    div.remark
+    p.
+        The Catch Intentions feature enables a simple form of communication between players about future behaviour. 
+        This allows for a non-binding proclamation of what one will harvest, so-called “cheap talk” in the literature, 
+        that has been shown to foster cooperation above a non-communicative baseline.
+    p.
+        This mechanism is active only between seasons. As soon as a season is over, a prompt appears on screen, 
+        and players can enter the number of fish they plan to catch in the next season. 
+        When the next season starts, all players are shown an extra column in the table with each of the players'
+        responses to this prompt. 
+        THe prompt times out to prevent the game from stalling indefinitely.
+        If a player did not enter a valid response (i.e., not a non-negative number) the response is recorded as '?'.
+
+    h4 Parameters controlling the Catch Intentions feature
+    p.
+        This can be accomplished by providing platform A the standard FISH URL with 2 query parameters:
+    dl
+        dt seasons
+        dd.
+            A comma-separated list of season numbers, 2 or larger, prior to which the catch intention dialog appears.
+            The default value is "2,4,6,8,10"
+        dt dialog duration
+        dd.
+            The number of seconds the dialog is visible. 
+            This must be greater than 1 and less than the delay between seasons.
+            The default value is 5.
+        dt prompt
+        dd.
+            The text of the prompt presented to players. 
+            This a required value.
+            The default value is "How many fish do you plan to catch in the next season?".
+        dt subprompt
+        dd.
+            The text of the secondary prompt presented to players. 
+            This an optional value (i.e. can be empty).
+            The default value is "(Optional, and we won't hold you to it!)".
+    p.
+        For example, provide platform A the following FISH URL: 
+
+    p For more information on working with redirection in Gorilla, see 
+        a(href="https://support.gorilla.sc/support/reference/tree-nodes#redirect",target="_blank") Gorilla Redirect Nodes
