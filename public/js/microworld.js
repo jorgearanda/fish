@@ -524,16 +524,16 @@ function populatePage() {
 }
 
 function maybeDisableCatchIntentControls(enabledflg) {
-    $('#catch-intent-seasons').attr("disabled", !enabledflg);
-    $('#catch-intent-dialog-duration').attr("disabled", !enabledflg);
-    $('#catch-intent-prompt1').attr("disabled", !enabledflg);
-    $('#catch-intent-prompt2').attr("disabled", !enabledflg);
+    $('#catch-intent-seasons').prop("disabled", !enabledflg);
+    $('#catch-intent-dialog-duration').prop("disabled", !enabledflg);
+    $('#catch-intent-prompt1').prop("disabled", !enabledflg);
+    $('#catch-intent-prompt2').prop("disabled", !enabledflg);
 }
 
 //Profit.Vis
 function maybeDisableProfitControls(enabledflg) {
     // console.log("maybeDisableProfitControls: disableflg = " + disableflg);
-    $('#show-fisher-balance').attr("disabled", !enabledflg);
+    $('#show-fisher-balance').prop("disabled", !enabledflg);
 }
 
 function noMicroworld(jqXHR) {
@@ -573,7 +573,7 @@ function gotRuns(r) {
 
     // enabled or disable the download all button depending on if there are any completed runs
     if (r.length == 0) {
-        $('#download-all-button').attr("disabled", "disabled");
+        $('#download-all-button').prop("disabled", "disabled");
     } else {
         $('#download-all-button').removeAttr("disabled");
     }
@@ -613,6 +613,7 @@ function setButtons() {
     $('#delete-confirmed').click(deleteMicroworld);
     $(".behaviour_group_select").click(showStatusTableOptions);
 
+    $('#show-catch-intentions-explanation').click(showCatchIntentionsExplanationText);
     $('#show-redirect-explanation').click(showRedirectExplanationText);
 
     initDownloadAll();
@@ -740,15 +741,19 @@ function uniformityChanges() {
     changeAttemptsSecondUniformity();
 }
 
+// CATCH INTENTIONS FEATURE
+
+function showCatchIntentionsExplanationText() {
+    $('#explain-catch-intentions-content').load('/explain-catch-intentions', function () {
+        $('#explain-catch-intentions-modal').modal({ show: true });
+    });
+    $('#explain-catch-intentions-modal').modal({ keyboard: false, backdrop: 'static' });
+}
+
+
 // REDIRECTION FEATURE
 
 function showRedirectExplanationText() {
-    // var explanationText = explainRedirectText.replace(/\n/g, '<br />');
-    // $('#explain-redirect-content').html('explanationText');
-    // $('#explain-redirect-content').load('explain-redirection');
-    // $.get("explain-redirection", function(data){
-    //     $("#explain-redirect-content").html(data).fadeIn();
-    // });
     $('#explain-redirect-content').load('/explain-redirection', function () {
         $('#explain-redirect-modal').modal({ show: true });
     });

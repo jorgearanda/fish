@@ -99,6 +99,11 @@ app.get('/explain-redirection', function(req, res) {
     myHost: req.protocol + '://' + req.get('host')
   });
 });
+app.get('/explain-catch-intentions', function(req, res) {
+  res.render('explain-catch-intentions.pug', {
+    myHost: req.protocol + '://' + req.get('host')
+  });
+});
 app.get('/new-welcome', function(req, res) {
   res.render('participant-access.pug');
 });

@@ -2,6 +2,10 @@ doctype html
 html(lang='en')
   head
     title FISH Catch Intentions Explained
+    style.
+        dd {
+            margin-left: 2em;
+        }
   body
     h2 FISH CATCH INTENTIONS FEATURE
     div.remark
@@ -9,25 +13,32 @@ html(lang='en')
         The Catch Intentions feature enables a simple form of communication between players about future behaviour. 
         This allows for a non-binding proclamation of what one will harvest, so-called “cheap talk” in the literature, 
         that has been shown to foster cooperation above a non-communicative baseline.
+    h4 The PROMPT
     p.
-        This mechanism is active only between seasons. As soon as a season is over, a prompt appears on screen, 
-        and players can enter the number of fish they plan to catch in the next season. 
-        When the next season starts, all players are shown an extra column in the table with each of the players'
-        responses to this prompt. 
-        THe prompt times out to prevent the game from stalling indefinitely.
-        If a player did not enter a valid response (i.e., not a non-negative number) the response is recorded as '?'.
+        As soon as a season is over, and this feature is active in the next season, 
+        a prompt appears on screen, and players can enter the number of fish they plan to catch in the next season. 
+        The only response accepted is a single number greater than or equal to 0.
+        The prompt times out after some number of seconds to prevent the game from stalling indefinitely.
+        If a player did not enter a valid response in time, it is recorded as '?'.
+        The response of bot players is computed from the bot settings, +/- a random perturbation.
+    h4 The DISPLAY
+    p.
+        During a season in which this feature is active, all players are shown an extra column in the data table
+        with each of the players' responses to the prompt during the preceding delay.
+        This column is also visible during the delay between seasons if this feature is active in both the prior season and the next season. 
+        In that case the response for the prior season is displayed, and the responses will be updated when the next season starts.
 
     h4 Parameters controlling the Catch Intentions feature
     p.
-        This can be accomplished by providing platform A the standard FISH URL with 2 query parameters:
+        There are four parameters that determine when this feature is active, how long players are prompted, and the text of the prompt:
     dl
         dt seasons
         dd.
-            A comma-separated list of season numbers, 2 or larger, prior to which the catch intention dialog appears.
-            The default value is "2,4,6,8,10"
+            A comma-separated list of season numbers, 2 or larger, during which this feature is active.
+            The default value is "2,4,6,8,10".
         dt dialog duration
         dd.
-            The number of seconds the dialog is visible. 
+            The number of seconds the dialog (prompt text and input area) is visible. 
             This must be greater than 1 and less than the delay between seasons.
             The default value is 5.
         dt prompt
@@ -40,8 +51,6 @@ html(lang='en')
             The text of the secondary prompt presented to players. 
             This an optional value (i.e. can be empty).
             The default value is "(Optional, and we won't hold you to it!)".
-    p.
-        For example, provide platform A the following FISH URL: 
 
-    p For more information on working with redirection in Gorilla, see 
-        a(href="https://support.gorilla.sc/support/reference/tree-nodes#redirect",target="_blank") Gorilla Redirect Nodes
+    p For more information on the use of limited communication in behavioural experiments on commons dilemmas, see this article in the 
+        a(href="https://thecommonsjournal.org/articles/10.18352/ijc.473",target="_blank") International Journal of the Commons

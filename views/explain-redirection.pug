@@ -1,41 +1,46 @@
 doctype html
 html(lang='en')
- head
-   title FISH Redirection Explained
- body
-    h1 FISH REDIRECTION FEATURES
-    h3 Hello, FISH Experimenter!
+  head
+    title FISH Redirection Explained
+    style.
+        dd {
+            margin-left: 2em;
+        }
+  body
+    h2 FISH REDIRECTION FEATURES
     div.remark
     p.
-        If your FISH experiment is part of a chain, 
-        such as a survey on platform A followed by FISH followed by another questionaire on platform B,
-        you will want to sent participants into FISH without needing them to log in to FISH in the usual 
-        form-based, manual way. And you want participants to automatically be redirected to platform B 
-        when they complete your FISH experiment.
+        Often your FISH experiment is part of a chain: 
+        your participants start with some activity on Platform A, then do your FISH experiment, 
+        followed by some more activity on Platform B (where Platform B may actually be the same as Platform A).
+        A common scenario is that you are recruiting participants from a third party platform such as Prolific or SONA,
+        and you will want to send participants from there into FISH without needing them to log in to FISH in the usual 
+        form-based, manual way. And you want participants to automatically be redirected back to the recruitment platform  
+        when they complete your FISH experiment in order for them to get paid.
     h4 Transparently sending your participants into FISH
     p.
-        This can be accomplished by providing platform A the standard FISH URL with 2 query parameters:
+        This can be accomplished by providing Platform A the standard FISH URL augmented with 2 query parameters:
     dl
         dt expid
         dd the ID of the FISH experiment
         dt partid
         dd the ID of the FISH participant
     p.
-        For example, provide platform A the following FISH URL: 
+        For example, provide Platform A the following FISH URL: 
     tt
-        small #{myHost}/?expid=XWDJ6X&partid=225
-    p 
+        small #{myHost}/?<b>expid</b>=XWDJ6X&<b>partid</b>=225
+    p
     p.
-        Of course, instead of '225' you may be able to use platform A's mechanism to put in the actual participant's id.
+        Of course, instead of '225' you may be able to use Platform A's mechanism to put in that platform's participant id.
 
-    h4 Transparently sending your participants from FISH to the next best thing
+    h4 Transparently sending your participants onward from FISH
     p.
         Your experiment design (the "microworld") can include a Redirection URL, 
-        which FISH will use to send participants to another web site after completing the experiment. 
+        which FISH will use to send participants to another web site after completing your experiment. 
         (This happens when participants click the OK button on the pop-up window announcing 
         the completion of the experiment.)
     p.
-        Before executing this, FISH will perform variable substition on the URL using any query parameters 
+        Before executing this, FISH will perform variable substitution on the URL using any query parameters 
         that were passed in when FISH started. Two additional variables are also available for substitution:
     dl
         dt fishTotal
@@ -46,31 +51,50 @@ html(lang='en')
         For example, you could put the following in the Redirection URL textbox: 
     tt
         small.
-            https://www.payme.com/?subj=$(partid)&catch=${fishTotal}&earned=${profitTotal}
+            https://www.payme.com/?subject=${partid}&catch=${fishTotal}&earned=${profitTotal}
 
     h4 Transparently sending your participants from FISH back to the previous platform
     p.
-        If platform B is actually the same as platform A 
-        (i.e., you want the participant to go back to platform A after completing your FISH experiment)
-        you can get platform A to provide one or more other query parameters that should be used
-        to enable participants to continue on that platform where they left off upon completion of the FISH experiment.
-        FISH will capture those query parameters, which you can then include in the Redirection URL 
+        If Platform B is actually the same as Platform A 
+        (i.e., you want to send the participant from platform A to FISH and then back to platform A 
+        after completing your FISH experiment), you can get Platform A to provide one or more other query parameters. 
+        These may include a completion code that can be used on the way back to inform Platform A that the participant 
+        has completed FISH and is ready to move on. This should be used to enable participants to continue on that platform 
+        where they left off upon completion of the FISH experiment.
+        FISH will capture those query parameters when it starts, which you can then include in the Redirection URL 
         using variable substitution.
 
-    h4 An example going from the survey platform GORILLA to FISH and back to GORILLA
+    h4 An example going from GORILLA to FISH and back to GORILLA
     p.
-        In Gorilla, create a Redirect Node and configure it as follows: 
-    dl
-        dt URL
-        dd Set this to: <tt><small> #{myHost}/?expid=<i>YOURFISHEXPERIMENTID</i> </small></tt>
-        dt Append Public ID
-        dd Name this: <tt><small> partid </small></tt>
-        dt Completion dropdown menu
-        dd Select 'Completion Token'
+        In this example, assume we have a participant in Gorilla (experiment design software for behavioural scientists)
+        whose public id is MYPID, and your FISH experiment id is FISHEX.
+    ol 
+        li.
+            In Gorilla, create a Redirect Node and configure it as follows: 
+        dl
+            dt URL
+            dd Set this to: <tt><small> #{myHost}/?expid=FISHEX </small></tt>
+            dt Append Public ID
+            dd Name this public id: <tt><small><b> partid </b></small></tt>
+            dt Completion dropdown menu
+            dd Select 'Completion Token'
+        p.
+            When Gorilla's participant reaches this Node in the Gorilla experiment, Gorilla expands the URL as
+            <br><tt><small> #{myHost}/?expid=FISHEX&partid=MYPID&completion_token=A7B8C9 </small></tt>
+            <br>and sends the participant to this FISH page. 
+            FISH will immediately start the game with experiment id FISHEX and participant id MYPID, 
+            while remembering the "completion_token" value for later use.
 
-    p In FISH, in your experiment's microworld parameters, set the Redirect URL to: 
-    tt
-        small https://research.sc/participant/login/resume/${completion_token}
+        li.
+          In FISH, in your experiment's microworld parameters, set the Redirection URL to: 
+        tt
+            small https://research.sc/participant/login/resume/${completion_token}
+        p.
+            When your FISH participant completes the game and clicks the OK button, FISH expands the Redirection URL 
+            (using the completion_token query parameter from the start URL) as
+            <br><tt><small> https://research.sc/participant/login/resume/A7B8C9 </small></tt>
+            <br>and sends the participant on to this Gorilla page. 
+            Gorilla will then let the participant proceed to the next Node in the Gorilla experiment.
     
     p 
     p That should do it! 

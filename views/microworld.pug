@@ -140,11 +140,14 @@ html
           h3 Catch Intentions
           .row
             .form-group
-              .col-md-10
+              .col-md-7
                 label.form-label.checkbox
                   | Enable&nbsp;
                   a#catch-intentions-tooltip(title='Before the start of some seasons, prompt human fishers to indicate and broadcast the number of fish they intend to catch.', data-toggle='tooltip', data-placement='top') catch intentions
-                  input#enable-catch-intentions(type='checkbox', checked=false)
+                  input#enable-catch-intentions.to-disable(type='checkbox', checked=false)
+              .col-md-5
+                  button#show-catch-intentions-explanation.btn.btn-info(type='button') EXPLAIN
+
           .row
             .form-group
               label.form-label.col-md-6(for='catch-intent-seasons') Catch intention 
@@ -168,13 +171,13 @@ html
               label.form-label.col-md-6(for='catch-intent-prompt2') Catch intentions subprompt (optional)
               .col-md-6
                 input#catch-intent-prompt2.form-control.to-disable(type='text', autofocus='', disabled=true)
-          h3 Redirection
+          h3 Redirection 
           .row
             .form-group
-              label.form-label.col-md-6(for='redirect-url') Redirection&nbsp;
+              label.form-label.col-md-7(for='redirect-url') Redirection&nbsp;
                   a#redirect-url-tooltip(title='Click the EXPLAIN button to find out how redirection works in Fish.', data-toggle='tooltip', data-placement='top') URL:&nbsp;
-              .col-md-6
-                button#show-redirect-explanation.btn.btn-default(type='button') EXPLAIN
+              .col-md-5
+                button#show-redirect-explanation.btn.btn-info(type='button') EXPLAIN
           .row
             .form-group
               .col-md-12
@@ -252,7 +255,7 @@ html
                 label.form-label.checkbox
                   | Enable&nbsp;
                   a#profit-columns-tooltip(title='Display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
-                  input#enable-profit-columns(type='checkbox', checked=true) 
+                  input#enable-profit-columns.to-disable(type='checkbox', checked=true) 
           .row
             .form-group
               .col-md-10
@@ -466,4 +469,11 @@ html
           #explain-redirect-content.modal-body Explanation of redirection features
           .modal-footer
             button#done-redirect-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK
+    #explain-catch-intentions-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #explain-catch-intentions-content.modal-body Explanation of catch intentions features
+          .modal-footer
+            button#done-catch-intentions-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
               | OK
