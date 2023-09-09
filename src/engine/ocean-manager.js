@@ -12,7 +12,7 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
   // simulations currently tracked
   this.trackedSimulations = {};
 
-  this.createOcean = function(mwId, cb) {
+  this.createOcean = function (mwId, cb) {
     Microworld.findOne(
       { _id: mwId },
       function onFound(err, mw) {
@@ -27,12 +27,12 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     );
   };
 
-  this.deleteOcean = function(oId) {
+  this.deleteOcean = function (oId) {
     delete this.oceans[oId];
     delete this.trackedSimulations[oId];
   };
 
-  this.assignFisherToOcean = function(mwId, pId, cb) {
+  this.assignFisherToOcean = function (mwId, pId, cb) {
     var oKeys = Object.keys(this.oceans);
     var oId = null;
 
@@ -54,11 +54,12 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     );
   };
 
-  this.removeFisherFromOcean = function(oId, pId) {
+  this.removeFisherFromOcean = function (oId, pId) {
     this.oceans[oId].removeFisher(pId);
   };
 
-  this.purgeOceans = function() {
+  this.purgeOceans = function () {
+    const PURGE_INTERVAL = 5 * 60 * 1000; // 5 minutes [originally 5 seconds!]
     var oKeys = Object.keys(this.oceans);
     var oId;
 
@@ -67,20 +68,43 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
       var expId;
       var time;
       if (this.oceans[oId].isRemovable()) {
-        log.info(
-          'Purging ocean ' +
+        if (this.oceans[oId].purgeScheduled) {
+          log.info(
+            'Purging ocean ' +
             this.oceans[oId].microworld.name +
             ' ' +
             oId +
             ' (' +
             this.oceans[oId].microworld.experimenter.username +
             ')'
-        );
-        this.deleteOcean(oId);
+          );
+          this.deleteOcean(oId);
+        }
+        else {  // .purgeScheduled is undefined
+          /* 
+           * [JKoomen] Wait with the actual purge until the next scheduled run of this function.
+           * Since this function runs on a fixed schedule, it could happen that the function runs 
+           * just a split second after some ocean is declared removable in response to some event.
+           * BUT, events can arrive out of order, especially if there are non-trivial delays due
+           * to, say, a FISH client in Europe sending an event (socket message) to a FISH server in the USA.
+           * SO, waiting to do the actual purge until the next cycle gives all the ocean's events
+           * at least PURGE_INTERVAL msecs to arrive and be acted on without null pointer exceptions.
+           */
+          log.debug(
+            'Scheduled: purging ocean ' +
+            this.oceans[oId].microworld.name +
+            ' ' +
+            oId +
+            ' (' +
+            this.oceans[oId].microworld.experimenter.username +
+            ')'
+          );
+          this.oceans[oId].purgeScheduled = true;
+        }
       }
     }
 
-    setTimeout(this.purgeOceans.bind(this), 5000);
+    setTimeout(this.purgeOceans.bind(this), PURGE_INTERVAL);
   };
 
   this.purgeOceans();
