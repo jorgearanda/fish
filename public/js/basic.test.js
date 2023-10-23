@@ -17,16 +17,4 @@ describe('Sanity checks', () => {
     });
   });
 
-  describe('The web client', () => {
-    // it('should respond to pings', done => {
-    //   request(app)
-    //     .get('/ping')
-    //     .expect(200)
-    //     .end(function(err, res) {
-    //       assert(err === null, err);
-    //       assert(res.text === 'pong', 'The app did not return with a `pong`');
-    //       return done();
-    //     });
-    // });
-  });
 });

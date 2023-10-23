@@ -1,17 +1,17 @@
 {
-  "name": "rmkfish",
-  "version": "0.1.0",
+  "name": "fishsim",
+  "version": "5.1.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/kodacapo/rmkfish"
+    "url": "https://github.com/jorgearanda/fish"
   },
   "nodemonConfig": {
     "verbose": true,
     "watch": ["./dist/app.js"],
     "delay": 5000
   },
-    "scripts": {
+  "scripts": {
     "build-as-needed" : "find ./src ./public ./views | entr -n -s 'npm run build' &",
     "build" : "npm run build:server && npm run build:client",
     "build:server": "echo 'Building server' && babel --verbose src -d dist",

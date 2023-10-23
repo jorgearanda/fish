@@ -88,7 +88,6 @@ function hideCatchIntentDialog() {
 
 function checkCatchIntentDisplay() {
     var season = myCatchIntentSubmitted ? st.catchIntentSeason : st.catchIntentDisplaySeason;
-    // console.log('checkCatchIntentDisplay(): ' + ' season=' + season + ' mySeason=' + myCatchIntentDisplaySeason);
     if (season != myCatchIntentDisplaySeason) {
         if (season == 0) {
             hideCatchIntentColumn();
@@ -135,23 +134,15 @@ function submitMyCatchIntent() {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-//////////// START Profit Colum Display Feature     //Profit.Vis
+//////////// START Profit Columns Display Feature     //Profit.Vis
 ////////////////////////////////////////
 
-//controls visibility of both seasonal and overall profit columns in one function for show and one for hide
+//controls visibility of both seasonal and overall profit columns in one function to hide
 //for tutorial text, table column heading, and table body
 
-// Not needed now. Maybe later?
-// function showProfitColumns(season) {
-//     $('#profit-season-header').show();
-//     $('#profit-season-th').show();
-//     $('#profit-total-header').show();
-//     $('#profit-total-th').show();
-//     for (var i in st.fishers) {
-//         $('#f' + i + '-profit-season').show();
-//         $('#f' + i + '-profit-total').show();
-//     }
-// }
+// There is no need for the analogous 'show' function because that's the default, 
+// and the hide function is only called either once or not at all, depending on 
+// the setting in the experiment configuration.
 
 function hideProfitColumns() {
     $('#profit-season-header').hide();
@@ -472,7 +463,6 @@ function hideTutorial() {
 
 function setupOcean(o) {
     ocean = o;
-    // console.log('setupOcean: ocean=' + JSON.stringify(ocean));
     displayRules();
     loadLabels();
     updateCosts();
@@ -480,7 +470,7 @@ function setupOcean(o) {
     hideTutorial();
     hideCatchIntentColumn();
     hideCatchIntentDialog();
-    if (!ocean.profitDisplayEnabled) {    // Profit.vis : if profit column checkbox is disabled, hide all relevant elements
+    if (!ocean.profitDisplayEnabled) {
         hideProfitColumns();
     }
 }
@@ -531,7 +521,6 @@ function attemptToFish() {
 
 function beginSeason(data) {
     st = data;
-    // console.log('beginSeason: st.season=' + st.season + ', st.status=' + st.status);
     $('#fish-season-header').text(' ' + msgs.info_season + ' ' + st.season);
     $('#profit-season-header').text(ocean.currencySymbol + ' ' + msgs.info_season + ' ' + st.season);
     updateWarning('');
@@ -563,7 +552,6 @@ function receiveStatus(data) {
 }
 
 function endSeason(data) {
-    // console.log('endSeason: st.season=' + st.season + ', st.status=' + st.status + ', data=' + JSON.stringify(data));
     st.season = data.season;
     st.status = data.status;
     resetLocation();
@@ -598,7 +586,6 @@ function endRun(trigger) {
 var queryParams = $.url().param();
 
 function maybeRedirect() {
-    // console.log("Entering maybeRedirect()");
     // replace the keyword REDIRECTURL with the value of the redirectURL parameter
     var url = ocean.redirectURL;
     if (url && url.length > 0) {
@@ -624,12 +611,10 @@ function substituteQueryParameter(url, key) {
 //
 // To escape the RegExp itself:
 function escapeRegExp(str) {
-    // console.log("Entering escapeRegExp("+str+")");
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 // To escape a replacement string:
 function escapeReplacement(str) {
-    // console.log("Entering escapeReplacement("+str+")");
     return str.replace(/\$/g, '$$$$');
 }
 
@@ -706,15 +691,6 @@ function resizeOceanCanvasToScreenWidth() {
 }
 
 function startTutorial() {
-    // Profit.Vis - is this correct here? 
-    // HK 2DO: should be shown or hidden before starttutorial() is called
-    //    if(ocean && ocean.profitDisplayEnabled) {  // insert profitDisplayEnabled here or include nested in above?
-    //         showProfitColumns(0);
-    //     }
-    //     else {
-    //         hideProfitColumns();
-    //     }
-    console.log("startTutorial: catchIntentionsEnabled = " + ocean.catchIntentionsEnabled);
     if (ocean && ocean.catchIntentionsEnabled) {
         showCatchIntentColumn(0);
     }
@@ -753,7 +729,6 @@ socket.on('start asking intent', startAskingIntendedCatch);
 socket.on('stop asking intent', stopAskingIntendedCatch);
 
 function main() {
-    //hideProfitColumns();        //Prof.Vis  CatchIntentions handled differently here than inversion I was working from
     hideCatchIntentColumn();
     $('#read-rules').on('click', readRules);
     $('#tutorial').on('click', startTutorial);

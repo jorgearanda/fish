@@ -72,29 +72,6 @@ logger.info('app.settings.env = ' + app.settings.env);
 logger.info('process.env.NODE_ENV = ' + process.env.NODE_ENV);
 logger.debug('Node env = ' + (process.env.NODE_ENV || app.settings.env));
 
-
-// if (process.env.NODE_ENV === 'test') {
-//   logger.remove(logger.transports.Console);
-// }
-// else if (process.env.NODE_ENV === 'development') {
-//   logger.transports.Console.level = 'debug';
-// }
-
-// if (app.settings.env === 'development') {
-//   process.env.NODE_ENV = 'development';
-//   logger.transports.Console.level = 'debug';
-//   app.use(morgan('dev'));
-//   app.use(errorHandler({ dumpExceptions: true, showStack: true }));
-// } else if (app.settings.env === 'production') {
-//   var loggerStream = {
-//     write: function(message) {
-//       logger.info(message.slice(0, -1));
-//     },
-//   };
-
-//   app.use(morgan({ stream: loggerStream }));
-// }
-
 app.set('port', process.env.PORT || 8080);
 
 mongoose.connect(config.db[app.settings.env]);

@@ -85,9 +85,9 @@ var catchIntentPrompt2 = '(Optional, and we won\'t hold you to it!)';
 // REDIRECTION FEATURE
 
 var explainRedirectText = '<h4>FISH REDIRECTION FEATURES</h4>' +
-    'If this FISH experiment is part of a chain, you will want to sent participants into FISH ' +
+    'If this FISH experiment is part of a chain, you will want to send participants into FISH ' +
     'without having them log in to FISH in the usual form-based way. ' +
-    'Provide the platform before FISH the standard FISH URL but with 2 query parameters:\n' +
+    'Configure the source platform with the standard FISH URL but with 2 query parameters:\n' +
     '&nbsp;&nbsp;&nbsp;<b><tt>expid</tt></b> -- this experiment\'s ID\n' + 
     '&nbsp;&nbsp;&nbsp;<b><tt>partid</tt></b> -- the participant\'s ID\n' +
     'That platform will likely provide one or more other query parameters that should be used ' +
