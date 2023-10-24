@@ -48,7 +48,7 @@ function readyTooltips() {
     $('#catch-intention-seasons-tooltip').tooltip();
     $('#catch-intent-dialog-duration-tooltip').tooltip();
     $('#redirect-url-tooltip').tooltip();
-    $('#profit-columns-tooltip').tooltip();     //Profit.Vis
+    $('#profit-columns-tooltip').tooltip();
 }
 
 function changeBotRowVisibility() {
@@ -328,7 +328,7 @@ function prepareMicroworldObject() {
     mw.redirectURL = $('#redirect-url').val();
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
-    mw.profitDisplayEnabled = $('#enable-profit-columns').prop('checked');  //Profit.Vis
+    mw.profitDisplayDisabled = $('#disable-profit-columns').prop('checked');
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
     mw.costSecond = $('#cost-second').val();
@@ -478,8 +478,8 @@ function populatePage() {
     maybeDisableCatchIntentControls(mw.params.catchIntentionsEnabled);
     $('#redirect-url').val(mw.params.redirectURL);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
-    $('#enable-profit-columns').prop('checked', mw.params.profitDisplayEnabled); //Profit.Vis added these three lines for enabling profit columns and disabling associated functions if necessary
-    maybeDisableProfitControls(mw.params.profitDisplayEnabled);
+    $('#disable-profit-columns').prop('checked', mw.params.profitDisplayDisabled);
+    maybeDisableProfitControls(mw.params.profitDisplayDisabled);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
     $('#cost-departure').val(mw.params.costDeparture);
@@ -530,10 +530,8 @@ function maybeDisableCatchIntentControls(enabledflg) {
     $('#catch-intent-prompt2').prop("disabled", !enabledflg);
 }
 
-//Profit.Vis
-function maybeDisableProfitControls(enabledflg) {
-    // console.log("maybeDisableProfitControls: disableflg = " + disableflg);
-    $('#show-fisher-balance').prop("disabled", !enabledflg);
+function maybeDisableProfitControls(disabledflg) {
+    $('#show-fisher-balance').prop("disabled", disabledflg);
 }
 
 function noMicroworld(jqXHR) {
@@ -652,10 +650,10 @@ function prepareControls() {
         var enabledflg = $(this).is(':checked');
         maybeDisableCatchIntentControls(enabledflg);
     });
-    $('#enable-profit-columns').on("click", function () {    //Profit.Vis
+    $('#disable-profit-columns').on("click", function () {
         //Dis- or enable the other Profit controls depending on whether the checkbox is checked.
-        var enabledflg = $(this).is(':checked');
-        maybeDisableProfitControls(enabledflg);
+        var disabledflg = $(this).is(':checked');
+        maybeDisableProfitControls(disabledflg);
     });
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);

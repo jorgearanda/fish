@@ -152,8 +152,8 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       && this.microworld.params.catchIntentSeasons.indexOf(season) >= 0;
   }
 
-  this.profitDisplayIsEnabled = function() {  //Profit.Vis
-    return this.microworld.params.profitDisplayEnabled;
+  this.profitDisplayIsDisabled = function() {
+    return this.microworld.params.profitDisplayDisabled;
   }
 
   this.setDelayForSeason = function(season) {

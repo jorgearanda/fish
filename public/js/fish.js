@@ -134,7 +134,7 @@ function submitMyCatchIntent() {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-//////////// START Profit Columns Display Feature     //Profit.Vis
+//////////// START Profit Columns Display Feature     
 ////////////////////////////////////////
 
 //controls visibility of both seasonal and overall profit columns in one function to hide
@@ -350,7 +350,7 @@ function updateFishers() {
             $('#f0-catch-intent').text(catchIntent);
             $('#f0-fish-season').text(fishSeason);
             $('#f0-fish-total').text(fishTotal);
-            if (ocean.profitDisplayEnabled) {    // Profit.vis : if profit column checkbox is enabled, calculate and show profits
+            if (!(ocean.profitDisplayDisabled)) {
                 $('#f0-profit-season').text(profitSeason);
                 $('#f0-profit-total').text(profitTotal);
             }
@@ -404,7 +404,7 @@ function updateFishers() {
                 $('#f' + j + '-fish-total').text('?');
             }
 
-            if (!ocean.profitDisplayEnabled) {  // Profit.vis
+            if (ocean.profitDisplayDisabled) {
                 // ignore update profits
             } else if (ocean.showFisherBalance) {
                 $('#f' + j + '-profit-season').text(profitSeason);
@@ -470,7 +470,7 @@ function setupOcean(o) {
     hideTutorial();
     hideCatchIntentColumn();
     hideCatchIntentDialog();
-    if (!ocean.profitDisplayEnabled) {
+    if (ocean.profitDisplayDisabled) {
         hideProfitColumns();
     }
 }
