@@ -251,13 +251,6 @@ html
           h3 Information display
           .row
             .form-group
-              .col-md-10     
-                label.form-label.checkbox
-                  | Disable&nbsp;
-                  a#profit-columns-tooltip(title='Do NOT display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
-                  input#disable-profit-columns.to-disable(type='checkbox', checked=false)
-          .row
-            .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Show all fishers
@@ -287,6 +280,13 @@ html
                 label.form-label.checkbox
                   | Show their balance
                   input#show-fisher-balance.to-disable(type='checkbox', checked='')
+          .row
+            .form-group
+              .col-md-10     
+                label.form-label.checkbox
+                  | Disable&nbsp;
+                  a#profit-columns-tooltip(title='Do NOT display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
+                  input#disable-profit-columns.to-disable(type='checkbox', checked=false)
           .row
             .form-group
               .col-md-10
