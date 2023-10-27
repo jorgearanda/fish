@@ -31,6 +31,10 @@ exports.engine = function engine(io, ioAdmin) {
         om.oceans[myOId].attemptToFish(myPId);
       });
 
+      socket.on('recordIntendedCatch', function(numFish) {
+        om.oceans[myOId].recordIntendedCatch(myPId, numFish);
+      });
+
       socket.on('goToSea', function() {
         om.oceans[myOId].goToSea(myPId);
       });

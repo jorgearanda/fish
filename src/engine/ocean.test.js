@@ -28,6 +28,11 @@ describe('Engine - Ocean', function() {
         costSecond: 0.0,
         costCast: 0.1,
         chanceCatch: 1.0,
+        numSeasons: 4,
+        catchIntentionsEnabled: false,
+        catchIntentDialogDuration: 17,
+        catchIntentSeasons: [2,4,6,8],
+        profitDisplayDisabled: false, 
         bots: [
           {
             name: 'bot 1',
@@ -375,6 +380,7 @@ describe('Engine - Ocean', function() {
 
   describe('hasReachedSeasonDelay()', function() {
     it('should report whether seconds has reached the seasonDelay parameter', function(done) {
+      o.seconds = 1;
       o.hasReachedSeasonDelay().should.equal(false);
       o.seconds = 5;
       o.hasReachedSeasonDelay().should.equal(true);
@@ -467,5 +473,40 @@ describe('Engine - Ocean', function() {
       o.fishers[3].seasonData[1].endMoney.should.equal(-0.1);
       return done();
     });
+  });
+
+  describe('catchIntentIsEnabled()', function() {
+    it('should return true if the catchIntentions parameter is true', function(done) {
+      o.catchIntentIsEnabled().should.equal(false);
+      o.microworld.params.catchIntentionsEnabled = true;
+      o.catchIntentIsEnabled().should.equal(true);
+      return done();
+    });
+  });
+
+  describe('catchIntentIsActive()', function() {
+    it('should return true if it is enabled and a season in in the active list', function(done) {
+      o.catchIntentIsActive(1).should.equal(false);
+      o.catchIntentIsActive(2).should.equal(false);
+      o.catchIntentIsActive(3).should.equal(false);
+      o.catchIntentIsActive(4).should.equal(false);
+      o.microworld.params.catchIntentionsEnabled = true;
+      // o.microworld.params.catchIntentSeasons = [2,4];
+      o.catchIntentIsActive(1).should.equal(false);
+      o.catchIntentIsActive(2).should.equal(true);
+      o.catchIntentIsActive(3).should.equal(false);
+      o.catchIntentIsActive(4).should.equal(true);
+      return done();
+    });
+  });
+
+});
+
+describe('profitDisplayIsDisabled()', function() {
+  it('should return true if the profitDisplay parameter is true', function(done) {
+    o.profitDisplayIsDisabled().should.equal(false);
+    o.microworld.params.profitDisplayDisabled = true;
+    o.profitDisplayIsDisabled().should.equal(true);
+    return done();
   });
 });

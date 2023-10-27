@@ -31,6 +31,7 @@ function transposeResults(res) {
                 fishStart: fishStart,
                 fishEnd: fishEnd,
                 fishTaken: res[i].fishers[j].fishTaken,
+                fishPlanned: res[i].fishers[j].fishPlanned,
                 profit: res[i].fishers[j].profit !== undefined ?
                     res[i].fishers[j].profit.toFixed(2) : 'n/a',
                 ir: res[i].fishers[j].individualRestraint !== undefined ?
@@ -59,6 +60,7 @@ function gotRunResults(r) {
             transposed[i].season + '</td><td>' +
             transposed[i].fishStart + '</td><td>' +
             transposed[i].fishEnd + '</td><td>' +
+            transposed[i].fishPlanned + '</td><td>' +
             transposed[i].fishTaken + '</td><td>' +
             transposed[i].profit + '</td><td>' +
             transposed[i].ir + '</td><td>' +

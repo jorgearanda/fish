@@ -60,7 +60,7 @@ var prepText = 'FISH simulates fishing in an ocean. ' +
     'Fishing can go on this way for many seasons, ' +
     'but all fishing permanently ceases any time that all the fish are caught.\n\n' + 
     'You can make money fishing. ' +
-    'You will be paid $5 for every fish you catch. ' +
+    'You will be paid $3 for every fish you catch. ' +
     '(For now, this is "play" money... ' +
     'but please treat it as if it were real money.)\n\n' +
     'Your job is to consider all these factors, ' +
@@ -73,8 +73,36 @@ var prepText = 'FISH simulates fishing in an ocean. ' +
     'Click on the Go Fishing button on the right when you are ready. ' +
     'Once all the fishers have clicked this button, ' +
     'the first season will begin. ' +
-    '(You may have to wait briefly for all the others fishers to click the button.)';
+    '(You may have to wait briefly for all the other fishers to click the button.)';
 
 var endTimeText = 'Seasons come and seasons go, but for now we are done.';
 
 var endDepletedText = 'All the fish are now gone.';
+
+var catchIntentPrompt1 = 'How many fish do you plan to catch in the next season?';
+var catchIntentPrompt2 = '(Optional, and we won\'t hold you to it!)';
+
+// REDIRECTION FEATURE
+
+var explainRedirectText = '<h4>FISH REDIRECTION FEATURES</h4>' +
+    'If this FISH experiment is part of a chain, you will want to send participants into FISH ' +
+    'without having them log in to FISH in the usual form-based way. ' +
+    'Configure the source platform with the standard FISH URL but with 2 query parameters:\n' +
+    '&nbsp;&nbsp;&nbsp;<b><tt>expid</tt></b> -- this experiment\'s ID\n' + 
+    '&nbsp;&nbsp;&nbsp;<b><tt>partid</tt></b> -- the participant\'s ID\n' +
+    'That platform will likely provide one or more other query parameters that should be used ' +
+    'to return the participant back to the platform upon completion of the FISH experiment.' +
+    'FISH will capture those query parameters, which you can then include in the Redirection URL below.\n\n' +
+    'For example, if setting up an an immediate redirect from Gorilla to FISH and back, ' +
+    'in the FISH \‘Redirection URL\’ box you need to add 2 pieces of information:\n' +
+    '1. the return Gorilla URL: <tt>https://research.sc/participant/login/resume/</tt>\n' +
+    '2. the code that tells FISH where to look for the information Gorilla needs on the participant\'s return, ' +
+    'for example: <tt>${completion_token}</tt>\n' +
+    'So, for Gorilla, paste the following into the Redirection URL box:\n' +
+    '&nbsp;&nbsp;&nbsp;<b><tt>https://research.sc/participant/login/resume/${completion_token}</tt></b>\n\n' +
+    'There are two other variables that you can use in this URL:\n' +
+    '&nbsp;&nbsp;&nbsp;<b><tt>fishTotal</tt></b> -- the participant\'s total number of fish caught\n' + 
+    '&nbsp;&nbsp;&nbsp;<b><tt>profitTotal</tt></b> -- the participant\'s total amount of profit made\n' +
+    'For example, you can specify the Redirection URL as:\n' +
+    '&nbsp;&nbsp;&nbsp;<b><tt>https://research.sc/participant/login/resume/${completion_token}?fishcaught=${fishTotal}&profit=${profitTotal}</tt></b>\n\n'
+    ;

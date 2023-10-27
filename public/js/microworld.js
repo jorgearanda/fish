@@ -17,11 +17,11 @@ function showStatusTableOptions() {
     var behaviour_name = $(this).attr('id');
 
     var behaviour_type = $(this).text();
-    $(this).closest('.dropdown').find('span#btn_txt').text(behaviour_type+"  ")
+    $(this).closest('.dropdown').find('span#btn_txt').text(behaviour_type + "  ")
 
-    $("."+behaviour_name).removeClass('hide');
+    $("." + behaviour_name).removeClass('hide');
 
-    if(behaviour_name == "static_option"){
+    if (behaviour_name == "static_option") {
         $(".dynamic_option").addClass('hide');
     } else {
         $(".static_option").addClass('hide');
@@ -44,6 +44,11 @@ function readyTooltips() {
     $('#predictability-tooltip').tooltip();
     $('#prob-action-tooltip').tooltip();
     $('#attempts-second-tooltip').tooltip();
+    $('#catch-intentions-tooltip').tooltip();
+    $('#catch-intention-seasons-tooltip').tooltip();
+    $('#catch-intent-dialog-duration-tooltip').tooltip();
+    $('#redirect-url-tooltip').tooltip();
+    $('#profit-columns-tooltip').tooltip();
 }
 
 function changeBotRowVisibility() {
@@ -143,6 +148,19 @@ function changeAttemptsSecondUniformity() {
     }
 }
 
+function parseCatchIntentSeasons(seasonsList, clean = false) {
+    // Extract all integers > 1 from given list (string)
+    var seasonsRegexp = /([2-9][0-9]*)|([1-9][0-9]+)/g;
+    var seasonNumbers = seasonsList.match(seasonsRegexp);
+    if (!seasonNumbers) return [];
+    seasonNumbers = seasonNumbers.map(Number);
+    if (clean) {
+        seasonNumbers = seasonNumbers.sort((a, b) => a - b);
+        // Worth removing duplicates?
+    }
+    return seasonNumbers;
+}
+
 function validate() {
     var errors = [];
 
@@ -231,6 +249,17 @@ function validate() {
         errors.push('The chance of catch must be a number between 0 and 1.');
     }
 
+    var catchIntentSeasonsStr = $('#catch-intent-seasons').val();
+    var catchIntentSeasons = parseCatchIntentSeasons(catchIntentSeasonsStr);
+    if (catchIntentSeasonsStr !== catchIntentSeasons.toString()) {
+        errors.push('"' + catchIntentSeasonsStr + '" is not a comma-separated list of season numbers greater than 1.');
+        $('#catch-intent-seasons').val(parseCatchIntentSeasons(catchIntentSeasonsStr, true));
+    }
+
+    if (parseInt($('#catch-intent-dialog-duration').val()) < 0) {
+        errors.push('The catch intent extra time cannot be negative.');
+    }
+
     if ($('#preparation-text').val().length < 1) {
         errors.push('The preparation text is missing.');
     }
@@ -291,8 +320,15 @@ function prepareMicroworldObject() {
     mw.enablePause = $('#enable-pause').prop('checked');
     mw.enableEarlyEnd = $('#enable-early-end').prop('checked');
     mw.enableTutorial = $('#enable-tutorial').prop('checked');
+    mw.catchIntentionsEnabled = $('#enable-catch-intentions').prop('checked');
+    mw.catchIntentSeasons = parseCatchIntentSeasons($('#catch-intent-seasons').val(), true);
+    mw.catchIntentDialogDuration = $('#catch-intent-dialog-duration').val();
+    mw.catchIntentPrompt1 = $('#catch-intent-prompt1').val();
+    mw.catchIntentPrompt2 = $('#catch-intent-prompt2').val();
+    mw.redirectURL = $('#redirect-url').val();
     mw.enableRespawnWarning = $('#change-ocean-colour').prop('checked');
     mw.fishValue = $('#fish-value').val();
+    mw.profitDisplayDisabled = $('#disable-profit-columns').prop('checked');
     mw.costCast = $('#cost-cast').val();
     mw.costDeparture = $('#cost-departure').val();
     mw.costSecond = $('#cost-second').val();
@@ -330,12 +366,12 @@ function prepareMicroworldObject() {
 }
 
 function reportErrors(err) {
-        var errMessage = 'The form has the following errors:\n\n';
-        for (var i in err) {
-            errMessage += err[i] + '\n';
-        }
-        alert(errMessage);
-        return;
+    var errMessage = 'The form has the following errors:\n\n';
+    for (var i in err) {
+        errMessage += err[i] + '\n';
+    }
+    alert(errMessage);
+    return;
 }
 
 function badMicroworld(jqXHR) {
@@ -434,7 +470,16 @@ function populatePage() {
     $('#enable-pause').prop('checked', mw.params.enablePause);
     $('#enable-early-end').prop('checked', mw.params.enableEarlyEnd);
     $('#enable-tutorial').prop('checked', mw.params.enableTutorial);
+    $('#enable-catch-intentions').prop('checked', mw.params.catchIntentionsEnabled);
+    $('#catch-intent-seasons').val(mw.params.catchIntentSeasons.toString());
+    $('#catch-intent-dialog-duration').val(mw.params.catchIntentDialogDuration);
+    $('#catch-intent-prompt1').val(mw.params.catchIntentPrompt1);
+    $('#catch-intent-prompt2').val(mw.params.catchIntentPrompt2);
+    maybeDisableCatchIntentControls(mw.params.catchIntentionsEnabled);
+    $('#redirect-url').val(mw.params.redirectURL);
     $('#change-ocean-colour').prop('checked', mw.params.enableRespawnWarning);
+    $('#disable-profit-columns').prop('checked', mw.params.profitDisplayDisabled);
+    maybeDisableProfitControls(mw.params.profitDisplayDisabled);
     $('#fish-value').val(mw.params.fishValue);
     $('#cost-cast').val(mw.params.costCast);
     $('#cost-departure').val(mw.params.costDeparture);
@@ -473,9 +518,20 @@ function populatePage() {
         $(botPrefix + 'attempts-second').val(mw.params.bots[i - 1].attemptsSecond);
     }
 
-    $("#"+mw.params.oceanOrder).prop('checked', true);
+    $("#" + mw.params.oceanOrder).prop('checked', true);
 
     changeBotRowVisibility();
+}
+
+function maybeDisableCatchIntentControls(enabledflg) {
+    $('#catch-intent-seasons').prop("disabled", !enabledflg);
+    $('#catch-intent-dialog-duration').prop("disabled", !enabledflg);
+    $('#catch-intent-prompt1').prop("disabled", !enabledflg);
+    $('#catch-intent-prompt2').prop("disabled", !enabledflg);
+}
+
+function maybeDisableProfitControls(disabledflg) {
+    $('#show-fisher-balance').prop("disabled", disabledflg);
 }
 
 function noMicroworld(jqXHR) {
@@ -505,7 +561,7 @@ function noRuns(jqXHR) {
 function gotRuns(r) {
     var table = '';
     for (var i in r) {
-        var button = '<button class="btn btn-sm btn-info" type="submit" onclick=location.href=\'/runs/' + r[i]._id + 
+        var button = '<button class="btn btn-sm btn-info" type="submit" onclick=location.href=\'/runs/' + r[i]._id +
             '?csv=true\'>Download   <span class="glyphicon glyphicon-download-alt"></span></button>';
         table += '<tr><td><a href="../runs/' + r[i]._id + '">' + moment(r[i].time).format('llll') + '</a></td>' +
             '<td>' + r[i].participants + '</td>' + '<td>' + button + '</tr>';
@@ -515,7 +571,7 @@ function gotRuns(r) {
 
     // enabled or disable the download all button depending on if there are any completed runs
     if (r.length == 0) {
-        $('#download-all-button').attr("disabled", "disabled");
+        $('#download-all-button').prop("disabled", "disabled");
     } else {
         $('#download-all-button').removeAttr("disabled");
     }
@@ -533,12 +589,12 @@ function getRuns() {
 }
 
 function backToList() {
-    location.href = '../dashboard'; 
+    location.href = '../dashboard';
 }
 
 // Makes downloading all runs possible
 function initDownloadAll() {
-    $('#download-all-button').attr("onclick", "location.href='/runs?csv=true&mw="+mwId+"'");
+    $('#download-all-button').attr("onclick", "location.href='/runs?csv=true&mw=" + mwId + "'");
 }
 
 function setButtons() {
@@ -554,6 +610,10 @@ function setButtons() {
     $('#archive-confirmed').click(archiveMicroworld);
     $('#delete-confirmed').click(deleteMicroworld);
     $(".behaviour_group_select").click(showStatusTableOptions);
+
+    $('#show-catch-intentions-explanation').click(showCatchIntentionsExplanationText);
+    $('#show-redirect-explanation').click(showRedirectExplanationText);
+
     initDownloadAll();
 }
 
@@ -578,13 +638,23 @@ function loadTexts() {
     $('#preparation-text').val(prepText);
     $('#end-time-text').val(endTimeText);
     $('#end-depletion-text').val(endDepletedText);
+    $('#catch-intent-prompt1').val(catchIntentPrompt1);
+    $('#catch-intent-prompt2').val(catchIntentPrompt2);
 }
 
 function prepareControls() {
     $('#microworld-panel-body-text').text(panelBody[mode]);
     $('#microworld-panel-2-body-text').text(panelBody[mode]);
-
-
+    $('#enable-catch-intentions').on("click", function () {
+        //Dis- or enable the other CatchIntention controls depending on whether the checkbox is checked.
+        var enabledflg = $(this).is(':checked');
+        maybeDisableCatchIntentControls(enabledflg);
+    });
+    $('#disable-profit-columns').on("click", function () {
+        //Dis- or enable the other Profit controls depending on whether the checkbox is checked.
+        var disabledflg = $(this).is(':checked');
+        maybeDisableProfitControls(disabledflg);
+    });
     if (mode === 'new') {
         $('#microworld-header').text(pageHeader[mode]);
         $('#microworld-panel-title').text(panelTitle[mode]);
@@ -608,7 +678,7 @@ function prepareControls() {
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
 
-        if($('input[type="radio"]:checked').parent().parent().hasClass('dynamic_option')) {
+        if ($('input[type="radio"]:checked').parent().parent().hasClass('dynamic_option')) {
             $(".static_option").addClass('hide');
             $(".dynamic_option").removeClass("hide");
             $('span#btn_txt').text("Dynamic Behaviour\xa0\xa0"); //\xa0 is the char &nbsp; makes
@@ -626,7 +696,7 @@ function prepareControls() {
         $('#archive-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.to-disable').each( function() {
+        $('.to-disable').each(function () {
             $(this).prop('disabled', true);
         });
         $('#results').removeClass('collapse');
@@ -642,7 +712,7 @@ function prepareControls() {
         $('#activate-2').removeClass('collapse');
         $('#delete').removeClass('collapse');
         $('#delete-2').removeClass('collapse');
-        $('.to-disable').each( function() {
+        $('.to-disable').each(function () {
             $(this).prop('disabled', true);
         });
         $('#results').removeClass('collapse');
@@ -668,6 +738,27 @@ function uniformityChanges() {
     changeProbActionUniformity();
     changeAttemptsSecondUniformity();
 }
+
+// CATCH INTENTIONS FEATURE
+
+function showCatchIntentionsExplanationText() {
+    $('#explain-catch-intentions-content').load('/explain-catch-intentions', function () {
+        $('#explain-catch-intentions-modal').modal({ show: true });
+    });
+    $('#explain-catch-intentions-modal').modal({ keyboard: false, backdrop: 'static' });
+}
+
+
+// REDIRECTION FEATURE
+
+function showRedirectExplanationText() {
+    $('#explain-redirect-content').load('/explain-redirection', function () {
+        $('#explain-redirect-modal').modal({ show: true });
+    });
+    $('#explain-redirect-modal').modal({ keyboard: false, backdrop: 'static' });
+}
+
+
 
 function main() {
     getMwId();

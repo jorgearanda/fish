@@ -50,6 +50,18 @@ html {
     border-color: #D32F2F;
     color: #FFFFFF; }
 
+#catch-intent-dialog {
+  font-size: 18px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  position: relative; }
+  #catch-intent-dialog div {
+    text-align: center;
+    display: inline-block; }
+  #catch-intent-dialog .prompt-label {
+    background-color: orange;
+}
+
 #costs-box {
   font-size: 18px;
   font-size: 1.8rem;

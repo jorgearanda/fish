@@ -57,6 +57,7 @@ pt['status_wait'] = 'Por favor aguarde';
 ko['status_wait'] = '잠시만 기다려주십시오';
 
 en['status_subWait'] = 'Loading the application';
+en['status_subWait'] = 'while other fishers are joining';           // RMK
 cn['status_subWait'] = '加载应用程序中';
 ct['status_subWait'] = '加載應用程序中';
 de['status_subWait'] = 'Ladevorgang';
@@ -229,6 +230,15 @@ fr['info_location'] = 'Lieu';
 pt['info_location'] = 'Local';
 ko['info_location'] = '현재 위치';
 
+en['info_intent'] = 'Plan';
+cn['info_intent'] = '计划';
+ct['info_intent'] = '計劃';
+de['info_intent'] = 'Plan';
+es['info_intent'] = 'Plan';
+fr['info_intent'] = 'Plan';
+pt['info_intent'] = 'Plano';
+ko['info_intent'] = '계획';
+
 en['info_season'] = 'Season';
 cn['info_season'] = '季节';
 ct['info_season'] = '季節';
@@ -249,6 +259,7 @@ ko['info_overall'] = '총';
 
 // End report
 en['end_over'] = 'This simulation is over.';
+en['end_over'] = 'This game is over.';          // RMK
 cn['end_over'] = '模拟活动结束';
 ct['end_over'] = '模擬活動結束';
 de['end_over'] = 'Die Simulation ist nun beendet.';
