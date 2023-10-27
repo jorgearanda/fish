@@ -157,7 +157,6 @@ pt['status_subSpawning'] = 'Os peixes estão em desova';
 ko['status_subSpawning'] = '산란이 진행 중입니다';
 
 en['status_paused'] = 'Simulation paused.';
-en['status_paused'] = 'Game paused.';           // RMK
 cn['status_paused'] = '模拟活动暂停';
 ct['status_paused'] = '模擬活動暫停';
 de['status_paused'] = 'Die Simulation ist pausiert.';
@@ -232,13 +231,13 @@ pt['info_location'] = 'Local';
 ko['info_location'] = '현재 위치';
 
 en['info_intent'] = 'Plan';
-cn['info_intent'] = 'Plan';
-ct['info_intent'] = 'Plan';
+cn['info_intent'] = '计划';
+ct['info_intent'] = '計劃';
 de['info_intent'] = 'Plan';
 es['info_intent'] = 'Plan';
 fr['info_intent'] = 'Plan';
-pt['info_intent'] = 'Plan';
-ko['info_intent'] = 'Plan';
+pt['info_intent'] = 'Plano';
+ko['info_intent'] = '계획';
 
 en['info_season'] = 'Season';
 cn['info_season'] = '季节';

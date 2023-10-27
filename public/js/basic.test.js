@@ -2,8 +2,6 @@
 const assert = require('assert');
 const request = require('supertest');
 
-// const app = require('./app').app;
-
 describe('Sanity checks', () => {
   describe('The test system', () => {
     it('should run a simple test', done => {
