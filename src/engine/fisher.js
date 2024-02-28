@@ -19,6 +19,10 @@ exports.Fisher = function Fisher(name, type, params, o) {
     return this.type === 'bot';
   };
 
+  this.isHuman = function() {
+    return this.type === 'human';
+  };
+
   this.isErratic = function() {
     return this.params.predictability === 'erratic';
   };

@@ -51,6 +51,16 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
     return this.fishers.length === this.microworld.params.numFishers;
   };
 
+  this.hasNoHumans = function() {
+    for (var i in this.fishers) {
+      if (this.fishers[i].isHuman()) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+
   this.addFisher = function(pId) {
     this.fishers.push(new Fisher(pId, 'human', null, this));
     this.log.info('Human fisher ' + pId + ' joined.');
@@ -60,12 +70,18 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
   this.removeFisher = function(pId) {
     for (var i in this.fishers) {
       var fisher = this.fishers[i];
-      if (!fisher.isBot() && fisher.name === pId) {
+      if (fisher.isHuman() && fisher.name === pId) {
         this.resume(pId); // just in case this fisher paused the game just before leaving!
         this.fishers.splice(i, 1);
+        this.log.info('Human fisher ' + pId + ' left.');
       }
     }
-    this.log.info('Human fisher ' + pId + ' left.');
+    if (this.hasNoHumans()) {
+      // Ocean used to hang around for other humans to show up.
+      // That can lead to problems if the corresponding microworld is still in test mode and gets changed.
+      // Experimenter will assume incorrectly that when the ocean eventually runs, that it has the latest settings. 
+      this.endOcean("No humans remaining");
+    }
   };
 
   this.findFisherIndex = function(pId) {
