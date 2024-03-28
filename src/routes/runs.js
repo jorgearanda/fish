@@ -24,7 +24,7 @@ function flattenRunResults(runs) {
 
       for (var k = 0; k < fishers.length; k++) {
         var toPush = {};
-        if (produceAllRuns) toPush['Run ID'] = parentalId;
+        toPush['Run ID'] = parentalId;
         toPush.Fisher = fishers[k].name;
         toPush.Type = fishers[k].type;
         toPush.Greed = fishers[k].greed;
