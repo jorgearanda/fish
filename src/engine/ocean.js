@@ -80,7 +80,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       // Ocean used to hang around for other humans to show up.
       // That can lead to problems if the corresponding microworld is still in test mode and gets changed.
       // Experimenter will assume incorrectly that when the ocean eventually runs, that it has the latest settings. 
-      this.endOcean("No humans remaining");
+      this.endOceanForLackOfHumans();
     }
   };
 
@@ -395,7 +395,7 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
       );
     }
 
-    if (this.season < this.microworld.params.numSeasons && reason !== 'depletion') {
+    if (this.season < this.microworld.params.numSeasons && reason !== 'depletion' && reason !== 'nohumans') {
       this.status = 'resting';
       this.resetTimer();
       this.log.info('Ending season ' + this.season + '.');
@@ -553,6 +553,18 @@ exports.Ocean = function Ocean(mw, incomingIo, incomingIoAdmin, om) {
 
     return participants;
   };
+
+  this.endOceanForLackOfHumans = function() {
+    // All humans have left - this could happen any time, 
+    // including naturally at the end of a complete run, 
+    // so be careful how to terminate and avoid recursion!
+    if (this.status === 'running' || this.status === 'paused') {
+      this.endCurrentSeason('nohumans');
+    }
+    else if (this.status !== 'over') {
+      this.endOcean('nohumans');
+    }
+  }
 
   this.endOcean = function(reason) {
     this.status = 'over';
