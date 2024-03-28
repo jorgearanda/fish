@@ -421,9 +421,9 @@ function updateFishers() {
             $('#f' + j).attr('data-profit-season', profitSeason);
             $('#f' + j).attr('data-name', name);
             $('#f' + j).attr('active-fisher', true);
-        }
 
-        j++;
+            j++;
+        }
     }
 }
 
