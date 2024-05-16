@@ -15,35 +15,35 @@ exports.Fisher = function Fisher(name, type, params, o) {
   this.status = 'At port';
   this.season = 0;
 
-  this.isBot = function() {
+  this.isBot = function () {
     return this.type === 'bot';
   };
 
-  this.isHuman = function() {
+  this.isHuman = function () {
     return this.type === 'human';
   };
 
-  this.isErratic = function() {
+  this.isErratic = function () {
     return this.params.predictability === 'erratic';
   };
 
-  this.getIntendedCatch = function() {
+  this.getIntendedCatch = function () {
     return this.seasonData[this.season].catchIntent;
   };
 
-  this.getFishCaught = function() {
+  this.getFishCaught = function () {
     return this.seasonData[this.season].fishCaught;
   };
 
-  this.getIntendedCasts = function() {
+  this.getIntendedCasts = function () {
     return this.seasonData[this.season].intendedCasts;
   };
 
-  this.getActualCasts = function() {
+  this.getActualCasts = function () {
     return this.seasonData[this.season].actualCasts;
   };
 
-  this.calculateSeasonGreed = function(currentSeason) {
+  this.calculateSeasonGreed = function (currentSeason) {
     var baseGreed = this.params.greed;
     var greedSpread = this.params.greedSpread;
     var predictability = this.params.predictability;
@@ -74,7 +74,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
     return currentGreed;
   };
 
-  this.calculateSeasonCasts = function(greed) {
+  this.calculateSeasonCasts = function (greed) {
     var totalFish = this.ocean.certainFish + this.ocean.mysteryFish;
     var spawn = this.ocean.microworld.params.spawnFactor;
     var numFishers = this.ocean.fishers.length;
@@ -82,7 +82,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
     return Math.round((((totalFish - totalFish / spawn) / numFishers) * 2 * greed) / chanceCatch);
   };
 
-  this.prepareFisherForSeason = function(season) {
+  this.prepareFisherForSeason = function (season) {
     this.ocean.log.info('Preparing Fisher ' + this.name + ' for season ' + season);
     this.season = season;
     this.seasonData[season] = {
@@ -90,7 +90,7 @@ exports.Fisher = function Fisher(name, type, params, o) {
       fishCaught: 0,
       startMoney: 0,
       endMoney: 0,
-      catchIntent: season < 2 ? 'n/a' : this.seasonData[season-1].nextCatchIntent,
+      catchIntent: season < 2 ? 'n/a' : this.seasonData[season - 1].nextCatchIntent,
       nextCatchIntent: 'n/a',
     };
 
@@ -100,11 +100,11 @@ exports.Fisher = function Fisher(name, type, params, o) {
       this.seasonData[season].greed = greed;
       this.seasonData[season].intendedCasts = intendedCasts;
     }
-  
+
     this.hasReturned = false;
   };
 
-  this.calculateBotCatchIntent = function(season) {
+  this.calculateBotCatchIntent = function (season) {
     var greed = this.calculateSeasonGreed(season);
     var intendedCasts = this.calculateSeasonCasts(greed);
     var chanceCatch = this.ocean.microworld.params.chanceCatch;
@@ -112,16 +112,16 @@ exports.Fisher = function Fisher(name, type, params, o) {
     return Math.round(intendedCasts * chanceCatch * variation);
   }
 
-  this.maybeGetBotCatchIntent = function() {
+  this.maybeGetBotCatchIntent = function () {
     var data = this.seasonData[this.season];
     if (data.nextCatchIntent === '???') {
       if (this.ocean.seconds >= data.nextCatchIntentSubmitDelay) {
         this.recordIntendedCatch(this.calculateBotCatchIntent(this.season + 1));
-      } 
+      }
     }
   }
 
-  this.prepareToAskCatchIntent = function() {
+  this.prepareToAskCatchIntent = function () {
     var data = this.seasonData[this.season];
     data.nextCatchIntent = '???';
     if (this.isBot()) {
@@ -131,21 +131,36 @@ exports.Fisher = function Fisher(name, type, params, o) {
     }
   }
 
-  this.changeMoney = function(amount) {
-    this.money += amount;
-    this.seasonData[this.season].endMoney += amount;
+  this.changeMoney = function (amount) {
+    try {
+      this.money += amount;
+      this.seasonData[this.season].endMoney += amount;
+    } catch (error) {
+      this.ocean.log.error('Attempt to `changeMoney` failed for fisher ' + this.name + ' on season ' + this.season);
+      this.ocean.log.error('The fisher has ' + this.seasonData.length + ' seasons in its seasonData array');
+    }
   };
 
-  this.incrementCast = function() {
-    this.seasonData[this.season].actualCasts++;
+  this.incrementCast = function () {
+    try {
+      this.seasonData[this.season].actualCasts++;
+    } catch (error) {
+      this.ocean.log.error('Attempt to `incrementCast` failed for fisher ' + this.name + ' on season ' + this.season);
+      this.ocean.log.error('The fisher has ' + this.seasonData.length + ' seasons in its seasonData array');
+    }
   };
 
-  this.incrementFishCaught = function() {
-    this.totalFishCaught++;
-    this.seasonData[this.season].fishCaught++;
+  this.incrementFishCaught = function () {
+    try {
+      this.totalFishCaught++;
+      this.seasonData[this.season].fishCaught++;
+    } catch (error) {
+      this.ocean.log.error('Attempt to `incrementFishCaught` failed for fisher ' + this.name + ' on season ' + this.season);
+      this.ocean.log.error('The fisher has ' + this.seasonData.length + ' seasons in its seasonData array');
+    }
   };
 
-  this.goToPort = function() {
+  this.goToPort = function () {
     if (this.status !== 'At port') {
       this.status = 'At port';
       this.hasReturned = true;
@@ -153,13 +168,13 @@ exports.Fisher = function Fisher(name, type, params, o) {
     }
   };
 
-  this.goToSea = function() {
+  this.goToSea = function () {
     this.status = 'At sea';
     this.changeMoney(-this.ocean.microworld.params.costDeparture);
     this.ocean.log.info('Fisher ' + this.name + ' sailed to sea.');
   };
 
-  this.tryToFish = function() {
+  this.tryToFish = function () {
     this.changeMoney(-this.ocean.microworld.params.costCast);
     this.incrementCast();
     if (this.ocean.isSuccessfulCastAttempt()) {
@@ -172,12 +187,12 @@ exports.Fisher = function Fisher(name, type, params, o) {
     }
   };
 
-  this.recordIntendedCatch = function(numFish) {
+  this.recordIntendedCatch = function (numFish) {
     this.seasonData[this.season].nextCatchIntent = numFish;
     this.ocean.log.info('Fisher ' + this.name + ' is planning to catch ' + numFish + ' fish.');
   }
 
-  this.runBot = function() {
+  this.runBot = function () {
     if (this.status === 'At sea') this.changeMoney(-this.ocean.microworld.params.costSecond);
 
     if (!this.isBot()) return;
