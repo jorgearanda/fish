@@ -84,6 +84,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(methodOverride());
 
+// Error handling middleware for body-parser JSON parsing errors
+app.use(function(err, req, res, next) {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    logger.warn('Malformed JSON received: ' + err.message);
+    return res.status(400).send({ error: 'Invalid JSON in request body' });
+  }
+  next(err);
+});
+
 app.use(cookieParser('life is better under the sea'));
 app.use(
   session({
@@ -182,6 +191,22 @@ app.get('/experimenters', allowOnlySuperusers, experimenters.list);
 app.post('/experimenters', allowOnlySuperusers, experimenters.create);
 app.get('/experimenters/:id', allowSelfAndSuperusers, experimenters.details);
 app.put('/experimenters/:id', allowSelfAndSuperusers, experimenters.update);
+
+// General error handler - must be defined after all routes
+app.use(function(err, req, res, next) {
+  logger.error('Unhandled error: ' + err.message, { stack: err.stack });
+
+  // Don't expose internal errors to clients in production
+  if (app.get('env') === 'production') {
+    return res.status(500).send({ error: 'Internal server error' });
+  }
+
+  // In development, send the full error for debugging
+  return res.status(500).send({
+    error: err.message,
+    stack: err.stack
+  });
+});
 
 var server = http.createServer(app);
 var io = (exports.io = socketio.listen(server, {

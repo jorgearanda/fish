@@ -16,7 +16,16 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     Microworld.findOne(
       { _id: mwId },
       function onFound(err, mw) {
-        // TODO - handle errors
+        if (err) {
+          log.error('Error finding microworld: ' + err);
+          return cb(new Error('Database error while finding microworld'));
+        }
+
+        if (!mw) {
+          log.warn('Attempted to create ocean for non-existent microworld: ' + mwId);
+          return cb(new Error('Microworld not found'));
+        }
+
         var ocean = new Ocean(mw, this.io, this.ioAdmin, this);
         this.oceans[ocean.id] = ocean;
         ocean.log.info('Ocean created.');
@@ -47,7 +56,10 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     this.createOcean(
       mwId,
       function onCreated(err, oId) {
-        // TODO - handle errors
+        if (err) {
+          log.error('Failed to assign fisher to ocean: ' + err.message);
+          return cb(null); // Return null to indicate failure
+        }
         this.oceans[oId].addFisher(pId);
         return cb(oId);
       }.bind(this)

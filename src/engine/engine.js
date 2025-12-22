@@ -17,6 +17,12 @@ exports.engine = function engine(io, ioAdmin) {
     });
 
     var enteredOcean = function(newOId) {
+      if (!newOId) {
+        log.error('Failed to enter ocean - microworld not found or error occurred');
+        socket.emit('error', { message: 'Unable to join simulation. The experiment may no longer be available.' });
+        return;
+      }
+
       var myOId = newOId;
       var myPId = clientPId;
       socket.join(myOId);
@@ -52,7 +58,8 @@ exports.engine = function engine(io, ioAdmin) {
       });
 
       socket.on('disconnect', function() {
-        if (!om.oceans[myOId].isInSetup() && !om.oceans[myOId].isRemovable()) {
+        // Check if ocean still exists before accessing its properties
+        if (om.oceans[myOId] && !om.oceans[myOId].isInSetup() && !om.oceans[myOId].isRemovable()) {
           // disconnected before ocean i.e before simulation run has finished
           // and setup phase is completed
           var ocean = om.oceans[myOId];
@@ -61,7 +68,13 @@ exports.engine = function engine(io, ioAdmin) {
           simulationData.participants = [myPId];
           ioAdmin.in(ocean.microworld.experimenter._id.toString()).emit('simulationInterrupt', simulationData);
         }
-        om.removeFisherFromOcean(myOId, myPId);
+
+        // Only try to remove fisher if ocean still exists
+        if (om.oceans[myOId]) {
+          om.removeFisherFromOcean(myOId, myPId);
+        } else {
+          log.debug('Disconnect event for participant ' + myPId + ' but ocean ' + myOId + ' no longer exists');
+        }
       });
     };
   });
