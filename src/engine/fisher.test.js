@@ -80,13 +80,13 @@ describe('Engine - Fisher', function() {
         },
       };
       var f = new Fisher('Mr. Tuna', 'bot', params, ocean);
-      var greedAtSeason1 = f.calculateSeasonGreed();
+      var greedAtSeason1 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
-      var greedAtSeason2 = f.calculateSeasonGreed();
+      var greedAtSeason2 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
-      var greedAtSeason3 = f.calculateSeasonGreed();
+      var greedAtSeason3 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
-      var greedAtSeason4 = f.calculateSeasonGreed();
+      var greedAtSeason4 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
       greedAtSeason1.should.be.greaterThan(0.0);
       greedAtSeason1.should.be.lessThan(greedAtSeason2);
@@ -112,13 +112,13 @@ describe('Engine - Fisher', function() {
         },
       };
       var f = new Fisher('Mr. Tuna', 'bot', params, ocean);
-      var greedAtSeason1 = f.calculateSeasonGreed();
+      var greedAtSeason1 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
-      var greedAtSeason2 = f.calculateSeasonGreed();
+      var greedAtSeason2 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
-      var greedAtSeason3 = f.calculateSeasonGreed();
+      var greedAtSeason3 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
-      var greedAtSeason4 = f.calculateSeasonGreed();
+      var greedAtSeason4 = f.calculateSeasonGreed(ocean.season);
       ocean.season += 1;
       greedAtSeason1.should.be.lessThan(1.0);
       greedAtSeason1.should.be.greaterThan(greedAtSeason2);
@@ -329,6 +329,10 @@ describe('Engine - Fisher', function() {
           },
         },
         fishers: [{}, {}, {}, {}],
+        log: {
+          info: function() {},
+          error: function() {},
+        },
       };
       var f = new Fisher('Mr. Tuna', 'bot', params, ocean);
       f.prepareFisherForSeason(1);
@@ -344,7 +348,13 @@ describe('Engine - Fisher', function() {
     });
 
     it('should set the basic season parameters for human fishers', function(done) {
-      var f = new Fisher('A Participant', 'human', {}, {});
+      var ocean = {
+        log: {
+          info: function() {},
+          error: function() {},
+        },
+      };
+      var f = new Fisher('A Participant', 'human', {}, ocean);
       f.prepareFisherForSeason(1);
       f.season.should.equal(1);
       f.hasReturned.should.equal(false);

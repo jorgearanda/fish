@@ -2,16 +2,20 @@
 /*global describe:true, it:true*/
 
 var should = require('should');
+var mongoose = require('mongoose');
 
 var Ocean = require('./ocean').Ocean;
-var o, io, mw;
+var o, io, ioAdmin, mw;
 
 describe('Engine - Ocean', function() {
   beforeEach(function(done) {
     io = require('../app').io;
+    ioAdmin = require('../app').ioAdmin;
     mw = {
       name: 'Test Microworld',
+      status: 'test',
       experimenter: {
+        _id: new mongoose.Types.ObjectId(),
         username: 'AnExperimenter',
       },
       params: {
@@ -46,7 +50,7 @@ describe('Engine - Ocean', function() {
         ],
       },
     };
-    o = new Ocean(mw, io);
+    o = new Ocean(mw, io, ioAdmin);
     return done();
   });
 
@@ -102,7 +106,7 @@ describe('Engine - Ocean', function() {
       o.addFisher('p001');
       o.removeFisher('p001');
       o.fishers.length.should.equal(3);
-      o.log.entries.length.should.equal(2);
+      o.log.entries.length.should.equal(3); // addFisher, removeFisher, and endOcean logging
       return done();
     });
 
