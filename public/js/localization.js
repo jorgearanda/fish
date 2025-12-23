@@ -61,7 +61,7 @@ en['status_subWait'] = 'while other fishers are joining';           // RMK
 cn['status_subWait'] = '加载应用程序中';
 ct['status_subWait'] = '加載應用程序中';
 de['status_subWait'] = 'Ladevorgang';
-es['status_subwait'] = 'Cargando la aplicación';
+es['status_subWait'] = 'Cargando la aplicación';
 fr['status_subWait'] = 'Chargement de l’application';
 pt['status_subWait'] = 'Carregando a aplicação';
 ko['status_subWait'] = '낚시 게임을 준비하는 중';
@@ -376,7 +376,7 @@ de['login_validating'] = 'Login wird ueberprueft.';
 es['login_validating'] = 'Validando';
 fr['login_validating'] = 'Validation';
 pt['login_validating'] = 'Validando';
-en['login_validating'] = '확인 중';
+ko['login_validating'] = '확인 중';
 
 en['login_welcome'] = 'Welcome to FISH, and thanks for participating!';
 cn['login_welcome'] = '欢迎到来，感谢您的参与';

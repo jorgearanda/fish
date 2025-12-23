@@ -8,14 +8,16 @@
   },
   "nodemonConfig": {
     "verbose": true,
-    "watch": ["./dist/app.js"],
+    "watch": [
+      "./dist/app.js"
+    ],
     "delay": 5000
   },
   "scripts": {
-    "build-as-needed" : "find ./src ./public ./views | entr -n -s 'npm run build' &",
-    "build" : "npm run build:server && npm run build:client",
+    "build-as-needed": "find ./src ./public ./views | entr -n -s 'npm run build' &",
+    "build": "npm run build:server && npm run build:client",
     "build:server": "echo 'Building server' && babel --verbose src -d dist",
-    "build:client" : "echo 'Building client' && babel --verbose public/js -d dist/public/js",
+    "build:client": "echo 'Building client' && babel --verbose public/js -d dist/public/js",
     "serve": "node dist/app.js",
     "servemon": "nodemon dist/app.js",
     "serve-pm2": "pm2 start dist/app.js --name Fish --log \"logs/fishlog_$( date '+%Y-%m-%d_%H-%M-%S' )\"",
@@ -82,6 +84,9 @@
     "eslint": "^8.47.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "istanbul-lib-coverage": "^3.2.2",
+    "istanbul-lib-instrument": "^6.0.3",
+    "jsdom": "^22.1.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "prettier": "^2.8.8",
@@ -89,8 +94,7 @@
     "superagent": "^4.1.0",
     "supertest": "^3.4.2"
   },
-  "engines": { 
-  },
+  "engines": {},
   "nyc": {
     "all": true,
     "include": [
