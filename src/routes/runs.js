@@ -65,7 +65,7 @@ function generateCSVRuns(runs, req, res) {
         logger.error('Error on GET /runs/' + req.params.id + '?csv=true');
       }
 
-      return res.send(500);
+      return res.sendStatus(500);
     }
 
     res.set(sendHeader);
@@ -79,7 +79,7 @@ exports.list = function(req, res) {
   var query = { 'microworld.experimenter._id': ObjectId(req.session.userId) };
   if (req.query.mw) query['microworld._id'] = ObjectId(req.query.mw);
 
-  if (req.query.csv === 'true' && !req.query.mw) return res.send(400);
+  if (req.query.csv === 'true' && !req.query.mw) return res.sendStatus(400);
   if (req.query.csv === 'true' && req.query.mw) {
     fields = { results: 1, microworld: 1 };
   } else {
@@ -89,7 +89,7 @@ exports.list = function(req, res) {
   Run.find(query, fields, { sort: { time: 1 } }, function found(err, runs) {
     if (err) {
       logger.error('Error on GET /runs', err);
-      return res.send(500);
+      return res.sendStatus(500);
     }
 
     // initiate download
@@ -108,7 +108,7 @@ exports.show = function(req, res) {
     function foundCb(err, run) {
       if (err) {
         logger.error('Error on GET /runs/' + req.params.id, err);
-        return res.send(500);
+        return res.sendStatus(500);
       }
 
       // initiate download

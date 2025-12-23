@@ -14,7 +14,7 @@ exports.list = function(req, res) {
   Microworld.find(query).exec(function findCb(err, microworlds) {
     if (err) {
       logger.error('Error on GET /microworlds', err);
-      return res.send(500);
+      return res.sendStatus(500);
     }
 
     return res.status(200).send(microworlds);
@@ -30,7 +30,7 @@ exports.show = function(req, res) {
     function foundCb(err, mw) {
       if (err) {
         logger.error('Error on GET /microworlds/' + req.params.id, err);
-        return res.send(500);
+        return res.sendStatus(500);
       }
 
       return res.status(200).send(mw);
@@ -149,10 +149,10 @@ exports.update = function(req, res) {
   Microworld.update({ _id: req.params.id }, mw, function onUpdate(err) {
     if (err) {
       logger.error('Error on PUT /microworlds/' + req.params.id, err);
-      return res.send(500);
+      return res.sendStatus(500);
     }
 
-    return res.send(204);
+    return res.sendStatus(204);
   });
 };
 
@@ -161,9 +161,9 @@ exports.delete = function(req, res) {
   Microworld.remove({ _id: req.params.id }, function onDelete(err) {
     if (err) {
       logger.error('Error on DELETE /microworlds/' + req.params.id, err);
-      return res.send(500);
+      return res.sendStatus(500);
     }
 
-    return res.send(204);
+    return res.sendStatus(204);
   });
 };

@@ -74,6 +74,7 @@ logger.debug('Node env = ' + (process.env.NODE_ENV || app.settings.env));
 
 app.set('port', process.env.PORT || 8080);
 
+mongoose.set('strictQuery', false);
 mongoose.connect(config.db[app.settings.env]);
 
 app.set('views', path.join(__dirname, '../views'));
@@ -81,7 +82,7 @@ app.set('view engine', 'pug');
 
 app.use(favicon(path.join(__dirname, '../favicon.ico')));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
 
 // Error handling middleware for body-parser JSON parsing errors
@@ -101,6 +102,8 @@ app.use(
       client: mongoose.connection.getClient()
     }),
     cookie: { maxAge: null },
+    resave: false,
+    saveUninitialized: false,
   })
 );
 
