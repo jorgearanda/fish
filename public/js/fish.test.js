@@ -45,6 +45,33 @@ describe('Fish (jsdom)', () => {
 
     // Mock jQuery - basic implementation for testing
     const jQuery = function(selector) {
+      // Handle $(function() {}) - shorthand for $(document).ready()
+      if (typeof selector === 'function') {
+        // Execute immediately in test environment
+        selector();
+        return jQuery(document);
+      }
+
+      // Handle $(window)
+      if (selector === window) {
+        return {
+          width: function() {
+            return 1024; // Mock window width
+          },
+          height: function() {
+            return 768; // Mock window height
+          },
+          on: function(event, handler) {
+            window.addEventListener(event, handler);
+            return this;
+          },
+          ready: function(handler) {
+            handler();
+            return this;
+          }
+        };
+      }
+
       if (typeof selector === 'string') {
         const element = document.querySelector(selector);
         return {
@@ -61,6 +88,38 @@ describe('Fish (jsdom)', () => {
               return this;
             }
             return element ? element.value : '';
+          },
+          html: function(val) {
+            if (val !== undefined) {
+              if (element) element.innerHTML = val;
+              return this;
+            }
+            return element ? element.innerHTML : '';
+          },
+          attr: function(name, val) {
+            if (val !== undefined) {
+              if (element) element.setAttribute(name, val);
+              return this;
+            }
+            return element ? element.getAttribute(name) : null;
+          },
+          prop: function(name, val) {
+            if (val !== undefined) {
+              if (element) element[name] = val;
+              return this;
+            }
+            return element ? element[name] : undefined;
+          },
+          addClass: function(className) {
+            if (element) element.classList.add(className);
+            return this;
+          },
+          removeClass: function(className) {
+            if (element) element.classList.remove(className);
+            return this;
+          },
+          hasClass: function(className) {
+            return element ? element.classList.contains(className) : false;
           },
           show: function() {
             if (element) element.style.display = '';
@@ -80,9 +139,61 @@ describe('Fish (jsdom)', () => {
               element.dispatchEvent(evt);
             }
             return this;
+          },
+          ready: function(handler) {
+            // In test environment, execute immediately
+            handler();
+            return this;
+          },
+          width: function(val) {
+            if (val !== undefined) {
+              if (element) element.style.width = val + 'px';
+              return this;
+            }
+            return element ? (element.offsetWidth || 800) : 0;
+          },
+          each: function(callback) {
+            if (element) {
+              callback.call(element, 0, element);
+            }
+            return this;
+          },
+          find: function(selector) {
+            const found = element ? element.querySelector(selector) : null;
+            return jQuery(found ? '#' + (found.id || 'not-found') : '#not-found');
+          },
+          fadeOut: function(duration, callback) {
+            if (element) element.style.display = 'none';
+            if (typeof duration === 'function') {
+              duration();
+            } else if (callback) {
+              callback();
+            }
+            return this;
+          },
+          fadeIn: function(duration, callback) {
+            if (element) element.style.display = '';
+            if (typeof duration === 'function') {
+              duration();
+            } else if (callback) {
+              callback();
+            }
+            return this;
           }
         };
       }
+
+      // Handle $(document) or other DOM nodes
+      if (selector === document || selector.nodeType) {
+        return {
+          ready: function(handler) {
+            // In test environment, execute immediately
+            handler();
+            return this;
+          }
+        };
+      }
+
       return {};
     };
 
@@ -116,17 +227,57 @@ describe('Fish (jsdom)', () => {
     window.langs = {
       en: {
         info_intent: 'Intended Catch',
+        info_fisher: 'Fisher',
+        info_season: 'Season',
+        info_overall: 'Overall',
         status_wait: 'Waiting',
-        status_season: 'Season',
-        costs_fishValue: 'Fish Value',
-        buttons_goToSea: 'Go to Sea'
+        status_season: 'Season ',
+        status_subWait: 'Please wait',
+        status_spawning: 'Spawning',
+        status_subSpawning: 'Fish are spawning',
+        status_paused: 'Paused',
+        status_getReady: 'Get ready!',
+        status_fishTo: ' to ',
+        status_fishRemaining: ' fish remaining',
+        end_over: 'Game Over',
+        costs_fishValue: 'Fish Value:',
+        costs_costLeave: 'Cost to Leave Port:',
+        costs_costCast: 'Cost per Cast:',
+        costs_costSecond: 'Cost per Second:',
+        buttons_goFishing: 'Go Fishing',
+        buttons_goToSea: 'Go to Sea',
+        buttons_castFish: 'Cast',
+        buttons_pause: 'Pause',
+        buttons_resume: 'Resume',
+        warning_seasonStart: 'Season starting!',
+        warning_seasonEnd: 'Season ending!'
       },
       es: {
         info_intent: 'Captura Prevista',
+        info_fisher: 'Pescador',
+        info_season: 'Temporada',
+        info_overall: 'Total',
         status_wait: 'Esperando',
-        status_season: 'Temporada',
-        costs_fishValue: 'Valor del Pescado',
-        buttons_goToSea: 'Ir al Mar'
+        status_season: 'Temporada ',
+        status_subWait: 'Por favor espere',
+        status_spawning: 'Desovando',
+        status_subSpawning: 'Los peces están desovando',
+        status_paused: 'Pausado',
+        status_getReady: '¡Prepárate!',
+        status_fishTo: ' a ',
+        status_fishRemaining: ' peces restantes',
+        end_over: 'Juego Terminado',
+        costs_fishValue: 'Valor del Pescado:',
+        costs_costLeave: 'Costo de Salir del Puerto:',
+        costs_costCast: 'Costo por Lanzamiento:',
+        costs_costSecond: 'Costo por Segundo:',
+        buttons_goFishing: 'Ir a Pescar',
+        buttons_goToSea: 'Ir al Mar',
+        buttons_castFish: 'Lanzar',
+        buttons_pause: 'Pausar',
+        buttons_resume: 'Reanudar',
+        warning_seasonStart: '¡Comienza la temporada!',
+        warning_seasonEnd: '¡Termina la temporada!'
       }
     };
 
@@ -423,6 +574,382 @@ describe('Fish (jsdom)', () => {
 
     it('should initialize socket connection', () => {
       should.exist(window.socket);
+    });
+  });
+
+  describe('UI Display Functions', () => {
+    beforeEach(() => {
+      // Add necessary DOM elements
+      if (!document.querySelector('#profit-season-header')) {
+        const elements = [
+          'profit-season-header', 'profit-total-header',
+          'profit-season-th', 'profit-total-th',
+          'f0-profit-season', 'f1-profit-season',
+          'f0-profit-total', 'f1-profit-total',
+          'costs-box', 'read-rules', 'changeLocation',
+          'attempt-fish', 'pause', 'resume',
+          'fisher-header', 'fish-season-header', 'fish-total-header',
+          'revenue-fish', 'cost-departure', 'cost-cast', 'cost-second',
+          'status-label', 'status-sub-label', 'warning-alert',
+          'rules-text', 'tutorial'
+        ];
+        elements.forEach(id => {
+          if (!document.querySelector('#' + id)) {
+            const elem = document.createElement('div');
+            elem.id = id;
+            document.body.appendChild(elem);
+          }
+        });
+      }
+
+      window.st = {
+        fishers: [
+          { name: 'Fisher 1' },
+          { name: 'Fisher 2' }
+        ],
+        status: 'loading',
+        season: 0,
+        certainFish: 100,
+        reportedMysteryFish: 0,
+        catchIntentDisplaySeason: 0
+      };
+
+      window.ocean = {
+        currencySymbol: '$',
+        fishValue: 3.0,
+        costDeparture: 1.0,
+        costCast: 0.5,
+        costSecond: 0.1,
+        preparationText: 'Welcome to the fish game!\nGood luck!',
+        enablePause: true,
+        enableTutorial: true,
+        profitDisplayDisabled: false
+      };
+    });
+
+    describe('hideProfitColumns()', () => {
+      it('should hide profit headers', () => {
+        window.hideProfitColumns();
+
+        document.querySelector('#profit-season-header').style.display.should.equal('none');
+        document.querySelector('#profit-total-header').style.display.should.equal('none');
+        document.querySelector('#profit-season-th').style.display.should.equal('none');
+        document.querySelector('#profit-total-th').style.display.should.equal('none');
+      });
+
+      it('should hide profit columns for all fishers', () => {
+        window.hideProfitColumns();
+
+        document.querySelector('#f0-profit-season').style.display.should.equal('none');
+        document.querySelector('#f1-profit-season').style.display.should.equal('none');
+        document.querySelector('#f0-profit-total').style.display.should.equal('none');
+        document.querySelector('#f1-profit-total').style.display.should.equal('none');
+      });
+
+      it('should hide costs box', () => {
+        window.hideProfitColumns();
+
+        document.querySelector('#costs-box').style.display.should.equal('none');
+      });
+
+      it('should remove bootstro classes from profit elements', () => {
+        const elem = document.querySelector('#profit-season-header');
+        elem.classList.add('bootstro');
+
+        window.hideProfitColumns();
+
+        elem.classList.contains('bootstro').should.be.false();
+      });
+    });
+
+    describe('disableButtons()', () => {
+      it('should disable all action buttons', () => {
+        window.disableButtons();
+
+        const changeLocation = document.querySelector('#changeLocation');
+        const attemptFish = document.querySelector('#attempt-fish');
+        const pause = document.querySelector('#pause');
+
+        changeLocation.hasAttribute('disabled').should.be.true();
+        attemptFish.hasAttribute('disabled').should.be.true();
+        pause.hasAttribute('disabled').should.be.true();
+      });
+    });
+
+    describe('loadLabels()', () => {
+      it('should set button labels from messages', () => {
+        window.loadLabels();
+
+        document.querySelector('#read-rules').textContent.should.equal(window.msgs.buttons_goFishing);
+      });
+
+      it('should set header labels from messages', () => {
+        window.loadLabels();
+
+        document.querySelector('#fisher-header').textContent.should.equal(window.msgs.info_fisher);
+      });
+
+      it('should call updateCosts and updateStatus', () => {
+        let costsUpdated = false;
+        let statusUpdated = false;
+
+        const originalUpdateCosts = window.updateCosts;
+        const originalUpdateStatus = window.updateStatus;
+
+        window.updateCosts = () => { costsUpdated = true; };
+        window.updateStatus = () => { statusUpdated = true; };
+
+        window.loadLabels();
+
+        costsUpdated.should.be.true();
+        statusUpdated.should.be.true();
+
+        // Restore
+        window.updateCosts = originalUpdateCosts;
+        window.updateStatus = originalUpdateStatus;
+      });
+    });
+
+    describe('updateStatus()', () => {
+      it('should display loading status', () => {
+        window.st.status = 'loading';
+        window.updateStatus();
+
+        const status = document.querySelector('#status-label');
+        status.innerHTML.should.equal(window.msgs.status_wait);
+      });
+
+      it('should display running status with season number', () => {
+        window.st.status = 'running';
+        window.st.season = 5;
+        window.updateStatus();
+
+        const status = document.querySelector('#status-label');
+        status.innerHTML.should.match(/Season/);
+        status.innerHTML.should.match(/5/);
+      });
+
+      it('should display fish count in running status', () => {
+        window.st.status = 'running';
+        window.st.season = 1;
+        window.st.certainFish = 100;
+        window.st.reportedMysteryFish = 0;
+        window.updateStatus();
+
+        const subLabel = document.querySelector('#status-sub-label');
+        subLabel.innerHTML.should.match(/100/);
+      });
+
+      it('should display mystery fish range when present', () => {
+        window.st.status = 'running';
+        window.st.season = 1;
+        window.st.certainFish = 80;
+        window.st.reportedMysteryFish = 20;
+        window.updateStatus();
+
+        const subLabel = document.querySelector('#status-sub-label');
+        subLabel.innerHTML.should.match(/80/);
+        subLabel.innerHTML.should.match(/100/);
+      });
+
+      it('should display resting status', () => {
+        window.st.status = 'resting';
+        window.updateStatus();
+
+        const status = document.querySelector('#status-label');
+        status.innerHTML.should.equal(window.msgs.status_spawning);
+      });
+
+      it('should display paused status', () => {
+        window.st.status = 'paused';
+        window.updateStatus();
+
+        const status = document.querySelector('#status-label');
+        status.innerHTML.should.equal(window.msgs.status_paused);
+      });
+
+      it('should display over status', () => {
+        window.st.status = 'over';
+        window.updateStatus();
+
+        const status = document.querySelector('#status-label');
+        status.innerHTML.should.equal(window.msgs.end_over);
+      });
+    });
+
+    describe('updateWarning()', () => {
+      it('should show start warning for first season', () => {
+        window.st.season = 0;
+        window.updateWarning('start');
+
+        const warning = document.querySelector('#warning-alert');
+        warning.textContent.should.equal(window.msgs.status_getReady);
+      });
+
+      it('should show start warning for subsequent seasons', () => {
+        window.st.season = 2;
+        window.updateWarning('start');
+
+        const warning = document.querySelector('#warning-alert');
+        warning.textContent.should.equal(window.msgs.warning_seasonStart);
+      });
+
+      it('should show end warning', () => {
+        window.updateWarning('end');
+
+        const warning = document.querySelector('#warning-alert');
+        warning.textContent.should.equal(window.msgs.warning_seasonEnd);
+      });
+
+      it('should clear warning with other input', () => {
+        window.updateWarning('something else');
+
+        const warning = document.querySelector('#warning-alert');
+        warning.textContent.should.equal('');
+      });
+    });
+
+    describe('clearWarnings()', () => {
+      it('should clear warning text', () => {
+        const warning = document.querySelector('#warning-alert');
+        warning.textContent = 'Some warning';
+
+        window.clearWarnings();
+
+        warning.textContent.should.equal('');
+      });
+    });
+
+    describe('updateCosts()', () => {
+      it('should show fish value when non-zero', () => {
+        window.ocean.fishValue = 3.0;
+        window.updateCosts();
+
+        const revenue = document.querySelector('#revenue-fish');
+        revenue.textContent.should.match(/\$3/);
+        revenue.style.display.should.not.equal('none');
+      });
+
+      it('should hide fish value when zero', () => {
+        window.ocean.fishValue = 0;
+        window.updateCosts();
+
+        const revenue = document.querySelector('#revenue-fish');
+        revenue.style.display.should.equal('none');
+      });
+
+      it('should show cost of departure when non-zero', () => {
+        window.ocean.costDeparture = 1.0;
+        window.updateCosts();
+
+        const cost = document.querySelector('#cost-departure');
+        cost.textContent.should.match(/\$1/);
+      });
+
+      it('should hide cost of departure when zero', () => {
+        window.ocean.costDeparture = 0;
+        window.updateCosts();
+
+        const cost = document.querySelector('#cost-departure');
+        cost.style.display.should.equal('none');
+      });
+
+      it('should show cost of cast when non-zero', () => {
+        window.ocean.costCast = 0.5;
+        window.updateCosts();
+
+        const cost = document.querySelector('#cost-cast');
+        cost.textContent.should.match(/\$0\.5/);
+      });
+
+      it('should hide cost of cast when zero', () => {
+        window.ocean.costCast = 0;
+        window.updateCosts();
+
+        const cost = document.querySelector('#cost-cast');
+        cost.style.display.should.equal('none');
+      });
+
+      it('should show cost per second when non-zero', () => {
+        window.ocean.costSecond = 0.1;
+        window.updateCosts();
+
+        const cost = document.querySelector('#cost-second');
+        cost.textContent.should.match(/\$0\.1/);
+      });
+
+      it('should hide cost per second when zero', () => {
+        window.ocean.costSecond = 0;
+        window.updateCosts();
+
+        const cost = document.querySelector('#cost-second');
+        cost.style.display.should.equal('none');
+      });
+
+      it('should return early if ocean is not defined', () => {
+        window.ocean = null;
+
+        // Should not throw error
+        (() => window.updateCosts()).should.not.throw();
+      });
+    });
+
+    describe('updateRulesText()', () => {
+      it('should set rules text with line breaks converted to <br />', () => {
+        window.ocean.preparationText = 'Line 1\nLine 2\nLine 3';
+        window.updateRulesText();
+
+        const rulesText = document.querySelector('#rules-text');
+        rulesText.innerHTML.should.equal('Line 1<br>Line 2<br>Line 3');
+      });
+
+      it('should handle text without line breaks', () => {
+        window.ocean.preparationText = 'Single line text';
+        window.updateRulesText();
+
+        const rulesText = document.querySelector('#rules-text');
+        rulesText.innerHTML.should.equal('Single line text');
+      });
+    });
+
+    describe('makeUnpausable()', () => {
+      it('should hide pause button when pause is disabled', () => {
+        window.ocean.enablePause = false;
+        window.makeUnpausable();
+
+        const pause = document.querySelector('#pause');
+        pause.style.display.should.equal('none');
+      });
+
+      it('should not hide pause button when pause is enabled', () => {
+        const pause = document.querySelector('#pause');
+        pause.style.display = ''; // Reset
+
+        window.ocean.enablePause = true;
+        window.makeUnpausable();
+
+        pause.style.display.should.not.equal('none');
+      });
+    });
+
+    describe('hideTutorial()', () => {
+      it('should hide tutorial when disabled', () => {
+        window.ocean.enableTutorial = false;
+        window.hideTutorial();
+
+        const tutorial = document.querySelector('#tutorial');
+        tutorial.style.display.should.equal('none');
+      });
+
+      it('should not hide tutorial when enabled', () => {
+        const tutorial = document.querySelector('#tutorial');
+        tutorial.style.display = ''; // Reset
+
+        window.ocean.enableTutorial = true;
+        window.hideTutorial();
+
+        tutorial.style.display.should.not.equal('none');
+      });
     });
   });
 });
