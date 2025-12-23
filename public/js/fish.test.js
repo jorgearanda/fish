@@ -65,6 +65,10 @@ describe('Fish (jsdom)', () => {
             window.addEventListener(event, handler);
             return this;
           },
+          resize: function(handler) {
+            if (handler) window.addEventListener('resize', handler);
+            return this;
+          },
           ready: function(handler) {
             handler();
             return this;
@@ -179,6 +183,25 @@ describe('Fish (jsdom)', () => {
               callback();
             }
             return this;
+          },
+          data: function(name, val) {
+            if (!element) return val === undefined ? undefined : this;
+            if (val !== undefined) {
+              element.setAttribute('data-' + name, val);
+              return this;
+            }
+            return element.getAttribute('data-' + name);
+          },
+          removeAttr: function(name) {
+            if (element) element.removeAttribute(name);
+            return this;
+          },
+          modal: function(options) {
+            // Mock Bootstrap modal
+            if (element && typeof element.modal === 'function') {
+              element.modal(options);
+            }
+            return this;
           }
         };
       }
@@ -246,6 +269,7 @@ describe('Fish (jsdom)', () => {
         costs_costSecond: 'Cost per Second:',
         buttons_goFishing: 'Go Fishing',
         buttons_goToSea: 'Go to Sea',
+        buttons_return: 'Return to Port',
         buttons_castFish: 'Cast',
         buttons_pause: 'Pause',
         buttons_resume: 'Resume',
@@ -273,6 +297,7 @@ describe('Fish (jsdom)', () => {
         costs_costSecond: 'Costo por Segundo:',
         buttons_goFishing: 'Ir a Pescar',
         buttons_goToSea: 'Ir al Mar',
+        buttons_return: 'Volver al Puerto',
         buttons_castFish: 'Lanzar',
         buttons_pause: 'Pausar',
         buttons_resume: 'Reanudar',
@@ -949,6 +974,357 @@ describe('Fish (jsdom)', () => {
         window.hideTutorial();
 
         tutorial.style.display.should.not.equal('none');
+      });
+    });
+  });
+
+  describe('Game Flow Functions', () => {
+    beforeEach(() => {
+      // Create additional DOM elements for game flow tests
+      const elements = [
+        'changeLocation', 'attempt-fish', 'pause', 'resume',
+        'fish-season-header', 'profit-season-header',
+        'over-text', 'over-modal'
+      ];
+      elements.forEach(id => {
+        const elem = document.createElement(id === 'changeLocation' || id === 'attempt-fish' || id === 'pause' || id === 'resume' ? 'button' : 'div');
+        elem.id = id;
+        if (id === 'changeLocation') {
+          elem.setAttribute('data-location', 'port');
+        }
+        if (id === 'over-modal') {
+          // Mock Bootstrap modal
+          elem.modal = function(options) {
+            elem.setAttribute('data-modal-shown', 'true');
+            elem.setAttribute('data-keyboard', options.keyboard);
+            elem.setAttribute('data-backdrop', options.backdrop);
+          };
+        }
+        document.body.appendChild(elem);
+      });
+
+      // Set up mock socket
+      window.mockSocketEmits = [];
+      window.socket = {
+        emit: function(event, data) {
+          window.mockSocketEmits.push({ event, data });
+        },
+        disconnect: function() {
+          window.mockSocketEmits.push({ event: 'disconnect' });
+        }
+      };
+
+      // Set up basic state
+      window.st = {
+        fishers: [],
+        status: 'loading',
+        season: 0,
+        certainFish: 100,
+        reportedMysteryFish: 0
+      };
+
+      window.ocean = {
+        profitDisplayDisabled: false,
+        enablePause: true,
+        enableTutorial: true,
+        currencySymbol: '$',
+        endTimeText: 'Time is up!\nGame over.',
+        endDepletionText: 'Fish depleted!\nGame over.'
+      };
+    });
+
+    describe('setupOcean()', () => {
+      it('should call all ocean setup functions', () => {
+        const testOcean = {
+          profitDisplayDisabled: false,
+          enablePause: true,
+          enableTutorial: true,
+          preparationText: 'Welcome!',
+          fishValue: 1.0,
+          costDeparture: 0.5,
+          costCast: 0.1,
+          costSecond: 0.0
+        };
+
+        window.setupOcean(testOcean);
+
+        // Ocean should be set
+        window.ocean.should.equal(testOcean);
+
+        // Catch intent column should be hidden (called by setupOcean)
+        // setupOcean calls hideCatchIntentColumn() which hides #catch-intent-th
+        const catchIntentTh = document.querySelector('#catch-intent-th');
+        should.exist(catchIntentTh);
+        catchIntentTh.style.display.should.equal('none');
+      });
+
+      it('should hide profit columns when profit display is disabled', () => {
+        const testOcean = {
+          profitDisplayDisabled: true,
+          enablePause: true,
+          enableTutorial: true,
+          preparationText: 'Welcome!',
+          fishValue: 1.0,
+          costDeparture: 0,
+          costCast: 0,
+          costSecond: 0
+        };
+
+        // Create profit elements
+        ['profit-season-header', 'profit-total-header'].forEach(id => {
+          const elem = document.createElement('div');
+          elem.id = id;
+          document.body.appendChild(elem);
+        });
+
+        window.setupOcean(testOcean);
+
+        const profitHeader = document.querySelector('#profit-season-header');
+        profitHeader.style.display.should.equal('none');
+      });
+    });
+
+    describe('changeLocation()', () => {
+      it('should change from port to sea', () => {
+        // Set up messages
+        window.msgs = window.langs[window.lang];
+
+        const btn = document.querySelector('#changeLocation');
+        btn.setAttribute('data-location', 'port');
+
+        window.changeLocation();
+
+        // Socket should emit goToSea
+        window.mockSocketEmits.should.containDeep([{ event: 'goToSea' }]);
+
+        // Button data should change
+        btn.getAttribute('data-location').should.equal('sea');
+
+        // Button text should change to return message
+        btn.innerHTML.should.equal(window.msgs.buttons_return);
+      });
+
+      it('should change from sea to port', () => {
+        // Set up messages
+        window.msgs = window.langs[window.lang];
+
+        const btn = document.querySelector('#changeLocation');
+        btn.setAttribute('data-location', 'sea');
+
+        window.changeLocation();
+
+        // Socket should emit return
+        window.mockSocketEmits.should.containDeep([{ event: 'return' }]);
+
+        // Button data should change
+        btn.getAttribute('data-location').should.equal('port');
+
+        // Button text should change to goToSea message
+        btn.innerHTML.should.equal(window.msgs.buttons_goToSea);
+      });
+    });
+
+    describe('resetLocation()', () => {
+      it('should reset location to port', () => {
+        // Set up messages
+        window.msgs = window.langs[window.lang];
+
+        const btn = document.querySelector('#changeLocation');
+        btn.setAttribute('data-location', 'sea');
+
+        window.resetLocation();
+
+        btn.getAttribute('data-location').should.equal('port');
+        btn.innerHTML.should.equal(window.msgs.buttons_goToSea);
+      });
+    });
+
+    describe('goToSea()', () => {
+      it('should emit goToSea event and enable fishing button', () => {
+        const attemptBtn = document.querySelector('#attempt-fish');
+        attemptBtn.setAttribute('disabled', 'disabled');
+
+        window.goToSea();
+
+        // Socket should emit
+        window.mockSocketEmits.should.containDeep([{ event: 'goToSea' }]);
+
+        // Button should be enabled
+        attemptBtn.hasAttribute('disabled').should.be.false();
+      });
+    });
+
+    describe('goToPort()', () => {
+      it('should emit return event and disable fishing button', () => {
+        const attemptBtn = document.querySelector('#attempt-fish');
+
+        window.goToPort();
+
+        // Socket should emit
+        window.mockSocketEmits.should.containDeep([{ event: 'return' }]);
+
+        // Button should be disabled
+        attemptBtn.getAttribute('disabled').should.equal('disabled');
+      });
+    });
+
+    describe('attemptToFish()', () => {
+      it('should emit attemptToFish event', () => {
+        window.attemptToFish();
+
+        window.mockSocketEmits.should.containDeep([{ event: 'attemptToFish' }]);
+      });
+    });
+
+    describe('endSeason()', () => {
+      it('should update season and status', () => {
+        window.st.season = 1;
+        window.st.status = 'running';
+
+        window.endSeason({ season: 2, status: 'resting' });
+
+        window.st.season.should.equal(2);
+        window.st.status.should.equal('resting');
+      });
+
+      it('should disable buttons', () => {
+        const changeBtn = document.querySelector('#changeLocation');
+        const attemptBtn = document.querySelector('#attempt-fish');
+
+        window.endSeason({ season: 2, status: 'resting' });
+
+        changeBtn.getAttribute('disabled').should.equal('disabled');
+        attemptBtn.getAttribute('disabled').should.equal('disabled');
+      });
+    });
+
+    describe('endRun()', () => {
+      it('should disconnect socket and show modal', () => {
+        window.endRun('time');
+
+        // Should disconnect
+        window.mockSocketEmits.should.containDeep([{ event: 'disconnect' }]);
+
+        // Status should be over
+        window.st.status.should.equal('over');
+
+        // Modal should be shown
+        const modal = document.querySelector('#over-modal');
+        modal.getAttribute('data-modal-shown').should.equal('true');
+      });
+
+      it('should display time-based end text', () => {
+        window.ocean.endTimeText = 'Time is up!\nGame over.';
+
+        window.endRun('time');
+
+        const overText = document.querySelector('#over-text');
+        overText.innerHTML.should.match(/Time is up/);
+        overText.innerHTML.should.match(/<br/);
+      });
+
+      it('should display depletion-based end text', () => {
+        window.ocean.endDepletionText = 'Fish depleted!\nGame over.';
+
+        window.endRun('depletion');
+
+        const overText = document.querySelector('#over-text');
+        overText.innerHTML.should.match(/Fish depleted/);
+        overText.innerHTML.should.match(/<br/);
+      });
+    });
+
+    describe('pause()', () => {
+      it('should disable location and fishing buttons', () => {
+        const changeBtn = document.querySelector('#changeLocation');
+        const attemptBtn = document.querySelector('#attempt-fish');
+
+        window.pause();
+
+        changeBtn.getAttribute('disabled').should.equal('disabled');
+        attemptBtn.getAttribute('disabled').should.equal('disabled');
+      });
+
+      it('should hide pause button and show resume button', () => {
+        const pauseBtn = document.querySelector('#pause');
+        const resumeBtn = document.querySelector('#resume');
+
+        window.pause();
+
+        pauseBtn.style.display.should.equal('none');
+        resumeBtn.style.display.should.equal('');
+      });
+    });
+
+    describe('resume()', () => {
+      it('should enable location and fishing buttons if they were enabled before pause', () => {
+        const changeBtn = document.querySelector('#changeLocation');
+        const attemptBtn = document.querySelector('#attempt-fish');
+
+        // Set pre-pause state to undefined (meaning they were enabled)
+        window.prePauseButtonsState = {
+          changeLocation: undefined,
+          attemptFish: undefined
+        };
+
+        window.resume();
+
+        changeBtn.hasAttribute('disabled').should.be.false();
+        attemptBtn.hasAttribute('disabled').should.be.false();
+      });
+
+      it('should show pause button and hide resume button', () => {
+        const pauseBtn = document.querySelector('#pause');
+        const resumeBtn = document.querySelector('#resume');
+        pauseBtn.style.display = 'none';
+        resumeBtn.style.display = '';
+
+        window.prePauseButtonsState = {};
+
+        window.resume();
+
+        pauseBtn.style.display.should.equal('');
+        resumeBtn.style.display.should.equal('none');
+      });
+    });
+
+    describe('requestPause()', () => {
+      it('should emit requestPause event with participant ID', () => {
+        window.pId = 'test-participant-123';
+
+        window.requestPause();
+
+        window.mockSocketEmits.should.containDeep([
+          { event: 'requestPause', data: 'test-participant-123' }
+        ]);
+      });
+    });
+
+    describe('requestResume()', () => {
+      it('should emit requestResume event with participant ID', () => {
+        window.pId = 'test-participant-456';
+
+        window.requestResume();
+
+        window.mockSocketEmits.should.containDeep([
+          { event: 'requestResume', data: 'test-participant-456' }
+        ]);
+      });
+    });
+
+    describe('maybeRedirect()', () => {
+      it('should not redirect if redirectURL is empty', () => {
+        window.ocean.redirectURL = '';
+
+        // Should not throw error
+        (() => window.maybeRedirect()).should.not.throw();
+      });
+
+      it('should not redirect if redirectURL is undefined', () => {
+        delete window.ocean.redirectURL;
+
+        // Should not throw error
+        (() => window.maybeRedirect()).should.not.throw();
       });
     });
   });
