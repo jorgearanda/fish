@@ -102,7 +102,7 @@ describe('Engine - OceanManager', function() {
 
           // Cleanup
           om.deleteOcean(oceanId);
-          testMicroworld.remove(function(removeErr) {
+          testMicroworld.deleteOne(function(removeErr) {
             return done(removeErr);
           });
         });
@@ -291,7 +291,7 @@ describe('Engine - OceanManager', function() {
 
           // Cleanup
           om.deleteOcean(oceanId);
-          testMicroworld.remove(function(removeErr) {
+          testMicroworld.deleteOne(function(removeErr) {
             return done(removeErr);
           });
         });

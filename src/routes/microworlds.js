@@ -146,7 +146,7 @@ exports.update = function(req, res) {
   delete mw.params.desc;
   delete mw.params.changeTo;
 
-  Microworld.update({ _id: req.params.id }, mw, function onUpdate(err) {
+  Microworld.updateOne({ _id: req.params.id }, mw, function onUpdate(err) {
     if (err) {
       logger.error('Error on PUT /microworlds/' + req.params.id, err);
       return res.sendStatus(500);
@@ -158,7 +158,7 @@ exports.update = function(req, res) {
 
 // DELETE /microworlds/:id
 exports.delete = function(req, res) {
-  Microworld.remove({ _id: req.params.id }, function onDelete(err) {
+  Microworld.deleteOne({ _id: req.params.id }, function onDelete(err) {
     if (err) {
       logger.error('Error on DELETE /microworlds/' + req.params.id, err);
       return res.sendStatus(500);
