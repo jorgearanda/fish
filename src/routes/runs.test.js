@@ -113,7 +113,6 @@ describe('Routes - Runs', () => {
   after(async () => {
     await Run.deleteMany({});
     await Experimenter.deleteMany({});
-    await mongoose.disconnect();
   });
 
   describe('GET /runs', () => {
