@@ -80,6 +80,19 @@ describe('GET /a/:id/profile', () => {
           });
       });
     });
+
+    it('should return 404 when profile exists in session but not in database', done => {
+      // This tests the error handling path when the internal API call fails
+      Experimenter.deleteOne({ _id: account_id }).then(() => {
+        agent
+          .get('/a/' + account_id + '/profile')
+          .expect(404)
+          .end((err, res) => {
+            assert(err === null, err);
+            return done();
+          });
+      });
+    });
   });
 
   describe('when a user is *not* logged in', () => {
@@ -335,6 +348,21 @@ describe('PUT /experimenters/:id', () => {
           email: kermit.email,
           rawPassword: 'a new password',
           confirmPass: 'a new password',
+        })
+        .end((err, res) => {
+          assert(err === null, err);
+          assert(res.statusCode === 204, 'Status code should be 204');
+          return done();
+        });
+    });
+
+    it('should allow updating without changing password', done => {
+      agent
+        .put('/experimenters/' + account_id)
+        .send({
+          username: 'updatedUsername',
+          name: 'Updated Name',
+          email: 'updated@example.com',
         })
         .end((err, res) => {
           assert(err === null, err);
