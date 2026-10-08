@@ -23,6 +23,38 @@ describe('Engine - Fisher', function() {
     return done();
   });
 
+  describe('lobby timestamps', function() {
+    it('should set entryTime close to now for a human fisher', function(done) {
+      var before = Date.now();
+      var f = new Fisher('A Participant', 'human', {}, {});
+      var after = Date.now();
+      f.entryTime.should.be.within(before, after);
+      return done();
+    });
+
+    it('should set readyTime to null for a human fisher', function(done) {
+      var f = new Fisher('A Participant', 'human', {}, {});
+      should.equal(f.readyTime, null);
+      return done();
+    });
+
+    it('should set entryTime close to now for a bot fisher', function(done) {
+      var before = Date.now();
+      var f = new Fisher('Mr. Tuna', 'bot', {}, {});
+      var after = Date.now();
+      f.entryTime.should.be.within(before, after);
+      return done();
+    });
+
+    it('should set readyTime close to now for a bot fisher', function(done) {
+      var before = Date.now();
+      var f = new Fisher('Mr. Tuna', 'bot', {}, {});
+      var after = Date.now();
+      f.readyTime.should.be.within(before, after);
+      return done();
+    });
+  });
+
   describe('isBot()', function() {
     it('should return true for bot fishers', function(done) {
       var f = new Fisher('Mr. Tuna', 'bot', {}, {});
@@ -364,6 +396,164 @@ describe('Engine - Fisher', function() {
       f.seasonData[1].startMoney.should.equal(0);
       f.seasonData[1].endMoney.should.equal(0);
       should.not.exist(f.seasonData[1].intendedCasts);
+      return done();
+    });
+  });
+
+  function makeOcean(params) {
+    return {
+      log: {
+        info: function() {},
+        error: function() {},
+      },
+      microworld: {
+        params: params,
+      },
+    };
+  }
+
+  describe('hasAdvantage()', function() {
+    it('should return false when fisher advantage is disabled', function(done) {
+      var ocean = makeOcean({ fisherAdvantageEnabled: false });
+      var f = new Fisher('Mr. Tuna', 'bot', { fHasAdvantage: true }, ocean);
+      f.hasAdvantage().should.equal(false);
+      return done();
+    });
+
+    it('should return false when the fisher does not have advantage', function(done) {
+      var ocean = makeOcean({ fisherAdvantageEnabled: true });
+      var f = new Fisher('Mr. Tuna', 'bot', { fHasAdvantage: false }, ocean);
+      f.hasAdvantage().should.equal(false);
+      return done();
+    });
+
+    it('should return true when advantage is enabled and the fisher has it', function(done) {
+      var ocean = makeOcean({ fisherAdvantageEnabled: true });
+      var f = new Fisher('Mr. Tuna', 'bot', { fHasAdvantage: true }, ocean);
+      f.hasAdvantage().should.equal(true);
+      return done();
+    });
+  });
+
+  describe('goToSea()', function() {
+    it('should charge the full departure cost to a fisher without advantage', function(done) {
+      var ocean = makeOcean({
+        fisherAdvantageEnabled: true,
+        costDeparture: 1.0,
+        costDepartureReduction: 0.4,
+      });
+      var f = new Fisher('Mr. Tuna', 'human', { fHasAdvantage: false }, ocean);
+      f.prepareFisherForSeason(0);
+      f.goToSea();
+      f.money.should.equal(-1.0);
+      return done();
+    });
+
+    it('should charge the reduced departure cost to an advantaged fisher', function(done) {
+      var ocean = makeOcean({
+        fisherAdvantageEnabled: true,
+        costDeparture: 1.0,
+        costDepartureReduction: 0.4,
+      });
+      var f = new Fisher('Mr. Tuna', 'human', { fHasAdvantage: true }, ocean);
+      f.prepareFisherForSeason(0);
+      f.goToSea();
+      f.money.should.equal(-0.6);
+      return done();
+    });
+
+    it('should increment totalDepartures each time the fisher sails', function(done) {
+      var ocean = makeOcean({ costDeparture: 0 });
+      var f = new Fisher('Mr. Tuna', 'human', {}, ocean);
+      f.prepareFisherForSeason(0);
+      f.goToSea();
+      f.goToPort();
+      f.goToSea();
+      f.totalDepartures.should.equal(2);
+      return done();
+    });
+  });
+
+  describe('tryToFish()', function() {
+    it('should charge the full cast cost to a fisher without advantage', function(done) {
+      var ocean = makeOcean({
+        fisherAdvantageEnabled: true,
+        costCast: 0.5,
+        costCastReduction: 0.2,
+      });
+      ocean.isSuccessfulCastAttempt = function() { return false; };
+      var f = new Fisher('Mr. Tuna', 'human', { fHasAdvantage: false }, ocean);
+      f.prepareFisherForSeason(0);
+      f.tryToFish();
+      f.money.should.equal(-0.5);
+      return done();
+    });
+
+    it('should charge the reduced cast cost to an advantaged fisher', function(done) {
+      var ocean = makeOcean({
+        fisherAdvantageEnabled: true,
+        costCast: 0.5,
+        costCastReduction: 0.2,
+      });
+      ocean.isSuccessfulCastAttempt = function() { return false; };
+      var f = new Fisher('Mr. Tuna', 'human', { fHasAdvantage: true }, ocean);
+      f.prepareFisherForSeason(0);
+      f.tryToFish();
+      f.money.should.equal(-0.3);
+      return done();
+    });
+
+    it('should increment totalCasts each time the fisher casts', function(done) {
+      var ocean = makeOcean({ costCast: 0 });
+      ocean.isSuccessfulCastAttempt = function() { return false; };
+      var f = new Fisher('Mr. Tuna', 'human', {}, ocean);
+      f.prepareFisherForSeason(0);
+      f.tryToFish();
+      f.tryToFish();
+      f.totalCasts.should.equal(2);
+      return done();
+    });
+  });
+
+  describe('runBot() per-second cost', function() {
+    it('should charge the full per-second cost to a fisher at sea without advantage', function(done) {
+      var ocean = makeOcean({
+        fisherAdvantageEnabled: true,
+        costSecond: 0.1,
+        costSecondReduction: 0.06,
+      });
+      var f = new Fisher('Mr. Tuna', 'human', { fHasAdvantage: false }, ocean);
+      f.prepareFisherForSeason(0);
+      f.status = 'At sea';
+      f.runBot();
+      f.money.should.equal(-0.1);
+      return done();
+    });
+
+    it('should charge the reduced per-second cost to an advantaged fisher at sea', function(done) {
+      var ocean = makeOcean({
+        fisherAdvantageEnabled: true,
+        costSecond: 0.1,
+        costSecondReduction: 0.06,
+      });
+      var f = new Fisher('Mr. Tuna', 'human', { fHasAdvantage: true }, ocean);
+      f.prepareFisherForSeason(0);
+      f.status = 'At sea';
+      f.runBot();
+      f.money.should.be.approximately(-0.04, 0.0001);
+      return done();
+    });
+
+    it('should increment totalSecondsAtSea only while at sea', function(done) {
+      var ocean = makeOcean({ costSecond: 0 });
+      var f = new Fisher('Mr. Tuna', 'human', {}, ocean);
+      f.prepareFisherForSeason(0);
+      f.status = 'At port';
+      f.runBot();
+      f.status = 'At sea';
+      f.runBot();
+      f.runBot();
+      f.totalSecondsAtSea.should.equal(2);
       return done();
     });
   });

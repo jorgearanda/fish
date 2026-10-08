@@ -104,6 +104,32 @@ describe('Routes - Runs', () => {
           ],
         },
       ],
+      devices: [
+        {
+          participant: 'Fisher1',
+          deviceClass: 'phone',
+          brand: 'Samsung',
+          model: 'SM-A105F',
+          os: 'Android',
+          osVersion: '9',
+          browser: 'Chrome',
+          browserVersion: '90.0',
+          inAppBrowser: 'WhatsApp',
+          touch: true,
+          screenWidth: 360,
+          screenHeight: 760,
+          userAgent: 'test-agent',
+        },
+      ],
+      endReason: 'time',
+      connectionEvents: [
+        // Like a real test run: away 13 s mid-season 1, then 17 s during the
+        // break after season 1, which counts toward season 2
+        { participant: 'Fisher1', event: 'disconnected', season: 1, phase: 'running', resultsSeason: 1 },
+        { participant: 'Fisher1', event: 'reconnected', season: 1, phase: 'running', resultsSeason: 1, secondsAway: 13 },
+        { participant: 'Fisher1', event: 'disconnected', season: 1, phase: 'resting', resultsSeason: 2 },
+        { participant: 'Fisher1', event: 'reconnected', season: 1, phase: 'resting', resultsSeason: 2, secondsAway: 17 },
+      ],
     });
 
     // Create authenticated agent
@@ -228,6 +254,95 @@ describe('Routes - Runs', () => {
       // 2 fishers * 2 seasons = 4 data rows + 1 header row = 5 lines
       const lines = res.text.trim().split('\n');
       lines.length.should.equal(5);
+    });
+
+    it('CSV should contain device columns, filled for humans and empty for bots', async () => {
+      const mwId = testRun.microworld._id.toString();
+      const res = await agent.get(`/runs?csv=true&mw=${mwId}`);
+
+      const lines = res.text.trim().split('\n');
+      lines[0].should.match(/Device Class/);
+      lines[0].should.match(/Device Brand/);
+      lines[0].should.match(/Device Model/);
+      lines[0].should.match(/In-App Browser/);
+      lines[0].should.match(/User Agent/);
+      const humanRows = lines.filter(line => /Fisher1/.test(line));
+      const botRows = lines.filter(line => /Fisher2/.test(line));
+      humanRows.length.should.equal(2);
+      humanRows.forEach(line => {
+        line.should.match(/phone,Samsung,SM-A105F,Android,9,Chrome,90\.0,WhatsApp,360x760,test-agent/);
+      });
+      botRows.forEach(line => {
+        line.should.not.match(/Samsung/);
+      });
+    });
+
+    it('CSV should summarise each fisher\'s disconnects and the run\'s end reason', async () => {
+      const mwId = testRun.microworld._id.toString();
+      const res = await agent.get(`/runs?csv=true&mw=${mwId}`);
+
+      const lines = res.text.trim().split('\n');
+      lines[0].should.match(/Disconnects,Seconds Away,Lost,Run End Reason,Device Class/);
+      const fisher1 = lines.filter(line => /Fisher1/.test(line));
+      fisher1.length.should.equal(2);
+      fisher1[0].should.match(/,1,13,,time,phone,/); // season 1
+      fisher1[1].should.match(/,1,17,,time,phone,/); // season 2 (the break before it)
+      lines.filter(line => /Fisher2/.test(line)).forEach(line => {
+        line.should.match(/,0,0,,time,,/);
+      });
+    });
+
+    it('should put a loss on the row of the season it happened in', () => {
+      const flatten = require('./runs').flattenRunResults;
+      const run = {
+        _id: 'r1',
+        endReason: 'time',
+        results: [1, 2, 3].map(season => ({
+          season: season,
+          fishers: (season < 3 ? ['A', 'B'] : ['B']).map(name => ({ name: name, type: 'human' })),
+        })),
+        connectionEvents: [
+          { participant: 'A', event: 'disconnected', season: 2, phase: 'running', resultsSeason: 2 },
+          { participant: 'A', event: 'removed', season: 2, phase: 'running', resultsSeason: 2,
+            reason: 'grace period expired' },
+          // B is lost during the break before a season B never gets to play
+          { participant: 'B', event: 'disconnected', season: 3, phase: 'resting', resultsSeason: 4 },
+          { participant: 'B', event: 'game ended', season: 3, phase: 'resting', resultsSeason: 4,
+            reason: 'too many disconnects' },
+        ],
+      };
+      const rows = flatten(run);
+      const row = (name, season) => rows.filter(r => r.Fisher === name && r.Season === season)[0];
+      row('A', 1).Lost.should.equal('');
+      row('A', 2).Lost.should.equal('removed: grace period expired');
+      row('A', 2).Disconnects.should.equal(1);
+      // Past B's last row: kept on that last row rather than dropped
+      row('B', 3).Lost.should.equal('game ended: too many disconnects');
+      row('B', 3).Disconnects.should.equal(1);
+    });
+
+    it('should still read events saved before resultsSeason existed', () => {
+      const flatten = require('./runs').flattenRunResults;
+      const rows = flatten({
+        _id: 'r2',
+        results: [{ season: 1, fishers: [{ name: 'A', type: 'human' }] }],
+        connectionEvents: [
+          { participant: 'A', event: 'disconnected', season: 1 },
+          { participant: 'A', event: 'reconnected', season: 1, secondsAway: 5 },
+        ],
+      });
+      rows[0].Disconnects.should.equal(1);
+      rows[0]['Seconds Away'].should.equal(5);
+    });
+
+    it('CSV should put the device columns last', async () => {
+      const mwId = testRun.microworld._id.toString();
+      const res = await agent.get(`/runs?csv=true&mw=${mwId}`);
+
+      const header = res.text.trim().split('\n')[0].split(',');
+      const deviceColumns = ['Device Class', 'Device Brand', 'Device Model', 'OS', 'OS Version',
+        'Browser', 'Browser Version', 'In-App Browser', 'Screen Size', 'User Agent'];
+      header.slice(-deviceColumns.length).should.eql(deviceColumns);
     });
   });
 

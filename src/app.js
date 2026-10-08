@@ -75,7 +75,8 @@ logger.debug('Node env = ' + (process.env.NODE_ENV || app.settings.env));
 app.set('port', process.env.PORT || 8080);
 
 mongoose.set('strictQuery', false);
-mongoose.connect(config.db[app.settings.env]);
+// Use family: 4 to force IPv4 (localhost may resolve to IPv6 ::1 which MongoDB may not listen on)
+mongoose.connect(config.db[app.settings.env], { family: 4 });
 
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'pug');
@@ -129,6 +130,22 @@ app.get('/explain-catch-intentions', function (req, res) {
   res.render('explain-catch-intentions.pug', {
     myHost: req.protocol + '://' + req.get('host')
   });
+});
+app.get('/explain-fisher-classes', function (req, res) {
+  res.render('explain-fisher-classes.pug', {
+    myHost: req.protocol + '://' + req.get('host')
+  });
+});
+app.get('/explain-fisher-advantage', function (req, res) {
+  res.render('explain-fisher-advantage.pug', {
+    myHost: req.protocol + '://' + req.get('host')
+  });
+});
+app.get('/explain-clean-abort', function (req, res) {
+  res.render('explain-clean-abort.pug');
+});
+app.get('/explain-disconnects', function (req, res) {
+  res.render('explain-disconnects.pug');
 });
 app.get('/new-welcome', function (req, res) {
   res.render('participant-access.pug');
@@ -213,6 +230,12 @@ app.use(function(err, req, res, next) {
 
 var server = http.createServer(app);
 var io = (exports.io = socketio.listen(server, {
+  // Heartbeat: browsers ping every 12 s; any message (ping or game action)
+  // proves a participant is there. After 12 + 8 = 20 s of silence the server
+  // treats them as disconnected (library defaults were 25 + 20 = 45 s). The
+  // 8 s wait leaves room for slow mobile round trips.
+  pingInterval: 12000,
+  pingTimeout: 8000,
   logger: {
     debug: logger.debug,
     info: logger.info,

@@ -41,15 +41,64 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
     delete this.trackedSimulations[oId];
   };
 
-  this.assignFisherToOcean = function (mwId, pId, cb) {
+  // Resolve incoming fisher's class using a microworld's params
+  function resolveClass(mwParams, pParams) {
+    if (!mwParams.fisherClassesEnabled) return null;
+    var validClasses = mwParams.fisherClasses || [];
+    if (validClasses.length === 0) return null;
+    var fClass = pParams && pParams.fClass;
+    if (!fClass) return validClasses[0];
+    var inputLower = fClass.toLowerCase();
+    var matched = validClasses.filter(function(c) { return c.toLowerCase() === inputLower; });
+    return matched.length > 0 ? matched[0] : validClasses[0];
+  }
+
+  // isRejoin: the participant's page was already in a game and has reconnected
+  // (browser auto-reconnect, or back from the back/forward cache), as opposed
+  // to a fresh visit
+  this.assignFisherToOcean = function (mwId, pId, pParams, cb, isRejoin) {
     var oKeys = Object.keys(this.oceans);
     var oId = null;
 
     for (var i in oKeys) {
       oId = oKeys[i];
-      if (this.oceans[oId].microworld._id.toString() === mwId && this.oceans[oId].hasRoom()) {
-        this.oceans[oId].addFisher(pId);
+      var ocean = this.oceans[oId];
+      if (ocean.microworld._id.toString() !== mwId) continue;
+
+      // Lost after disconnecting: may not rejoin, nor start over in a new group
+      if (ocean.isLost(pId)) {
+        log.info('Fisher ' + pId + ' was lost from ocean ' + oId + ' and may not rejoin');
+        return cb(null, 'lost');
+      }
+
+      // Reconnect: fisher is already in this ocean (e.g. browser refresh or second tab)
+      if (ocean.findFisherIndex(pId) !== null) {
+        log.info('Fisher ' + pId + ' reconnected to existing ocean ' + oId);
         return cb(oId);
+      }
+
+      if (ocean.hasRoom()) {
+        var resolvedClass = resolveClass(ocean.microworld.params, pParams);
+        if (resolvedClass === null || ocean.needsClass(resolvedClass)) {
+          ocean.addFisher(pId, pParams);
+          return cb(oId);
+        }
+      }
+    }
+
+    // A reconnecting page whose game has ended, or which was removed from a
+    // game still in progress, must not be seated in a new group. (A fresh
+    // visit may start a new game, e.g. to reuse test IDs.)
+    if (isRejoin) {
+      for (var j in oKeys) {
+        var played = this.oceans[oKeys[j]];
+        if (!played || played.microworld._id.toString() !== mwId || !played.hasPlayed(pId)) continue;
+        if (played.isRemovable()) {
+          log.info('Fisher ' + pId + ' reconnected after their game in ocean ' + oKeys[j] + ' ended');
+          return cb(null, 'gameOver', { endReason: played.endReason });
+        }
+        log.info('Fisher ' + pId + ' reconnected after being removed from ocean ' + oKeys[j]);
+        return cb(null, 'removed');
       }
     }
 
@@ -60,7 +109,7 @@ exports.OceanManager = function OceanManager(io, ioAdmin) {
           log.error('Failed to assign fisher to ocean: ' + err.message);
           return cb(null); // Return null to indicate failure
         }
-        this.oceans[oId].addFisher(pId);
+        this.oceans[oId].addFisher(pId, pParams);
         return cb(oId);
       }.bind(this)
     );

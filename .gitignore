@@ -10,3 +10,4 @@ fish.sublime-workspace
 coverage/
 dist/
 .vscode
+.claude/

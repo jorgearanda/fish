@@ -148,30 +148,70 @@ html
               .col-md-5
                   button#show-catch-intentions-explanation.btn.btn-info(type='button') EXPLAIN
 
-          .row
+          .row.catch-intention-option.hide
             .form-group
-              label.form-label.col-md-6(for='catch-intent-seasons') Catch intention 
-                  a#catch-intention-seasons-tooltip(title='Comma-separated list of season numbers, 2 or higher, when to prompt human fishers to indicate their intent.', data-toggle='tooltip', data-placement='top') seasons 
+              label.form-label.col-md-6(for='catch-intent-seasons') Catch intention
+                  a#catch-intention-seasons-tooltip(title='Comma-separated list of season numbers, 2 or higher, when to prompt human fishers to indicate their intent.', data-toggle='tooltip', data-placement='top') seasons
               .col-md-6
-                input#catch-intent-seasons.form-control.to-disable(type='text', value='2,4,6,8,10', disabled=true)
-          .row
+                input#catch-intent-seasons.form-control.to-disable(type='text', value='2,4,6,8,10')
+          .row.catch-intention-option.hide
             .form-group
-              label.form-label.col-md-6(for='catch-intent-dialog-duration') Catch intention 
+              label.form-label.col-md-6(for='catch-intent-dialog-duration') Catch intention
                   a#catch-intent-dialog-duration-tooltip(title='The number of seconds at the beginning of the delay between seasons during which human fishers are prompted to indicate their intent.', data-toggle='tooltip', data-placement='top') dialog duration
                   |  (seconds)
               .col-md-6
-                input#catch-intent-dialog-duration.form-control.to-disable(type='number', min='1', step='1', value='5', disabled=true)
-          .row
+                input#catch-intent-dialog-duration.form-control.to-disable(type='number', min='1', step='1', value='5')
+          .row.catch-intention-option.hide
             .form-group
               label.form-label.col-md-6(for='catch-intent-prompt1') Catch intentions prompt (required)
               .col-md-6
-                input#catch-intent-prompt1.form-control.to-disable(type='text', autofocus='', disabled=true)
-          .row
+                input#catch-intent-prompt1.form-control.to-disable(type='text', autofocus='')
+          .row.catch-intention-option.hide
             .form-group
               label.form-label.col-md-6(for='catch-intent-prompt2') Catch intentions subprompt (optional)
               .col-md-6
-                input#catch-intent-prompt2.form-control.to-disable(type='text', autofocus='', disabled=true)
-          h3 Redirection 
+                input#catch-intent-prompt2.form-control.to-disable(type='text', autofocus='')
+          h3 Disconnects
+          .row
+            .form-group
+              .col-md-7
+                label.form-label.checkbox
+                  | Handle&nbsp;
+                  a#disconnect-handling-tooltip(title='When off, a participant whose connection drops during the game is removed at once. When on, they get time to reconnect (for example after reloading the page) and rejoin with their catch and profit intact.', data-toggle='tooltip', data-placement='top') disconnects
+                  input#enable-disconnect-handling.to-disable(type='checkbox', checked=false)
+              .col-md-5
+                button#show-disconnects-explanation.btn.btn-info(type='button') EXPLAIN
+          .row.disconnect-option.hide
+            .form-group
+              label.form-label.col-md-6(for='disconnect-grace-period') Grace period to&nbsp;
+                  a#disconnect-grace-period-tooltip(title='How long a disconnected participant has to reconnect. Keep it short if the game pauses: the other players are waiting.', data-toggle='tooltip', data-placement='top') reconnect
+                  |  (seconds)
+              .col-md-6
+                input#disconnect-grace-period.form-control.to-disable(type='number', min='1', step='1', value='30')
+          .row.disconnect-option.hide
+            .form-group
+              label.form-label.col-md-6(for='disconnect-during-grace') During the&nbsp;
+                  a#disconnect-during-grace-tooltip(title='Pause: everyone waits, and sees a message with a countdown. Continue: the game goes on and the others are not told; the absent participant catches nothing meanwhile.', data-toggle='tooltip', data-placement='top') grace period
+              .col-md-6
+                select#disconnect-during-grace.form-control.to-disable
+                  option(value='pause') Pause game
+                  option(value='continue') Continue game
+          .row.disconnect-option.hide
+            .form-group
+              label.form-label.col-md-6(for='disconnects-allowed')
+                a#disconnects-allowed-tooltip(title='How many times each participant may disconnect. One more than this, and they are lost straight away, with no grace period.', data-toggle='tooltip', data-placement='top') Disconnects allowed
+                |  per participant
+              .col-md-6
+                input#disconnects-allowed.form-control.to-disable(type='number', min='0', step='1', value='3')
+          .row.disconnect-option.hide
+            .form-group
+              label.form-label.col-md-6(for='disconnect-lost-action') When a participant&nbsp;
+                  a#disconnect-lost-action-tooltip(title='A participant is lost when the grace period runs out, or when they go over the disconnects allowed. They cannot rejoin. Ending the game saves the run with the reason recorded.', data-toggle='tooltip', data-placement='top') is lost
+              .col-md-6
+                select#disconnect-lost-action.form-control.to-disable
+                  option(value='end') End and record the game
+                  option(value='remove') Remove them and play on
+          h3 Redirection
           .row
             .form-group
               label.form-label.col-md-7(for='redirect-url') Redirection&nbsp;
@@ -182,6 +222,60 @@ html
             .form-group
               .col-md-12
                 input#redirect-url.form-control.to-disable(type='text', value='')
+          h3 Clean Abort
+          .row
+            .form-group
+              .col-md-7
+                label.form-label.checkbox
+                  | Enable&nbsp;
+                  a#clean-abort-tooltip(title='Enable timeouts and abort prompts for participants who take too long to read the rules or wait in the lobby.', data-toggle='tooltip', data-placement='top') clean abort
+                  input#enable-clean-abort.to-disable(type='checkbox', checked=false)
+              .col-md-5
+                button#show-clean-abort-explanation.btn.btn-info(type='button') EXPLAIN
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-7(for='read-rules-timeout')
+                a#read-rules-timeout-tooltip(title='Minutes before prompting a participant still reading the rules. 0 to disable.', data-toggle='tooltip', data-placement='top') Read rules timeout (min)
+              .col-md-5
+                input#read-rules-timeout.form-control.to-disable(type='number', min='0', max='10', step='1')
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-12(for='abort-reading-rules-text') Reading rules timeout message
+              .col-md-12
+                textarea#abort-reading-rules-text.form-control.to-disable(rows='3', placeholder='Leave blank to use default message')
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-7(for='lobby-wait-timeout')
+                a#lobby-wait-timeout-tooltip(title='Minutes before prompting a participant waiting in the lobby. 0 to disable.', data-toggle='tooltip', data-placement='top') Lobby wait timeout (min)
+              .col-md-5
+                input#lobby-wait-timeout.form-control.to-disable(type='number', min='0', max='10', step='1')
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-12(for='abort-lobby-wait-text') Lobby wait timeout message
+              .col-md-12
+                textarea#abort-lobby-wait-text.form-control.to-disable(rows='3', placeholder='Leave blank to use default message')
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-7(for='prompt-timeout')
+                a#prompt-timeout-tooltip(title='Seconds before auto-acting if a participant does not respond to a timeout prompt. Also applies to the simulation-over dialog if a redirect URL is set.', data-toggle='tooltip', data-placement='top') Prompt timeout (sec)
+              .col-md-5
+                input#prompt-timeout.form-control.to-disable(type='number', min='10', max='60', step='1')
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-7(for='max-timeouts')
+                a#max-timeouts-tooltip(title='Maximum number of times a participant may be prompted before the next timeout forces an immediate exit.', data-toggle='tooltip', data-placement='top') Max timeouts
+              .col-md-5
+                input#max-timeouts.form-control.to-disable(type='number', min='1', max='20', step='1')
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-12(for='force-abort-text') Force abort message
+              .col-md-12
+                textarea#force-abort-text.form-control.to-disable(rows='3', placeholder='Leave blank to use default message')
+          .row.clean-abort-option.hide
+            .form-group
+              label.form-label.col-md-7(for='abort-url') Abort URL
+              .col-md-12
+                input#abort-url.form-control.to-disable(type='text', value='')
 
 
         .col-md-4
@@ -224,6 +318,90 @@ html
                 a#chance-catch-tooltip(title='If the chance of catch is 1.0, every fishing attempt is successful. If it is 0.5, half of them are.', data-toggle='tooltip', data-placement='top') Chance of catch
               .col-md-6
                 input#chance-catch.form-control.to-disable(type='number', min='0', step='0.01', value='1.00')
+
+          h3 Fisher Classes
+          .row
+            .form-group
+              .col-md-7
+                label.form-label.checkbox
+                  | Enable&nbsp;
+                  a#fisher-classes-tooltip(title='Assign fishers to different classes with different fish values, allowing study of inequality and resource distribution.', data-toggle='tooltip', data-placement='top') fisher classes
+                  input#enable-fisher-classes.to-disable(type='checkbox', checked=false)
+              .col-md-5
+                  button#show-fisher-classes-explanation.btn.btn-info(type='button') EXPLAIN
+          .row.fisher-class-option.hide
+            .form-group
+              label.form-label.col-md-6(for='fisher-class-names')
+                a#fisher-class-names-tooltip(title='Comma-separated list of class names.', data-toggle='tooltip', data-placement='top') List of class names
+              .col-md-6
+                input#fisher-class-names.form-control.to-disable(type='text', value='Female, Male')
+          .row.fisher-class-option.hide
+            .form-group
+              label.form-label.col-md-6(for='fisher-class-counts')
+                a#fisher-class-counts-tooltip(title='Comma-separated list of fisher counts per class. Must sum to total fishers per simulation.', data-toggle='tooltip', data-placement='top') Number of fishers for each class
+              .col-md-6
+                input#fisher-class-counts.form-control.to-disable(type='text', value='2, 2')
+          .row.fisher-class-option.hide
+            .form-group
+              label.form-label.col-md-6(for='fisher-class-emojis')
+                a#fisher-class-emojis-tooltip(title='Comma-separated list of emojis, one for each class. Emojis are displayed in the game table just before the fisher name.', data-toggle='tooltip', data-placement='top') Emojis for each class
+              .col-md-6
+                input#fisher-class-emojis.form-control.to-disable(type='text', value='♀︎, ♂︎')
+
+          h3 Fisher Advantage
+          .row
+            .form-group
+              .col-md-7
+                label.form-label.checkbox
+                  | Enable&nbsp;
+                  a#fisher-advantage-tooltip(title='Give some fishers a monetary advantage over the other fishers.', data-toggle='tooltip', data-placement='top') fisher advantage
+                  input#enable-fisher-advantage.to-disable(type='checkbox', checked=false)
+              .col-md-5
+                  button#show-fisher-advantage-explanation.btn.btn-info(type='button') EXPLAIN
+          .row.fisher-advantage-option.hide
+            .form-group
+              label.form-label.col-md-6(for='fish-value-pay-gap')
+                a#fish-value-pay-gap-tooltip(title='Additional earnings per fish for advantaged fishers', data-toggle='tooltip', data-placement='top') Fish value pay gap
+              .col-md-6
+                input#fish-value-pay-gap.form-control.to-disable(type='number', min='0.01', step='0.01', value='0.01')
+          .row.fisher-advantage-option.hide
+            .form-group
+              label.form-label.col-md-6(for='cost-cast-reduction')
+                a#cost-cast-reduction-tooltip(title='Reduction in the cost to attempt to fish for advantaged fishers', data-toggle='tooltip', data-placement='top') Cost to attempt to fish reduction
+              .col-md-6
+                input#cost-cast-reduction.form-control.to-disable(type='number', min='0', step='0.01', value='0.00')
+          .row.fisher-advantage-option.hide
+            .form-group
+              label.form-label.col-md-6(for='cost-departure-reduction')
+                a#cost-departure-reduction-tooltip(title='Reduction in the cost to set sail for advantaged fishers', data-toggle='tooltip', data-placement='top') Cost to set sail reduction
+              .col-md-6
+                input#cost-departure-reduction.form-control.to-disable(type='number', min='0', step='0.01', value='0.00')
+          .row.fisher-advantage-option.hide
+            .form-group
+              label.form-label.col-md-6(for='cost-second-reduction')
+                a#cost-second-reduction-tooltip(title='Reduction in the cost per second at sea for advantaged fishers', data-toggle='tooltip', data-placement='top') Cost per second at sea reduction
+              .col-md-6
+                input#cost-second-reduction.form-control.to-disable(type='number', min='0', step='0.01', value='0.00')
+          .row.fisher-advantage-option.hide
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Enable&nbsp;
+                  a#profit-gap-tooltip(title='Display the profit gap column in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit gap column
+                  input#enable-profit-gap.to-disable(type='checkbox', checked=false)
+          .row.fisher-advantage-option.hide
+            .form-group
+              label.form-label.col-md-6(for='advantage-emoji')
+                a#advantage-emoji-tooltip(title='Emoji displayed before the name of a fisher with advantage', data-toggle='tooltip', data-placement='top') Advantage emoji
+              .col-md-6
+                input#advantage-emoji.form-control.to-disable(type='text', value='↑')
+          .row.fisher-advantage-option.hide
+            .form-group
+              label.form-label.col-md-6(for='disadvantage-emoji')
+                a#disadvantage-emoji-tooltip(title='Emoji displayed before the name of a fisher without advantage', data-toggle='tooltip', data-placement='top') No-advantage emoji
+              .col-md-6
+                input#disadvantage-emoji.form-control.to-disable(type='text', value='↓')
+
       .row
         .col-md-4
           h3 Preparation text
@@ -249,6 +427,20 @@ html
       .row
         .col-md-3
           h3 Information display
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Show&nbsp;
+                  a#show-fish-value-notice-tooltip(title='Show the "Each fish earns you ..." notice under the game controls. With Fisher Advantage on, each fisher sees their own fish value.', data-toggle='tooltip', data-placement='top') fish value notice
+                  input#show-fish-value-notice.to-disable(type='checkbox', checked='')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Show game&nbsp;
+                  a#show-game-clock-tooltip(title='Show the time left in the current season, break, or countdown in the status bar. The clock stops while the game is paused. A visible clock may change how participants fish.', data-toggle='tooltip', data-placement='top') clock
+                  input#show-game-clock.to-disable(type='checkbox')
           .row
             .form-group
               .col-md-10
@@ -282,17 +474,31 @@ html
                   input#show-fisher-balance.to-disable(type='checkbox', checked='')
           .row
             .form-group
-              .col-md-10     
+              .col-md-10
                 label.form-label.checkbox
                   | Disable&nbsp;
-                  a#profit-columns-tooltip(title='Do NOT display fishers seasonal and total profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') profit columns
-                  input#disable-profit-columns.to-disable(type='checkbox', checked=false)
+                  a#profit-season-tooltip(title='Do NOT display fishers seasonal profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') season profit column
+                  input#disable-profit-season.to-disable(type='checkbox', checked=false)
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Disable&nbsp;
+                  a#profit-total-tooltip(title='Do NOT display fishers overall profits in the play table throughout the game', data-toggle='tooltip', data-placement='top') overall profit column
+                  input#disable-profit-total.to-disable(type='checkbox', checked=false)
           .row
             .form-group
               .col-md-10
                 label.form-label.checkbox
                   | Warn when overfishing
                   input#change-ocean-colour.to-disable(type='checkbox')
+          .row
+            .form-group
+              .col-md-10
+                label.form-label.checkbox
+                  | Hide the&nbsp;
+                  a#hide-ocean-tooltip(title='Do NOT show the ocean picture. Season messages appear under the fish count instead, and the overfishing warning turns the fish count red.', data-toggle='tooltip', data-placement='top') ocean image
+                  input#hide-ocean.to-disable(type='checkbox')
           h3 Status Table Behaviour
           .row
             .col-md-10
@@ -336,72 +542,96 @@ html
                   input.to-disable#ocean_order_desc_money_overall(type='radio', name='ocean_order', value='ocean_order_desc_money_overall')
         .col-md-9
           h3 Bot behaviour
-          .row
-            label.form-label.col-md-2 Name
-            label.form-label.col-md-2
-              a#greed-tooltip(title='Between 0 and 1. The higher the value, the more greedily this bot will behave. A value of 0.5 takes as many fish as possible while still behaving sustainably.', data-toggle='tooltip', data-placement='top') Greed
-            label.form-label.col-md-2
-              a#trend-tooltip(title='A bot with a stable trend will behave the same way at the beginning and at the end of the simulation. A bot with an increasing trend will be more greedy as time goes by (while still being as greedy as specified in its Greed parameter, on average), and one with a decreasing trend will be less greedy in later seasons.', data-toggle='tooltip', data-placement='top') Trend
-            label.form-label.col-md-2
-              a#greed-spread-tooltip(title='For bots with regular predictability with increasing or decreasing trends, the greed spread is the difference between the lowest season greed and highest season greed centered around the average greed. For example: a greed of 0.5 and a greed spread of 0.2 will result in a low season greed of 0.4 and high season greed of 0.6 centered around an average greed of 0.5. Must be between 0 and 2 * Greed.', data-toggle='tooltip', data-placement='top') Greed Spread
-            label.form-label.col-md-2
-              a#predictability-tooltip(title='Erratic bots appear more lifelike, but they may behave non-optimally.', data-toggle='tooltip', data-placement='top') Predictability
-            label.form-label.col-md-2
-              a#prob-action-tooltip(title='If bots behave erratically, this parameter (between 0 and 1) controls how frequently they act. The lower the value, the more they will appear to hesitate.', data-toggle='tooltip', data-placement='top') Probability of action
-            label.form-label.col-md-2
-              a#attempts-second-tooltip(title='If bots behave erratically, this controls the maximum number of fish they will try to catch in any second, provided they are doing something that second. If bots behave regularly, this controls how many fish they will try to catch every second (until they fulfill their quota).', data-toggle='tooltip', data-placement='top') Maximum casts per second
-          each botName, i in {1: 'Dolphin', 2: 'Shark', 3: 'Octopus', 4: 'Whale', 5: 'Seagull', 6: 'Penguin', 7: 'Walrus', 8: 'Stingray', 9: 'Orca', 10: 'Seal', 11: 'Polar Bear'}
-            div(id="bot-" + i + "-row" class=(i < 4 ? "row bot-row" : "row bot-row collapse"))
-              .col-md-2
-                input.form-control.to-disable(id="bot-" + i + "-name", type='text', value=botName)
-              .col-md-2
-                input.form-control.to-disable(id="bot-" + i + "-greed", type='number', min='0', step='0.01', value='0.50')
-              .col-md-2
-                select.form-control.to-disable(id="bot-" + i + "-trend")
-                  option(value='stable') Stable
-                  option(value='decrease') Decrease
-                  option(value='increase') Increase
-              .col-md-2
-                input.form-control.to-disable(id="bot-" + i + "-greed-spread", type='number', min='0', max='2.0', step='0.01', value='0.20')
-              .col-md-2
-                select.form-control.to-disable(id="bot-" + i + "-predictability")
-                  option(value='erratic') Erratic
-                  option(value='regular') Regular
-              .col-md-2
-                input.form-control.to-disable(id="bot-" + i + "-prob-action", type='number', min='0', step='0.01', value='0.80')
-              .col-md-2
-                input.form-control.to-disable(id="bot-" + i + "-attempts-second", type='number', min='1', step='1', value='3')
-          .row
-            .col-md-2.col-md-offset-2
-              .form-group
-                label.form-label.checkbox
-                  | Uniform
-                  input#uniform-greed.to-disable(type='checkbox', checked='')
-            .col-md-2
-              .form-group
-                label.form-label.checkbox
-                  | Uniform
-                  input#uniform-trend.to-disable(type='checkbox', checked='')
-            .col-md-2
-              .form-group
-                label.form-label.checkbox
-                  | Uniform
-                  input#uniform-greed-spread.to-disable(type='checkbox', checked='')
-            .col-md-2
-              .form-group
-                label.form-label.checkbox
-                  | Uniform
-                  input#uniform-predictability.to-disable(type='checkbox', checked='')
-            .col-md-2
-              .form-group
-                label.form-label.checkbox
-                  | Uniform
-                  input#uniform-prob-action.to-disable(type='checkbox', checked='')
-            .col-md-2
-              .form-group
-                label.form-label.checkbox
-                  | Uniform
-                  input#uniform-attempts-second.to-disable(type='checkbox', checked='')
+          - var bots = {1: 'Dolphin', 2: 'Shark', 3: 'Octopus', 4: 'Whale', 5: 'Seagull', 6: 'Penguin', 7: 'Walrus', 8: 'Stingray', 9: 'Orca', 10: 'Seal', 11: 'Polar Bear'}
+          .table-responsive
+            table#bot-table.table.table-bordered
+              thead
+                tr
+                  th Setting
+                  th Name:
+                  each botName, i in bots
+                    th(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      input.form-control.to-disable(id="bot-" + i + "-name", type='text', value=botName)
+              tbody
+                tr.fisher-class-option.hide
+                  td Class
+                  td
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      select.form-control.to-disable(id="bot-" + i + "-class")
+                tr.fisher-advantage-option.hide
+                  td Advantage
+                  td
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      select.form-control.to-disable(id="bot-" + i + "-advantage")
+                        option(value='no') No
+                        option(value='yes') Yes
+                tr
+                  td
+                    a#greed-tooltip(title='Between 0 and 1. The higher the value, the more greedily this bot will behave. A value of 0.5 takes as many fish as possible while still behaving sustainably.', data-toggle='tooltip', data-placement='top') Greed
+                  td
+                    label.form-label.checkbox
+                      input#uniform-greed.to-disable(type='checkbox', checked='')
+                      |  Uniform
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      input.form-control.to-disable(id="bot-" + i + "-greed", type='number', min='0', step='0.01', value='0.50')
+                tr
+                  td
+                    a#trend-tooltip(title='A bot with a stable trend will behave the same way at the beginning and at the end of the simulation. A bot with an increasing trend will be more greedy as time goes by (while still being as greedy as specified in its Greed parameter, on average), and one with a decreasing trend will be less greedy in later seasons.', data-toggle='tooltip', data-placement='top') Trend
+                  td
+                    label.form-label.checkbox
+                      input#uniform-trend.to-disable(type='checkbox', checked='')
+                      |  Uniform
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      select.form-control.to-disable(id="bot-" + i + "-trend")
+                        option(value='stable') Stable
+                        option(value='decrease') Decrease
+                        option(value='increase') Increase
+                tr
+                  td
+                    a#greed-spread-tooltip(title='For bots with regular predictability with increasing or decreasing trends, the greed spread is the difference between the lowest season greed and highest season greed centered around the average greed. For example: a greed of 0.5 and a greed spread of 0.2 will result in a low season greed of 0.4 and high season greed of 0.6 centered around an average greed of 0.5. Must be between 0 and 2 * Greed.', data-toggle='tooltip', data-placement='top') Greed Spread
+                  td
+                    label.form-label.checkbox
+                      input#uniform-greed-spread.to-disable(type='checkbox', checked='')
+                      |  Uniform
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      input.form-control.to-disable(id="bot-" + i + "-greed-spread", type='number', min='0', max='2.0', step='0.01', value='0.20')
+                tr
+                  td
+                    a#predictability-tooltip(title='Erratic bots appear more lifelike, but they may behave non-optimally.', data-toggle='tooltip', data-placement='top') Predictability
+                  td
+                    label.form-label.checkbox
+                      input#uniform-predictability.to-disable(type='checkbox', checked='')
+                      |  Uniform
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      select.form-control.to-disable(id="bot-" + i + "-predictability")
+                        option(value='erratic') Erratic
+                        option(value='regular') Regular
+                tr
+                  td
+                    a#prob-action-tooltip(title='If bots behave erratically, this parameter (between 0 and 1) controls how frequently they act. The lower the value, the more they will appear to hesitate.', data-toggle='tooltip', data-placement='top') Probability of action
+                  td
+                    label.form-label.checkbox
+                      input#uniform-prob-action.to-disable(type='checkbox', checked='')
+                      |  Uniform
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      input.form-control.to-disable(id="bot-" + i + "-prob-action", type='number', min='0', step='0.01', value='0.80')
+                tr
+                  td
+                    a#attempts-second-tooltip(title='If bots behave erratically, this controls the maximum number of fish they will try to catch in any second, provided they are doing something that second. If bots behave regularly, this controls how many fish they will try to catch every second (until they fulfill their quota).', data-toggle='tooltip', data-placement='top') Maximum casts per second
+                  td
+                    label.form-label.checkbox
+                      input#uniform-attempts-second.to-disable(type='checkbox', checked='')
+                      |  Uniform
+                  each botName, i in bots
+                    td(class="bot-" + i + "-col" + (i < 4 ? "" : " hide"))
+                      input.form-control.to-disable(id="bot-" + i + "-attempts-second", type='number', min='1', step='1', value='3')
       .panel.panel-info
         #microworld-panel-2-title.panel-heading
           | Panel Title
@@ -476,4 +706,32 @@ html
           #explain-catch-intentions-content.modal-body Explanation of catch intentions features
           .modal-footer
             button#done-catch-intentions-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK
+    #explain-fisher-classes-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #explain-fisher-classes-content.modal-body Explanation of fisher classes features
+          .modal-footer
+            button#done-fisher-classes-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK
+    #explain-fisher-advantage-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #explain-fisher-advantage-content.modal-body Explanation of fisher advantage features
+          .modal-footer
+            button#done-fisher-advantage-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK
+    #explain-clean-abort-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #explain-clean-abort-content.modal-body Explanation of clean abort features
+          .modal-footer
+            button#done-clean-abort-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
+              | OK
+    #explain-disconnects-modal.modal.fade(role='dialog', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          #explain-disconnects-content.modal-body Explanation of disconnect handling
+          .modal-footer
+            button#done-disconnects-explanation.btn.btn-primary(data-dismiss='modal', aria-hidden='true')
               | OK

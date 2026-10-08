@@ -1,0 +1,77 @@
+doctype html
+html(lang='en')
+  head
+    title FISH Disconnect Handling Explained
+    style.
+        dd {
+            margin-left: 2em;
+        }
+  body
+    h2 FISH DISCONNECT HANDLING
+    p.
+        Participants sometimes lose their connection during a game: the page is reloaded,
+        the phone's screen locks, someone switches to another app, or the signal drops.
+        When this feature is off, a participant whose connection drops after the game has
+        started is removed at once, and the rest of the group plays on without them.
+    p.
+        When it is on, a disconnected participant stays in the game for a grace period.
+        If they open the game again in that time (with the same experiment code and
+        participant ID), they go straight back into the current season with their catch
+        and profit intact, without seeing the rules again.
+    p.
+        A disconnected participant's boat is sent back to port, so they don't keep paying
+        for time at sea while they are away.
+    h4 Settings
+    dl
+        dt Grace period to reconnect (seconds)
+        dd.
+            How long a disconnected participant has to come back. If the game pauses,
+            the other players wait this long, so keep it short; 30 seconds is the default.
+        dt During the grace period
+        dd.
+            <b>Pause game:</b> the game stops for everyone, and the other players see
+            "A player has lost their connection. Waiting for them to return" with a countdown.
+            When the pause ends, everyone sees "the game resumes in N s" before play
+            continues; N is the initial delay, but at least 2 and at most 5 seconds.
+            <br/>
+            <b>Continue game:</b> the game goes on and the other players are not told.
+            The absent participant catches nothing while they are away, which may affect
+            the group's results.
+        dt Disconnects allowed per participant
+        dd.
+            How many times each participant may disconnect. The next disconnect after
+            that counts as lost straight away, with no grace period. This stops one
+            unreliable connection from holding up the group again and again.
+        dt When a participant is lost
+        dd.
+            A participant is lost when the grace period runs out, or when they go over
+            the disconnects allowed.
+            <br/>
+            <b>End and record the game:</b> the game ends for everyone, the other players
+            see a message saying a player lost their connection, and the run is saved
+            with the reason recorded.
+            <br/>
+            <b>Remove them and play on:</b> the others carry on without them, as when
+            the feature is off.
+    p.
+        A participant who has been lost cannot rejoin that game, and is not placed in
+        a new group either.
+    h4 In the results
+    p.
+        Every disconnect, return, removal and game end is saved with the run, with the
+        season and second it happened in. This also happens when the feature is off.
+        The CSV export has four columns for it. The first three are per season: a
+        disconnect during the break between seasons counts toward the season that follows.
+    dl
+        dt Disconnects
+        dd How many times the participant's connection dropped in that season.
+        dt Seconds Away
+        dd Time away in that season, counting only the times they came back.
+        dt Lost
+        dd.
+            Whether and why the participant was lost in that season, for example
+            "removed: grace period expired".
+        dt Run End Reason
+        dd.
+            Why the run ended: time (all seasons played), depletion (no fish left),
+            nohumans (all participants gone), or disconnect (a lost participant ended it).

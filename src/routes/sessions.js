@@ -106,7 +106,8 @@ exports.createSuperuserSession = function(req, res) {
 
 // POST /participant-sessions
 exports.participantSession = function(req, res) {
-  var code = req.body.code;
+  // Codes are generated in uppercase (routes/microworlds.js); accept them typed in any case
+  var code = typeof req.body.code === 'string' ? req.body.code.trim().toUpperCase() : req.body.code;
   var pid = req.body.pid;
   if (!code || !pid) {
     return res.status(400).send('Missing experiment code or participant ID');

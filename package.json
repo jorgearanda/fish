@@ -21,6 +21,8 @@
     "serve": "node dist/app.js",
     "servemon": "nodemon dist/app.js",
     "serve-pm2": "pm2 start dist/app.js --name Fish --log \"logs/fishlog_$( date '+%Y-%m-%d_%H-%M-%S' )\"",
+    "publish-log": "cp logs/$(ls -t logs/ | head -1) public/fishlog.log && echo 'Log available at /public/fishlog.log'",
+    "unpublish-log": "rm -f public/fishlog.log && echo 'Log removed'",
     "start": "set NODE_ENV=production && npm run build && npm run serve",
     "start-pm2": "set NODE_ENV=production && npm run build && npm run serve-pm2",
     "dev": "set NODE_ENV=development && npm run build-as-needed ; npm run servemon",

@@ -134,6 +134,31 @@ describe('POST /participant-sessions', () => {
       });
   });
 
+  it('should accept a code typed in lower or mixed case', done => {
+    const userAgent = request.agent(app);
+    userAgent
+      .post('/participant-sessions')
+      .send({ code: 'test123', pid: 'participant1' })
+      .end((err, res) => {
+        assert(err === null, err);
+        assert(res.statusCode === 200, 'The status code should be 200');
+        assert(res.body.code === 'TEST123');
+        return done();
+      });
+  });
+
+  it('should ignore spaces around the code', done => {
+    const userAgent = request.agent(app);
+    userAgent
+      .post('/participant-sessions')
+      .send({ code: '  Test123 ', pid: 'participant1' })
+      .end((err, res) => {
+        assert(err === null, err);
+        assert(res.statusCode === 200, 'The status code should be 200');
+        return done();
+      });
+  });
+
   it('should accept test status microworlds', done => {
     Microworld.updateOne(
       { _id: testMicroworld._id },
@@ -250,20 +275,10 @@ describe('POST /superuser-sessions', () => {
   });
 });
 
-function createSuperuser(fields) {
-  return new Promise((resolve, reject) => {
-    Superuser.create(fields, (err, doc) => {
-      if (err) reject(err);
-      resolve(doc);
-    });
-  });
+async function createSuperuser(fields) {
+  return await Superuser.create(fields);
 }
 
-function createExperimenter(fields) {
-  return new Promise((resolve, reject) => {
-    Experimenter.create(fields, (err, doc) => {
-      if (err) reject(err);
-      resolve(doc);
-    });
-  });
+async function createExperimenter(fields) {
+  return await Experimenter.create(fields);
 }

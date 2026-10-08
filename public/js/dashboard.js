@@ -112,7 +112,12 @@ var displaySimulationStatus = function(simulation, eventStatus) {
         rowBootstrapClass = 'warning';
     }
 
-    var html = '<tr class =' + rowBootstrapClass + '><td>' + simulation.code + '</td>' + '<td>' + simulation.time + '<td>';
+    // A run's "Currently running" row is updated in place when it finishes;
+    // abandonments are separate events and get rows of their own
+    var isInterruption = rowBootstrapClass === 'warning';
+    var oceanAttr = !isInterruption && simulation.oceanId ? ' data-ocean-id="' + simulation.oceanId + '"' : '';
+    var html = '<tr class="' + rowBootstrapClass + '"' + oceanAttr + '><td>' + simulation.code + '</td>' +
+        '<td>' + simulation.time + '</td><td>';
     for (var i = 0; i < simulation.participants.length; i++) {
         if (i !== 0) {
             html+= ', ';
@@ -124,7 +129,12 @@ var displaySimulationStatus = function(simulation, eventStatus) {
     }
     html+= '</td><td>' + eventStatus + '</td></tr>';
 
-    $('#tracked-simulations-row').prepend(html);
+    var existingRow = oceanAttr ? $('#tracked-simulations-row tr[data-ocean-id="' + simulation.oceanId + '"]') : $();
+    if (existingRow.length) {
+        existingRow.replaceWith(html);
+    } else {
+        $('#tracked-simulations-row').prepend(html);
+    }
     $('tr').delay(300).animate({opacity : 1}, 500);
 };
 

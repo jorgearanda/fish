@@ -241,11 +241,25 @@ describe('Localization (jsdom)', () => {
       'buttons_goFishing',
       'buttons_goToSea',
       'buttons_castFish',
+      'buttons_catchFish',
       'buttons_return',
       'login_title',
       'login_welcome',
       'end_over',
+      'end_disconnect',
+      'end_lost',
+      'end_removed',
+      'warning_playerDisconnected',
+      'warning_resuming',
+      'status_starting',
     ];
+
+    it('the disconnect countdown should keep its {seconds} placeholder in every language', () => {
+      supportedLanguages.forEach(lang => {
+        should(window.langs[lang].warning_playerDisconnected).match(/\{seconds\}/);
+        should(window.langs[lang].warning_resuming).match(/\{seconds\}/);
+      });
+    });
 
     it('all languages should have all required keys', () => {
       requiredKeys.forEach(key => {
@@ -261,6 +275,7 @@ describe('Localization (jsdom)', () => {
     const iconButtons = [
       'buttons_goToSea',
       'buttons_castFish',
+      'buttons_catchFish',
       'buttons_return',
       'buttons_pause',
       'buttons_resume',

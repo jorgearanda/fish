@@ -86,7 +86,10 @@ describe('Engine - OceanManager', function() {
           catchIntentionsEnabled: false,
           catchIntentDialogDuration: 17,
           catchIntentSeasons: [],
-          profitDisplayDisabled: false,
+
+          profitSeasonDisabled: false,
+          profitTotalDisabled: false,
+          profitGapDisabled: true,
           bots: [],
         },
       });
@@ -115,7 +118,7 @@ describe('Engine - OceanManager', function() {
       var nonExistentId = new mongoose.Types.ObjectId();
       var participantId = 'test-participant-1';
 
-      om.assignFisherToOcean(nonExistentId.toString(), participantId, function(oceanId) {
+      om.assignFisherToOcean(nonExistentId.toString(), participantId, null, function(oceanId) {
         // Should not call callback or should handle error
         // This test will fail before the fix because it will crash
         // After fix, we need to ensure error is handled properly
@@ -154,7 +157,10 @@ describe('Engine - OceanManager', function() {
           catchIntentionsEnabled: false,
           catchIntentDialogDuration: 17,
           catchIntentSeasons: [],
-          profitDisplayDisabled: false,
+
+          profitSeasonDisabled: false,
+          profitTotalDisabled: false,
+          profitGapDisabled: true,
           bots: [],
         },
       });
@@ -163,11 +169,11 @@ describe('Engine - OceanManager', function() {
         if (saveErr) return done(saveErr);
 
         // Create initial ocean with first fisher
-        om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher1', function(oceanId1) {
+        om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher1', null, function(oceanId1) {
           should.exist(oceanId1);
 
           // Assign second fisher to same ocean
-          om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher2', function(oceanId2) {
+          om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher2', null, function(oceanId2) {
             should.exist(oceanId2);
             String(oceanId2).should.equal(String(oceanId1)); // Should be same ocean
             om.oceans[oceanId1].fishers.length.should.equal(2);
@@ -212,7 +218,10 @@ describe('Engine - OceanManager', function() {
           catchIntentionsEnabled: false,
           catchIntentDialogDuration: 17,
           catchIntentSeasons: [],
-          profitDisplayDisabled: false,
+
+          profitSeasonDisabled: false,
+          profitTotalDisabled: false,
+          profitGapDisabled: true,
           bots: [],
         },
       });
@@ -221,11 +230,11 @@ describe('Engine - OceanManager', function() {
         if (saveErr) return done(saveErr);
 
         // Create ocean with first fisher (fills it)
-        om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher1', function(oceanId1) {
+        om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher1', null, function(oceanId1) {
           should.exist(oceanId1);
 
           // Try to assign second fisher - should create new ocean
-          om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher2', function(oceanId2) {
+          om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher2', null, function(oceanId2) {
             should.exist(oceanId2);
             String(oceanId2).should.not.equal(String(oceanId1)); // Should be different ocean
             Object.keys(om.oceans).length.should.equal(2); // Two oceans
@@ -273,7 +282,10 @@ describe('Engine - OceanManager', function() {
           catchIntentionsEnabled: false,
           catchIntentDialogDuration: 17,
           catchIntentSeasons: [],
-          profitDisplayDisabled: false,
+
+          profitSeasonDisabled: false,
+          profitTotalDisabled: false,
+          profitGapDisabled: true,
           bots: [],
         },
       });
@@ -281,7 +293,7 @@ describe('Engine - OceanManager', function() {
       testMicroworld.save(function(saveErr) {
         if (saveErr) return done(saveErr);
 
-        om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher1', function(oceanId) {
+        om.assignFisherToOcean(testMicroworld._id.toString(), 'fisher1', null, function(oceanId) {
           should.exist(oceanId);
           om.oceans[oceanId].fishers.length.should.equal(1);
 
@@ -330,7 +342,10 @@ describe('Engine - OceanManager', function() {
           catchIntentionsEnabled: false,
           catchIntentDialogDuration: 17,
           catchIntentSeasons: [],
-          profitDisplayDisabled: false,
+
+          profitSeasonDisabled: false,
+          profitTotalDisabled: false,
+          profitGapDisabled: true,
           bots: [],
         },
       });

@@ -47,14 +47,14 @@ pt['costs_costLeave'] = 'Deixar o porto custa';
 ko['costs_costLeave'] = '출항 비용';
 
 // Status
-en['status_wait'] = 'Please wait';
-cn['status_wait'] = '请稍候';
-ct['status_wait'] = '請稍候';
-de['status_wait'] = 'Bitte warten';
-es['status_wait'] = 'Espera por favor';
-fr['status_wait'] = 'Veuillez patienter';
-pt['status_wait'] = 'Por favor aguarde';
-ko['status_wait'] = '잠시만 기다려주십시오';
+en['status_wait'] = 'Please wait in the lobby';
+cn['status_wait'] = '请在大厅等候';
+ct['status_wait'] = '請在大廳等候';
+de['status_wait'] = 'Bitte warten Sie in der Lobby';
+es['status_wait'] = 'Por favor espere en el vestíbulo';
+fr['status_wait'] = 'Veuillez patienter dans le salon';
+pt['status_wait'] = 'Por favor aguarde no lobby';
+ko['status_wait'] = '로비에서 기다려주십시오';
 
 en['status_subWait'] = 'Loading the application';
 en['status_subWait'] = 'while other fishers are joining';           // RMK
@@ -175,6 +175,37 @@ fr['warning_seasonEnd'] = 'Attention, cette saison de pêche va se terminer.';
 pt['warning_seasonEnd'] = 'Aviso: Esta temporada está prestes a acabar.';
 ko['warning_seasonEnd'] = '경고: 이번 어획기가 곧 종료됩니다.';
 
+// Shown while the game is paused for a disconnected player; {seconds} counts down.
+// \n is a line break (the notice line shows line breaks)
+en['warning_playerDisconnected'] = 'A player has lost their connection.\nWaiting for them to return: {seconds} s';
+cn['warning_playerDisconnected'] = '有玩家断开了连接。\n正在等待其返回：{seconds} 秒';
+ct['warning_playerDisconnected'] = '有玩家中斷了連線。\n正在等待其返回：{seconds} 秒';
+de['warning_playerDisconnected'] = 'Ein Spieler hat die Verbindung verloren.\nWarten auf seine Rückkehr: {seconds} s';
+es['warning_playerDisconnected'] = 'Un jugador ha perdido la conexión.\nEsperando su regreso: {seconds} s';
+fr['warning_playerDisconnected'] = 'Un joueur a perdu sa connexion.\nEn attente de son retour : {seconds} s';
+pt['warning_playerDisconnected'] = 'Um jogador perdeu a conexão.\nAguardando o retorno: {seconds} s';
+ko['warning_playerDisconnected'] = '한 플레이어의 연결이 끊어졌습니다.\n돌아오기를 기다리는 중: {seconds}초';
+
+// Shown when a pause is over, before play continues; {seconds} counts down
+en['warning_resuming'] = 'Get ready: the game resumes in {seconds} s';
+cn['warning_resuming'] = '请准备：游戏将在 {seconds} 秒后继续';
+ct['warning_resuming'] = '請準備：遊戲將在 {seconds} 秒後繼續';
+de['warning_resuming'] = 'Achtung: Das Spiel geht in {seconds} s weiter';
+es['warning_resuming'] = 'Prepárese: el juego continúa en {seconds} s';
+fr['warning_resuming'] = 'Attention : la partie reprend dans {seconds} s';
+pt['warning_resuming'] = 'Prepare-se: o jogo continua em {seconds} s';
+ko['warning_resuming'] = '준비하세요: {seconds}초 후 게임이 계속됩니다';
+
+// Status bar during the countdown before the first season
+en['status_starting'] = 'The game is starting';
+cn['status_starting'] = '游戏即将开始';
+ct['status_starting'] = '遊戲即將開始';
+de['status_starting'] = 'Das Spiel beginnt';
+es['status_starting'] = 'El juego está por comenzar';
+fr['status_starting'] = 'La partie va commencer';
+pt['status_starting'] = 'O jogo está começando';
+ko['status_starting'] = '게임이 곧 시작됩니다';
+
 en['warning_seasonStart'] = 'Get ready: the next season is about to start.';
 cn['warning_seasonStart'] = '准备好：下个季节即将开始';
 ct['warning_seasonStart'] = '準備好：下個季節即將開始';
@@ -257,6 +288,134 @@ fr['info_overall'] = 'En tout';
 pt['info_overall'] = 'Total';
 ko['info_overall'] = '총';
 
+en['info_payGap'] = 'Pay Gap';
+cn['info_payGap'] = '薪酬差距';
+ct['info_payGap'] = '薪酬差距';
+de['info_payGap'] = 'Lohngefälle';
+es['info_payGap'] = 'Brecha salarial';
+fr['info_payGap'] = 'Écart salarial';
+pt['info_payGap'] = 'Hiato salarial';
+ko['info_payGap'] = '임금 격차';
+
+// Abort / timeout
+en['abort_readingRulesMessage'] = "You've been reading the rules for a while. Would you like to continue reading, proceed to the lobby, or leave the simulation?";
+cn['abort_readingRulesMessage'] = '您已阅读规则一段时间。您想继续阅读、进入大厅还是离开模拟？';
+ct['abort_readingRulesMessage'] = '您已閱讀規則一段時間。您想繼續閱讀、進入大廳還是離開模擬？';
+de['abort_readingRulesMessage'] = 'Sie lesen die Regeln schon eine Weile. Möchten Sie weiterlesen, zur Lobby gehen oder die Simulation verlassen?';
+es['abort_readingRulesMessage'] = 'Has estado leyendo las reglas por un tiempo. ¿Deseas seguir leyendo, ir al lobby o abandonar la simulación?';
+fr['abort_readingRulesMessage'] = "Vous lisez les règles depuis un moment. Voulez-vous continuer à lire, passer au lobby ou quitter la simulation ?";
+pt['abort_readingRulesMessage'] = 'Você está lendo as regras há algum tempo. Gostaria de continuar lendo, ir ao lobby ou sair da simulação?';
+ko['abort_readingRulesMessage'] = '규칙을 꽤 오래 읽고 있습니다. 계속 읽으시겠습니까, 로비로 이동하시겠습니까, 아니면 시뮬레이션을 종료하시겠습니까?';
+
+en['abort_lobbyWaitMessage'] = "You've been waiting for the simulation to start for a while. Would you like to keep waiting or leave the simulation?";
+cn['abort_lobbyWaitMessage'] = '您等待模拟开始已有一段时间。您想继续等待还是离开模拟？';
+ct['abort_lobbyWaitMessage'] = '您等待模擬開始已有一段時間。您想繼續等待還是離開模擬？';
+de['abort_lobbyWaitMessage'] = 'Sie warten schon eine Weile auf den Start der Simulation. Möchten Sie weiter warten oder die Simulation verlassen?';
+es['abort_lobbyWaitMessage'] = 'Has estado esperando que comience la simulación por un tiempo. ¿Deseas seguir esperando o abandonar la simulación?';
+fr['abort_lobbyWaitMessage'] = "Vous attendez depuis un moment que la simulation commence. Voulez-vous continuer à attendre ou quitter la simulation ?";
+pt['abort_lobbyWaitMessage'] = 'Você está esperando a simulação começar há algum tempo. Gostaria de continuar esperando ou sair da simulação?';
+ko['abort_lobbyWaitMessage'] = '시뮬레이션 시작을 꽤 오래 기다리고 있습니다. 계속 기다리시겠습니까 아니면 시뮬레이션을 종료하시겠습니까?';
+
+en['abort_keepReading'] = 'Keep Reading';
+cn['abort_keepReading'] = '继续阅读';
+ct['abort_keepReading'] = '繼續閱讀';
+de['abort_keepReading'] = 'Weiterlesen';
+es['abort_keepReading'] = 'Seguir leyendo';
+fr['abort_keepReading'] = 'Continuer à lire';
+pt['abort_keepReading'] = 'Continuar lendo';
+ko['abort_keepReading'] = '계속 읽기';
+
+en['abort_proceed'] = 'Proceed to Lobby';
+cn['abort_proceed'] = '进入大厅';
+ct['abort_proceed'] = '進入大廳';
+de['abort_proceed'] = 'Zur Lobby';
+es['abort_proceed'] = 'Ir al lobby';
+fr['abort_proceed'] = 'Aller au lobby';
+pt['abort_proceed'] = 'Ir ao lobby';
+ko['abort_proceed'] = '로비로 이동';
+
+en['abort_keepWaiting'] = 'Keep Waiting';
+cn['abort_keepWaiting'] = '继续等待';
+ct['abort_keepWaiting'] = '繼續等待';
+de['abort_keepWaiting'] = 'Weiter warten';
+es['abort_keepWaiting'] = 'Seguir esperando';
+fr['abort_keepWaiting'] = 'Continuer à attendre';
+pt['abort_keepWaiting'] = 'Continuar aguardando';
+ko['abort_keepWaiting'] = '계속 대기';
+
+en['abort_abort'] = 'Abort';
+cn['abort_abort'] = '中止';
+ct['abort_abort'] = '中止';
+de['abort_abort'] = 'Abbrechen';
+es['abort_abort'] = 'Abandonar';
+fr['abort_abort'] = 'Abandonner';
+pt['abort_abort'] = 'Abandonar';
+ko['abort_abort'] = '종료';
+
+en['forceAbort_message'] = 'The maximum waiting time has been reached. Your session has ended.';
+cn['forceAbort_message'] = '已达到最长等待时间，您的会话已结束。';
+ct['forceAbort_message'] = '已達到最長等待時間，您的會話已結束。';
+de['forceAbort_message'] = 'Die maximale Wartezeit wurde erreicht. Ihre Sitzung wurde beendet.';
+es['forceAbort_message'] = 'Se ha alcanzado el tiempo máximo de espera. Su sesión ha finalizado.';
+fr['forceAbort_message'] = "Le temps d'attente maximum a été atteint. Votre session est terminée.";
+pt['forceAbort_message'] = 'O tempo máximo de espera foi atingido. Sua sessão foi encerrada.';
+ko['forceAbort_message'] = '최대 대기 시간에 도달했습니다. 세션이 종료되었습니다.';
+
+en['forceAbort_ok'] = 'OK';
+cn['forceAbort_ok'] = '确定';
+ct['forceAbort_ok'] = '確定';
+de['forceAbort_ok'] = 'OK';
+es['forceAbort_ok'] = 'Aceptar';
+fr['forceAbort_ok'] = 'OK';
+pt['forceAbort_ok'] = 'OK';
+ko['forceAbort_ok'] = '확인';
+
+// Lobby
+en['lobby_header'] = 'Lobby Status';
+cn['lobby_header'] = '大厅状态';
+ct['lobby_header'] = '大廳狀態';
+de['lobby_header'] = 'Lobby-Status';
+es['lobby_header'] = 'Estado de la sala';
+fr['lobby_header'] = 'État du lobby';
+pt['lobby_header'] = 'Estado do lobby';
+ko['lobby_header'] = '로비 상태';
+
+en['lobby_headerWaiting'] = 'Waiting (mm:ss)';
+cn['lobby_headerWaiting'] = '等待时间（分:秒）';
+ct['lobby_headerWaiting'] = '等待時間（分:秒）';
+de['lobby_headerWaiting'] = 'Wartezeit (mm:ss)';
+es['lobby_headerWaiting'] = 'Espera (mm:ss)';
+fr['lobby_headerWaiting'] = 'Attente (mm:ss)';
+pt['lobby_headerWaiting'] = 'Aguardando (mm:ss)';
+ko['lobby_headerWaiting'] = '대기 시간 (mm:ss)';
+
+en['lobby_fisherMissing'] = 'Fisher missing';
+cn['lobby_fisherMissing'] = '渔人缺席';
+ct['lobby_fisherMissing'] = '漁人缺席';
+de['lobby_fisherMissing'] = 'Fischer fehlt';
+es['lobby_fisherMissing'] = 'Pescador faltante';
+fr['lobby_fisherMissing'] = 'Pêcheur manquant';
+pt['lobby_fisherMissing'] = 'Pescador ausente';
+ko['lobby_fisherMissing'] = '플레이어 없음';
+
+en['lobby_fisherReady'] = 'Fisher ready and waiting';
+cn['lobby_fisherReady'] = '渔人已准备好，等待中';
+ct['lobby_fisherReady'] = '漁人已準備好，等待中';
+de['lobby_fisherReady'] = 'Fischer bereit und wartend';
+es['lobby_fisherReady'] = 'Pescador listo y esperando';
+fr['lobby_fisherReady'] = 'Pêcheur prêt et en attente';
+pt['lobby_fisherReady'] = 'Pescador pronto e aguardando';
+ko['lobby_fisherReady'] = '플레이어 준비 완료, 대기 중';
+
+en['lobby_fisherReading'] = 'Fisher reading rules';
+cn['lobby_fisherReading'] = '渔人正在阅读规则';
+ct['lobby_fisherReading'] = '漁人正在閱讀規則';
+de['lobby_fisherReading'] = 'Fischer liest Regeln';
+es['lobby_fisherReading'] = 'Pescador leyendo las reglas';
+fr['lobby_fisherReading'] = 'Pêcheur lit les règles';
+pt['lobby_fisherReading'] = 'Pescador lendo as regras';
+ko['lobby_fisherReading'] = '플레이어 규칙 읽는 중';
+
 // End report
 en['end_over'] = 'This simulation is over.';
 en['end_over'] = 'This game is over.';          // RMK
@@ -267,6 +426,36 @@ es['end_over'] = 'Esta simulación ha terminado.';
 fr['end_over'] = 'La simulation est terminée.';
 pt['end_over'] = 'A simulação acabou.';
 ko['end_over'] = '게임이 모두 종료되었습니다.';
+
+// The game ended because a player's connection was lost (disconnect handling)
+en['end_disconnect'] = 'The game has ended because a player lost their connection.';
+cn['end_disconnect'] = '由于一名玩家断开了连接，游戏已结束。';
+ct['end_disconnect'] = '由於一名玩家中斷了連線，遊戲已結束。';
+de['end_disconnect'] = 'Das Spiel wurde beendet, weil ein Spieler die Verbindung verloren hat.';
+es['end_disconnect'] = 'El juego ha terminado porque un jugador perdió la conexión.';
+fr['end_disconnect'] = 'La partie est terminée car un joueur a perdu sa connexion.';
+pt['end_disconnect'] = 'O jogo terminou porque um jogador perdeu a conexão.';
+ko['end_disconnect'] = '한 플레이어의 연결이 끊어져 게임이 종료되었습니다.';
+
+// Shown to a participant who comes back after being lost from their game
+en['end_lost'] = 'Your connection was lost for too long, so you cannot rejoin this game.';
+cn['end_lost'] = '您的连接中断时间过长，因此无法重新加入本局游戏。';
+ct['end_lost'] = '您的連線中斷時間過長，因此無法重新加入本局遊戲。';
+de['end_lost'] = 'Ihre Verbindung war zu lange unterbrochen, daher können Sie diesem Spiel nicht wieder beitreten.';
+es['end_lost'] = 'Su conexión estuvo interrumpida demasiado tiempo, por lo que no puede volver a unirse a este juego.';
+fr['end_lost'] = 'Votre connexion a été interrompue trop longtemps : vous ne pouvez pas rejoindre cette partie.';
+pt['end_lost'] = 'Sua conexão ficou interrompida por tempo demais, por isso você não pode voltar a este jogo.';
+ko['end_lost'] = '연결이 너무 오래 끊어져 이 게임에 다시 참여할 수 없습니다.';
+
+// Shown to a participant who comes back after being removed from a game still under way
+en['end_removed'] = 'You were disconnected from your game and removed from it, so you cannot rejoin.';
+cn['end_removed'] = '您与游戏的连接已断开并已被移出游戏，因此无法重新加入。';
+ct['end_removed'] = '您與遊戲的連線已中斷並已被移出遊戲，因此無法重新加入。';
+de['end_removed'] = 'Ihre Verbindung zum Spiel wurde getrennt und Sie wurden aus dem Spiel entfernt. Sie können nicht wieder beitreten.';
+es['end_removed'] = 'Se desconectó del juego y fue retirado de él, por lo que no puede volver a unirse.';
+fr['end_removed'] = 'Vous avez été déconnecté de la partie et en avez été retiré : vous ne pouvez pas la rejoindre.';
+pt['end_removed'] = 'Você foi desconectado do jogo e removido dele, por isso não pode voltar.';
+ko['end_removed'] = '게임 연결이 끊어져 게임에서 제외되었으므로 다시 참여할 수 없습니다.';
 
 en['end_caught'] = 'You caught';
 cn['end_caught'] = '你捕捞了';
@@ -313,6 +502,16 @@ es['buttons_castFish'] = 'Pescar un pez <i class="icon-fish-hook"></i>';
 fr['buttons_castFish'] = 'Essayez de pêcher <i class="icon-fish-hook"></i>';
 pt['buttons_castFish'] = 'Pescar um peixe <i class="icon-fish-hook"></i>';
 ko['buttons_castFish'] = '낚시하기 <i class="icon-fish-hook"></i>';
+
+// Used instead of buttons_castFish when the chance of catching is 100%
+en['buttons_catchFish'] = 'Catch a fish <i class="icon-fish-hook"></i>';
+cn['buttons_catchFish'] = '捕一条鱼 <i class="icon-fish-hook"></i>';
+ct['buttons_catchFish'] = '捕一條魚 <i class="icon-fish-hook"></i>';
+de['buttons_catchFish'] = 'Einen Fisch fangen <i class="icon-fish-hook"></i>';
+es['buttons_catchFish'] = 'Pescar un pez <i class="icon-fish-hook"></i>';
+fr['buttons_catchFish'] = 'Pêcher un poisson <i class="icon-fish-hook"></i>';
+pt['buttons_catchFish'] = 'Pescar um peixe <i class="icon-fish-hook"></i>';
+ko['buttons_catchFish'] = '물고기 잡기 <i class="icon-fish-hook"></i>';
 
 en['buttons_return'] = 'Return to port <i class="icon-lighthouse"></i>';
 cn['buttons_return'] = '返航 <i class="icon-lighthouse"></i>';

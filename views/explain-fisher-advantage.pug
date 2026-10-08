@@ -1,0 +1,91 @@
+doctype html
+html(lang='en')
+  head
+    title Fisher Advantage Explained
+    style.
+        dd {
+            margin-left: 2em;
+        }
+  body
+    h2 FISHER ADVANTAGE FEATURE
+    div.remark
+    p.
+        The Fisher Advantage feature allows you to give some fishers a monetary
+        advantage over the other fishers. This enables study of how participants
+        respond when some fishers earn more per fish than others.
+
+    h4 How it works
+    p.
+        When enabled, certain fishers receive a higher value per fish caught,
+        creating an asymmetry in earnings. This can be used to study the effects
+        of inequality on cooperation and resource management in the commons
+        dilemma.
+    p.
+        Human fishers can be given advantage by including the URL parameter, "fhasadvantage". 
+        This mechanism is intended to be used with a service providing experiment subjects, such as #[a(href='https://gorilla.sc/') Gorilla], 
+        which can send each subject to Fish using a Fish URL with parameters set up in the service.
+        Any number of fishers can have the advantage. Of course there is no sense in giving all fishers advantage!
+    p.
+        Bot fishers do not have advantage by default, but experimenters can toggle that using a drop-down menu ("yes'/"no") in the bot definition. 
+
+
+    h4 Parameters
+    p.
+        The following parameters (microworld and URL) control the Fisher Advantage feature:
+    dl
+        dt Enable fisher advantage
+        dd.
+            Toggle to enable or disable the feature entirely.
+
+        dt Fish value pay gap
+        dd.
+            The amount fishers who have advantage earn per fish #[strong in addition to ] the standard fish value. This value must be a single number greater than 0.
+
+        dt Cost to attempt to fish reduction
+        dd.
+            The amount subtracted from the standard "Cost to attempt to fish" for fishers who have advantage. Cannot exceed the standard cost.
+
+        dt Cost to set sail reduction
+        dd.
+            The amount subtracted from the standard "Cost to set sail" for fishers who have advantage. Cannot exceed the standard cost.
+
+        dt Cost per second at sea reduction
+        dd.
+            The amount subtracted from the standard "Cost per second at sea" for fishers who have advantage. Cannot exceed the standard cost.
+
+        dt Enable profit gap column
+        dd.
+            When enabled, Fish shows an additional column in the game table displaying the total extra earnings, given the number of fish caught, for fishers with advantage.
+            The benefit is displayed in a blueish color with a leading "+" sign.
+            For fishers who do not have advantage, this column displays the amount they lost for not having advantage. 
+            The number in this case is displayed in a reddish color with a leading "-" sign.
+
+        dt Advantage emoji
+        dd.
+            The emoji that Fish displays in front of a player's name if the player has advantage.
+
+        dt No-advantage emoji
+        dd.
+            The emoji that Fish displays in front of a player's name if the player does not have advantage.
+
+        dt fhasadvantage
+        dd.
+            This URL parameter indicates whether or not the incoming human fisher has advantage or not.    <br>
+        
+        ul Equivalent ways of having advantage:
+
+            li(style=" font-family: Monaco; font-size: 12px ").
+                http://somefish.org/fish?mwid=123abc&pid=Alice&fhasadvantage
+            li(style=" font-family: Monaco; font-size: 12px ").
+                http://somefish.org/fish?mwid=123abc&pid=Alice&fhasadvantage=1
+            li(style=" font-family: Monaco; font-size: 12px ").
+                http://somefish.org/fish?mwid=123abc&pid=Alice&fhasadvantage=true
+
+        ul Equivalent ways of #[bold not ] having advantage:
+
+            li(style=" font-family: Monaco; font-size: 12px ").
+                http://somefish.org/fish?mwid=123abc&pid=Bob
+            li(style=" font-family: Monaco; font-size: 12px ").
+                http://somefish.org/fish?mwid=123abc&pid=Bob&fhasadvantage=0
+            li(style=" font-family: Monaco; font-size: 12px ").
+                http://somefish.org/fish?mwid=123abc&pid=Bob&fhasadvantage=false

@@ -3,6 +3,14 @@
 
 var should = require('should');
 
+describe('Engine - Heartbeat', function() {
+  it('should notice a silent participant within 20 seconds', function() {
+    var eio = require('../app').io.eio;
+    eio.pingInterval.should.equal(12000);
+    eio.pingTimeout.should.equal(8000);
+  });
+});
+
 describe('Engine - Disconnect Handler', function() {
   var OceanManager = require('./ocean-manager').OceanManager;
   var io, ioAdmin, om;

@@ -390,13 +390,8 @@ describe('PUT /experimenters/:id', () => {
   });
 });
 
-function createUser(model, fields) {
-  return new Promise((resolve, reject) => {
-    model.create(fields, (err, doc) => {
-      if (err) reject(err);
-      resolve(doc);
-    });
-  });
+async function createUser(model, fields) {
+  return await model.create(fields);
 }
 
 function getAgentForUser(endpoint, fields, rawPassword) {

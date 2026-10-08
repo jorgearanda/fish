@@ -1,0 +1,63 @@
+doctype html
+html(lang='en')
+  head
+    title Fisher Classes Explained
+    style.
+        dd {
+            margin-left: 2em;
+        }
+  body
+    h2 FISHER CLASSES FEATURE
+    div.remark
+    p.
+        The Fisher Classes feature allows you to assign fishers to different classes, and assign an emoji to each class which will be shown in the game table next to each player's name. 
+        This enables study of inequality, class bias, and resource distribution.
+
+    h4 How it works
+    p.
+        When enabled, the experimenter can define 2 or more classes, and associate emoji's with each one. 
+        The defaults are "Female, Male" and "♀︎, ♂︎".
+        The experimenter must also define, for each class, how many fishers must be in any game.
+        So a common setting for a game with 4 fishers is "2, 2" : each game must have 2 females and 2 males.
+        Fish is careful to monitor and enforce these rules.
+
+    p.
+        Human fishers are assigned a class via a URL parameter, "fclass". 
+        This mechanism is intended to be used with a service providing experiment subjects, such as #[a(href='https://gorilla.sc/') Gorilla],
+        which can send each subject to Fish using a Fish URL with parameters set up in the service.
+
+    p.
+        Bot fishers are automatically assigned the first class in the list of classes. Experimenters can change the class using a drop-down menu in the bot definition. 
+        Bots, when present, affect the numbers required for each class. 
+
+    h4 Parameters
+    p.
+        The following parameters control the Fisher Classes feature:
+    dl
+        dt Enable fisher classes
+        dd.
+            Toggle to enable or disable the feature entirely.
+
+        dt List of class names
+        dd.
+            A comma-separated list of names, where each name must consist of letters (a-z), with spaces allowed. For example: "Group A, Group B". (Fish automatically capitalizes class names.)
+
+        dt Number of fishers for each class
+        dd.
+            A comma-separated list of numbers, one for each class, in the same order, each one greater than 0. The sum of all numbers must be equal to the number of fishers per simulation.
+
+        dt Emojis for each class
+        dd.
+            A comma-separated list of emojis, one for each class, in the same order, each one a single emoji character.
+
+        dt fclass
+        dd.
+            This URL parameter indicates the class of the incoming human fisher.  
+            If fisher classes are enabled and a fisher comes in without a class assignment, the fisher is assigned the first class in the list of classes. <br>
+            (Fish automatically capitalizes class names.)   <br>
+        
+        ul Example of a fisher Dolphin being in the class of females:
+
+            li(style=" font-family: Monaco; font-size: 12px ").
+                http://somefish.org/fish?mwid=123abc&pid=Dolphin&fclass=female
+
