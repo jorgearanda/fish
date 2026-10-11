@@ -1,22 +1,32 @@
 #!/bin/bash
 # Dump the fish database, zip it, and upload to Dropbox via rclone.
-# Skips the backup if no new runs have been saved since the last backup.
+# Skips the backup if nothing in the database has changed since the last
+# backup (new runs, microworld edits, participant links, ...).
+# Every night it also writes one line to $DROPBOX_DEST/fish-backup-status.txt,
+# so an old date on that file means the job itself is not running.
 # Requires: mongodump, mongosh, rclone configured with a remote named "dropbox"
-# Usage: ./backup_db.sh
+# Usage: bash backup_db.sh (cron runs it with /bin/bash, so it works even
+# when a git pull drops the executable bit)
 
 set -e
 
-LAST_RUN_FILE="$HOME/.fish_last_backup_run_id"
+LAST_HASH_FILE="$HOME/.fish_last_backup_hash"
 DROPBOX_DEST="dropbox:/fish-backups"
+STATUS_FILE="fish-backup-status.txt"
 
-LATEST_ID=$(mongosh fish --quiet --eval \
-  "const r = db.runs.findOne({}, {projection: {_id:1}, sort: {_id:-1}}); print(r ? r._id.toString() : '')" \
+write_status() {
+  echo "$(date -u '+%Y-%m-%d %H:%M UTC')  $1" | rclone rcat "$DROPBOX_DEST/$STATUS_FILE"
+}
+
+# A fingerprint of every collection's contents
+LATEST_HASH=$(mongosh fish --quiet --eval "print(db.runCommand({dbHash: 1}).md5)" \
   2>/dev/null | tail -1 || echo "")
 
-LAST_ID=$(cat "$LAST_RUN_FILE" 2>/dev/null || echo "")
+LAST_HASH=$(cat "$LAST_HASH_FILE" 2>/dev/null || echo "")
 
-if [ "$LATEST_ID" = "$LAST_ID" ]; then
-  echo "No new runs since last backup. Skipping."
+if [ -n "$LATEST_HASH" ] && [ "$LATEST_HASH" = "$LAST_HASH" ]; then
+  echo "$(date -u +%FT%TZ) No changes since last backup. Skipping."
+  write_status "skipped: no changes since the last backup"
   exit 0
 fi
 
@@ -36,6 +46,7 @@ rclone copy "$ARCHIVE" "$DROPBOX_DEST"
 echo "Cleaning up local files..."
 rm -rf "$BACKUP_DIR" "$ARCHIVE"
 
-echo "$LATEST_ID" > "$LAST_RUN_FILE"
+echo "$LATEST_HASH" > "$LAST_HASH_FILE"
+write_status "backup saved: $BACKUP_NAME.tar.gz"
 
 echo "Done. Backup saved to $DROPBOX_DEST/$BACKUP_NAME.tar.gz"
